@@ -2,6 +2,7 @@ const path = require("path");
 
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshTypeScript = require('react-refresh-typescript');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 
@@ -27,9 +28,12 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: require.resolve('babel-loader'),
+                        loader: require.resolve('ts-loader'),
                         options: {
-                            plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+                            getCustomTransformers: () => ({
+                                before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
+                            }),
+                            transpileOnly: isDevelopment,
                         },
                     },
                 ],
