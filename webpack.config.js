@@ -2,9 +2,11 @@ const path = require("path");
 
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 
-// npm install react-hot-loader --save-dev
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -17,12 +19,20 @@ module.exports = {
         extensions: [".tsx", ".ts", ".js"],
     },
     devtool: "inline-source-map",
+    mode: isDevelopment ? 'development' : 'production',
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                use: "ts-loader",
+                test: /\.[jt]sx?$/,
                 exclude: /node_modules/,
+                use: [
+                    {
+                        loader: require.resolve('babel-loader'),
+                        options: {
+                            plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+                        },
+                    },
+                ],
             },
             {
                 test: /\.css$/,
@@ -31,6 +41,7 @@ module.exports = {
         ],
     },
     plugins: [
+        isDevelopment && new ReactRefreshWebpackPlugin(),
         new CopyPlugin({
             patterns: [
                 { from: 'assets', to: '' }, // copies all files from assets to dist/
@@ -46,10 +57,11 @@ module.exports = {
             maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
             skipWaiting: true,
         }),
-    ],
+    ].filter(Boolean),
     devServer: {
         compress: true,
-        port: 3000,
         historyApiFallback: true,
+        hot: true,
+        port: 3000,
     },
 };
