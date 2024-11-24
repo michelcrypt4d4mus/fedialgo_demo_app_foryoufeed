@@ -15,7 +15,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 
 const App: React.FC = () => {
-// const App = () => {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/service-worker.js');
