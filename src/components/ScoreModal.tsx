@@ -23,7 +23,7 @@ export default function ScoreModal({
     return (
         <Modal show={showScoreModal} onHide={() => setShowScoreModal(false)} style={{ color: "black" }}>
             <Modal.Header closeButton>
-                <Modal.Title>Toot Weighted Score</Modal.Title>
+                <Modal.Title>This Toot's Score</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
