@@ -17,7 +17,7 @@ export default function ScoreModal({
     showScoreModal: boolean,
     toot: Toot
 }) {
-    console.debug(`ScoreModal for toot #${toot.id}: `, toot);
+    console.debug(`ScoreModal for #${toot.id}: `, toot);
     console.debug(`extractScoreInfo() for toot #${toot.id}: `, extractScoreInfo(toot));
 
     return (
