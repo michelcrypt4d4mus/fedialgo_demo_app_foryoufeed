@@ -27,6 +27,7 @@ export default function App(): React.ReactElement {
     if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported, registering...');
 
+        // Service worker for github pages: https://gist.github.com/kosamari/7c5d1e8449b2fbc97d372675f16b566e
         try {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js');
@@ -37,7 +38,7 @@ export default function App(): React.ReactElement {
     }
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/fedialgo_demo_app_foryoufeed">
             <AuthProvider>
                 <div className='container-fluid min-vh-100' style={containerStyle}>
                     <Modal show={error !== ""} onHide={() => setError("")} style={{color: "black"}}>
