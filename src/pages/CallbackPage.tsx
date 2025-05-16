@@ -25,6 +25,7 @@ interface CallbackPageProps {
 export default function CallbackPage(props: CallbackPageProps) {
     const { setError } = props;
     const [searchParams] = useSearchParams();
+    logSafe(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
 
     // Example of 'app' object
     // {

@@ -18,6 +18,10 @@ const envMsg = `* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV} *`;
 console.log(`${'*'.repeat(envMsg.length)}\n${envMsg}\n${'*'.repeat(envMsg.length)}`);
 console.log(`\nprocess.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}\n\n`);
 
+// Github pages only lets you deploy from docs/ folder
+const outputDir = process.env.BUILD_GITHUB_PAGES == 'true' ? 'docs' : 'dist';
+console.log(`\nBuilding to outputDir: ${outputDir} (BUILD_GITHUB_PAGES=${process.env.BUILD_GITHUB_PAGES}\n`);
+
 
 module.exports = {
     entry: "./src/index.tsx",
