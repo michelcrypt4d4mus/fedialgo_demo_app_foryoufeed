@@ -40,12 +40,10 @@ export default function LoginPage() {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
         // const redirectUri = window.location.origin + "/#/callback"; // OAuth won't accept a hashtag in the redirect URI
-        let redirectUri: string;
+        let redirectUri = window.location.origin;
 
         if (isProduction) {
-            redirectUri = `${window.location.origin}/fedialgo_demo_app_foryoufeed`;
-        } else {
-            redirectUri = `${window.location.origin}/#/callback`;
+            redirectUri += `/fedialgo_demo_app_foryoufeed`;
         }
 
         logMsg("window.location.origin redirectUri:", redirectUri);
