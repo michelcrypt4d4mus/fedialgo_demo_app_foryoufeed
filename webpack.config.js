@@ -18,13 +18,16 @@ const envMsg = `* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV} *`;
 console.log(`${'*'.repeat(envMsg.length)}\n${envMsg}\n${'*'.repeat(envMsg.length)}`);
 console.log(`\nprocess.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}\n\n`);
 
+// Github pages only lets you deploy from docs/ folder
+const outputDir = process.env.NODE_ENV == 'production' ? 'docs' : 'dist';
+
 
 module.exports = {
     entry: "./src/index.tsx",
     output: {
         clean: true,  // Clean the cache each time we build
         filename: "bundle.js",
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, outputDir),
     },
     resolve: {
         extensions: [".js", ".json", ".tsx", ".ts"],
