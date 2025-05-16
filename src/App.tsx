@@ -18,6 +18,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import { isProduction } from './helpers/react_helpers';
 import { logLocaleInfo, logMsg } from "./helpers/string_helpers";
 
 
@@ -39,7 +40,7 @@ export default function App(): React.ReactElement {
     }
 
     return (
-        <HashRouter basename="/fedialgo_demo_app_foryoufeed">
+        <HashRouter basename={isProduction ? "/fedialgo_demo_app_foryoufeed" : "/"}>
             <AuthProvider>
                 <div className='container-fluid min-vh-100' style={containerStyle}>
                     <Modal show={error !== ""} onHide={() => setError("")} style={{color: "black"}}>

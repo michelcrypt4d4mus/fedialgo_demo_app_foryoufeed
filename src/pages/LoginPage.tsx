@@ -9,6 +9,7 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
+import { isProduction } from '../helpers/react_helpers';
 import { logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
 // const showcase = require("../../public/assets/Showcase.jpg");
 
@@ -36,7 +37,7 @@ export default function LoginPage() {
     const loginRedirect = async (): Promise<void> => {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
-        const redirectUri = window.location.origin + "/callback";
+        const redirectUri = window.location.origin + "/#/callback";
         logMsg("window.location.origin redirectUri:", redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
