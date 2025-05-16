@@ -26,8 +26,6 @@ export default function App(): React.ReactElement {
     const [error, setError] = useState<string>("");
     logLocaleInfo();
 
-    logMsg("<App.tsx> window.location.href:", window.location.href);
-
     // This is a workaround for Github pages (which only allows GET query params), the HashRouter,
     // and OAuth redirects.
     //       otherwise this: http://localhost:3000/?code=abcdafwgwdgw
@@ -40,7 +38,7 @@ export default function App(): React.ReactElement {
     }
 
     if ('serviceWorker' in navigator) {
-        console.log('Service Worker is supported, registering...');
+        logMsg('Service Worker is supported, registering...');
 
         // Service worker for github pages: https://gist.github.com/kosamari/7c5d1e8449b2fbc97d372675f16b566e
         try {

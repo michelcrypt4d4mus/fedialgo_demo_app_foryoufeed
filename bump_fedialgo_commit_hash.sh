@@ -23,5 +23,8 @@ npm install --save github:michelcrypt4d4mus/fedialgo#${FEDIALGO_COMMIT_OR_TAG}
 git commit -am "Bump fedialgo commit to $FEDIALGO_COMMIT_OR_TAG"
 git push origin master
 
-./link_local_fedialgo.sh
+if [ -z "$1" ]; then
+    ./link_local_fedialgo.sh
+fi
+
 echo -e "\nFinished updating fedialgo demo app package.json."
