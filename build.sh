@@ -1,5 +1,9 @@
 #!/bin/bash
+set -e
 
-BUILD_GITHUB_PAGES=true FEDIALGO_DEBUG=false QUICK_MODE=false NODE_ENV=production npx webpack --mode production
+git checkout github_pages
+git merge master
+NODE_ENV=production BUILD_GITHUB_PAGE=true FEDIALGO_DEBUG=false QUICK_MODE=false npx webpack --mode production
 git commit -am"Build"
 git push origin github_pages
+git checkout master
