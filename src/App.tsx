@@ -19,7 +19,7 @@ import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { isProduction } from './helpers/react_helpers';
-import { logLocaleInfo, logMsg } from "./helpers/string_helpers";
+import { logLocaleInfo, logMsg, logSafe } from "./helpers/string_helpers";
 
 
 export default function App(): React.ReactElement {
@@ -35,7 +35,7 @@ export default function App(): React.ReactElement {
     // From: https://github.com/auth0/auth0-spa-js/issues/407
     if (window.location.href.includes('?code=')){
         const newUrl = window.location.href.replace(/\/(\?code=.*)/, '/#/callback$1')
-        logMsg('<App.tsx> Callback, redirecting to:', newUrl);
+        logSafe('<App.tsx> Callback, redirecting to:', newUrl);
         window.location.href = newUrl;
     }
 

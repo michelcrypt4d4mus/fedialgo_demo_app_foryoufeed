@@ -31,20 +31,17 @@ const DATE_FORMAT = Intl.DateTimeFormat(
 
 // Log the browser's locale information to the console
 export const logLocaleInfo = (): void => {
-    const locale = navigator?.language;
-    const localeParts = locale.split('-');
-    const _country = localeParts[1] || '';
-
     const msg = [
         `navigator.locale="${browserLocale()}"`,
         `language="${browserLanguage()}"`,
         `country="${browserCountry()}"`,
+        `process.env.NODE_ENV="${process.env.NODE_ENV}"`,
+        `process.env.FEDIALGO_DEBUG="${process.env.FEDIALGO_DEBUG}"`,
+        `TheAlgorithm.isDebugMode="${TheAlgorithm.isDebugMode}"`,
+        `process.env.FEDIALGO_VERSION="${process.env.FEDIALGO_VERSION}"`,
     ];
 
     logMsg(`${msg.join(", ")}`);
-    logMsg(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
-    logMsg(`process.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}, TheAlgorithm.isDebugMode: ${TheAlgorithm.isDebugMode}`);
-    logMsg(`process.env.FEDIALGO_VERSION: ${process.env.FEDIALGO_VERSION}`);
 };
 
 
