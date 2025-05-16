@@ -1,6 +1,6 @@
 # FediAlgo: A Configurable Mastodon Timeline Algorithm
 
-* Try the demo [here](https://fedialgo.thms.uk/)!
+* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/)!
 
 This repo contains a simple demo React application (a website, basically - one that if you follow the instructions in this document will be served to your usual browser from a webserver running on your local machine) for the (almost) pure javascript [`fedialgo`](https://github.com/michelcrypt4d4mus/fedialgo) package, a customizable algorithm for the federated social media platform [Mastodon](https://joinmastodon.org/) that can free you from the tyranny of Mastodon's reverse chronological order timeline.
 
