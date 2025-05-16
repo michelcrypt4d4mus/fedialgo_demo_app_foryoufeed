@@ -3,7 +3,7 @@ set -e
 
 echo -e "Deploying..."
 git checkout github_pages
-git merge master
+git merge master --no-edit
 NODE_ENV=production npx webpack --mode production
 git commit -am"Build"
 git push origin github_pages

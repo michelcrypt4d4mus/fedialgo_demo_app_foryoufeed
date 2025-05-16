@@ -26,6 +26,7 @@ export default function CallbackPage(props: CallbackPageProps) {
     const { setError } = props;
     const [searchParams] = useSearchParams();
     logSafe(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
+    const logThis = (msg: string, ...args: any[]) => logMsg(`<CallbackPage> ${msg}`, ...args);
 
     // Example of 'app' object
     // {
@@ -38,18 +39,17 @@ export default function CallbackPage(props: CallbackPageProps) {
     //     website: "https://mastodon.social",
     // }
     const [app] = useAppStorage({ keyName: "app", defaultValue: null })
-    const { user, loginUser } = useAuthContext();
+    const { setLoggedInUser, user } = useAuthContext();
     const paramsCode = searchParams.get('code');
-    const logThis = (msg: string, ...args: any[]) => logMsg(`<CallbackPage> ${msg}`, ...args);
 
     useEffect(() => {
         if (paramsCode !== null && !user) {
-            oAuth(paramsCode);
+            oAuthUserAndRegisterApp(paramsCode);
         }
     }, [paramsCode]);
 
     // Get an OAuth token for our app using the code we received from the server
-    const oAuth = async (code: string) => {
+    const oAuthUserAndRegisterApp = async (code: string) => {
         const body = new FormData();
 
         body.append('grant_type', 'authorization_code');
@@ -80,7 +80,7 @@ export default function CallbackPage(props: CallbackPageProps) {
                     username: verifiedUser.username,
                 };
 
-                loginUser(userData).then(() => logThis(`Logged in '${userData.username}'! User object:`, userData));
+                setLoggedInUser(userData).then(() => logThis(`Logged in '${userData.username}'! User object:`, userData));
             }).catch((error) => {
                 console.error(`[${DEMO_APP}] <CallbackPage> api.v1.accounts.verifyCredentials() error:`, error);
                 setError(`Account verifyCredentials error:\n${error.toString()}`);

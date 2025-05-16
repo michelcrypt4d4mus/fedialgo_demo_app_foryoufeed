@@ -2,6 +2,7 @@ import React, { CSSProperties } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 
 import { CRYPTADAMUS_ICON_URL } from '../helpers/style_helpers';
+import { HOMEPAGE } from '../helpers/string_helpers';
 import { useAuthContext } from "../hooks/useAuth";
 
 const XS_VALUE = 4;  // React Bootstrap Grid System
@@ -41,7 +42,7 @@ export default function Header() {
                         className='text-center align-middle p-2'
                         style={{fontSize: 20, whiteSpace: "nowrap"}}
                     >
-                        <a href={process.env.FEDIALGO_HOMEPAGE} style={{color: "white"}} target="_blank">
+                        <a href={HOMEPAGE} style={{color: "white"}} target="_blank">
                             Fedialgo Demo
                         </a>
 

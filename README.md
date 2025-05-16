@@ -1,10 +1,11 @@
 # FediAlgo: A Configurable Mastodon Timeline Algorithm
 
-* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/)!
+* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/).
+* Watch a demo of all the features [on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk).
 
-This repo contains a simple demo React application (a website, basically - one that if you follow the instructions in this document will be served to your usual browser from a webserver running on your local machine) for the (almost) pure javascript [`fedialgo`](https://github.com/michelcrypt4d4mus/fedialgo) package, a customizable algorithm for the federated social media platform [Mastodon](https://joinmastodon.org/) that can free you from the tyranny of Mastodon's reverse chronological order timeline.
+This repo contains a simple demo React application (a website, basically) for the (almost) pure javascript [`fedialgo`](https://github.com/michelcrypt4d4mus/fedialgo) package, a customizable algorithm for the federated social media platform [Mastodon](https://joinmastodon.org/) that can free you from the tyranny of Mastodon's reverse chronological order timeline.
 
-Each incoming toot in your recent timeline will be scored based on a variety of factors and resorted top to bottom based on what toots have the highest scores instead of just reverse chronological order. You can adjust in a very fine grained way how much weight you want to give to each of those factors in determining each toot's scores.
+Each incoming toot in your recent timeline will be scored based on a variety of factors and resorted top to bottom based on what toots have the highest scores instead of just reverse chronological order. You can adjust in a very fine grained way how much weight you want to give to each of those factors in determining each toot's scores. There are also some easy to use presets, including reverting to the standard reverse chronological order.
 
 <p align="center">
     <img src="public/assets/Showcase.png" alt="Algorithm Weighting Sliders" width="600">
@@ -14,36 +15,15 @@ Each incoming toot in your recent timeline will be scored based on a variety of 
 
 Both this repo and the `fedialgo` package linked above were forked from [pkreissel's original implementations](https://github.com/pkreissel/fedialgo).
 
-### Demo You Can Try
-There's a version you can try out by pointing your web browser at [fedialgo.thms.uk](https://fedialgo.thms.uk/) thanks to @nanos.
-
-### Demo Video
-You can watch a demo of all the features [over on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk).
-
-[![FediAlgo in action](https://img.youtube.com/vi/tR35bUHzJdk/0.jpg)](https://www.youtube.com/watch?v=tR35bUHzJdk)
 
 
-# Installation
-### Prerequisites
-* [`node.js`](https://nodejs.org/):
-   * On Linux use `apt`, `yum`, or your favorite package manager. For example here's [guide on how to install `node.js` on Ubuntu linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04).
-   * On macOS you can install `node.js` with [Homebrew](https://brew.sh/) by running `brew install node`.
-* `git`
-   * Hopefully you have `git` installed already but if you're on a recent version of macOS you may need to use Homebrew: `brew install git`
-
-### Quick Start
-There's [a script](./quick_install.sh) in this repo that will do all the steps for you if you're into that kind of thing, otherwise:
-
-1. `git clone https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed`
-1. `cd fedialgo_demo_app_foryoufeed`
-1. `npm install` (you can ignore the various warnings)
-1. `npm run start`
-   * It should automatically change focus to your default browser and prompt you to login to Mastodon but if that doesn't happen you can point your browser at [`http://localhost:3000/`](http://localhost:3000/).
+# Usage
+1. Click on the link to [the demo deploy](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (it's deployed on GitHub Pages).
 1. Specify the Mastodon server your account lives on and click "Login". If you're already logged in with that browser you won't have to enter a password.
    <p align="center">
      <img src="doc/login_screen.png" alt="OAuth Permissions Request" width="600">
    </p>
-1. After you've logged in to your Mastodon server (or if you're logged in in that browser) your browser will request that you give `fedialgo` permission to access your Mastodon account. If you don't accept this app will not work.
+1. After you've logged in to your Mastodon server (or if you're logged in in that browser) your browser will request that you give `fedialgo` permission to access your Mastodon account. If you don't accept this the app will not work.
    <p align="center">
      <img src="doc/permissions_request.png" alt="OAuth Permissions Request" width="300">
    </p>
@@ -51,15 +31,9 @@ There's [a script](./quick_install.sh) in this repo that will do all the steps f
 1. Have fun.
 1. Profit.
 
-### Upgrading
-```bash
-git pull
-npm install
-```
 
-# Usage
 ## Setting Weights
-Once the initial load is complete you can adjust the way the algorithm weights various aspects of a toot when it decides what should be at or near the top of your feed. Hopefully these are self explanatory:
+Once the initial load is complete you can adjust the way the algorithm weights various aspects of a toot when it decides what should be at or near the top of your feed. There's also a drop down for preconfigured settings (feedback appreciated!) Hopefully these are self explanatory:
 
 <p align="center">
     <img src="doc/algorithm_sliders.png" alt="Algorithm Weighting Sliders" width="300">
@@ -67,7 +41,7 @@ Once the initial load is complete you can adjust the way the algorithm weights v
 
 One thing that's kind of a gotcha is the way the `topPosts - Favor posts that are trending in the Fediverse` slider works. Because trending posts often have tons of engagement in the form of replies, favorites, and retoots they can easily drown out the toots from people you are actually following. As a result the impact of this slider gets increasingly drastic _but only if the value is below 1.0_. At 1.0 and above it behaves like all the other weighting sliders.
 
-## Filtering
+### Filtering
 You can filter based on hashtag, source (accounts you follow, hashtags you follow, various kinds of trending toots), language, application, and various numerical metrics like minimum number of replies, minimum number of boosts, etc.
 
 <p align="center">
@@ -90,20 +64,12 @@ Here's an example of the elements that go into scoring a toot:
 </p>
 
 ## Retooting And Favoriting
-* You can retoot and favorite other people's toots through this app's web interface.
+* You can retoot, bookmark, and favorite other people's toots through this app's web interface.
 * Clicking the reply icon will take you to the standard Mastodon web app view of the toot you want to reply to on your home server.
 * Clicking the timestamp in the top right corner will take you to the toot on that tooter's home server (you'll only be able to reply if that's also your home server).
 
-## Shutdown
-`Ctrl-C` in the terminal window you launched the `node.js` server in (with `npm run start`) will kill the app.
 
-# Known Issues
-* If you get an error about `GenerateSW() was called more than once` or whatever just ignore it.
-* Sometimes (always?) when starting the app after the first time you will find your Mastodon login has expired in which case you will be kicked back to the login screen for reauthorization.
-* Infinite scroll isn't _really_ infinite (yet). If you scroll far enough you will run out of toots to peruse.
-* Whether or not a toot that matches one of your preconfigured (via web app or whatever) "hide these toots" filter rules actually ends up getting hidden depends on the server version of the user posting the toot that should be hidden. Put another way: sometimes toots escape your preconfigured filters.
-
-### Troubleshooting
+## Troubleshooting
 Most (all?) browsers will allow you to clear all the "site data" (cookies and cache) for a single site. If you run into an issue try doing that and then reloading the app at `https://localhost:3000`.
 
 * [How to clear site data for one site in Chrome](https://support.google.com/chrome/thread/16531954/clear-cache-for-specific-website-in-google-chrome?hl=en)
@@ -121,19 +87,43 @@ Here's an example of what you might see:
     <img src="doc/brower_console_debug_logs.png" alt="brower_console_debug_logs.png" width="800">
 </p>
 
+### Known Issues
+* If you get an error about `GenerateSW() was called more than once` or whatever just ignore it.
+* Sometimes (always?) when starting the app after the first time you will find your Mastodon login has expired in which case you will be kicked back to the login screen for reauthorization.
+* Infinite scroll isn't _really_ infinite (yet). If you scroll far enough you will run out of toots to peruse.
 
-# Troubleshooting
-Someone reported they were unable to build with `npm run build` but using `NODE_ENV=production npm run build --no-hmr` seemed to fix the issue.
 
 # Contributing
+
+### Prerequisites
+* [`node.js`](https://nodejs.org/):
+   * On Linux use `apt`, `yum`, or your favorite package manager. For example here's [guide on how to install `node.js` on Ubuntu linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04).
+   * On macOS you can install `node.js` with [Homebrew](https://brew.sh/) by running `brew install node`.
+* `git`
+   * Hopefully you have `git` installed already but if you're on a recent version of macOS you may need to use Homebrew: `brew install git`
+
+### Quick Start
+There's [a script](./quick_install.sh) in this repo that will do all the steps for you if you're into that kind of thing, otherwise:
+
+1. `git clone https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed`
+1. `cd fedialgo_demo_app_foryoufeed`
+1. `npm install` (you can ignore the various warnings)
+1. `npm run start`
+   * It should automatically change focus to your default browser and prompt you to login to Mastodon but if that doesn't happen you can point your browser at [`http://localhost:3000/`](http://localhost:3000/).
+
 You can install the local `fedialgo` package by running `npm link` in the `fedialgo` project dir and then `npm link fedialgo` in this project's dir _or_ you can do that kind of thing manually by running `npm install path/to/local/fedialgo` in this repo's dir but either way in order to pick up any code changes from `fedialgo` you will have to run `npm run build` in the `fedialgo` package dir.
 
 Assuming you check both `fedialgo` and this repo out to the same directory there's a helper script to link the local repo in [`link_local_fedialgo.sh`](./link_local_fedialgo.sh).
 
-#### Debugging
+### Debugging
 If you set the environment variable `FEDIALGO_DEBUG=true` a _lot_ more debugging info will be printed to the browser console. See [`.env.example`](./.env.example) for other environment variables you can play with.
 
-#### Beta Users
+There's also an arrow icon at the top right of ecah toot that will open a display showing the raw JSON of the underlying toot.
+
+### Troubleshooting
+Someone reported they were unable to build with `npm run build` but using `NODE_ENV=production npm run build --no-hmr` seemed to fix the issue.
+
+### Beta Users
 * @benroyce@mastodon.social
 * @HistoPol@mastodon.social
 * @joeneXtra@todon.eu

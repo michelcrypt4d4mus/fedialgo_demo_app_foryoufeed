@@ -27,7 +27,8 @@ export default function App(): React.ReactElement {
     logLocaleInfo();
 
     // This is a workaround for Github pages (which only allows GET query params), the HashRouter,
-    // and OAuth redirects.
+    // and OAuth redirects. OAuth redirects cannot include a hash and Github Pages doesn't accept
+    // any route URLs without a hash.
     //       otherwise this: http://localhost:3000/?code=abcdafwgwdgw
     //    is routed to this: http://localhost:3000/?code=abcdafwgwdgw#/login
     // From: https://github.com/auth0/auth0-spa-js/issues/407

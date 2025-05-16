@@ -10,7 +10,7 @@ import { usePersistentState } from "react-persistent-state";
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
 import { isProduction } from '../helpers/react_helpers';
-import { logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
+import { REPO_NAME, logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
 import { SHOWCASE_IMAGE_URL } from '../helpers/style_helpers';
 // const showcase = require("../../public/assets/Showcase.jpg");
 
@@ -36,17 +36,20 @@ export default function LoginPage() {
     const logCreds = (msg: string, ...args: any[]) => logSafe(`${LOG_PREFIX} ${msg}`, ...args);
     logCreds(`window.location.href:`, window.location.href);
 
-    const loginRedirect = async (): Promise<void> => {
+    const oAuthLogin = async (): Promise<void> => {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
-        // const redirectUri = window.location.origin + "/#/callback"; // OAuth won't accept a hashtag in the redirect URI
         let redirectUri = window.location.origin;
 
-        if (isProduction) {
-            redirectUri += `/fedialgo_demo_app_foryoufeed`;
+        if (isProduction && redirectUri.includes("github.io")) {
+            if (REPO_NAME) {
+                redirectUri += `/${REPO_NAME}`;
+            } else {
+                console.warn("isProduction is true but FEDIALGO_REPO_NAME is not set. Can cause issues with OAuth.");
+            }
         }
 
-        logMsg("window.location.origin redirectUri:", redirectUri);
+        logMsg(`${LOG_PREFIX} OAuth login redirectUri:`, redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
         if (_app?.clientId) {
@@ -82,7 +85,7 @@ export default function LoginPage() {
 
     return (
         <div className='vh-100' style={loginContainer}>
-            {/* TODO: use file-loader to get webpack to handle this */}
+            {/* TODO? use file-loader to get webpack to handle this */}
             {/* <img src={"/assets/Showcase.jpg"} style={previewImage}/> */}
             <img src={SHOWCASE_IMAGE_URL} alt="FediAlgo Showcase" style={previewImage} />
 
@@ -112,7 +115,7 @@ export default function LoginPage() {
                 </Form.Group>
 
                 <div style={{ display: 'flex', justifyContent: 'center', marginLeft: '10px' }}>
-                    <Button onClick={loginRedirect}>Login</Button>
+                    <Button onClick={oAuthLogin}>Login</Button>
                 </div>
             </div>
         </div>

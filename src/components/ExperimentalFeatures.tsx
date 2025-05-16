@@ -39,7 +39,7 @@ export default function ExperimentalFeatures() {
         // Wait for the data to show up
         algorithm.getCurrentState()
             .then((currentState) => {
-                console.log("FediAlgo state:", currentState);
+                logMsg("FediAlgo state:", currentState);
                 currentState.version = versionString();
                 setAlgoState(currentState);
                 setShowStateModal(true);
@@ -106,7 +106,7 @@ export default function ExperimentalFeatures() {
 const container: CSSProperties = {
     ...roundedBox,
     paddingBottom: "20px",
-    paddingLeft: "30px",
+    paddingLeft: "20px",
     paddingRight: "20px",
     paddingTop: "20px",
 };

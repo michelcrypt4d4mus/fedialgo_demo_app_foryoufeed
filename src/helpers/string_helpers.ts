@@ -5,6 +5,9 @@ import TheAlgorithm from "fedialgo";
 
 export const DEMO_APP = "DEMO APP";
 export const LOADING_ERROR_MSG = `Currently loading, please wait a moment and try again.`;
+export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
+export const REPO_NAME = HOMEPAGE ? HOMEPAGE.split('/').pop() : null;
+export const REPO_URL = HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE;
 
 // Locale
 const DEFAULT_LOCALE = "en-US";

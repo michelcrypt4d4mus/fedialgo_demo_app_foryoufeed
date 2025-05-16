@@ -12,7 +12,7 @@ import { User } from "../types";
 const LOG_PREFIX = `<AuthProvider>`;
 
 const AuthContext = createContext({
-    loginUser: async (_user: User) => {},
+    setLoggedInUser: async (_user: User) => {},
     logout: () => {},
     user: null,
 });
@@ -25,8 +25,7 @@ export default function AuthProvider(props: PropsWithChildren) {
     const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
     const navigate = useNavigate();
 
-    // NOTE: this doesn't actually authenticate the user, it just sets the user object in local storage
-    // call this function when you want to authenticate the user. User object looks like this:
+    // User object looks like this:
     // {
     //     access_token: "xyssdsfdnffdwf"
     //     id: "10936317990452342342"
@@ -34,8 +33,8 @@ export default function AuthProvider(props: PropsWithChildren) {
     //     server: "https://universeodon.com"
     //     username: "cryptadamus"
     // }
-    const loginUser = async (user: User) => {
-        logSafe(`${LOG_PREFIX} loginUser() called, app:`, app, `\nuser:`, user);
+    const setLoggedInUser = async (user: User) => {
+        logSafe(`${LOG_PREFIX} setLoggedInUser() called, app:`, app, `\nuser:`, user);
         setUser(user);
         navigate("/");
     };
@@ -63,7 +62,7 @@ export default function AuthProvider(props: PropsWithChildren) {
     };
 
     const value = useMemo(
-        () => ({ user, loginUser, logout }),
+        () => ({ logout, setLoggedInUser, user }),
         [user]
     );
 
