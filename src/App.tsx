@@ -34,7 +34,7 @@ export default function App(): React.ReactElement {
     //       otherwise this: http://localhost:3000/?code=abcdafwgwdgw
     //    is routed to this: http://localhost:3000/?code=abcdafwgwdgw#/login
     // From: https://github.com/auth0/auth0-spa-js/issues/407
-    if (window.location.href.includes('callback?code')){
+    if (window.location.href.includes('?code=')){
         const newUrl = window.location.href.replace(/\/(\?code=.*)/, '/#/callback$1')
         logMsg('<App.tsx> Callback, redirecting to:', newUrl);
         window.location.href = newUrl;
