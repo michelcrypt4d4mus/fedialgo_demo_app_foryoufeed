@@ -1,7 +1,7 @@
 /*
  * Simple node.js webserver w/out framework: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Node_server_without_framework
  */
-
+require('dotenv-flow').config();
 const path = require("path");
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -82,6 +82,8 @@ module.exports = {
         new webpack.EnvironmentPlugin({
             FEDIALGO_HOMEPAGE: require('./package.json').homepage,
             FEDIALGO_VERSION: require('./package.json').version,
+            FEDIALGO_DEBUG: process.env.FEDIALGO_DEBUG,
+            QUICK_MODE: process.env.QUICK_MODE,
         }),
     ].filter(Boolean),
 
