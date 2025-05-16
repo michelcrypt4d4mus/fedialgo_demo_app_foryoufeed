@@ -40,20 +40,18 @@ export default function LoginPage() {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
         let redirectUri = window.location.origin;
+        logMsg(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`);
 
+        // OAuth won't allow "#" chars in redirectUris. Github Pages requires the URL
         if (isProduction && redirectUri.includes("github.io")) {
-            if (REPO_NAME) {
-                redirectUri += `/${REPO_NAME}`;
-            } else {
-                console.warn("isProduction is true but FEDIALGO_REPO_NAME is not set. Can cause issues with OAuth.");
-            }
+            redirectUri += `/${REPO_NAME}`;
         }
 
         logMsg(`${LOG_PREFIX} OAuth login redirectUri:`, redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
         if (_app?.clientId) {
-            logCreds(`Found existing app creds to use connecting to '${sanitizedServer}':`, _app);
+            logCreds(`Found existing app creds to use for '${sanitizedServer}':`, _app);
             appTouse = _app;
         } else {
             logCreds(`No existing app found, creating a new app for '${sanitizedServer}':`, _app);

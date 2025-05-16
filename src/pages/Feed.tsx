@@ -117,6 +117,7 @@ export default function Feed() {
             <Tooltip id={TOOLTIP_ANCHOR} place="top" />
 
             <Tooltip
+                border={"solid"}
                 clickable={true}
                 delayShow={100}
                 id={TOOLTIP_ACCOUNT_ANCHOR}
