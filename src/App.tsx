@@ -12,6 +12,7 @@ import "./birdUI.css";
 import "./default.css";
 import AlgorithmProvider from "./hooks/useAlgorithm";
 import AuthProvider from './hooks/useAuth';
+import CallbackWrapper from "./components/CallbackWrapper";
 import CallbackPage from './pages/CallbackPage';
 import Feed from './pages/Feed';
 import Footer from './components/Footer';
@@ -54,14 +55,7 @@ export default function App(): React.ReactElement {
                     <Header />
 
                     <Routes>
-                        <Route path="/" element={
-                            <ProtectedRoute>
-                                <AlgorithmProvider setError={setError}>
-                                    <Feed />
-                                </AlgorithmProvider>
-                            </ProtectedRoute>
-                        } />
-
+                        <Route path="/" element={<CallbackWrapper setError={setError} />} />
                         <Route path="/callback" element={<CallbackPage setError={setError} />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="*" element={<NotFoundPage />} />

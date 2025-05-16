@@ -25,10 +25,13 @@ interface CallbackPageProps {
 
 
 export default function CallbackPage(props: CallbackPageProps) {
-    const { setError, searchParams } = props;
+    let { setError, searchParams } = props;
 
+    if (!searchParams) {
+        [searchParams] = useSearchParams();
+    }
 
-    const [searchParams] = useSearchParams();
+    console.log(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
 
     // Example of 'app' object
     // {
