@@ -28,7 +28,7 @@ module.exports = {
     output: {
         clean: true,  // Clean the cache each time we build
         filename: "bundle.js",
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, outputDir),
     },
     resolve: {
         extensions: [".js", ".json", ".tsx", ".ts"],
