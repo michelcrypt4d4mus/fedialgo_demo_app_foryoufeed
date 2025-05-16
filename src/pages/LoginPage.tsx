@@ -38,7 +38,7 @@ export default function LoginPage() {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
         // const redirectUri = window.location.origin + "/#/callback"; // OAuth won't accept a hashtag in the redirect URI
-        const redirectUri = window.location.origin + "/";
+        const redirectUri = window.location.origin;
         logMsg("window.location.origin redirectUri:", redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
@@ -48,6 +48,7 @@ export default function LoginPage() {
         } else {
             logCreds(`No existing app found, creating a new app for '${sanitizedServer}':`, _app);
 
+            // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
             appTouse = await api.v1.apps.create({
                 clientName: APP_NAME,
                 redirectUris: redirectUri,
@@ -65,6 +66,11 @@ export default function LoginPage() {
             scope: OAUTH_SCOPE_STR,
         });
 
+        // Bad (no '/callback):     client_id=fasdfN&redirect_uri=http:%2F%2Flocalhost:3000&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
+        // Bad (with '/?foo=bar'):  client_id=eZdxN8&redirect_uri=http:%2F%2Flocalhost:3000%2F?foo=bar&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
+        // Bad (with '?foo-bar):    client_id=jeZxN8&redirect_uri=http:%2F%2Flocalhost:3000?foo=bar&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
+        // Good (with '/callback'): client_id=jeZxN8&redirect_uri=http:%2F%2Flocalhost:3000%2Fcallback&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
+        logMsg(`Stringified query string:`, query);
         setApp({...appTouse, redirectUri });
         const newUrl = `${sanitizedServer}/oauth/authorize?${query}`;
         logCreds(`redirecting to "${newUrl}"...`);

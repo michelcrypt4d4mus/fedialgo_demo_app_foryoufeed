@@ -4,7 +4,7 @@ import { Buffer } from 'buffer'; // Required for class-transformer to work
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from "react-bootstrap";
-import { Routes, Route, BrowserRouter, HashRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, HashRouter, useSearchParams } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { inject } from '@vercel/analytics';
 
@@ -26,6 +26,19 @@ import { logLocaleInfo, logMsg } from "./helpers/string_helpers";
 export default function App(): React.ReactElement {
     const [error, setError] = useState<string>("");
     logLocaleInfo();
+
+    logMsg("<App.tsx> window.location.href:", window.location.href);
+
+    // This is a workaround for Github pages (which only allows GET query params), the HashRouter,
+    // and OAuth redirects.
+    //       otherwise this: http://localhost:3000/?code=abcdafwgwdgw
+    //    is routed to this: http://localhost:3000/?code=abcdafwgwdgw#/login
+    // From: https://github.com/auth0/auth0-spa-js/issues/407
+    if (window.location.href.includes('callback?code')){
+        const newUrl = window.location.href.replace(/\/(\?code=.*)/, '/#/callback$1')
+        logMsg('<App.tsx> Callback, redirecting to:', newUrl);
+        window.location.href = newUrl;
+    }
 
     if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported, registering...');
@@ -55,7 +68,16 @@ export default function App(): React.ReactElement {
                     <Header />
 
                     <Routes>
-                        <Route path="/" element={<CallbackWrapper setError={setError} />} />
+                        {/* <Route path="/" element={<CallbackWrapper setError={setError} />} /> */}
+
+                        <Route path="/" element={
+                            <ProtectedRoute>
+                                <AlgorithmProvider setError={setError}>
+                                    <Feed />
+                                </AlgorithmProvider>
+                            </ProtectedRoute>
+                        } />
+
                         <Route path="/callback" element={<CallbackPage setError={setError} />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="*" element={<NotFoundPage />} />
@@ -79,16 +101,19 @@ const containerStyle: CSSProperties = {
 
 
 function NotFoundPage() {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const currentPath = location.pathname;
+    // const navigate = useNavigate();
+    // const location = useLocation();
+    // const currentPath = location.pathname;
+    // const [searchParams] = useSearchParams();
+
 
     // Use currentPath to determine the current route
-    logMsg(`<NotFoundPage> currentPath: "${currentPath}", location:`, location);
+    // logMsg(`<NotFoundPage> currentPath: "${currentPath}", location:`, location);
+    logMsg(`<NotFoundPage>`);
 
-    useEffect(() => {
-        navigate('/');
-    }, [navigate]);
+    // useEffect(() => {
+    //     navigate('/');
+    // }, [navigate]);
 
     return <div>Redirecting...</div>;
 }
