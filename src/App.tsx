@@ -1,10 +1,11 @@
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { Buffer } from 'buffer'; // Required for class-transformer to work
 (window as any).Buffer = Buffer;
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from "react-bootstrap";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // import { inject } from '@vercel/analytics';
 
 import "./birdUI.css";
@@ -62,6 +63,7 @@ export default function App(): React.ReactElement {
 
                         <Route path="/callback" element={<CallbackPage setError={setError} />} />
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
                     </Routes>
 
                     <Footer />
@@ -79,3 +81,19 @@ const containerStyle: CSSProperties = {
     flexDirection: 'column',
     height: 'auto',
 };
+
+
+function NotFoundPage() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const currentPath = location.pathname;
+
+    // Use currentPath to determine the current route
+    logMsg(`<NotFoundPage> currentPath: "${currentPath}", location:`, location);
+
+    useEffect(() => {
+        navigate('/');
+    }, [navigate]);
+
+    return <div>Redirecting...</div>;
+}
