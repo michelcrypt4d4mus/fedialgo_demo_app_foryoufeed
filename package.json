@@ -27,6 +27,7 @@
     },
     "scripts": {
         "build": "webpack --mode production",
+        "deploy": "gh-pages --dist dist --branch github_pagez --nojekyll",
         "lint": "eslint src/**/*.ts src/**/*.tsx --fix",
         "predeploy": "npm run build",
         "test": "jest",
@@ -71,6 +72,7 @@
         "dotenv-webpack": "^8.1.0",
         "eslint": "^9.6.0",
         "eslint-plugin-react": "^7.34.3",
+        "gh-pages": "^6.3.0",
         "globals": "^15.8.0",
         "html-webpack-plugin": "^5.5.1",
         "react-refresh": "^0.14.2",
