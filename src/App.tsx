@@ -54,7 +54,8 @@ export default function App(): React.ReactElement {
     }
 
     return (
-        <HashRouter basename={isProduction ? "/fedialgo_demo_app_foryoufeed" : "/"}>
+        // <HashRouter basename={isProduction ? "/fedialgo_demo_app_foryoufeed" : "/"}>
+        <HashRouter>
             <AuthProvider>
                 <div className='container-fluid min-vh-100' style={containerStyle}>
                     <Modal show={error !== ""} onHide={() => setError("")} style={{color: "black"}}>
