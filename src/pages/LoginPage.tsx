@@ -33,12 +33,20 @@ export default function LoginPage() {
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
     const [server, setServer] = usePersistentState<string>(DEFAULT_MASTODON_SERVER, {storageKey: "server"});
     const logCreds = (msg: string, ...args: any[]) => logSafe(`${LOG_PREFIX} ${msg}`, ...args);
+    logCreds(`window.location.href:`, window.location.href);
 
     const loginRedirect = async (): Promise<void> => {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
         // const redirectUri = window.location.origin + "/#/callback"; // OAuth won't accept a hashtag in the redirect URI
-        const redirectUri = window.location.origin;
+        let redirectUri: string;
+
+        if (isProduction) {
+            redirectUri = `${window.location.origin}/fedialgo_demo_app_foryoufeed`;
+        } else {
+            redirectUri = `${window.location.origin}/#/callback`;
+        }
+
         logMsg("window.location.origin redirectUri:", redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
