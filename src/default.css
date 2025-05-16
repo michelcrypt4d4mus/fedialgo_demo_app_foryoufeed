@@ -13997,3 +13997,11 @@ input[type="range"]::-ms-thumb {
 .form-check-label {
     font-size: 12px;
 }
+
+#presetWeights {
+    border-width: 1px;
+    border-color: #31abb5;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
