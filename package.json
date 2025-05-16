@@ -2,7 +2,7 @@
     "name": "fedialgo-demo-app-foryoufeed",
     "version": "0.40.0",
     "private": false,
-    "homepage": "https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed",
+    "homepage": "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed",
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.7.1",
         "@fortawesome/free-solid-svg-icons": "^6.7.1",

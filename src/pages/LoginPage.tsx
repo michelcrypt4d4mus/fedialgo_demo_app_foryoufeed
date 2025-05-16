@@ -9,7 +9,7 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
-import { logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
+import { logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
 // const showcase = require("../../public/assets/Showcase.jpg");
 
 // Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
@@ -37,6 +37,7 @@ export default function LoginPage() {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
         const redirectUri = window.location.origin + "/callback";
+        logMsg("window.location.origin redirectUri:", redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
         if (_app?.clientId) {
