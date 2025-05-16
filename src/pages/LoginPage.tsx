@@ -75,10 +75,6 @@ export default function LoginPage() {
             scope: OAUTH_SCOPE_STR,
         });
 
-        // Bad (no '/callback):     client_id=fasdfN&redirect_uri=http:%2F%2Flocalhost:3000&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
-        // Bad (with '/?foo=bar'):  client_id=eZdxN8&redirect_uri=http:%2F%2Flocalhost:3000%2F?foo=bar&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
-        // Bad (with '?foo-bar):    client_id=jeZxN8&redirect_uri=http:%2F%2Flocalhost:3000?foo=bar&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
-        // Good (with '/callback'): client_id=jeZxN8&redirect_uri=http:%2F%2Flocalhost:3000%2Fcallback&response_type=code&scope=read+write:bookmarks+write:favourites+write:follows+write:statuses
         logMsg(`Stringified query string:`, query);
         setApp({...appTouse, redirectUri });
         const newUrl = `${sanitizedServer}/oauth/authorize?${query}`;

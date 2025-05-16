@@ -24,10 +24,6 @@ export default function AuthProvider(props: PropsWithChildren) {
 
     const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
     const navigate = useNavigate();
-    window.location.hash
-
-    const [searchParams, setSearchParams] = useSearchParams();
-    // logMsg(`<AuthProvider> searchParams:`, searchParams);
 
     // NOTE: this doesn't actually authenticate the user, it just sets the user object in local storage
     // call this function when you want to authenticate the user. User object looks like this:

@@ -2,7 +2,6 @@
  * Handles the incoming call that is part of OAuth 2.0 authorization code flow.
  */
 import React, { useEffect } from 'react';
-import { URLSearchParams } from 'url';
 
 import TheAlgorithm from 'fedialgo';
 import { createRestAPIClient } from "masto"
@@ -20,18 +19,13 @@ import { User } from '../types';
 
 interface CallbackPageProps {
     setError?: (error: string) => void,
-    searchParams?: URLSearchParams
 };
 
 
 export default function CallbackPage(props: CallbackPageProps) {
-    let { setError, searchParams } = props;
-
-    if (!searchParams) {
-        [searchParams] = useSearchParams();
-    }
-
-    console.log(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
+    const { setError } = props;
+    const [searchParams] = useSearchParams();
+    logSafe(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
 
     // Example of 'app' object
     // {

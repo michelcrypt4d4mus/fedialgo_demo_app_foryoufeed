@@ -4,7 +4,7 @@ import { Buffer } from 'buffer'; // Required for class-transformer to work
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from "react-bootstrap";
-import { Routes, Route, BrowserRouter, HashRouter, useSearchParams } from "react-router-dom";
+import { Routes, Route, HashRouter } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { inject } from '@vercel/analytics';
 
@@ -12,7 +12,6 @@ import "./birdUI.css";
 import "./default.css";
 import AlgorithmProvider from "./hooks/useAlgorithm";
 import AuthProvider from './hooks/useAuth';
-import CallbackWrapper from "./components/CallbackWrapper";
 import CallbackPage from './pages/CallbackPage';
 import Feed from './pages/Feed';
 import Footer from './components/Footer';
@@ -54,7 +53,6 @@ export default function App(): React.ReactElement {
     }
 
     return (
-        // <HashRouter basename={isProduction ? "/fedialgo_demo_app_foryoufeed" : "/"}>
         <HashRouter>
             <AuthProvider>
                 <div className='container-fluid min-vh-100' style={containerStyle}>
@@ -69,8 +67,6 @@ export default function App(): React.ReactElement {
                     <Header />
 
                     <Routes>
-                        {/* <Route path="/" element={<CallbackWrapper setError={setError} />} /> */}
-
                         <Route path="/" element={
                             <ProtectedRoute>
                                 <AlgorithmProvider setError={setError}>
@@ -102,19 +98,11 @@ const containerStyle: CSSProperties = {
 
 
 function NotFoundPage() {
-    // const navigate = useNavigate();
-    // const location = useLocation();
-    // const currentPath = location.pathname;
-    // const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const currentPath = location.pathname;
 
-
-    // Use currentPath to determine the current route
-    // logMsg(`<NotFoundPage> currentPath: "${currentPath}", location:`, location);
-    logMsg(`<NotFoundPage>`);
-
-    // useEffect(() => {
-    //     navigate('/');
-    // }, [navigate]);
-
+    logMsg(`<NotFoundPage> You shouldn't be here! currentPath: "${currentPath}", location:`, location);
+    useEffect(() => {navigate('/')}, [navigate]);
     return <div>Redirecting...</div>;
-}
+};
