@@ -4,7 +4,7 @@ import { Buffer } from 'buffer'; // Required for class-transformer to work
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from "react-bootstrap";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, HashRouter } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { inject } from '@vercel/analytics';
 
@@ -39,7 +39,7 @@ export default function App(): React.ReactElement {
     }
 
     return (
-        <BrowserRouter basename="/fedialgo_demo_app_foryoufeed">
+        <HashRouter basename="/fedialgo_demo_app_foryoufeed">
             <AuthProvider>
                 <div className='container-fluid min-vh-100' style={containerStyle}>
                     <Modal show={error !== ""} onHide={() => setError("")} style={{color: "black"}}>
@@ -69,7 +69,7 @@ export default function App(): React.ReactElement {
                     <Footer />
                 </div>
             </AuthProvider>
-        </BrowserRouter>
+        </HashRouter>
     );
 };
 
