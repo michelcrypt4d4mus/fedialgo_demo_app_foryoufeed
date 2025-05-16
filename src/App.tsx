@@ -27,9 +27,13 @@ export default function App(): React.ReactElement {
     if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported, registering...');
 
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js');
-        });
+        try {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js');
+            });
+        } catch (error) {
+            console.error('Error registering service worker:', error);
+        }
     }
 
     return (
