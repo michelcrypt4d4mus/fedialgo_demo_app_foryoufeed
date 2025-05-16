@@ -4,6 +4,7 @@
 import { CSSProperties } from "react";
 
 export const CRYPTADAMUS_ICON_URL = "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg";
+export const SHOWCASE_IMAGE_URL = "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.png";
 export const IMAGE_BACKGROUND_COLOR = "#C1C1C1";
 export const RED = 'firebrick';
 export const TOOLTIP_ANCHOR = "tooltip-anchor";
