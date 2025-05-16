@@ -37,7 +37,8 @@ export default function LoginPage() {
     const loginRedirect = async (): Promise<void> => {
         const sanitizedServer = sanitizeServerUrl(server);
         const api = createRestAPIClient({url: sanitizedServer});
-        const redirectUri = window.location.origin + "/#/callback";
+        // const redirectUri = window.location.origin + "/#/callback"; // OAuth won't accept a hashtag in the redirect URI
+        const redirectUri = window.location.origin + "/";
         logMsg("window.location.origin redirectUri:", redirectUri);
         let appTouse;  // TODO: using 'App' type causes a type error
 
