@@ -51,6 +51,11 @@ export const logLocaleInfo = (): void => {
 // Remove http:// or https:// from the server URL, Remove everything after slash
 export function sanitizeServerUrl(server: string): string {
     server = server.replace(/^https?:\/\//, '').split('/')[0];
+
+    if (!/^[a-zA-Z0-9.-]+$/.test(server)) {
+        throw new Error(`"${server}" does not appear to be a valid server URL.`);
+    }
+
     return `https://${server}`;
 };
 

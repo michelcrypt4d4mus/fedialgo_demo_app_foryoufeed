@@ -18,7 +18,6 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import { isProduction } from './helpers/react_helpers';
 import { logLocaleInfo, logMsg, logSafe } from "./helpers/string_helpers";
 
 
@@ -74,8 +73,8 @@ export default function App(): React.ReactElement {
                             </ProtectedRoute>
                         } />
 
-                        <Route path="/callback" element={<CallbackPage setError={setError} />} />
-                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/callback" element={<CallbackPage setError={setError}/>} />
+                        <Route path="/login" element={<LoginPage setError={setError}/>} />
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>
 
