@@ -188,7 +188,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                 dialogClassName="modal-xl"
                 json={toot}
                 jsonViewProps={{
-                    collapsed: 3,
+                    collapsed: 1,
                     displayArrayKey: true,
                     indentWidth: 8,
                     name: "toot",

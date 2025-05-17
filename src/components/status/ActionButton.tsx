@@ -196,7 +196,7 @@ export default function ActionButton(props: ActionButtonProps) {
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
                     let msg = `Failed to ${actionName} account! You may have used ${FEDIALGO} before it requested`;
-                    msg += ` permission to ${actionName} accounts. It can be fixed by clearing your cookies for this site.`;
+                    msg += ` permission to ${actionName} accounts. This can be fixed by clearing your cookies for this site.`;
                     msg += `\n(${error.message})`;
                     console.error(`${msg} Resetting state to ${startingState}`, error);
                     setCurrentState(startingState);

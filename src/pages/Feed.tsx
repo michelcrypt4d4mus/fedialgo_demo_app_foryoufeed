@@ -113,20 +113,6 @@ export default function Feed() {
 
     return (
         <Container fluid style={{height: 'auto'}}>
-            {/* Tooltip options: https://react-tooltip.com/docs/options */}
-            <Tooltip id={TOOLTIP_ANCHOR} place="top" />
-
-            <Tooltip
-                border={"solid"}
-                clickable={true}
-                delayShow={100}
-                id={TOOLTIP_ACCOUNT_ANCHOR}
-                opacity={0.95}
-                place="left"
-                style={tooltipStyle}
-                variant="light"
-            />
-
             <Row>
                 <Col xs={12} md={6}>
                     <div className="sticky-top" style={isControlPanelSticky ? {} : {position: "relative"}} >
@@ -199,6 +185,20 @@ export default function Feed() {
                         </p>}
 
                     <div style={statusesColStyle}>
+                        {/* Tooltip options: https://react-tooltip.com/docs/options */}
+                        <Tooltip id={TOOLTIP_ANCHOR} place="top" />
+
+                        <Tooltip
+                            border={"solid"}
+                            clickable={true}
+                            delayShow={100}
+                            id={TOOLTIP_ACCOUNT_ANCHOR}
+                            opacity={0.95}
+                            place="left"
+                            style={tooltipStyle}
+                            variant="light"
+                        />
+
                         {timeline.slice(0, numShownToots).map((toot) => (
                             <StatusComponent
                                 hideLinkPreviews={hideLinkPreviews}
