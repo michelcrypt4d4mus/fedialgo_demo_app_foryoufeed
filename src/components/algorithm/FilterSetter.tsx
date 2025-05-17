@@ -50,10 +50,10 @@ export default function FilterSetter() {
                     switchbar={numericFilterSwitchbar}
                     title="Interactions"
                 >
-                    {Object.entries(algorithm.filters.numericFilters).map(([name, numericFilter]) => (
+                    {Object.entries(algorithm.filters.numericFilters).map(([name, numericFilter], i) => (
                         <Slider
                             description={numericFilter.description}
-                            key={name}
+                            key={`${name}_${i}`}
                             label={numericFilter.title}
                             maxValue={50}
                             minValue={0}

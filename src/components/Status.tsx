@@ -21,8 +21,6 @@ import {
     faReply,
     faRetweet,
     faUpRightFromSquare,
-    faUserPlus,
-    faVolumeMute,
 } from "@fortawesome/free-solid-svg-icons";
 
 import ActionButton, { ButtonAction } from "./status/ActionButton";

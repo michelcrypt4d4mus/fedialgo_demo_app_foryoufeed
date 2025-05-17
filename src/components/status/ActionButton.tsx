@@ -18,6 +18,7 @@ import {
     faVolumeMute
 } from "@fortawesome/free-solid-svg-icons";
 
+import { confirm } from "../Confirmation";
 import { logMsg, scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
@@ -170,7 +171,8 @@ export default function ActionButton(props: ActionButtonProps) {
     const performAccountAction = (actionName: ButtonAction) => {
         return () => {
             (async () => {
-                if (!window.confirm(`Are you sure?`)) return;
+                const confirmTxt = `Are you sure you want to ${actionName} ${status.realToot().account.describe()}?`;
+                if (!(await confirm(confirmTxt))) return;
 
                 const resolvedToot = await status.resolve();
                 const startingState = !!resolvedToot.account[actionInfo.booleanName];
