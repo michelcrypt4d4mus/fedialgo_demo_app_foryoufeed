@@ -9,8 +9,7 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
-import { isProduction } from '../helpers/react_helpers';
-import { REPO_NAME, logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
+import { errorMsg, logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
 import { SHOWCASE_IMAGE_URL } from '../helpers/style_helpers';
 // const showcase = require("../../public/assets/Showcase.jpg");
 
@@ -52,44 +51,44 @@ export default function LoginPage(props: LoginPageProps) {
             return;
         }
 
+        // OAuth won't allow HashRouter's "#" chars in redirectUris
+        const redirectUri = `${window.location.origin}/${window.location.pathname}`.replace(/\/+$/, '');
+        logMsg(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`); // TODO: remove this log line
         const api = createRestAPIClient({url: sanitizedServer});
-        let redirectUri = window.location.origin;
-        logMsg(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`);
-
-        // OAuth won't allow "#" chars in redirectUris. Github Pages requires the URL
-        if (isProduction && redirectUri.includes("github.io")) {
-            redirectUri += `/${REPO_NAME}`;
-        }
-
-        logMsg(`${LOG_PREFIX} OAuth login redirectUri:`, redirectUri);
-        let appTouse;  // TODO: using 'App' type causes a type error
+        let registeredApp;  // TODO: using 'App' type causes a type error
 
         if (_app?.clientId) {
             logCreds(`Found existing app creds to use for '${sanitizedServer}':`, _app);
-            appTouse = _app;
+            registeredApp = _app;
         } else {
             logCreds(`No existing app found, creating a new app for '${sanitizedServer}':`, _app);
 
-            // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
-            appTouse = await api.v1.apps.create({
-                clientName: APP_NAME,
-                redirectUris: redirectUri,
-                scopes: OAUTH_SCOPE_STR,
-                website: sanitizedServer,
-            });
+            try {
+                // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
+                registeredApp = await api.v1.apps.create({
+                    clientName: APP_NAME,
+                    redirectUris: redirectUri,
+                    scopes: OAUTH_SCOPE_STR,
+                    website: sanitizedServer,
+                });
+            } catch (error) {
+                let msg = `Error creating app on Mastodon server:`;
+                errorMsg(msg, error);
+                setError(`${msg} ${error}`);
+                return;
+            }
 
-            logCreds("Created app with api.v1.apps.create(), response var 'appTouse':", appTouse);
+            logCreds("Created app with api.v1.apps.create(), response var 'registeredApp':", registeredApp);
         }
 
         const query = stringifyQuery({
-            client_id: appTouse.clientId,
+            client_id: registeredApp.clientId,
             redirect_uri: redirectUri,
             response_type: 'code',
             scope: OAUTH_SCOPE_STR,
         });
 
-        logMsg(`Stringified query string:`, query);
-        setApp({...appTouse, redirectUri });
+        setApp({...registeredApp, redirectUri });
         const newUrl = `${sanitizedServer}/oauth/authorize?${query}`;
         logCreds(`redirecting to "${newUrl}"...`);
         window.location.href = newUrl;
