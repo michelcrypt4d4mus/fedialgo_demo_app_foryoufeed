@@ -101,7 +101,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     if (sortByCount) {
-        optionKeys = sortKeysByValue(optionInfo)
+        optionKeys = sortKeysByValue(optionInfo);
     } else {
         optionKeys = Object.keys(optionInfo).sort((a, b) => compareStr(a, b));
     }
