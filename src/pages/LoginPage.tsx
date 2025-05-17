@@ -19,6 +19,7 @@ const OAUTH_SCOPES = [
     "write:bookmarks",
     "write:favourites",
     "write:follows",
+    "write:mutes",
     "write:statuses",  // Required for retooting and voting in polls
 ];
 

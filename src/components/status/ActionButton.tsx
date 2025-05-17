@@ -6,8 +6,17 @@ import React, { CSSProperties } from "react";
 
 import { capitalCase } from "change-case";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition, faBalanceScale, faBookmark, faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
-import { Toot } from "fedialgo";
+import { FEDIALGO, Toot } from "fedialgo";
+import {
+    IconDefinition,
+    faBalanceScale,
+    faBookmark,
+    faReply,
+    faRetweet,
+    faStar,
+    faUserPlus,
+    faVolumeMute
+} from "@fortawesome/free-solid-svg-icons";
 
 import { logMsg, scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
@@ -15,6 +24,8 @@ import { useAlgorithm } from "../../hooks/useAlgorithm";
 export enum ButtonAction {
     Bookmark = 'bookmark',
     Favourite = 'favourite',
+    Follow = 'follow',
+    Mute = 'mute',
     Reblog = 'reblog',
     Reply = 'reply',
     Score = 'score',
@@ -22,8 +33,19 @@ export enum ButtonAction {
 
 type ActionInfo = {
     booleanName?: string,
+    className?: string,
     countName?: string,
     icon: IconDefinition,
+    isAccountAction?: boolean,
+    style?: CSSProperties,
+};
+
+// Sizing icons: https://docs.fontawesome.com/web/style/size
+const ACCOUNT_ACTION_BUTTON_CLASS = "fa-xs";
+
+const ACCOUNT_ACTION_BUTTON_STYLE = {
+    transform: "translate(0px, 2px)",
+    marginTop: "5px",
 };
 
 const ACTION_INFO: Record<ButtonAction, ActionInfo> = {
@@ -35,6 +57,20 @@ const ACTION_INFO: Record<ButtonAction, ActionInfo> = {
         booleanName: `${ButtonAction.Favourite}d`,
         countName: `${ButtonAction.Favourite}sCount`,
         icon: faStar,
+    },
+    [ButtonAction.Follow]: {
+        booleanName: `${ButtonAction.Follow}ed`,
+        className: ACCOUNT_ACTION_BUTTON_CLASS,
+        icon: faUserPlus,
+        isAccountAction: true,
+        style: ACCOUNT_ACTION_BUTTON_STYLE
+    },
+    [ButtonAction.Mute]: {
+        booleanName: `${ButtonAction.Follow}d`,
+        className: ACCOUNT_ACTION_BUTTON_CLASS,
+        icon: faVolumeMute,
+        isAccountAction: true,
+        style: ACCOUNT_ACTION_BUTTON_STYLE
     },
     [ButtonAction.Reblog]: {
         booleanName: 'reblogged',
@@ -62,7 +98,7 @@ interface ActionButtonProps {
 
 export default function ActionButton(props: ActionButtonProps) {
     const { action, onClick, status } = props;
-    const { api, setError } = useAlgorithm();
+    const { algorithm, api, setError } = useAlgorithm();
     const actionInfo = ACTION_INFO[action];
     const [currentState, setCurrentState] = React.useState<boolean>(status[actionInfo.booleanName]);
 
@@ -85,6 +121,8 @@ export default function ActionButton(props: ActionButtonProps) {
     // Returns a function that's called when state changes for faves, bookmarks, retoots
     const performAction = (actionName: ButtonAction, actionInfo: ActionInfo) => {
         return () => {
+            if (actionInfo.isAccountAction) return performAccountAction(actionName)();
+
             const startingCount = status[actionInfo.countName] == true ? 1 : (status[actionInfo.countName] || 0);
             const startingState = !!status[actionInfo.booleanName];
             const newState = !startingState;
@@ -129,13 +167,54 @@ export default function ActionButton(props: ActionButtonProps) {
         };
     };
 
+    const performAccountAction = (actionName: ButtonAction) => {
+        return () => {
+            (async () => {
+                if (!window.confirm(`Are you sure?`)) return;
+
+                const resolvedToot = await status.resolve();
+                const startingState = !!resolvedToot.account[actionInfo.booleanName];
+                const newState = !startingState;
+
+                logMsg(`${actionName}() account (startingState: ${startingState}): `, status);
+                status.account[actionInfo.booleanName] = newState;
+                resolvedToot.account[actionInfo.booleanName] = newState;
+                setCurrentState(newState);
+                const selected = api.v1.accounts.$select(resolvedToot.account.id);
+
+                try {
+                    if (actionName == ButtonAction.Follow) {
+                        await (newState ? selected.follow() : selected.unfollow());
+                    } else if (actionName == ButtonAction.Mute) {
+                        await (newState ? selected.mute() : selected.unmute());
+                        await algorithm.refreshMutedAccounts();
+                    } else {
+                        throw new Error(`Unknown actionName: ${actionName}`);
+                    }
+
+                    logMsg(`Successfully changed ${actionName} bool to ${newState}`);
+                } catch (error) {
+                    // If there's an error, roll back the change to the original state
+                    let msg = `Failed to ${actionName} account! You may have used ${FEDIALGO} before it requested`;
+                    msg += ` permission to ${actionName} accounts. It can be fixed by clearing your cookies for this site.`;
+                    msg += `\n(${error.message})`;
+                    console.error(`${msg} Resetting state to ${startingState}`, error);
+                    setCurrentState(startingState);
+                    status.account[actionInfo.booleanName] = startingState;
+                    resolvedToot.account[actionInfo.booleanName] = startingState;
+                    setError(msg);
+                }
+            })();
+        };
+    };
+
     return (
         <button
             aria-hidden="false"
             aria-label={label}
-            className={className}
+            className={className + (actionInfo.className ? ` ${actionInfo.className}` : "")}
             onClick={onClick || performAction(action, actionInfo)}
-            style={buttonStyle}
+            style={actionInfo.style || {...buttonStyle}}
             title={label}
             type="button"
         >
