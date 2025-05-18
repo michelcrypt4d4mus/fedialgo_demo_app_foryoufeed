@@ -7,6 +7,8 @@ import Accordion from 'react-bootstrap/esm/Accordion';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { extractDomain, MediaCategory, Toot, type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory } from "fedialgo";
 
+import StatusComponent from "./Status";
+import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection, { LINK_FONT_SIZE, infoTxtStyle } from "./TrendingSection";
 import { accordionSubheader, IMAGE_BACKGROUND_COLOR, linkesque, noPadding, paddingBorder } from "../helpers/style_helpers";
@@ -32,41 +34,6 @@ export default function TrendingInfo() {
 
     const trendingObjInfoTxt = (obj: TrendingWithHistory) => {
         return `${obj.numToots?.toLocaleString()} toots by ${obj.numAccounts?.toLocaleString()} accounts`;
-    };
-
-    const tootInfoTxt = (toot: Toot) => {
-        const msg = `${toot.repliesCount?.toLocaleString()} replies`;
-        return `${msg}, ${toot.reblogsCount?.toLocaleString()} retoots`
-    }
-
-    const tootLinkLabel = (obj: Toot): React.ReactElement => {
-        const toot = obj as Toot;
-
-        if (toot.attachmentType() == MediaCategory.IMAGE) {
-            const image = toot.imageAttachments[0];
-
-            return (<>
-                {prefixedHtml(toot.contentShortened(MAX_TRENDING_LINK_LEN), ATTACHMENT_PREFIXES[MediaCategory.IMAGE])}
-                <span style={infoTxtStyle}>({tootInfoTxt(obj as Toot)})</span><br />
-
-                <div className="media-gallery" style={{width: "100%"}}>
-                    <div className="media-gallery__item" style={{width: "100%"}}>
-                        <LazyLoadImage
-                            alt={toot.imageAttachments[0].description}
-                            effect="blur"
-                            src={image.previewUrl}
-                            style={imageStyle}
-                            wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
-                        />
-                    </div>
-                </div>
-            </>);
-        } else {
-            return prefixedHtml(
-                toot.contentShortened(MAX_TRENDING_LINK_LEN),
-                ATTACHMENT_PREFIXES[toot.attachmentType()] || (toot.card?.url && 'link')
-            );
-        }
     };
 
     const prefixedHtml = (text: string, prefix?: string): React.ReactElement => {
@@ -116,6 +83,7 @@ export default function TrendingInfo() {
                 <TrendingSection
                     title="Hashtags"
                     infoTxt={trendingObjInfoTxt}
+                    key={"hashtags"}
                     linkLabel={tagNameMapper}
                     linkUrl={linkMapper}
                     onClick={openTrendingLink}
@@ -125,6 +93,7 @@ export default function TrendingInfo() {
                 <TrendingSection
                     title="Links"
                     hasCustomStyle={true}
+                    key={"links"}
                     infoTxt={trendingObjInfoTxt}
                     linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
                     linkUrl={linkMapper}
@@ -132,19 +101,22 @@ export default function TrendingInfo() {
                     trendingObjs={algorithm.trendingData.links}
                 />
 
-                <TrendingSection
-                    title="Toots"
-                    hasCustomStyle={true}
-                    linkLabel={tootLinkLabel}
-                    linkUrl={linkMapper}
-                    onClick={openToot}
-                    trendingObjs={algorithm.trendingData.toots}
-                />
+                <SubAccordion key={"toots"} title={"Toots"}>
+                    {algorithm.trendingData.toots.map((toot) => (
+                        <StatusComponent
+                            fontColor="black"
+                            hideLinkPreviews={false}
+                            key={toot.uri}
+                            status={toot}
+                        />
+                    ))}
+                </SubAccordion>
 
                 <TrendingSection
                     title="Your Most Participated Hashtags"
                     footer={buildParticipatedHashtagsFooter()}
                     infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
+                    key={"participatedHashtags"}
                     linkLabel={tagNameMapper}
                     linkUrl={linkMapper}
                     onClick={openTrendingLink}
@@ -159,6 +131,7 @@ export default function TrendingInfo() {
                         info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
                         return info.join(', ');
                     }}
+                    key={"servers"}
                     linkLabel={(domain: string) => domain as string}
                     linkUrl={(domain: string) => `https://${domain}`}
                     onClick={(domain: string, e) => followUri(`https://${domain}`, e)}

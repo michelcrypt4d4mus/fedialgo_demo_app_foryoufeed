@@ -67,13 +67,16 @@ const INFO_ICONS: Record<InfoIconType, IconInfo> = {
 };
 
 interface StatusComponentProps {
+    fontColor?: CSSProperties["color"],
     hideLinkPreviews?: boolean,
     status: Toot,
 };
 
 
 export default function StatusComponent(props: StatusComponentProps) {
-    const { hideLinkPreviews, status } = props;
+    const { fontColor, hideLinkPreviews, status } = props;
+    const fontStyle = fontColor ? { color: fontColor } : {};
+    const contentClass = fontColor ? "status__content__alt" : "status__content";
 
     // If it's a retoot set 'toot' to the original toot
     const toot = status.realToot();
@@ -256,7 +259,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                             <span className="display-name">
                                 <bdi>
                                     <strong key="internalBDI" className="display-name__html">
-                                        <NewTabLink href={toot.account.homserverURL()} style={accountLink}>
+                                        <NewTabLink href={toot.account.homserverURL()} style={{...accountLink, ...fontStyle}}>
                                             {parse(toot.account.displayNameWithEmojis())}
                                         </NewTabLink>
 
@@ -284,7 +287,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     </div>
 
                     {/* Text of the toot */}
-                    <div className="status__content" >
+                    <div className={contentClass} style={fontStyle}>
                         <div className="status__content__text status__content__text--visible translate" lang="en">
                             {parse(toot.contentWithEmojis())}
                         </div>

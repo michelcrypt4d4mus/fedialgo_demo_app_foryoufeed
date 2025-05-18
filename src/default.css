@@ -3230,6 +3230,14 @@ body > [data-popper-placement] {
     unicode-bidi:isolate
 }
 
+.status__content__alt a {
+    color: #1e476c;
+    text-decoration: none;
+    unicode-bidi: -webkit-isolate;
+    unicode-bidi: -moz-isolate;
+    unicode-bidi:isolate
+}
+
 .reply-indicator__content a:hover, .status__content a:hover {
     text-decoration:underline
 }
