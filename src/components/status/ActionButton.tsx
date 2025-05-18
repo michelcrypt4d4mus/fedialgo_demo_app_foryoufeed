@@ -99,7 +99,7 @@ export default function ActionButton(props: ActionButtonProps) {
     let label = actionInfo.label || capitalCase(action);
     let actionTarget: Account | Toot = status;
     let className = ACTION_ICON_BASE_CLASS;
-    let buttonText: string | number;
+    let buttonText: string;
     let icon = actionInfo.icon;
 
     if (isAccountAction(action)) {
@@ -113,12 +113,8 @@ export default function ActionButton(props: ActionButtonProps) {
 
         label += ` ${status.account.webfingerURI}`;
     } else {
-        if (actionInfo.countName) {
-            buttonText = status[actionInfo.countName];
-
-            if (typeof buttonText == "number" && buttonText > 0) {
-                buttonText = buttonText.toLocaleString();
-            }
+        if (actionInfo.countName && status[actionInfo.countName] > 0) {
+            buttonText = status[actionInfo.countName]?.toLocaleString();
         } else if (action == TootAction.Score) {
             buttonText = scoreString(status.scoreInfo?.score);
         }
@@ -137,7 +133,7 @@ export default function ActionButton(props: ActionButtonProps) {
             if (isAccountAction(action)) return performAccountAction()();
 
             const actionInfo = ACTION_INFO[action];
-            const startingCount = status[actionInfo.countName] == true ? 1 : (status[actionInfo.countName] || 0);
+            const startingCount = status[actionInfo.countName] || 0;
             const startingState = !!status[actionInfo.booleanName];
             const newState = !startingState;
 
@@ -235,7 +231,7 @@ export default function ActionButton(props: ActionButtonProps) {
         >
             <FontAwesomeIcon aria-hidden="true" className="fa-fw" icon={icon} />
 
-            {(buttonText || buttonText === 0) &&
+            {buttonText &&
                 <span className="icon-button__counter">
                     <span className="animated-number">
                         <span style={{position: "static"}}>

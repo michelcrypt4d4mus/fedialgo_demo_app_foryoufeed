@@ -42,7 +42,6 @@ enum InfoIconType {
     Edited = "Edited",
     Hashtags = "Hashtags",
     Mention = "You're Mentioned",
-    Public = "Public",
     Reply = "Reply",
     ShowToot = "Show Raw Toot JSON",
     TrendingLink = "Contains Trending Link",
