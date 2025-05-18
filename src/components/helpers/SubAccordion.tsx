@@ -29,7 +29,7 @@ export default function SubAccordion(props: SubAccordionProps) {
                     </span>
 
                     {description &&
-                        <span style={descriptionStyle} key={2}>{'   '}({description})</span>}
+                        <span style={descriptionStyle} key={2}>{'  '}({description})</span>}
                 </Form.Label>
             </Accordion.Header>
 

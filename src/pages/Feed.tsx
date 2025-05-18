@@ -17,7 +17,7 @@ import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { logMsg, warnMsg } from "../helpers/string_helpers";
-import { TOOLTIP_ANCHOR, linkesque } from "../helpers/style_helpers";
+import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const NUM_TOOTS_TO_LOAD_ON_SCROLL = 10;
@@ -114,6 +114,20 @@ export default function Feed() {
     return (
         <Container fluid style={{height: 'auto'}}>
             <Row>
+                {/* Tooltip options: https://react-tooltip.com/docs/options */}
+                <Tooltip id={TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
+
+                <Tooltip
+                    border={"solid"}
+                    clickable={true}
+                    delayShow={100}
+                    id={TOOLTIP_ACCOUNT_ANCHOR}
+                    opacity={0.95}
+                    place="left"
+                    style={accountTooltipStyle}
+                    variant="light"
+                />
+
                 <Col xs={12} md={6}>
                     {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
                     <div className="sticky-top" style={isControlPanelSticky ? {} : {position: "relative"}} >
@@ -186,20 +200,6 @@ export default function Feed() {
                         </p>}
 
                     <div style={statusesColStyle}>
-                        {/* Tooltip options: https://react-tooltip.com/docs/options */}
-                        <Tooltip id={TOOLTIP_ANCHOR} place="top" />
-
-                        <Tooltip
-                            border={"solid"}
-                            clickable={true}
-                            delayShow={100}
-                            id={TOOLTIP_ACCOUNT_ANCHOR}
-                            opacity={0.95}
-                            place="left"
-                            style={tooltipStyle}
-                            variant="light"
-                        />
-
                         {timeline.slice(0, numShownToots).map((toot) => (
                             <StatusComponent
                                 hideLinkPreviews={hideLinkPreviews}
@@ -266,7 +266,7 @@ const stickySwitchContainer: CSSProperties = {
     paddingRight: "2px",
 };
 
-const tooltipStyle: CSSProperties = {
+const accountTooltipStyle: CSSProperties = {
+    ...tooltipZIndex,
     width: "500px",
-    zIndex: 2000,
 };

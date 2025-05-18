@@ -11,7 +11,7 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckbox from "./FilterCheckbox";
 import FilterCheckboxGrid from "./FilterCheckboxGrid";
 import Slider from "./Slider";
-import { TOOLTIP_ANCHOR } from "../../helpers/style_helpers";
+import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";
 
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
@@ -75,7 +75,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             ),
 
             <div style={{width: "23%"}} key={"minTootsSlider"}>
-                <Tooltip id={minTootsTooltipAnchor} place="bottom" />
+                <Tooltip id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
 
                 <a data-tooltip-id={minTootsTooltipAnchor} data-tooltip-content={minTootsTooltipTxt}>
                     <Slider

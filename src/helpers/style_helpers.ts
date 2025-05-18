@@ -73,3 +73,7 @@ export const titleStyle: CSSProperties = {
     marginTop: "0px",
     textDecoration: "underline",
 };
+
+export const tooltipZIndex: CSSProperties = {
+    zIndex: 2000,
+};
