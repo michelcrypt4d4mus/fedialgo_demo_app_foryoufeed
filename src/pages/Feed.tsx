@@ -115,6 +115,7 @@ export default function Feed() {
         <Container fluid style={{height: 'auto'}}>
             <Row>
                 <Col xs={12} md={6}>
+                    {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
                     <div className="sticky-top" style={isControlPanelSticky ? {} : {position: "relative"}} >
                         <div style={stickySwitchContainer}>
                             <Form.Check

@@ -35,9 +35,11 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     labelExtra = (typeof labelExtra == "number") ? labelExtra.toLocaleString() : labelExtra;
     const labelStyle: CSSProperties = {fontWeight: "bold"};
     let style: CSSProperties = {color: "black"};
+    let tooltipAnchor = HASHTAG_ANCHOR;
 
     if (tooltip) {
         style = {...highlightedCheckboxStyle, ...style, backgroundColor: tooltip.color};
+        tooltipAnchor += HIGHLIGHT;
     }
 
     if (capitalize) {
@@ -59,11 +61,7 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     }
 
     return (
-        <a
-            data-tooltip-id={HASHTAG_ANCHOR + (tooltip ? HIGHLIGHT : "")}
-            data-tooltip-content={tooltip?.text}
-            key={label}
-        >
+        <a data-tooltip-id={tooltipAnchor} data-tooltip-content={tooltip?.text} key={label}>
             <Form.Switch
                 checked={isCheckedState}
                 id={label}

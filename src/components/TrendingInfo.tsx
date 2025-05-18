@@ -142,6 +142,16 @@ export default function TrendingInfo() {
                 />
 
                 <TrendingSection
+                    title="Your Most Participated Hashtags"
+                    footer={buildParticipatedHashtagsFooter()}
+                    infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
+                    linkLabel={tagNameMapper}
+                    linkUrl={linkMapper}
+                    onClick={openTrendingLink}
+                    trendingObjs={algorithm.userData.popularUserTags().slice(0, maxHashtagsToShow)}
+                />
+
+                <TrendingSection
                     title="Servers That Were Scraped"
                     infoTxt={(domain: string) => {
                         const serverInfo = algorithm.mastodonServers[domain];
@@ -153,16 +163,6 @@ export default function TrendingInfo() {
                     linkUrl={(domain: string) => `https://${domain}`}
                     onClick={(domain: string, e) => followUri(`https://${domain}`, e)}
                     trendingObjs={Object.keys(algorithm.mastodonServers)}
-                />
-
-                <TrendingSection
-                    title="Your Most Participated Hashtags"
-                    footer={buildParticipatedHashtagsFooter()}
-                    infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
-                    linkLabel={tagNameMapper}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
-                    trendingObjs={algorithm.userData.popularUserTags().slice(0, maxHashtagsToShow)}
                 />
             </Accordion>
         </TopLevelAccordion>

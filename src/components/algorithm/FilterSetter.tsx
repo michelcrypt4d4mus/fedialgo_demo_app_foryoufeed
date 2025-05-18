@@ -13,7 +13,7 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckbox, { HASHTAG_ANCHOR, HIGHLIGHT } from "./FilterCheckbox";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { noPadding, paddingBorder } from "../../helpers/style_helpers";
+import { noPadding } from "../../helpers/style_helpers";
 import { SwitchType } from "./BooleanFilterAccordionSection";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 

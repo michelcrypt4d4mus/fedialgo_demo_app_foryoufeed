@@ -35,39 +35,44 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const [minToots, setMinToots] = useState(hasMinToots ? DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER : 0);
     const [sortByCount, setSortByValue] = useState(false);
 
-    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
     const minTootsTooltipTxt = `Hide ${filter.title}s with less than ${minToots} toots`;
+    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
     const makeSpacer = (key: string) => <div key={key} style={{width: "20px"}} />;
 
-    let switchbar = [
-        <FilterCheckbox
-            capitalize={true}
-            isChecked={filter.invertSelection}
-            key={SwitchType.INVERT_SELECTION}
-            label={SwitchType.INVERT_SELECTION}
-            onChange={(e) => filter.invertSelection = e.target.checked}  // TODO: this is modifying the filter directly
-        />,
+    const makeSwitch = (label: string, isChecked: boolean, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
+        return (
+            <FilterCheckbox
+                capitalize={true}
+                isChecked={isChecked}
+                key={label}
+                label={label}
+                onChange={onChange}
+            />
+        );
+    };
 
-        <FilterCheckbox
-            capitalize={true}
-            isChecked={sortByCount}
-            key={SwitchType.SORT_BY_COUNT}
-            label={SwitchType.SORT_BY_COUNT}
-            onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
-        />
+    let switchbar = [
+        makeSwitch(
+            SwitchType.INVERT_SELECTION,
+            filter.invertSelection,
+            (e) => filter.invertSelection = e.target.checked // TODO: this is modifying the filter directly
+        ),
+        makeSwitch(
+            SwitchType.SORT_BY_COUNT,
+            sortByCount,
+            (e) => setSortByValue(e.target.checked) // TODO: this will unnecessarily call filterFeed
+        ),
     ];
 
     if (!hasMinToots) {
         switchbar = [makeSpacer("spacer1"), ...switchbar, makeSpacer("spacer2")];
     } else {
         switchbar = switchbar.concat([
-            <FilterCheckbox
-                capitalize={true}
-                isChecked={highlightedOnly}
-                key={SwitchType.HIGHLIGHTS_ONLY}
-                label={SwitchType.HIGHLIGHTS_ONLY}
-                onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
-            />,
+            makeSwitch(
+                SwitchType.HIGHLIGHTS_ONLY,
+                highlightedOnly,
+                (e) => setHighlightedOnly(e.target.checked) // TODO: this will unnecessarily call filterFeed
+            ),
 
             <div style={{width: "23%"}} key={"minTootsSlider"}>
                 <Tooltip id={minTootsTooltipAnchor} place="bottom" />
