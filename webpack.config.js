@@ -81,9 +81,9 @@ module.exports = {
             skipWaiting: true,
         }),
         new webpack.EnvironmentPlugin({
+            FEDIALGO_DEBUG: process.env.FEDIALGO_DEBUG,
             FEDIALGO_HOMEPAGE: require('./package.json').homepage,
             FEDIALGO_VERSION: require('./package.json').version,
-            FEDIALGO_DEBUG: process.env.FEDIALGO_DEBUG,
             QUICK_MODE: process.env.QUICK_MODE,
         }),
     ].filter(Boolean),

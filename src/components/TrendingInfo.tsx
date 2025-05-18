@@ -4,15 +4,20 @@
 import React, { CSSProperties, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { extractDomain, MediaCategory, Toot, type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory } from "fedialgo";
+import {
+    extractDomain,
+    MediaCategory,
+    type TagWithUsageCounts,
+    type TrendingLink,
+    type TrendingWithHistory
+} from "fedialgo";
 
 import StatusComponent from "./Status";
 import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
-import TrendingSection, { LINK_FONT_SIZE, infoTxtStyle } from "./TrendingSection";
-import { accordionSubheader, IMAGE_BACKGROUND_COLOR, linkesque, noPadding, paddingBorder } from "../helpers/style_helpers";
-import { followUri, openToot, openTrendingLink } from "../helpers/react_helpers";
+import TrendingSection, { LINK_FONT_SIZE } from "./TrendingSection";
+import { accordionSubheader, IMAGE_BACKGROUND_COLOR, linkesque, noPadding } from "../helpers/style_helpers";
+import { followUri, openTrendingLink } from "../helpers/react_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const DEFAULT_MAX_HASHTAGS_TO_SHOW = 100;

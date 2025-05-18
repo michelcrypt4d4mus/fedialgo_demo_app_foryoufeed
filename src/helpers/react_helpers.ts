@@ -4,7 +4,7 @@
 import { MouseEvent } from "react";
 
 import { logMsg } from "./string_helpers";
-import { Toot, TrendingWithHistory } from "fedialgo";
+import { Toot, type TrendingWithHistory } from "fedialgo";
 
 export const isProduction = process.env.NODE_ENV === 'production';
 

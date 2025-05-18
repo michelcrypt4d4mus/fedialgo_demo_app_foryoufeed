@@ -4,7 +4,7 @@
 import React from 'react';
 
 import Slider, { DEFAULT_STEP_SIZE } from './Slider';
-import { StringNumberDict } from "fedialgo";
+import { type StringNumberDict } from "fedialgo";
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCALE_MULTIPLIER = 1.2;
