@@ -44,7 +44,7 @@ export default function FilterSetter() {
                 {booleanFilters.map((f) => <BooleanFilterAccordionSection filter={f} key={f.title} />)}
 
                 <FilterAccordionSection
-                    description={"Filter based on minimum/maximum number of replies, reposts, etc"}
+                    description={"Filter based on minimum/maximum number of replies, retoots, etc"}
                     isActive={hasActiveNumericFilter}
                     key={"numericFilters"}
                     switchbar={numericFilterSwitchbar}
