@@ -60,7 +60,7 @@ export default function WeightSetter() {
 
     return (
         <TopLevelAccordion title={"Feed Algorithm Control Panel"}>
-            <DropdownButton id="presetWeights" style={presetMenuContainer} title={PRESET_MENU_TITLE} variant="info">
+            <DropdownButton id="presetWeights" title={PRESET_MENU_TITLE} variant="info">
                 {Object.keys(algorithm.weightPresets).map((preset) => (
                     <Dropdown.Item key={preset} onClick={() => updateWeightsToPreset(preset)} style={presetMenu}>
                         {preset}
@@ -82,10 +82,6 @@ export default function WeightSetter() {
     );
 };
 
-
-const presetMenuContainer: CSSProperties = {
-    marginBottom: "7px",
-};
 
 const presetMenu: CSSProperties = {
     fontWeight: "bold",
