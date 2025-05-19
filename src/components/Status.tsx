@@ -142,8 +142,6 @@ export default function StatusComponent(props: StatusComponentProps) {
                 color = FOLLOWED_TAG_COLOR;
             } else if (toot.trendingTags?.length) {
                 color = TRENDING_TAG_COLOR;
-            } else if (toot.participatedTags?.length) {
-                color = PARTICIPATED_TAG_COLOR;
             }
         }
 
