@@ -20,6 +20,7 @@ import {
     faPencil,
     faReply,
     faRetweet,
+    faRobot,
     faUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -30,14 +31,19 @@ import MultimediaNode from "./status/MultimediaNode";
 import NewTabLink from './helpers/NewTabLink';
 import Poll from "./status/Poll";
 import PreviewCard from "./status/PreviewCard";
-import { FOLLOWED_TAG_COLOR, FOLLOWED_USER_COLOR_FADED, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR } from "../helpers/style_helpers";
+import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR } from "../helpers/style_helpers";
 import { openToot } from "../helpers/react_helpers";
 import { timestampString } from '../helpers/string_helpers';
-import { TOOLTIPS } from "./algorithm/FilterCheckboxGrid";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
 
+type IconInfo = {
+    icon: IconDefinition,
+    color?: string,
+};
+
 enum InfoIconType {
+    Bot = "Bot Account",
     DM = "Direct Message",
     Edited = "Edited",
     Hashtags = "Hashtags",
@@ -48,12 +54,8 @@ enum InfoIconType {
     TrendingToot = "Trending Toot",
 };
 
-type IconInfo = {
-    icon: IconDefinition,
-    color?: string,
-};
-
 const INFO_ICONS: Record<InfoIconType, IconInfo> = {
+    [InfoIconType.Bot]:          {icon: faRobot, color: "#196273"},
     [InfoIconType.DM]:           {icon: faLock, color: "purple"},
     [InfoIconType.Edited]:       {icon: faPencil},
     [InfoIconType.Hashtags]:     {icon: faHashtag, color: PARTICIPATED_TAG_COLOR},
@@ -223,6 +225,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 {toot.containsUserMention() && infoIcon(InfoIconType.Mention)}
                                 {toot.containsTagsMsg() && infoIcon(InfoIconType.Hashtags)}
                                 {toot.isDM() && infoIcon(InfoIconType.DM)}
+                                {toot.account.bot && infoIcon(InfoIconType.Bot)}
                             </span>
 
                             <time dateTime={toot.createdAt} title={toot.createdAt}>
