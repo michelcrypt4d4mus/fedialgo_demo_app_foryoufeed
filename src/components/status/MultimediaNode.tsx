@@ -51,6 +51,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     onClick={() => setMediaInspectionIdx(idx)}
                     src={image.previewUrl}
                     style={imageStyle}
+                    title={image.description}
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
                 />
             </div>

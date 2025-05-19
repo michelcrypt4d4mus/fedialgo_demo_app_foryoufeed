@@ -41,10 +41,11 @@ export default function PreviewCard({ card, hideLinkPreviews }: { card: mastodon
                 />
 
                 <LazyLoadImage
-                    alt=""
+                    alt={card.title || card.description}
                     className="status-card__image-image"
                     src={card.image}
                     style={cardImage}
+                    title={card.title || card.description}
                 />
             </div>
 
