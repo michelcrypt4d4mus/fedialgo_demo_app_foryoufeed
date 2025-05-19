@@ -41,7 +41,6 @@ fi
 pushd ../fedialgo
 assert_repo_is_ready
 update_changelog "$VERSION_NUMBER"
-git commit -am"Bump last CHANGELOG.md version to $VERSION_NUMBER"
 tag_repo "$VERSION_NUMBER"
 
 # Handle demo app dir (this dir)
