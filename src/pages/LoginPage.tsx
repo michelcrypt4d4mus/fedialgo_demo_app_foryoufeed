@@ -40,7 +40,6 @@ export default function LoginPage(props: LoginPageProps) {
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
     const [server, setServer] = usePersistentState<string>(DEFAULT_MASTODON_SERVER, {storageKey: "server"});
     const logCreds = (msg: string, ...args: any[]) => logSafe(`${LOG_PREFIX} ${msg}`, ...args);
-    logCreds(`window.location.href:`, window.location.href);
 
     const oAuthLogin = async (): Promise<void> => {
         let sanitizedServer = server;

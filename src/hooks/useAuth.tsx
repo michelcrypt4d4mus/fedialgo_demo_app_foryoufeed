@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 import React, { PropsWithChildren, createContext, useContext, useMemo } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { logMsg, logSafe } from "../helpers/string_helpers";
 import { useAppStorage, useUserStorage } from "./useLocalStorage";
