@@ -18,8 +18,8 @@ Both this repo and the `fedialgo` package linked above were forked from [pkreiss
 
 
 # Usage
-1. Click on the link to [the demo deploy](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (it's deployed on GitHub Pages).
-1. Specify the Mastodon server your account lives on and click "Login". If you're already logged in with that browser you won't have to enter a password.
+1. Click on the link to [the demo](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (it's deployed on GitHub Pages).
+1. Specify the Mastodon server your account lives on and click "Login". If you're already logged in with that browser you won't have to enter a password. (Note: passwords and tokens are never sent to FediAlgo! Your login in strictly between you and your Mastodon server. Once authenticated your Mastodon server gives your browser a temporary token FediAlgo uses to read your timeline, the same as any other Mastodon client app.)
    <p align="center">
      <img src="doc/login_screen.png" alt="OAuth Permissions Request" width="600">
    </p>
@@ -46,7 +46,7 @@ You can filter based on hashtag, source (accounts you follow, hashtags you follo
 
 <p align="center">
     <img src="doc/source_and_language_filters.png" hspace="20" width="300">
-    <img src="doc/tag_filters.png" hspace="20" width="300">
+    <img src="doc/hashtag_filters.png" hspace="20" width="300">
 </p>
 
 

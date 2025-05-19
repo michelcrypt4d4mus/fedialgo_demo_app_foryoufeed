@@ -39,7 +39,7 @@ export default function FilterSetter() {
 
     return (
         <TopLevelAccordion bodyStyle={noPadding} isActive={hasAnyActiveFilter} title="Feed Filters">
-            <Accordion>
+            <Accordion alwaysOpen>
                 <Tooltip id={HASHTAG_ANCHOR + HIGHLIGHT} place="top" style={tooltipZIndex} />
                 {booleanFilters.map((f) => <BooleanFilterAccordionSection filter={f} key={f.title} />)}
 
