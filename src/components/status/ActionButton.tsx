@@ -96,6 +96,9 @@ export default function ActionButton(props: ActionButtonProps) {
     const { action, onClick, status } = props;
     const { algorithm, api, setError } = useAlgorithm();
     const actionInfo = ACTION_INFO[action];
+    const oAuthErrorMsg = `Failed to ${action} account! You may have used ${FEDIALGO} before it requested` +
+        ` permission to ${action} accounts. This can be fixed by clearing your cookies for this site.`;
+
     let label = actionInfo.label || capitalCase(action);
     let actionTarget: Account | Toot = status;
     let className = ACTION_ICON_BASE_CLASS;
@@ -123,7 +126,7 @@ export default function ActionButton(props: ActionButtonProps) {
     const [currentState, setCurrentState] = React.useState<boolean>(actionTarget[actionInfo.booleanName]);
 
     // If the action is a boolean (fave, reblog, bookmark) set the className active/inactive
-    if (actionInfo.booleanName) {
+    if (actionTarget[actionInfo.booleanName]) {
         className += currentState ? " active activate" : " deactivate";
     }
 
@@ -132,13 +135,11 @@ export default function ActionButton(props: ActionButtonProps) {
         return () => {
             if (isAccountAction(action)) return performAccountAction()();
 
-            const actionInfo = ACTION_INFO[action];
             const startingCount = status[actionInfo.countName] || 0;
             const startingState = !!status[actionInfo.booleanName];
             const newState = !startingState;
-
-            // Optimistically update the GUI (we will reset to original state if the server call fails later)
             logMsg(`${action}() toot (startingState: ${startingState}, count: ${startingCount}): `, status);
+            // Optimistically update the GUI (we will reset to original state if the server call fails later)
             status[actionInfo.booleanName] = newState;
             setCurrentState(newState);
 
@@ -183,17 +184,17 @@ export default function ActionButton(props: ActionButtonProps) {
                 const confirmTxt = `Are you sure you want to ${label.toLowerCase()}?`;
                 if (!(await confirm(confirmTxt))) return;
 
-                const resolvedToot = await status.resolve();
-                const startingState = !!resolvedToot.account[actionInfo.booleanName];
+                const startingState = !!status.account[actionInfo.booleanName];
                 const newState = !startingState;
-
                 logMsg(`${action}() account (startingState: ${startingState}): `, status);
+                // Optimistically update the GUI (we will reset to original state if the server call fails later)
                 status.account[actionInfo.booleanName] = newState;
-                resolvedToot.account[actionInfo.booleanName] = newState;
                 setCurrentState(newState);
-                const selected = api.v1.accounts.$select(resolvedToot.account.id);
 
                 try {
+                    const resolvedToot = await status.resolve();
+                    const selected = api.v1.accounts.$select(resolvedToot.account.id);
+
                     if (action == AccountAction.Follow) {
                         await (newState ? selected.follow() : selected.unfollow());
                     } else if (action == AccountAction.Mute) {
@@ -206,13 +207,10 @@ export default function ActionButton(props: ActionButtonProps) {
                     logMsg(`Successfully changed ${action} bool to ${newState}`);
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
-                    let msg = `Failed to ${action} account! You may have used ${FEDIALGO} before it requested`;
-                    msg += ` permission to ${action} accounts. This can be fixed by clearing your cookies for this site.`;
-                    msg += `\n(${error.message})`;
-                    console.error(`${msg} Resetting state to ${startingState}`, error);
                     setCurrentState(startingState);
                     status.account[actionInfo.booleanName] = startingState;
-                    resolvedToot.account[actionInfo.booleanName] = startingState;
+                    const msg = `${oAuthErrorMsg} (${error.message})`;
+                    console.error(`${msg} Resetting state to ${startingState}`, error);
                     setError(msg);
                 }
             })();

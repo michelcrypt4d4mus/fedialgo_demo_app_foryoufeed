@@ -29,11 +29,11 @@ interface FilterCheckboxProps {
 
 export default function FilterCheckbox(props: FilterCheckboxProps) {
     let { capitalize, isChecked, label, labelExtra, onChange, tooltip, url } = props;
-    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     const { algorithm } = useAlgorithm();
 
+    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     labelExtra = (typeof labelExtra == "number") ? labelExtra.toLocaleString() : labelExtra;
-    const labelStyle: CSSProperties = {fontWeight: "bold"};
+    const labelStyle = {...defaultLabelStyle};
     let style: CSSProperties = {color: "black"};
     let tooltipAnchor = HASHTAG_ANCHOR;
 
@@ -87,4 +87,8 @@ const hashtagLink: CSSProperties = {
 const highlightedCheckboxStyle: CSSProperties = {
     backgroundColor: "cyan",
     borderRadius: "12px"
+};
+
+const defaultLabelStyle: CSSProperties = {
+    fontWeight: "bold",
 };

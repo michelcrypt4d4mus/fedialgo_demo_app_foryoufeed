@@ -270,8 +270,8 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 <span key="acctdisplay" className="display-name__account">
                                     @{toot.account.webfingerURI}
                                     <span style={{width: "5px"}}>{' '}</span>
-                                    {buildActionButton(AccountAction.Mute)}
                                     {buildActionButton(AccountAction.Follow)}
+                                    {buildActionButton(AccountAction.Mute)}
                                 </span>
                             </span>
                         </div>

@@ -39,7 +39,11 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
     const makeSpacer = (key: string) => <div key={key} style={{width: "20px"}} />;
 
-    const makeSwitch = (label: string, isChecked: boolean, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
+    const makeSwitch = (
+        label: SwitchType,
+        isChecked: boolean,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>
+    ) => void) => {
         return (
             <FilterCheckbox
                 capitalize={true}

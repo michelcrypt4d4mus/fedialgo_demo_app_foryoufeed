@@ -10,7 +10,6 @@ import { LOADING_ERROR_MSG, errorMsg, logMsg, warnMsg } from "../helpers/string_
 import { useAuthContext } from "./useAuth";
 
 const FOCUS = "focus";
-const VISIBILITY_CHANGE = "visibilitychange";
 const RELOAD_IF_OLDER_THAN_MINUTES = 5;
 const RELOAD_IF_OLDER_THAN_SECONDS = 60 * RELOAD_IF_OLDER_THAN_MINUTES;
 
@@ -37,7 +36,7 @@ interface AlgorithmContextProps extends PropsWithChildren {
 
 export default function AlgorithmProvider(props: AlgorithmContextProps) {
     const { children, setError } = props;
-    const { user, logout } = useAuthContext();
+    const { logout, user } = useAuthContext();
 
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -88,7 +87,7 @@ export default function AlgorithmProvider(props: AlgorithmContextProps) {
         };
 
         constructFeed();
-    }, [setAlgorithm, user]);  // TODO: add setError and setIsLoading to this list of dependencies?
+    }, [setAlgorithm, user]);
 
     // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after RELOAD_IF_OLDER_THAN_SECONDS
     useEffect(() => {
