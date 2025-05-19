@@ -294,8 +294,8 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
                     {toot.contentTagsParagraph() &&
-                        <div className={contentClass} style={{...fontStyle, paddingTop: "5px"}}>
-                            <span style={{fontSize: 13}}>{parse(toot.contentTagsParagraph())}</span>
+                        <div className={contentClass} style={{paddingTop: "12px"}}>
+                            <span style={tagFontStyle}>{parse(toot.contentTagsParagraph())}</span>
                         </div>}
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
@@ -320,4 +320,10 @@ const accountLink: CSSProperties = {
 
 const baseIconStyle: CSSProperties = {
     marginRight: "3px",
+};
+
+// TODO: this probably doesn't do anything because the <a> tag overrides it
+const tagFontStyle: CSSProperties = {
+    color: "#636f7a",
+    fontSize: 13,
 };
