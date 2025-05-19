@@ -59,7 +59,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
     const participatedColorArray = participatedColorGradient.rgb(maxParticipations);
     const trendingTagNames = algorithm.trendingData.tags.map(tag => tag.name);
-    console.log("participatedColorGradient", participatedColorArray);
     let optionKeys: string[];
 
     // Generate color and tooltip text for a hashtag checkbox
