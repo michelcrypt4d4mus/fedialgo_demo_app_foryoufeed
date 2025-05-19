@@ -280,10 +280,10 @@ export default function StatusComponent(props: StatusComponentProps) {
                         </div>
                     </div>
 
-                    {/* Text of the toot */}
+                    {/* Text content of the toot */}
                     <div className={contentClass} style={fontStyle}>
                         <div className="status__content__text status__content__text--visible translate" lang="en">
-                            {parse(toot.contentWithEmojis())}
+                            {parse(toot.contentNonTagsParagraphs())}
                         </div>
                     </div>
 
@@ -291,6 +291,12 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {toot.card && !hasAttachments && <PreviewCard card={toot.card} hideLinkPreviews={hideLinkPreviews} />}
                     {hasAttachments && <MultimediaNode setMediaInspectionIdx={setMediaInspectionIdx} status={toot}/>}
                     {toot.poll && <Poll poll={toot.poll} />}
+
+                    {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
+                    {toot.contentTagsParagraph() &&
+                        <div className={contentClass} style={{...fontStyle, paddingTop: "5px"}}>
+                            <span style={{fontSize: 13}}>{parse(toot.contentTagsParagraph())}</span>
+                        </div>}
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
                     <div className="status__action-bar">
