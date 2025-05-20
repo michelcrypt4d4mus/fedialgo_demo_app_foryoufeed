@@ -31,7 +31,7 @@ import NewTabLink from './helpers/NewTabLink';
 import Poll from "./status/Poll";
 import PreviewCard from "./status/PreviewCard";
 import useOnScreen from "../hooks/useOnScreen";
-import { debugMsg, timestampString } from '../helpers/string_helpers';
+import { debugMsg, logSafe, timestampString } from '../helpers/string_helpers';
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR } from "../helpers/style_helpers";
 import { openToot } from "../helpers/react_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
@@ -97,7 +97,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     useEffect(() => {
         if (isLoading || !isOnScreen) return;
-        if (isOnScreen != hasBeenShown) debugMsg(`Status on screen ${isOnScreen}: ${toot.describe()}`);
+        if (isOnScreen != hasBeenShown) logSafe(`Status on screen ${isOnScreen}: ${toot.describe()}`);
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
         setHasBeenShown(isOnScreen || hasBeenShown);
     }, [isLoading, isOnScreen])
