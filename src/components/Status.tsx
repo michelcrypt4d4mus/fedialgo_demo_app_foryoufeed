@@ -1,19 +1,18 @@
 /*
  * Render a Status, also known as a Toot.
  */
-import React, { CSSProperties, useEffect } from "react";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
 
 import parse from 'html-react-parser';
 // import Toast from 'react-bootstrap/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Toot, TypeFilterName, formatScore } from "fedialgo";
+import { Toot, formatScore } from "fedialgo";
 import {
     IconDefinition,
     faBolt,
     faCheckCircle,
     faFireFlameCurved,
-    faGlobe,
     faHashtag,
     faLink,
     faLock,
@@ -31,9 +30,11 @@ import MultimediaNode from "./status/MultimediaNode";
 import NewTabLink from './helpers/NewTabLink';
 import Poll from "./status/Poll";
 import PreviewCard from "./status/PreviewCard";
+import useOnScreen from "../hooks/useOnScreen";
+import { debugMsg, timestampString } from '../helpers/string_helpers';
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR } from "../helpers/style_helpers";
 import { openToot } from "../helpers/react_helpers";
-import { timestampString } from '../helpers/string_helpers';
+import { useAlgorithm } from "../hooks/useAlgorithm";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
 
@@ -75,8 +76,11 @@ interface StatusComponentProps {
 
 export default function StatusComponent(props: StatusComponentProps) {
     const { fontColor, hideLinkPreviews, status } = props;
+    const { isLoading } = useAlgorithm();
     const fontStyle = fontColor ? { color: fontColor } : {};
     const contentClass = fontColor ? "status__content__alt" : "status__content";
+    const statusRef = useRef<HTMLDivElement>(null);
+    const isOnScreen = useOnScreen(statusRef);
 
     // If it's a retoot set 'toot' to the original toot
     const toot = status.realToot();
@@ -89,6 +93,14 @@ export default function StatusComponent(props: StatusComponentProps) {
     const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
+    const [hasBeenShown, setHasBeenShown] = React.useState<boolean>(false);
+
+    useEffect(() => {
+        if (isLoading || !isOnScreen) return;
+        if (isOnScreen != hasBeenShown) debugMsg(`Status on screen ${isOnScreen}: ${toot.describe()}`);
+        toot.numTimesShown = (toot.numTimesShown || 0) + 1;
+        setHasBeenShown(isOnScreen || hasBeenShown);
+    }, [isLoading, isOnScreen])
 
     // Increase mediaInspectionIdx on Right Arrow
     useEffect(() => {
@@ -297,7 +309,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         </div>}
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
-                    <div className="status__action-bar">
+                    <div className="status__action-bar" ref={statusRef}>
                         {buildActionButton(TootAction.Reply, (e: React.MouseEvent) => openToot(toot, e))}
                         {buildActionButton(TootAction.Reblog)}
                         {buildActionButton(TootAction.Favourite)}

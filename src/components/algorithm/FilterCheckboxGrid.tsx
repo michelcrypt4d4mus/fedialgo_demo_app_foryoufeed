@@ -20,7 +20,7 @@ export type CheckboxTooltip = {
     text: string;
 };
 
-export const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
+const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
     [BooleanFilterName.LANGUAGE]: {
         color: FOLLOWED_USER_COLOR,
         text: `You post most in this language`,

@@ -205,8 +205,7 @@ export default function Feed() {
                                 hideLinkPreviews={hideLinkPreviews}
                                 key={toot.uri}
                                 status={toot}
-                            />
-                        ))}
+                            />))}
 
                         {timeline.length == 0 && (
                             isLoading
