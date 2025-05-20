@@ -57,7 +57,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const maxParticipations = Math.max(...Object.values(algorithm.userData.participatedHashtags).map(t => t.numToots));
     const participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
-    const participatedColorArray = participatedColorGradient.rgb(maxParticipations);
+    const participatedColorArray = participatedColorGradient.rgb(Math.max(maxParticipations, 2));
     const trendingTagNames = algorithm.trendingData.tags.map(tag => tag.name);
     let optionKeys: string[];
 
