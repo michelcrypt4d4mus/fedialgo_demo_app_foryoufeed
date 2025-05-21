@@ -4,6 +4,7 @@
  */
 import React, { CSSProperties } from 'react';
 
+import { DataKey } from 'recharts/types/util/types';
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Modal } from 'react-bootstrap';
 import { ScoreName } from 'fedialgo';
@@ -47,11 +48,9 @@ export default function StatsModal(props: StatsModalProps) {
     if (!algorithm) return <>   </>;
 
     const data = show ? algorithm.getRechartsStatsData(10) : [];
-    const [hiddenLines, setHiddenLines] = React.useState<Array<string>>([]);
+    const [hiddenLines, setHiddenLines] = React.useState<Array<DataKey<string | number>>>([]);
 
-    const handleLegendClick = (dataKey: string | number) => {
-        dataKey = dataKey.toString();
-
+    const handleLegendClick = (dataKey: DataKey<string | number>) => {
         if (hiddenLines.includes(dataKey)) {
             setHiddenLines(hiddenLines.filter(el => el !== dataKey));
         } else {
@@ -91,10 +90,13 @@ export default function StatsModal(props: StatsModalProps) {
 
                         {Object.values(ScoreName).map((scoreName, i) => (
                             <Line
+                                animationDuration={500}
                                 dataKey={`${scoreName}_weighted_average`}
                                 hide={hiddenLines.includes(`${scoreName}_weighted_average`)}
+                                legendType='line'
                                 // isAnimationActive={false}
                                 stroke={COLORS[i]}
+                                strokeWidth={2}
                             />))}
                     </LineChart>
                 </ResponsiveContainer>
