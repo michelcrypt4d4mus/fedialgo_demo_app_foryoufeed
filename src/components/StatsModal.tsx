@@ -9,7 +9,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { DataKey } from 'recharts/types/util/types';
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Modal } from 'react-bootstrap';
-import { MinMaxAvg, ScoreName, ScoreStats, formatScore } from 'fedialgo';
+import { MinMaxAvgScore, ScoreName, ScoreStats, formatScore } from 'fedialgo';
 
 import { FEED_BACKGROUND_COLOR } from '../helpers/style_helpers';
 import { ModalProps } from 'react-bootstrap';
@@ -45,7 +45,7 @@ interface StatsModalProps extends ModalProps {
 
 // TODO: this sucks, these are keys of MinMaxAvg types and ScoreStats
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
-const VALUE_TYPES: (keyof MinMaxAvg)[] = ["average", "averageFinalScore", "min", "max"];
+const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
 
 
 export default function StatsModal(props: StatsModalProps) {
@@ -56,7 +56,7 @@ export default function StatsModal(props: StatsModalProps) {
     const data = show ? algorithm.getRechartsStatsData(10) : [];
     const [hiddenLines, setHiddenLines] = React.useState<Array<DataKey<string | number>>>([]);
     const [scoreType, setScoreType] = React.useState<keyof ScoreStats>("weighted");
-    const [valueType, setValueType] = React.useState<keyof MinMaxAvg>("average");
+    const [valueType, setValueType] = React.useState<keyof MinMaxAvgScore>("average");
 
     const handleLegendClick = (dataKey: DataKey<string | number>) => {
         if (hiddenLines.includes(dataKey)) {
