@@ -17,7 +17,7 @@ import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { logMsg, warnMsg } from "../helpers/string_helpers";
-import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
+import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const NUM_TOOTS_TO_LOAD_ON_SCROLL = 10;
@@ -251,7 +251,7 @@ const scrollStatusMsg: CSSProperties = {
 };
 
 const statusesColStyle: CSSProperties = {
-    backgroundColor: '#15202b',
+    backgroundColor: FEED_BACKGROUND_COLOR,
     borderRadius: '10px',
     height: 'auto',
 };

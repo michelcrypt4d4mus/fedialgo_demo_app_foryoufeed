@@ -15,3 +15,12 @@ export type User = {
     username: string;
     server: string;  // homeserver domain
 };
+
+
+export interface ModalProps {
+    dialogClassName?: "modal-sm" | "modal-lg" | "modal-xl" | "modal-fullscreen" | undefined,
+    show: boolean,
+    setShow: (show: boolean) => void,
+    subtitle?: string | React.ReactNode,
+    title: string,
+};

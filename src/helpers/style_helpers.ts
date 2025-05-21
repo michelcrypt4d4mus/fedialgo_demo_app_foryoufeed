@@ -1,5 +1,6 @@
 /*
  * Reusable CSS.
+ * CSS color keywords:https://www.w3.org/wiki/CSS/Properties/color/keywords
  */
 import { CSSProperties } from "react";
 
@@ -9,6 +10,7 @@ export const IMAGE_BACKGROUND_COLOR = "#C1C1C1";
 export const RED = 'firebrick';
 export const TOOLTIP_ANCHOR = "tooltip-anchor";
 
+export const FEED_BACKGROUND_COLOR = '#15202b';
 export const FOLLOWED_TAG_COLOR = 'yellow';
 export const FOLLOWED_USER_COLOR = 'cyan';
 export const FOLLOWED_USER_COLOR_FADED = "#2092a1";

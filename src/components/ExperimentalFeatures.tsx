@@ -8,16 +8,19 @@ import { FEDIALGO } from 'fedialgo';
 
 import FindFollowers from "./FindFollowers";
 import JsonModal from "./JsonModal";
+import StatsModal from "./StatsModal";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import { accordionSubheader, roundedBox } from "../helpers/style_helpers";
 import { logMsg, versionString } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useAuthContext } from "../hooks/useAuth";
 
+const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
 const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 
 const BUTTON_TEXT = {
+    [SCORE_STATS]: "Show a bar chart of the scores of your timeline",
     [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state`,
     [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed. " +
                                   "Takes time & resources proportional to the number of times you've tooted.",
@@ -31,6 +34,7 @@ export default function ExperimentalFeatures() {
     const [algoState, setAlgoState] = useState({});
     const [isLoadingState, setIsLoadingState] = useState(false);
     const [showStateModal, setShowStateModal] = useState(false);
+    const [showStatsModal, setShowStatsModall] = useState(false);
 
     const showAlgoState = () => {
         logMsg(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
@@ -84,6 +88,12 @@ export default function ExperimentalFeatures() {
                 title="FediAlgo State"
             />
 
+            <StatsModal
+                setShow={setShowStatsModall}
+                show={showStatsModal}
+                title="FediAlgo Score Stats"
+            />
+
             <p style={{...accordionSubheader, paddingTop: "2px"}}>
                 Use with caution.
             </p>
@@ -91,6 +101,8 @@ export default function ExperimentalFeatures() {
             <div style={container}>
                 <ul style={listStyle}>
                     {makeLabeledButton(SHOW_STATE, showAlgoState)}
+                    <hr className="hr" />
+                    {makeLabeledButton(SCORE_STATS, () => setShowStatsModall(true))}
                     <hr className="hr" />
                     {makeLabeledButton(LOAD_COMPLETE_USER_HISTORY, triggerPullAllUserData)}
                 </ul>

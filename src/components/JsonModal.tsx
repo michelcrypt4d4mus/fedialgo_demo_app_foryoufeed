@@ -8,6 +8,7 @@ import ReactJsonView from '@microlink/react-json-view';
 import { Modal } from 'react-bootstrap';
 
 import { globalFont } from '../helpers/style_helpers';
+import { ModalProps } from '../types';
 
 type ReactJsonViewProps = typeof ReactJsonView.defaultProps;
 
@@ -24,15 +25,10 @@ const DEFAULT_JSON_VIEW_PROPS: ReactJsonViewProps = {
     theme: "rjv-default", // "apathy:inverted",
 };
 
-interface JsonModalProps {
-    dialogClassName?: "modal-sm" | "modal-lg" | "modal-xl" | "modal-fullscreen" | undefined,
+interface JsonModalProps extends ModalProps {
     infoTxt?: ReactNode,
     json: object,
     jsonViewProps?: ReactJsonViewProps,
-    show: boolean,
-    setShow: (show: boolean) => void,
-    subtitle?: string | React.ReactNode,
-    title: string,
 };
 
 
