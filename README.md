@@ -31,6 +31,8 @@ Both this repo and the `fedialgo` package linked above were forked from [pkreiss
 1. Have fun.
 1. Profit.
 
+If you try out FediAlgo but don't plan on using it again you may want to revoke its permissions. This can be done by going to `https://{YOUR_SERVER}/oauth/authorized_applications` and clicking the "revoke" button.
+
 
 ## Setting Weights
 Once the initial load is complete you can adjust the way the algorithm weights various aspects of a toot when it decides what should be at or near the top of your feed. There's also a drop down for preconfigured settings (feedback appreciated!) Hopefully these are self explanatory:

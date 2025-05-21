@@ -52,7 +52,7 @@ export default function LoginPage(props: LoginPageProps) {
         }
 
         // OAuth won't allow HashRouter's "#" chars in redirectUris
-        const redirectUri = `${window.location.origin}/${window.location.pathname}`.replace(/\/+$/, '');
+        const redirectUri = `${window.location.origin}${window.location.pathname}`.replace(/\/+$/, '');
         logMsg(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`); // TODO: remove this log line
         const api = createRestAPIClient({url: sanitizedServer});
         let registeredApp;  // TODO: using 'App' type causes a type error
