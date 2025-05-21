@@ -43,7 +43,6 @@ const COLORS: CSSProperties["color"][] = [
 interface StatsModalProps extends ModalProps {
 };
 
-// TODO: this sucks, these are keys of MinMaxAvg types and ScoreStats
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
 const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
 

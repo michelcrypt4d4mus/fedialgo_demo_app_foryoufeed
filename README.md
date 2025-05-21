@@ -94,7 +94,6 @@ Here's an example of what you might see:
 
 
 # Contributing
-
 ### Prerequisites
 * [`node.js`](https://nodejs.org/):
    * On Linux use `apt`, `yum`, or your favorite package manager. For example here's [guide on how to install `node.js` on Ubuntu linux](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04).
@@ -119,6 +118,9 @@ Assuming you check both `fedialgo` and this repo out to the same directory there
 If you set the environment variable `FEDIALGO_DEBUG=true` a _lot_ more debugging info will be printed to the browser console. See [`.env.example`](./.env.example) for other environment variables you can play with.
 
 There's also an arrow icon at the top right of ecah toot that will open a display showing the raw JSON of the underlying toot.
+
+### Environment Variables
+Environment variables are managed by [`dotenv-flow`](https://www.npmjs.com/package/dotenv-flow) so there are files in this repo called `.env.production` and `.env.development` for the main two `NODE_ENV` values. To override the values in those files you should be able to just create files named `.env.production.local` and `.env.development.local`, respectively.
 
 ### Troubleshooting
 Someone reported they were unable to build with `npm run build` but using `NODE_ENV=production npm run build --no-hmr` seemed to fix the issue.
