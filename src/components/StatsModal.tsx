@@ -45,7 +45,7 @@ interface StatsModalProps extends ModalProps {
 
 // TODO: this sucks, these are keys of MinMaxAvg types and ScoreStats
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
-const VALUE_TYPES: (keyof MinMaxAvg)[] = ["average", "min", "max"];
+const VALUE_TYPES: (keyof MinMaxAvg)[] = ["average", "averageFinalScore", "min", "max"];
 
 
 export default function StatsModal(props: StatsModalProps) {
@@ -87,8 +87,8 @@ export default function StatsModal(props: StatsModalProps) {
 
                 <DropdownButton id="valueType" title={"Value Type"} style={buttonStyle} variant="info">
                     {VALUE_TYPES.map((valueType) => (
-                        <Dropdown.Item key={valueType} onClick={() => setValueType(valueType)} >
-                            {valueType}
+                        <Dropdown.Item key={valueType as string} onClick={() => setValueType(valueType)}>
+                            {valueType as string}
                         </Dropdown.Item>
                     ))}
                 </DropdownButton>
@@ -109,8 +109,11 @@ export default function StatsModal(props: StatsModalProps) {
                         {/* <CartesianGrid strokeDasharray="3 3" /> */}
                         <XAxis dataKey="segment" />
                         <YAxis />
+
                         <Tooltip
                             formatter={(value, name) => [formatScore(Number(value)), (name as string).split('_')[0]]}
+                            contentStyle={{backgroundColor: "black"}}
+                            labelStyle={{fontSize: 20, fontWeight: "bold"}}
                         />
 
                         <Legend
