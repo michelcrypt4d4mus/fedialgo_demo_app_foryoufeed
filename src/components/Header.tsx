@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 
 import { CRYPTADAMUS_ICON_URL } from '../helpers/style_helpers';
-import { REPO_URL } from '../helpers/string_helpers';
+import { CHANGELOG_URL, REPO_URL } from '../helpers/string_helpers';
 import { useAuthContext } from "../hooks/useAuth";
 
 const XS_VALUE = 4;  // React Bootstrap Grid System
@@ -46,7 +46,11 @@ export default function Header() {
                             Fedialgo Demo
                         </a>
 
-                        {' '}<span style={{fontSize: 15}}>(v{process.env.FEDIALGO_VERSION})</span>
+                        {' '}<span style={{color: "lightgrey", fontSize: 14}}>(
+                            <a href={CHANGELOG_URL} style={{color: "grey"}} target="_blank">
+                                v{process.env.FEDIALGO_VERSION}
+                            </a>
+                        )</span>
                     </span>
                 </Col>
 

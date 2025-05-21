@@ -8,6 +8,8 @@ export const LOADING_ERROR_MSG = `Currently loading, please wait a moment and tr
 export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
 export const REPO_NAME = HOMEPAGE ? HOMEPAGE.split('/').pop() : null;
 export const REPO_URL = HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE;
+export const CHANGELOG_URL = `https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md`;
+export const CRYPTADAMUS_MASTODON_URL = "https://universeodon.com/@cryptadamist";
 
 // Locale
 const DEFAULT_LOCALE = "en-US";

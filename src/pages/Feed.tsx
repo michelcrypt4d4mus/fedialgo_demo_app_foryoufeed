@@ -16,7 +16,7 @@ import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/Status";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
-import { logMsg, warnMsg } from "../helpers/string_helpers";
+import { CRYPTADAMUS_MASTODON_URL, logMsg, warnMsg } from "../helpers/string_helpers";
 import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
@@ -181,6 +181,12 @@ export default function Feed() {
                                 {`Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`}
                             </p>
                         </div>
+
+                        <p style={{...bugReport}}>
+                            Report bugs to <a href={CRYPTADAMUS_MASTODON_URL} style={{color: "lightgrey"}} target="_blank">
+                                @cryptadamist@universeodon.com
+                            </a>
+                        </p>
                     </div>
                 </Col>
 
@@ -224,6 +230,20 @@ export default function Feed() {
 };
 
 
+const controlPanelFooter: CSSProperties = {
+    height: "20px",
+    marginBottom: "5px",
+    paddingLeft: "2px",
+    paddingRight: "2px",
+};
+
+const bugReport: CSSProperties = {
+    ...controlPanelFooter,
+    color: "grey",
+    fontSize: "15px",
+    marginTop: "12px",
+};
+
 const loadingMsgStyle: CSSProperties = {
     fontSize: "16px",
     height: "20px",
@@ -257,12 +277,9 @@ const statusesColStyle: CSSProperties = {
 };
 
 const stickySwitchContainer: CSSProperties = {
+    ...controlPanelFooter,
     display: "flex",
-    height: "20px",
     justifyContent: "space-between",
-    marginBottom: "5px",
-    paddingLeft: "2px",
-    paddingRight: "2px",
 };
 
 const accountTooltipStyle: CSSProperties = {
