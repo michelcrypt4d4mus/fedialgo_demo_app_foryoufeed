@@ -7,7 +7,7 @@ import React, { CSSProperties, useState, useEffect } from "react";
 
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import { NON_SCORE_WEIGHTS, WeightName, type Weights } from "fedialgo";
+import { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
 
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import WeightSlider from './WeightSlider';
@@ -68,7 +68,7 @@ export default function WeightSetter() {
                 ))}
             </DropdownButton>
 
-            {NON_SCORE_WEIGHTS.map((weight) => weightSlider(weight))}
+            {Object.values(NonScoreWeightName).map((weight) => weightSlider(weight))}
             <div style={{height: '12px'}} />
 
             <div style={roundedBox}>
