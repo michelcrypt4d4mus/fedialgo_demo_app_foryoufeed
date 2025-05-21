@@ -31,8 +31,8 @@ export default function WeightSetter() {
         logMsg(`updateWeights() called with:`, newWeights);
 
         try {
-            setUserWeights(newWeights);
-            await algorithm.updateUserWeights(newWeights);
+            setUserWeights(newWeights);  // Note lack of await here
+            algorithm.updateUserWeights(newWeights);
         } catch (error) {
             setError(`${error?.message || error}`);
         }
