@@ -11,6 +11,7 @@ import { mastodon } from 'masto';
 import { debugMsg, errorMsg } from '../../helpers/string_helpers';
 import { isAccessTokenRevokedError, timeString } from 'fedialgo';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
+import { useError } from "../../components/helpers/ErrorHandler";
 
 const ALREADY_VOTED_MSG = `You have already voted`;
 
@@ -21,7 +22,8 @@ interface PollProps {
 
 export default function Poll(props: PollProps) {
     const { poll } = props;
-    const { api, setError } = useAlgorithm();
+    const { api } = useAlgorithm();
+    const { setError } = useError();
 
     const [hasVoted, setHasVoted] = useState(poll.ownVotes?.length > 0);
     const [revealed, setRevealed] = useState(false);

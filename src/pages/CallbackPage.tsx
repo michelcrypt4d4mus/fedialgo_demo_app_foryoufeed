@@ -3,7 +3,6 @@
  */
 import React, { useEffect } from 'react';
 
-import TheAlgorithm from 'fedialgo';
 import { createRestAPIClient } from "masto"
 import { useSearchParams } from 'react-router-dom';
 
@@ -11,19 +10,16 @@ import { DEMO_APP, logMsg, logSafe } from '../helpers/string_helpers';
 import { OAUTH_SCOPE_STR } from './LoginPage';
 import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
+import { useError } from '../components/helpers/ErrorHandler';
 import { User } from '../types';
 
 // const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
 // const GRANT_TYPE = "authorization_code";
 // const GRANT_TYPE = "client_credentials";
 
-interface CallbackPageProps {
-    setError?: (error: string) => void,
-};
 
-
-export default function CallbackPage(props: CallbackPageProps) {
-    const { setError } = props;
+export default function CallbackPage() {
+    const { setError } = useError();
     const [searchParams] = useSearchParams();
     logSafe(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
     const logThis = (msg: string, ...args: any[]) => logMsg(`<CallbackPage> ${msg}`, ...args);

@@ -11,6 +11,7 @@ import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
 import { errorMsg, logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
 import { SHOWCASE_IMAGE_URL } from '../helpers/style_helpers';
+import { useError } from '../components/helpers/ErrorHandler';
 // const showcase = require("../../public/assets/Showcase.jpg");
 
 // Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
@@ -28,13 +29,9 @@ const DEFAULT_MASTODON_SERVER = "universeodon.com";
 const APP_NAME = `${FEDIALGO}Demo`;  // Name of the app that will be created in the user's Mastodon account
 const LOG_PREFIX = `<LoginPage>`;
 
-interface LoginPageProps {
-    setError: (error: string) => void;
-};
 
-
-export default function LoginPage(props: LoginPageProps) {
-    const { setError } = props;
+export default function LoginPage() {
+    const { setError } = useError();
 
     // TODO: why is this not using useAppStorage?
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);

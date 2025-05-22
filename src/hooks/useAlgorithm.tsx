@@ -5,6 +5,7 @@ import React, { PropsWithChildren, createContext, useContext, useEffect, useStat
 
 import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";
+import { useError } from "../components/helpers/ErrorHandler";
 
 import { LOADING_ERROR_MSG, errorMsg, logMsg, warnMsg } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
@@ -13,12 +14,10 @@ const FOCUS = "focus";
 const RELOAD_IF_OLDER_THAN_MINUTES = 5;
 const RELOAD_IF_OLDER_THAN_SECONDS = 60 * RELOAD_IF_OLDER_THAN_MINUTES;
 
-
 interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
     isLoading?: boolean,
-    setError?: (error: string) => void,
     setShouldAutoUpdate?: (should: boolean) => void,
     shouldAutoUpdate?: boolean,
     timeline: Toot[],
@@ -29,14 +28,10 @@ interface AlgoContext {
 const AlgorithmContext = createContext<AlgoContext>({timeline: []});
 export const useAlgorithm = () => useContext(AlgorithmContext);
 
-interface AlgorithmContextProps extends PropsWithChildren {
-    setError?: (error: string) => void,
-};
 
-
-export default function AlgorithmProvider(props: AlgorithmContextProps) {
-    const { children, setError } = props;
+export default function AlgorithmProvider(props: PropsWithChildren) {
     const { logout, user } = useAuthContext();
+    const { setError } = useError();
 
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -126,7 +121,6 @@ export default function AlgorithmProvider(props: AlgorithmContextProps) {
         algorithm,
         api,
         isLoading,
-        setError,
         setShouldAutoUpdate,
         shouldAutoUpdate,
         timeline,
@@ -136,7 +130,7 @@ export default function AlgorithmProvider(props: AlgorithmContextProps) {
 
     return (
         <AlgorithmContext.Provider value={algoContext}>
-            {children}
+            {props.children}
         </AlgorithmContext.Provider>
     );
 };

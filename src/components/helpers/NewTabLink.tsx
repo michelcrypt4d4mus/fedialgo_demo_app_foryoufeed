@@ -4,14 +4,14 @@
 
 import React, { CSSProperties, PropsWithChildren, ReactElement } from "react";
 
-interface LinkProps extends PropsWithChildren {
+interface NewTabLinkProps extends PropsWithChildren {
     className?: string;
     href: string;
     style?: CSSProperties;
 };
 
 
-export default function ProtectedRoute(props: LinkProps): ReactElement {
+export default function NewTabLink(props: NewTabLinkProps): ReactElement {
     const { children, className, href } = props;
     const style = props.style || {};
 

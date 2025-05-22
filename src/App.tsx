@@ -3,7 +3,6 @@ import { Buffer } from 'buffer'; // Required for class-transformer to work
 (window as any).Buffer = Buffer;
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal } from "react-bootstrap";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { inject } from '@vercel/analytics';
@@ -13,6 +12,7 @@ import "./default.css";
 import AlgorithmProvider from "./hooks/useAlgorithm";
 import AuthProvider from './hooks/useAuth';
 import CallbackPage from './pages/CallbackPage';
+import ErrorHandler from "./components/helpers/ErrorHandler";
 import Feed from './pages/Feed';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -22,7 +22,6 @@ import { logLocaleInfo, logMsg, logSafe } from "./helpers/string_helpers";
 
 
 export default function App(): React.ReactElement {
-    const [error, setError] = useState<string>("");
     logLocaleInfo();
 
     // This is a workaround for Github pages (which only allows GET query params), the HashRouter,
@@ -52,35 +51,29 @@ export default function App(): React.ReactElement {
 
     return (
         <HashRouter>
-            <AuthProvider>
-                <div className='container-fluid min-vh-100' style={containerStyle}>
-                    <Modal show={error !== ""} onHide={() => setError("")} style={{color: "black"}}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Error</Modal.Title>
-                        </Modal.Header>
+            <div className='container-fluid min-vh-100' style={containerStyle}>
+                <ErrorHandler>
+                    <AuthProvider>
+                        <Header />
 
-                        <Modal.Body>{error}</Modal.Body>
-                    </Modal>
+                        <Routes>
+                            <Route path="/" element={
+                                <ProtectedRoute>
+                                    <AlgorithmProvider>
+                                        <Feed />
+                                    </AlgorithmProvider>
+                                </ProtectedRoute>
+                            } />
 
-                    <Header />
+                            <Route path="/callback" element={<CallbackPage/>} />
+                            <Route path="/login" element={<LoginPage/>} />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
 
-                    <Routes>
-                        <Route path="/" element={
-                            <ProtectedRoute>
-                                <AlgorithmProvider setError={setError}>
-                                    <Feed />
-                                </AlgorithmProvider>
-                            </ProtectedRoute>
-                        } />
-
-                        <Route path="/callback" element={<CallbackPage setError={setError}/>} />
-                        <Route path="/login" element={<LoginPage setError={setError}/>} />
-                        <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
-
-                    <Footer />
-                </div>
-            </AuthProvider>
+                        <Footer />
+                    </AuthProvider>
+                </ErrorHandler>
+            </div>
         </HashRouter>
     );
 };

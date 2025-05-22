@@ -100,6 +100,7 @@ export default function StatsModal(props: StatsModalProps) {
                                     animationDuration={500}
                                     dataKey={key}
                                     hide={hiddenLines.includes(key)}
+                                    key={key}
                                     legendType='line'
                                     // isAnimationActive={false}
                                     stroke={RECHARTS_COLORS[i]}

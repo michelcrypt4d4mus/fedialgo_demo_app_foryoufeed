@@ -22,6 +22,7 @@ import {
 import { confirm } from "../Confirmation";
 import { logMsg, scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { useError } from "../helpers/ErrorHandler";
 
 export enum AccountAction {
     Follow = 'follow',
@@ -94,11 +95,13 @@ interface ActionButtonProps {
 
 export default function ActionButton(props: ActionButtonProps) {
     const { action, onClick, status } = props;
-    const { algorithm, api, setError } = useAlgorithm();
-    const actionInfo = ACTION_INFO[action];
+    const { algorithm, api } = useAlgorithm();
+    const { setError } = useError();
+
     const oAuthErrorMsg = `Failed to ${action} account! You may have used ${FEDIALGO} before it requested` +
         ` permission to ${action} accounts. This can be fixed by clearing your cookies for this site.`;
 
+    const actionInfo = ACTION_INFO[action];
     let label = actionInfo.label || capitalCase(action);
     let actionTarget: Account | Toot = status;
     let className = ACTION_ICON_BASE_CLASS;

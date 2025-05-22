@@ -9,6 +9,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { Tooltip } from 'react-tooltip';
 
+import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/ExperimentalFeatures";
 import FilterSetter from "../components/algorithm/FilterSetter";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/LoadingSpinner";
@@ -16,9 +17,10 @@ import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/Status";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
-import { CRYPTADAMUS_MASTODON_URL, logMsg, warnMsg } from "../helpers/string_helpers";
 import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
+import { logMsg, warnMsg } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
+import { useError } from "../components/helpers/ErrorHandler";
 import TheAlgorithm from "fedialgo";
 
 const NUM_TOOTS_TO_LOAD_ON_SCROLL = 10;
@@ -31,13 +33,15 @@ const NO_TOOTS_MSG = "No toots in feed! Maybe check your filters settings?";
 
 
 export default function Feed() {
-    const { algorithm, isLoading, setShouldAutoUpdate, setError, shouldAutoUpdate, timeline, triggerFeedUpdate } = useAlgorithm();
+    const { algorithm, isLoading, setShouldAutoUpdate, shouldAutoUpdate, timeline, triggerFeedUpdate } = useAlgorithm();
+    const { setError } = useError();
+
     const bottomRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
 
     // State variables
-    const [hideLinkPreviews, setHideLinkPreviews] = useState(false);
-    const [isControlPanelSticky, setIsControlPanelSticky] = useState<boolean>(true);  // Left panel stickiness
+    const hideLinkPreviewsState = useState(false);
+    const isControlPanelStickyState = useState(true);  // Left panel stickiness
     const [loadingStatus, setLoadingStatus] = useState<string>(null);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(DEFAULT_NUM_DISPLAYED_TOOTS);
     const [prevScrollY, setPrevScrollY] = useState(0);
@@ -112,6 +116,18 @@ export default function Feed() {
     }, [algorithm, algorithm?.loadingStatus, isLoading]);
 
 
+    const buildStateCheckbox = (label: string, state: ReturnType<typeof useState<boolean>>) => (
+        <Form.Check
+            checked={state[0]}
+            className="mb-3"  // bootstrap spacing info: https://getbootstrap.com/docs/5.1/utilities/spacing/
+            key={label}
+            label={label}
+            onChange={(e) => state[1](e.target.checked)}
+            type="checkbox"
+        />
+    );
+
+
     return (
         <Container fluid style={{height: 'auto'}}>
             <Row>
@@ -131,25 +147,10 @@ export default function Feed() {
 
                 <Col xs={12} md={6}>
                     {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
-                    <div className="sticky-top" style={isControlPanelSticky ? {} : {position: "relative"}} >
+                    <div className="sticky-top" style={isControlPanelStickyState[0] ? {} : {position: "relative"}} >
                         <div style={stickySwitchContainer}>
-                            <Form.Check
-                                checked={isControlPanelSticky}
-                                className="mb-3"  // bootstrap spacing info: https://getbootstrap.com/docs/5.1/utilities/spacing/
-                                key={"stickPanel"}
-                                label={`Stick Control Panel To Top`}
-                                onChange={(e) => setIsControlPanelSticky(e.target.checked)}
-                                type="checkbox"
-                            />
-
-                            <Form.Check
-                                checked={hideLinkPreviews}
-                                className="mb-3"
-                                key={"linkPreviews"}
-                                label={`Hide Link Previews`}
-                                onChange={(e) => setHideLinkPreviews(e.target.checked)}
-                                type="checkbox"
-                            />
+                            {buildStateCheckbox(`Stick Control Panel To Top`, isControlPanelStickyState)}
+                            {buildStateCheckbox(`Hide Link Previews`, hideLinkPreviewsState)}
 
                             <a
                                 data-tooltip-id={TOOLTIP_ANCHOR}
@@ -157,14 +158,7 @@ export default function Feed() {
                                 key={"tooltipautoload"}
                                 style={{color: "white"}}
                             >
-                                <Form.Check
-                                    checked={shouldAutoUpdate}
-                                    className="mb-3"
-                                    key={"autoLoadNewToots"}
-                                    label={`Auto Load New Toots`}
-                                    onChange={(e) => setShouldAutoUpdate(e.target.checked)}
-                                    type="checkbox"
-                                />
+                                {buildStateCheckbox(`Auto Load New Toots`, [shouldAutoUpdate, setShouldAutoUpdate])}
                             </a>
                         </div>
 
@@ -179,12 +173,15 @@ export default function Feed() {
                                 : finishedLoadingMsg(algorithm?.lastLoadTimeInSeconds)}
 
                             <p style={scrollStatusMsg}>
-                                {!TheAlgorithm.isDebugMode
+                                {TheAlgorithm.isDebugMode
                                     ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
-                                    : <>
-                                        Report bugs: <a href={CRYPTADAMUS_MASTODON_URL} style={bugsLink} target="_blank">
-                                            @cryptadamist</a>
-                                    </>}
+                                    : <BugReportLink />}
+                            </p>
+
+                           <p style={scrollStatusMsg}>
+                                <a onClick={() => {throw new Error("Debug mode is on!")}} style={bugsLink}>
+                                    Throw Test Error
+                                </a>
                             </p>
                         </div>
                     </div>
@@ -208,7 +205,7 @@ export default function Feed() {
                     <div style={statusesColStyle}>
                         {timeline.slice(0, numShownToots).map((toot) => (
                             <StatusComponent
-                                hideLinkPreviews={hideLinkPreviews}
+                                hideLinkPreviews={hideLinkPreviewsState[0]}
                                 key={toot.uri}
                                 status={toot}
                             />))}
