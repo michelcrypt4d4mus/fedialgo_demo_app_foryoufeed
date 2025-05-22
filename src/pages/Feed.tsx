@@ -11,9 +11,9 @@ import TheAlgorithm from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import BugReportLink from "../components/helpers/BugReportLink";
-import ExperimentalFeatures from "../components/ExperimentalFeatures";
+import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
 import FilterSetter from "../components/algorithm/FilterSetter";
-import LoadingSpinner, { fullPageCenteredSpinner } from "../components/LoadingSpinner";
+import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/Status";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";

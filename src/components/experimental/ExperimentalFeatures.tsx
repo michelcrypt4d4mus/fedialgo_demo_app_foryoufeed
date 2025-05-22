@@ -7,14 +7,14 @@ import { Button } from 'react-bootstrap';
 import { FEDIALGO } from 'fedialgo';
 
 import FindFollowers from "./FindFollowers";
-import JsonModal from "./JsonModal";
+import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
-import TopLevelAccordion from "./helpers/TopLevelAccordion";
-import { accordionSubheader, roundedBox } from "../helpers/style_helpers";
-import { logMsg, versionString } from "../helpers/string_helpers";
-import { useAlgorithm } from "../hooks/useAlgorithm";
-import { useAuthContext } from "../hooks/useAuth";
-import { useError } from "./helpers/ErrorHandler";
+import TopLevelAccordion from "../helpers/TopLevelAccordion";
+import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
+import { logMsg, versionString } from "../../helpers/string_helpers";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { useAuthContext } from "../../hooks/useAuth";
+import { useError } from "../helpers/ErrorHandler";
 
 const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";

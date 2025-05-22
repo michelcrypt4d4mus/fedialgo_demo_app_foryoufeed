@@ -25,7 +25,7 @@ import {
 
 import ActionButton, { AccountAction, ButtonAction, TootAction } from "./status/ActionButton";
 import AttachmentsModal from './status/AttachmentsModal';
-import JsonModal from './JsonModal';
+import JsonModal from './helpers/JsonModal';
 import MultimediaNode from "./status/MultimediaNode";
 import NewTabLink from './helpers/NewTabLink';
 import Poll from "./status/Poll";

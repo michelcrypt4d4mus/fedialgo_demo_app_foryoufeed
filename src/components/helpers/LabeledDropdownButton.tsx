@@ -19,7 +19,7 @@ interface LabeledDropdownButton {
 export default function LabeledDropdownButton(props: LabeledDropdownButton) {
     let { id, initialLabel, onClick, options, optionStyle, style, variant } = props;
     const [currentLabel, setCurrentLabel] = React.useState(initialLabel);
-    id ||= initialLabel.replace(/\s+/g, '-').toLowerCase(); // Replace spaces with hyphens and convert to lowercase
+    id ||= initialLabel.replace(/\s+/g, '-');
     variant ||= "info";
 
     const selectOption = (value: string) => {

@@ -18,17 +18,17 @@ export const useError = () => useContext(ErrorContext);
 
 
 export default function ErrorHandler(props: PropsWithChildren) {
-    const [error, setError] = useState<string>("");
+    const [errorMsg, setError] = useState<string>("");
 
-    const errorPage = (fallbackError?: Error, resetErrorBoundary?: () => void) => {
-        console.error(`ErrorHandler: errorPage() called with error: ${fallbackError?.message}`);
+    const errorPage = ({ error, resetErrorBoundary }) => {
+        console.error(`ErrorHandler: errorPage() called with error: ${error}`);
 
         return (
             <div style={{backgroundColor: "black", color: "white", fontSize: "16px", padding: "100px"}}>
                 <h1>Something went wrong!</h1>
 
                 <p style={errorParagraph}>
-                    Error: {fallbackError.message}
+                    Error: {error.message}
                 </p>
 
                 <p style={errorParagraph}>
@@ -39,13 +39,13 @@ export default function ErrorHandler(props: PropsWithChildren) {
     };
 
     return (
-        <ErrorBoundary fallbackRender={({ error, resetErrorBoundary }) => errorPage(error, resetErrorBoundary)}>
-            <Modal show={error !== ""} onHide={() => setError("")} style={{color: "black"}}>
+        <ErrorBoundary fallbackRender={errorPage}>
+            <Modal show={errorMsg !== ""} onHide={() => setError("")} style={{color: "black"}}>
                 <Modal.Header closeButton>
                     <Modal.Title>Error</Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body>{error}</Modal.Body>
+                <Modal.Body>{errorMsg}</Modal.Body>
             </Modal>
 
             <ErrorContext.Provider value={{setError}}>

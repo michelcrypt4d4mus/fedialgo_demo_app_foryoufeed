@@ -2,7 +2,7 @@
  * Simple component for links that open in a new tab.
  */
 
-import React, { CSSProperties, PropsWithChildren, ReactElement } from "react";
+import React, { CSSProperties } from "react";
 
 import { CRYPTADAMUS_MASTODON_URL } from "../../helpers/string_helpers";
 

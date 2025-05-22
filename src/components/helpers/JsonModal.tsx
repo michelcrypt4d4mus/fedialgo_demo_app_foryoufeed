@@ -7,8 +7,8 @@ import { Modal } from 'react-bootstrap';
 
 import ReactJsonView from '@microlink/react-json-view';
 
-import { globalFont } from '../helpers/style_helpers';
-import { ModalProps } from '../types';
+import { globalFont } from '../../helpers/style_helpers';
+import { ModalProps } from '../../types';
 
 type ReactJsonViewProps = typeof ReactJsonView.defaultProps;
 

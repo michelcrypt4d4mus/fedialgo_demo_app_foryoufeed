@@ -4,8 +4,8 @@ import parse from 'html-react-parser';
 import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
 import { mastodon } from 'masto';
 
-import { titleStyle } from "../helpers/style_helpers";
-import { User } from '../types';
+import { titleStyle } from "../../helpers/style_helpers";
+import { User } from '../../types';
 
 const NUM_SUGGESTIONS = 4;
 

@@ -6,13 +6,13 @@ import React, { CSSProperties } from 'react';
 import { Modal } from 'react-bootstrap';
 
 import { DataKey } from 'recharts/types/util/types';
-import { Label, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { MinMaxAvgScore, ScoreName, ScoreStats, formatScore } from 'fedialgo';
 
-import LabeledDropdownButton from './helpers/LabeledDropdownButton';
-import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../helpers/style_helpers';
+import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
+import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../../helpers/style_helpers';
 import { ModalProps } from 'react-bootstrap';
-import { useAlgorithm } from '../hooks/useAlgorithm';
+import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
 const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
