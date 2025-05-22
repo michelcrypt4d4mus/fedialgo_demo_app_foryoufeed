@@ -19,6 +19,7 @@ import WeightSetter from "../components/algorithm/WeightSetter";
 import { CRYPTADAMUS_MASTODON_URL, logMsg, warnMsg } from "../helpers/string_helpers";
 import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
+import TheAlgorithm from "fedialgo";
 
 const NUM_TOOTS_TO_LOAD_ON_SCROLL = 10;
 const DEFAULT_NUM_DISPLAYED_TOOTS = 20;
@@ -173,20 +174,19 @@ export default function Feed() {
                         {algorithm && <ExperimentalFeatures />}
 
                         <div style={stickySwitchContainer}>
-                            {(isLoading)
+                            {isLoading
                                 ? <LoadingSpinner message={loadingStatus} style={loadingMsgStyle} />
                                 : finishedLoadingMsg(algorithm?.lastLoadTimeInSeconds)}
 
                             <p style={scrollStatusMsg}>
-                                {`Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`}
+                                {!TheAlgorithm.isDebugMode
+                                    ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
+                                    : <>
+                                        Report bugs: <a href={CRYPTADAMUS_MASTODON_URL} style={bugsLink} target="_blank">
+                                            @cryptadamist</a>
+                                    </>}
                             </p>
                         </div>
-
-                        <p style={{...bugReport}}>
-                            Report bugs to <a href={CRYPTADAMUS_MASTODON_URL} style={{color: "lightgrey"}} target="_blank">
-                                @cryptadamist@universeodon.com
-                            </a>
-                        </p>
                     </div>
                 </Col>
 
@@ -229,6 +229,11 @@ export default function Feed() {
     );
 };
 
+
+const bugsLink: CSSProperties = {
+    color: "lightgrey",
+    textDecoration: "none",
+};
 
 const controlPanelFooter: CSSProperties = {
     height: "20px",
