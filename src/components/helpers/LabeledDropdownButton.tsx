@@ -2,7 +2,6 @@
  * Drop down button that starts with a default but updates to take a value.
  */
 import React, { CSSProperties } from 'react';
-
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 

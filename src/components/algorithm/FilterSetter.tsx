@@ -4,8 +4,8 @@
  * are trending in the Fedivers.
  */
 import React from "react";
-
 import Accordion from 'react-bootstrap/esm/Accordion';
+
 import { Tooltip } from 'react-tooltip';
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";

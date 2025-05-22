@@ -3,10 +3,10 @@
  * React Bootstrap Modal: https://getbootstrap.com/docs/5.0/components/modal/
  */
 import React, { CSSProperties } from 'react';
+import { Modal } from 'react-bootstrap';
 
 import { DataKey } from 'recharts/types/util/types';
 import { Label, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Modal } from 'react-bootstrap';
 import { MinMaxAvgScore, ScoreName, ScoreStats, formatScore } from 'fedialgo';
 
 import LabeledDropdownButton from './helpers/LabeledDropdownButton';

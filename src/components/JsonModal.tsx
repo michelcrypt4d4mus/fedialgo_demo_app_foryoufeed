@@ -3,9 +3,9 @@
  * React Bootstrap Modal: https://getbootstrap.com/docs/5.0/components/modal/
  */
 import React, { CSSProperties, ReactNode } from 'react';
+import { Modal } from 'react-bootstrap';
 
 import ReactJsonView from '@microlink/react-json-view';
-import { Modal } from 'react-bootstrap';
 
 import { globalFont } from '../helpers/style_helpers';
 import { ModalProps } from '../types';

@@ -4,11 +4,11 @@
  * are trending in the Fedivers.
  */
 import React, { CSSProperties, ReactElement, useMemo } from "react";
-
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
+
 import tinygradient from "tinygradient";
+import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { compareStr, debugMsg } from "../../helpers/string_helpers";

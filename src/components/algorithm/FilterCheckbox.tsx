@@ -2,8 +2,8 @@
  * Component for checkboxes that drive the user's filter settings.
  */
 import React, { CSSProperties, useState } from "react";
-
 import Form from 'react-bootstrap/esm/Form';
+
 import { capitalCase } from "change-case";
 
 import { CheckboxTooltip } from "./FilterCheckboxGrid";

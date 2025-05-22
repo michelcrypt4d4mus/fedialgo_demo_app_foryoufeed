@@ -2,11 +2,12 @@
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
 import React, { CSSProperties, useState, useEffect, useRef } from "react";
-
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+
+import TheAlgorithm from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import BugReportLink from "../components/helpers/BugReportLink";
@@ -21,7 +22,6 @@ import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from 
 import { logMsg, warnMsg } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
-import TheAlgorithm from "fedialgo";
 
 const NUM_TOOTS_TO_LOAD_ON_SCROLL = 10;
 const DEFAULT_NUM_DISPLAYED_TOOTS = 20;
@@ -176,12 +176,6 @@ export default function Feed() {
                                 {TheAlgorithm.isDebugMode
                                     ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
                                     : <BugReportLink />}
-                            </p>
-
-                           <p style={scrollStatusMsg}>
-                                <a onClick={() => {throw new Error("Debug mode is on!")}} style={bugsLink}>
-                                    Throw Test Error
-                                </a>
                             </p>
                         </div>
                     </div>

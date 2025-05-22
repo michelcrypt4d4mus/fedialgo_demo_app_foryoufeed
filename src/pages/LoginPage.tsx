@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
-
 import Button from 'react-bootstrap/esm/Button';
 import Form from 'react-bootstrap/esm/Form';
+
 import { createRestAPIClient } from 'masto';
 import { FEDIALGO } from "fedialgo";
 import { stringifyQuery } from 'ufo';

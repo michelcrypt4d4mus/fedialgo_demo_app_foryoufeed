@@ -4,7 +4,6 @@
  * are trending in the Fedivers.
  */
 import React, { CSSProperties, PropsWithChildren } from "react";
-
 import Accordion from 'react-bootstrap/esm/Accordion';
 
 import { accordionBody, noPadding, titleStyle } from "../../helpers/style_helpers";

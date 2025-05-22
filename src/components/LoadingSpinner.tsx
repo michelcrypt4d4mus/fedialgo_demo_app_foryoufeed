@@ -3,6 +3,7 @@
  */
 import React, { CSSProperties } from 'react';
 import Spinner from 'react-bootstrap/esm/Spinner';
+
 import { READY_TO_LOAD_MSG } from "fedialgo";
 
 const ANIMATION = "grow";  // "border" is the other option

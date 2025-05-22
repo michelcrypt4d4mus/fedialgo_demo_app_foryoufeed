@@ -2,8 +2,8 @@
  * React component to display polls, mostly ripped from poll.tsx in Mastodon repo
  */
 import React, { KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
-
 import { Button } from 'react-bootstrap';
+
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { mastodon } from 'masto';
