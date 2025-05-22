@@ -19,7 +19,7 @@ import {
     faVolumeMute
 } from "@fortawesome/free-solid-svg-icons";
 
-import { confirm } from "../Confirmation";
+import { confirm } from "../helpers/Confirmation";
 import { logMsg, scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
