@@ -20,6 +20,30 @@ export const PARTICIPATED_TAG_COLOR_MIN = "#d8deb9";
 export const TRENDING_TAG_COLOR = RED;
 export const TRENDING_TAG_COLOR_FADED = '#f08c8c';
 
+export const RECHARTS_COLORS: CSSProperties["color"][] = [
+    "red",
+    "orange",
+    // "yellow",
+    "green",
+    "blue",
+    "purple",
+    "pink",
+    "brown",
+    "grey",
+    "fuchsia",
+    "lime",
+    "cyan",
+    "bisque",
+    // "navy",
+    "orangered",
+    "skyblue",
+    "rosybrown",
+    "olive",
+    "mediumvioletred",
+    "lightgoldenrodyellow",
+    "gold",
+    "crimson",
+];
 
 export const accordionBody: CSSProperties = {
     backgroundColor: '#b2bfd4',

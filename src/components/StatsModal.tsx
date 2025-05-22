@@ -4,47 +4,21 @@
  */
 import React, { CSSProperties } from 'react';
 
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import { DataKey } from 'recharts/types/util/types';
-import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Label, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Modal } from 'react-bootstrap';
 import { MinMaxAvgScore, ScoreName, ScoreStats, formatScore } from 'fedialgo';
 
-import { FEED_BACKGROUND_COLOR } from '../helpers/style_helpers';
+import LabeledDropdownButton from './helpers/LabeledDropdownButton';
+import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../helpers/style_helpers';
 import { ModalProps } from 'react-bootstrap';
 import { useAlgorithm } from '../hooks/useAlgorithm';
 
-const COLORS: CSSProperties["color"][] = [
-    "red",
-    "orange",
-    // "yellow",
-    "green",
-    "blue",
-    "purple",
-    "pink",
-    "brown",
-    "grey",
-    "fuchsia",
-    "lime",
-    "cyan",
-    "bisque",
-    // "navy",
-    "orangered",
-    "skyblue",
-    "rosybrown",
-    "olive",
-    "mediumvioletred",
-    "lightgoldenrodyellow",
-    "gold",
-    "crimson",
-];
+const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
+const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
 
 interface StatsModalProps extends ModalProps {
 };
-
-const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
-const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
 
 
 export default function StatsModal(props: StatsModalProps) {
@@ -76,21 +50,19 @@ export default function StatsModal(props: StatsModalProps) {
             </Modal.Header>
 
             <Modal.Body >
-                <DropdownButton id="scoreType" title={"Raw or Weighted"} style={buttonStyle} variant="info">
-                    {SCORE_TYPES.map((scoreType) => (
-                        <Dropdown.Item key={scoreType} onClick={() => setScoreType(scoreType)} >
-                            {scoreType}
-                        </Dropdown.Item>
-                    ))}
-                </DropdownButton>
+                <LabeledDropdownButton
+                    initialLabel={"Raw or Weighted"}
+                    onClick={(value) => setScoreType(value as keyof ScoreStats)}
+                    options={SCORE_TYPES}
+                    style={buttonStyle}
+                />
 
-                <DropdownButton id="valueType" title={"Value Type"} style={buttonStyle} variant="info">
-                    {VALUE_TYPES.map((valueType) => (
-                        <Dropdown.Item key={valueType as string} onClick={() => setValueType(valueType)}>
-                            {valueType as string}
-                        </Dropdown.Item>
-                    ))}
-                </DropdownButton>
+                <LabeledDropdownButton
+                    initialLabel={"Value Type"}
+                    onClick={(value) => setValueType(value as keyof MinMaxAvgScore)}
+                    options={VALUE_TYPES}
+                    style={buttonStyle}
+                />
 
                 <ResponsiveContainer height={600} width="100%">
                     <LineChart
@@ -130,7 +102,7 @@ export default function StatsModal(props: StatsModalProps) {
                                     hide={hiddenLines.includes(key)}
                                     legendType='line'
                                     // isAnimationActive={false}
-                                    stroke={COLORS[i]}
+                                    stroke={RECHARTS_COLORS[i]}
                                     strokeWidth={2}
                                 />
                             );})}
