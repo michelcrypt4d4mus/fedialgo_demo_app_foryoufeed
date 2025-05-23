@@ -40,13 +40,13 @@ export default function Header() {
 
                     <span
                         className='text-center align-middle p-2'
-                        style={{fontSize: 20, whiteSpace: "nowrap"}}
+                        style={{fontSize: 16, whiteSpace: "nowrap"}}
                     >
                         <a href={REPO_URL} style={{color: "white"}} target="_blank">
                             Fedialgo Demo
                         </a>
 
-                        {' '}<span style={{color: "lightgrey", fontSize: 14}}>(
+                        {' '}<span style={{color: "lightgrey", fontSize: 10}}>(
                             <a href={CHANGELOG_URL} style={{color: "grey"}} target="_blank">
                                 v{process.env.FEDIALGO_VERSION}
                             </a>

@@ -32,7 +32,7 @@ export default function App(): React.ReactElement {
     // From: https://github.com/auth0/auth0-spa-js/issues/407
     if (window.location.href.includes('?code=')){
         const newUrl = window.location.href.replace(/\/(\?code=.*)/, '/#/callback$1')
-        logSafe('<App.tsx> Callback, redirecting to:', newUrl);
+        logSafe(`<App.tsx> OAuth callback to "${window.location.href}", redirecting to "${newUrl}"`);
         window.location.href = newUrl;
     }
 

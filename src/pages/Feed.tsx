@@ -116,10 +116,10 @@ export default function Feed() {
     }, [algorithm, algorithm?.loadingStatus, isLoading]);
 
 
-    const buildStateCheckbox = (label: string, state: ReturnType<typeof useState<boolean>>) => (
+    const buildStateCheckbox = (label: string, state: ReturnType<typeof useState<boolean>>, className?: string) => (
         <Form.Check
             checked={state[0]}
-            className="mb-3"  // bootstrap spacing info: https://getbootstrap.com/docs/5.1/utilities/spacing/
+            className={className || ''}
             key={label}
             label={label}
             onChange={(e) => state[1](e.target.checked)}
@@ -149,7 +149,7 @@ export default function Feed() {
                     {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
                     <div className="sticky-top" style={isControlPanelStickyState[0] ? {} : {position: "relative"}} >
                         <div style={stickySwitchContainer}>
-                            {buildStateCheckbox(`Stick Control Panel To Top`, isControlPanelStickyState)}
+                            {buildStateCheckbox(`Stick Control Panel To Top`, isControlPanelStickyState, 'd-none d-sm-block')}
                             {buildStateCheckbox(`Hide Link Previews`, hideLinkPreviewsState)}
 
                             <a
@@ -172,7 +172,7 @@ export default function Feed() {
                                 ? <LoadingSpinner message={loadingStatus} style={loadingMsgStyle} />
                                 : finishedLoadingMsg(algorithm?.lastLoadTimeInSeconds)}
 
-                            <p style={scrollStatusMsg}>
+                            <p style={scrollStatusMsg} className="d-none d-sm-block">
                                 {TheAlgorithm.isDebugMode
                                     ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
                                     : <BugReportLink />}
@@ -227,8 +227,7 @@ const bugsLink: CSSProperties = {
 };
 
 const controlPanelFooter: CSSProperties = {
-    height: "20px",
-    marginBottom: "5px",
+    height: "auto",
     paddingLeft: "2px",
     paddingRight: "2px",
 };
@@ -242,7 +241,7 @@ const bugReport: CSSProperties = {
 
 const loadingMsgStyle: CSSProperties = {
     fontSize: "16px",
-    height: "20px",
+    height: "auto",
     marginTop: "6px",
 };
 
