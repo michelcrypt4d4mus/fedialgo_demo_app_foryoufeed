@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 // import Toast from 'react-bootstrap/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Toot, formatScore } from "fedialgo";
+import { Toot } from "fedialgo";
 import {
     IconDefinition,
     faBolt,
@@ -33,6 +33,7 @@ import PreviewCard from "./PreviewCard";
 import useOnScreen from "../../hooks/useOnScreen";
 import { debugMsg, logSafe, timestampString } from '../../helpers/string_helpers';
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR } from "../../helpers/style_helpers";
+import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
@@ -173,7 +174,7 @@ export default function StatusComponent(props: StatusComponentProps) {
         <div>
             <JsonModal
                 infoTxt="Scoring categories where the unweighted score is zero are not shown."
-                json={toot.alternateScoreInfo()}
+                json={toot.scoreInfo ? formatScores(toot.scoreInfo) as object : {}}
                 jsonViewProps={{
                     collapsed: 3,
                     name: "toot.scoreInfo",

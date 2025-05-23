@@ -7,10 +7,11 @@ import { Modal } from 'react-bootstrap';
 
 import { DataKey } from 'recharts/types/util/types';
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { MinMaxAvgScore, ScoreName, ScoreStats, formatScore } from 'fedialgo';
+import { MinMaxAvgScore, ScoreName, ScoreStats } from 'fedialgo';
 
 import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
 import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../../helpers/style_helpers';
+import { formatScore } from '../../helpers/number_helpers';
 import { ModalProps } from 'react-bootstrap';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
