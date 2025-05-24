@@ -6,6 +6,7 @@
 import React from "react";
 import Accordion from 'react-bootstrap/esm/Accordion';
 
+import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
@@ -54,7 +55,7 @@ export default function FilterSetter() {
                         <Slider
                             description={numericFilter.description}
                             key={`${name}_${i}`}
-                            label={numericFilter.title}
+                            label={capitalCase(numericFilter.title)}
                             maxValue={50}
                             minValue={0}
                             onChange={async (e) => {
