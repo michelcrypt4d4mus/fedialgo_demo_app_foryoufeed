@@ -54,12 +54,19 @@ interface FilterCheckboxGridProps {
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, minToots, sortByCount, highlightedOnly } = props;
     const { algorithm } = useAlgorithm();
-
-    const maxParticipations = Math.max(...Object.values(algorithm.userData.participatedHashtags).map(t => t.numToots));
-    const participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
-    const participatedColorArray = participatedColorGradient.rgb(Math.max(maxParticipations, 2));
-    const trendingTagNames = algorithm.trendingData.tags.map(tag => tag.name);
     let optionKeys: string[];
+
+    const participatedColorArray = useMemo(() => {
+        const participatedTags = Object.values(algorithm.userData.participatedHashtags);
+        const maxParticipations = Math.max(...participatedTags.map(t => t.numToots));
+        const participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
+        return participatedColorGradient.rgb(Math.max(maxParticipations, 2));
+    }, [algorithm.userData.participatedHashtags]);
+
+    const trendingTagNames = useMemo(
+        () => algorithm.trendingData.tags.map(tag => tag.name),
+        [algorithm.trendingData.tags]
+    );
 
     // Generate color and tooltip text for a hashtag checkbox
     const getTooltipInfo = (name: string): CheckboxTooltip | undefined => {
@@ -84,7 +91,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionInfo = useMemo(
         () => {
-            // debugMsg(`useMemo() recomputing optionInfo for ${filter.title}, validValues:`, filter.validValues);
             if (!minToots) return filter.optionInfo;
 
             // For "filtered" filters only allow options with a minimum number of toots (and active options)
