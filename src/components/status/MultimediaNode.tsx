@@ -10,7 +10,8 @@ import { warnMsg } from "../../helpers/string_helpers";
 const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 // TODO: what is this for?
-const HIDDEN_CANVAS = <canvas className="media-gallery__preview media-gallery__preview--hidden" height="32" width="32"/>;
+const GALLERY_CLASS = `media-gallery__preview`;
+const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
 
 interface MultimediaNodeProps {
     status: Toot;
