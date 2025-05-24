@@ -54,7 +54,6 @@ interface FilterCheckboxGridProps {
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, minToots, sortByCount, highlightedOnly } = props;
     const { algorithm } = useAlgorithm();
-    let optionKeys: string[];
 
     const participatedColorArray = useMemo(() => {
         const participatedTags = Object.values(algorithm.userData.participatedHashtags);
@@ -89,34 +88,37 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         }
     };
 
-    const optionInfo = useMemo(
+    const optionKeys: string[] = useMemo(
         () => {
-            if (!minToots) return filter.optionInfo;
+            let optionInfo = filter.optionInfo;
 
-            // For "filtered" filters only allow options with a minimum number of toots (and active options)
-            return Object.fromEntries(Object.entries(filter.optionInfo).filter(
-                ([option, numToots]) => {
-                    if (filter.validValues.includes(option)) return true;
-                    if (numToots >= minToots) return (highlightedOnly ? !!getTooltipInfo(option) : true);
-                    return false;
-                }
-            ));
+            if (minToots) {
+                // For "filtered" filters only allow options with a minimum number of toots (and active options)
+                optionInfo = Object.fromEntries(Object.entries(filter.optionInfo).filter(
+                    ([option, numToots]) => {
+                        if (filter.validValues.includes(option)) return true;
+                        if (numToots >= minToots) return (highlightedOnly ? !!getTooltipInfo(option) : true);
+                        return false;
+                    }
+                ));
+            }
+
+            if (sortByCount) {
+                return sortKeysByValue(optionInfo);
+            } else {
+                return Object.keys(optionInfo).sort((a, b) => compareStr(a, b));
+            }
         },
         [
             algorithm.userData.followedTags,
             filter.optionInfo,
             filter.title,
             filter.validValues,
+            highlightedOnly,
             minToots,
-            highlightedOnly
+            sortByCount,
         ]
     );
-
-    if (sortByCount) {
-        optionKeys = sortKeysByValue(optionInfo);
-    } else {
-        optionKeys = Object.keys(optionInfo).sort((a, b) => compareStr(a, b));
-    }
 
     // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
     const propertyCheckbox = (name: string, i: number) => {
