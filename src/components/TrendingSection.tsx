@@ -49,6 +49,11 @@ export default function TrendingSection(props: TrendingProps) {
 };
 
 
+const infoTxtStyle: CSSProperties = {
+    fontSize: LINK_FONT_SIZE - 3,
+    marginLeft: "6px",
+};
+
 const listItemStyle: CSSProperties = {
     marginBottom: "7px",
     marginTop: "7px",
@@ -61,11 +66,6 @@ const listStyle: CSSProperties = {
     paddingLeft: "20px",
 };
 
-const subHeaderLabel: CSSProperties = {
-    marginBottom: "-5px",
-    marginTop: "-5px"
-};
-
 const tagLinkStyle: CSSProperties = {
     color: "black",
 };
@@ -73,9 +73,4 @@ const tagLinkStyle: CSSProperties = {
 const boldTagLinkStyle: CSSProperties = {
     ...tagLinkStyle,
     fontWeight: "bold",
-};
-
-export const infoTxtStyle: CSSProperties = {
-    fontSize: LINK_FONT_SIZE - 3,
-    marginLeft: "6px",
 };
