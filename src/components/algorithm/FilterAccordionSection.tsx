@@ -18,7 +18,7 @@ export default function FilterAccordionSection(props: FilterAccordionSectionProp
 
     return (
         <SubAccordion {...props}>
-            {/* Top bar with invert/sort switches */}
+            {/* Top bar with invert/sort/etc. switches */}
             <div style={switchesContainer} key={"filterSwitchContainer"}>
                 {switchbar}
             </div>
