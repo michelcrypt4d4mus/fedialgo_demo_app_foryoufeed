@@ -7,11 +7,11 @@ import { mastodon } from 'masto';
 
 import { warnMsg } from "../../helpers/string_helpers";
 
-const IMAGES_HEIGHT = 314;
-const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
-// TODO: what is this for?
+// TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
 const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
+const IMAGES_HEIGHT = 314;
+const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 
 interface MultimediaNodeProps {
     status: Toot;
