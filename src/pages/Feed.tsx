@@ -36,9 +36,6 @@ export default function Feed() {
     const { algorithm, isLoading, setShouldAutoUpdate, shouldAutoUpdate, timeline, triggerFeedUpdate } = useAlgorithm();
     const { setError } = useError();
 
-    const bottomRef = useRef<HTMLDivElement>(null);
-    const isBottom = useOnScreen(bottomRef);
-
     // State variables
     const hideLinkPreviewsState = useState(false);
     const isControlPanelStickyState = useState(true);  // Left panel stickiness
@@ -47,6 +44,8 @@ export default function Feed() {
     const [prevScrollY, setPrevScrollY] = useState(0);
     const [scrollPercentage, setScrollPercentage] = useState(0);
 
+    const bottomRef = useRef<HTMLDivElement>(null);
+    const isBottom = useOnScreen(bottomRef);
     const numShownToots = Math.max(DEFAULT_NUM_DISPLAYED_TOOTS, numDisplayedToots);
 
     // Reset all state except for the user and server

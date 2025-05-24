@@ -7,6 +7,9 @@ import { mastodon } from 'masto';
 
 import { warnMsg } from "../../helpers/string_helpers";
 
+// TODO: what is this for? It came from pkreissel's original implementation
+const GALLERY_CLASS = `media-gallery__preview`;
+const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
 const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 
@@ -19,10 +22,7 @@ interface MultimediaNodeProps {
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
     const { status, setMediaInspectionIdx } = props;
     const images = status.imageAttachments;
-    const style = {overflow: "hidden"};
     let imageHeight = IMAGES_HEIGHT;
-    // TODO: what is this for?
-    const hiddenCanvas = <canvas className="media-gallery__preview media-gallery__preview--hidden" height="32" width="32"/>
 
     // If there's one image try to show it full size; If there's more than one use old image handler.
     if (images.length == 1 ) {
@@ -43,7 +43,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     width: 1 / status.mediaAttachments.length * 100 + "%"
                 }}
             >
-                {hiddenCanvas}
+                {HIDDEN_CANVAS}
 
                 <LazyLoadImage
                     alt={image.description}
@@ -60,13 +60,13 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
 
     if (status.imageAttachments.length > 0) {
         return (
-            <div className="media-gallery" style={{ height: images.length > 1 ? '100%' : `${imageHeight}px`, ...style }}>
+            <div className="media-gallery" style={{height: images.length > 1 ? '100%' : `${imageHeight}px`, ...style}}>
                 {status.imageAttachments.map((image, i) => makeImage(image, i))}
             </div>
         );
     } else if (status.videoAttachments.length > 0) {
         return (
-            <div className="media-gallery" style={{ height: `${VIDEO_HEIGHT}px`, ...style }}>
+            <div className="media-gallery" style={{height: `${VIDEO_HEIGHT}px`, ...style}}>
                 {status.videoAttachments.map((video, i) => {
                     const sourceTag = <source src={video?.remoteUrl || video?.url} type="video/mp4" />;
                     let videoTag: React.ReactElement;
@@ -88,7 +88,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
 
                     return (
                         <div className="media-gallery__item" key={i} style={videoContainer}>
-                            {hiddenCanvas}
+                            {HIDDEN_CANVAS}
                             {videoTag}
                         </div>
                     );
@@ -97,7 +97,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         );
     } else if (status.audioAttachments.length > 0) {
         return (
-            <div className="media-gallery" style={{ height: `${imageHeight / 4}px`, ...style }}>
+            <div className="media-gallery" style={{height: `${imageHeight / 4}px`, ...style}}>
                 <audio controls style={{ width: "100%" }}>
                     <source src={status.audioAttachments[0].remoteUrl} type="audio/mpeg" />
                 </audio>
@@ -127,6 +127,10 @@ const imageStyle: CSSProperties = {
     // filter: "drop-shadow(0 -5px 0 gray) drop-shadow(0 5px 0 gray) drop-shadow(-5px 0 0 gray) drop-shadow(5px 0 0 gray)",
     objectFit: "contain",
     objectPosition: "top",
+};
+
+const style: CSSProperties = {
+    overflow: "hidden"
 };
 
 const videoContainer: CSSProperties = {
