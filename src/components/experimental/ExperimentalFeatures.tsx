@@ -11,6 +11,7 @@ import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
+import { AppStorage, useUserStorage, useLocalStorage } from "../../hooks/useLocalStorage";
 import { logMsg, versionString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useAuthContext } from "../../hooks/useAuth";
@@ -19,24 +20,40 @@ import { useError } from "../helpers/ErrorHandler";
 const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
 const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
+const WIPE_ALL = "Wipe All User Data";
 
 const BUTTON_TEXT = {
     [SCORE_STATS]: "Show a bar chart of the scores of your timeline",
     [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state`,
     [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed. " +
                                   "Takes time & resources proportional to the number of times you've tooted.",
+    [WIPE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors.",
 };
+
+export const OAUTH_ERROR_MSG = `You may have used ${FEDIALGO} before it requested` +
+        ` appropriate permissions. This can be fixed with the "${WIPE_ALL}" button in the Experimental Features` +
+        ` section or by manually clearing all your cookies for this site.`;
 
 
 export default function ExperimentalFeatures() {
     const { algorithm, api, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
+    const { logout, setApp, setUser, user } = useAuthContext();
     const { setError } = useError();
-    const { user } = useAuthContext();
 
     const [algoState, setAlgoState] = useState({});
     const [isLoadingState, setIsLoadingState] = useState(false);
     const [showStateModal, setShowStateModal] = useState(false);
     const [showStatsModal, setShowStatsModal] = useState(false);
+
+    // Reset all state except for the user and server
+    const wipeAll = async () => {
+        if (!window.confirm("Are you sure?")) return;  // TODO: use a better confirmation dialog
+        setError("");
+        setApp(null);
+        setUser(null);
+        await algorithm?.reset(true);
+        logout();
+    };
 
     const showAlgoState = () => {
         logMsg(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
@@ -107,6 +124,8 @@ export default function ExperimentalFeatures() {
                     {makeLabeledButton(SCORE_STATS, () => setShowStatsModal(true))}
                     <hr className="hr" />
                     {makeLabeledButton(LOAD_COMPLETE_USER_HISTORY, triggerPullAllUserData)}
+                    <hr className="hr" />
+                    {makeLabeledButton(WIPE_ALL, wipeAll, "danger")}
                 </ul>
 
                 <hr className="hr" />

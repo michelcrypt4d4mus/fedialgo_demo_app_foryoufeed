@@ -14,7 +14,8 @@ import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
 import { FEED_BACKGROUND_COLOR } from '../../helpers/style_helpers';
 import { errorMsg, logMsg } from '../../helpers/string_helpers';
-import { FakeToot, ModalProps } from '../../types';
+import { ModalProps } from '../../types';
+import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
 
@@ -95,7 +96,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                         setMediaAttachments(prev => [...prev, media]);
                     })
                     .catch(err => {
-                        logAndSetError(`Failed to upload media "${file.name}"`, err);
+                        logAndSetError(`Failed to upload media "${file.name}". ${OAUTH_ERROR_MSG}`, err);
                     })
                     .finally(() => {
                         setIsAttaching(false);
@@ -141,7 +142,9 @@ export default function ReplyModal(props: ReplyModalProps) {
             </Modal.Header>
 
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
-                <StatusComponent fontColor="black" hideLinkPreviews={true} status={toot}/>
+                <div style={{backgroundColor: FEED_BACKGROUND_COLOR, borderRadius: "3px"}}>
+                    <StatusComponent hideLinkPreviews={true} status={toot}/>
+                </div>
 
                 <Form.Group className="mb-3" style={{}}>
                     <Form.Control
@@ -202,6 +205,7 @@ const dropzoneStyle: CSSProperties = {
 
 const formStyle: CSSProperties = {
     backgroundColor: "white",// FEED_BACKGROUND_COLOR,
+    borderWidth: "5px",
     color: "black",
     marginTop: "15px",
 };
