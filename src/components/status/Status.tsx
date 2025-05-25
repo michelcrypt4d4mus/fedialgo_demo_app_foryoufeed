@@ -211,8 +211,8 @@ export default function StatusComponent(props: StatusComponentProps) {
 
             <ReplyModal
                 toot={toot}
-                show={showReplyModal}
                 setShow={setShowReplyModal}
+                show={showReplyModal}
             />
 
             {hasImageAttachments &&
