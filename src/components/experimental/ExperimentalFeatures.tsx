@@ -37,7 +37,7 @@ export const OAUTH_ERROR_MSG = `You may have used ${FEDIALGO} before it requeste
 
 export default function ExperimentalFeatures() {
     const { algorithm, api, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
-    const { logout, setApp, setUser, user } = useAuthContext();
+    const { logout, setApp, user } = useAuthContext();
     const { setError } = useError();
 
     const [algoState, setAlgoState] = useState({});
@@ -45,16 +45,7 @@ export default function ExperimentalFeatures() {
     const [showStateModal, setShowStateModal] = useState(false);
     const [showStatsModal, setShowStatsModal] = useState(false);
 
-    // Reset all state except for the user and server
-    const wipeAll = async () => {
-        if (!(await confirm(`Are you sure you want to completely wipe all FediAlgo data and start over?`))) return;
-        setError("");
-        setApp(null);
-        setUser(null);
-        await algorithm?.reset(true);
-        logout();
-    };
-
+    // Show modal with algorithm internal state
     const showAlgoState = () => {
         logMsg(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
         setIsLoadingState(true);
@@ -71,6 +62,14 @@ export default function ExperimentalFeatures() {
             .finally(() => setIsLoadingState(false));
         ;
     }
+
+    // Reset all state except for the user and server
+    const wipeAll = async () => {
+        if (!(await confirm(`Are you sure you want to completely wipe all FediAlgo data and start over?`))) return;
+        setApp(null);
+        await algorithm?.reset(true);
+        logout();
+    };
 
     const makeLabeledButton = (label: keyof typeof BUTTON_TEXT, onClick: () => void, variant?: string) => (
         <li key={label} style={listElement}>

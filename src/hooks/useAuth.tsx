@@ -8,8 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { logMsg, logSafe } from "../helpers/string_helpers";
 import { useAppStorage, useUserStorage } from "./useLocalStorage";
 import { User } from "../types";
+import { useError } from "../components/helpers/ErrorHandler";
 
 const LOG_PREFIX = `<AuthProvider>`;
+const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
 
 const AuthContext = createContext({
     setLoggedInUser: async (_user: User) => {},
@@ -21,11 +23,11 @@ const AuthContext = createContext({
 
 
 export default function AuthProvider(props: PropsWithChildren) {
+    const { setError } = useError();
+    const navigate = useNavigate();
+
     const [app, setApp] = useAppStorage({ keyName: "app", defaultValue: null });
     const [user, setUser] = useUserStorage({ keyName: "user", defaultValue: null });
-
-    const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
-    const navigate = useNavigate();
 
     // User object looks like this:
     // {
@@ -56,9 +58,10 @@ export default function AuthProvider(props: PropsWithChildren) {
             // Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://universeodon.com/oauth/revoke. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.""
             const _logoutResponse = await axios.post(oauthRevokeURL, body);
         } catch (error) {
-            console.warn(`Error while trying to logout "${error}":`, error);
+            console.warn(`(Possibly innocuous) error while trying to logout "${error}":`, error);
         }
 
+        setError("");
         setUser(null);
         navigate("/login", {replace: true});
     };
