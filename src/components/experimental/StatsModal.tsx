@@ -12,17 +12,14 @@ import { MinMaxAvgScore, ScoreName, ScoreStats } from 'fedialgo';
 import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
 import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../../helpers/style_helpers';
 import { formatScore } from '../../helpers/number_helpers';
-import { ModalProps } from 'react-bootstrap';
+import { ModalProps } from '../../types';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
 const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
 
-interface StatsModalProps extends ModalProps {
-};
 
-
-export default function StatsModal(props: StatsModalProps) {
+export default function StatsModal(props: ModalProps) {
     let { dialogClassName, show, setShow, title } = props;
     const { algorithm } = useAlgorithm();
     if (!algorithm) return <>   </>;
