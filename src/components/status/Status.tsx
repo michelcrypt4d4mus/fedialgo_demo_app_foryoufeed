@@ -211,8 +211,8 @@ export default function StatusComponent(props: StatusComponentProps) {
 
             <ReplyModal
                 toot={toot}
-                show={showReplyModal}
                 setShow={setShowReplyModal}
+                show={showReplyModal}
             />
 
             {hasImageAttachments &&
@@ -253,7 +253,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 {timestampString(toot.createdAt)}
                             </time>
 
-                            <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={{ marginLeft: "10px" }}>
+                            <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={openJSON}>
                                 {infoIcon(InfoIconType.ShowToot)}
                             </span>
                         </NewTabLink>
@@ -265,7 +265,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 data-tooltip-html={toot.account.noteWithAccountInfo()}
                             >
                                 <div className="status__avatar">
-                                    <div className="account__avatar" style={{ width: "46px", height: "46px" }}>
+                                    <div className="account__avatar" style={{height: "46px", width: "46px"}}>
                                         <LazyLoadImage src={toot.account.avatar} alt={`${toot.account.webfingerURI}`} />
                                     </div>
                                 </div>
@@ -274,7 +274,10 @@ export default function StatusComponent(props: StatusComponentProps) {
                             <span className="display-name">
                                 <bdi>
                                     <strong key="internalBDI" className="display-name__html">
-                                        <NewTabLink href={toot.account.homserverURL()} style={{...accountLink, ...fontStyle}}>
+                                        <NewTabLink
+                                            href={toot.account.homserverURL()}
+                                            style={{...accountLink, ...fontStyle}}
+                                        >
                                             {parse(toot.account.displayNameWithEmojis())}
                                         </NewTabLink>
 
@@ -282,7 +285,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                             <span
                                                 className="verified-badge"
                                                 key={`${f.name}_${i}`}
-                                                style={{ color: "lightblue", padding: "0px 5px" }}
+                                                style={{color: "lightblue", padding: "0px 5px"}}
                                                 title={f.value.replace(/<[^>]*>?/gm, '')}
                                             >
                                                 <FontAwesomeIcon aria-hidden="true" icon={faCheckCircle} />
@@ -351,6 +354,10 @@ const accountLink: CSSProperties = {
 
 const baseIconStyle: CSSProperties = {
     marginRight: "3px",
+};
+
+const openJSON: CSSProperties = {
+    marginLeft: "10px"
 };
 
 // TODO: this probably doesn't do anything because the <a> tag overrides it

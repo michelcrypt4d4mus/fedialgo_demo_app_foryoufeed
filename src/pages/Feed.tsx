@@ -19,6 +19,7 @@ import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
+import { confirm } from "../components/helpers/Confirmation";
 import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { logMsg, warnMsg } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
@@ -52,7 +53,7 @@ export default function Feed() {
 
     // Reset all state except for the user and server
     const reset = async () => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!(await confirm(`Are you sure you want to clear all historical data?`))) return;
         setError("");
         setNumDisplayedToots(DEFAULT_NUM_DISPLAYED_TOOTS);
         if (!algorithm) return;
