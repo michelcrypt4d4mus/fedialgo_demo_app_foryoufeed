@@ -21,6 +21,7 @@ import {
 
 import { confirm } from "../helpers/Confirmation";
 import { logMsg, scoreString } from "../../helpers/string_helpers";
+import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
@@ -98,9 +99,6 @@ export default function ActionButton(props: ActionButtonProps) {
     const { action, onClick, setThread, toot } = props;
     const { algorithm, api } = useAlgorithm();
     const { setError } = useError();
-
-    const oAuthErrorMsg = `Failed to ${action} account! You may have used ${FEDIALGO} before it requested` +
-        ` permission to ${action} accounts. This can be fixed by clearing your cookies for this site.`;
 
     const actionInfo = ACTION_INFO[action];
     let label = actionInfo.label || capitalCase(action);
@@ -212,7 +210,7 @@ export default function ActionButton(props: ActionButtonProps) {
                     // If there's an error, roll back the change to the original state
                     setCurrentState(startingState);
                     toot.account[actionInfo.booleanName] = startingState;
-                    const msg = `${oAuthErrorMsg} (${error.message})`;
+                    const msg = `Failed to ${action} account! ${OAUTH_ERROR_MSG} (${error.message})`;
                     console.error(`${msg} Resetting state to ${startingState}`, error);
                     setError(msg);
                 }

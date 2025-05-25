@@ -14,12 +14,14 @@ const LOG_PREFIX = `<AuthProvider>`;
 const AuthContext = createContext({
     setLoggedInUser: async (_user: User) => {},
     logout: () => {},
+    setApp: (_app: any) => undefined,
+    setUser: (_user: User | null) => undefined,
     user: null,
 });
 
 
 export default function AuthProvider(props: PropsWithChildren) {
-    const [app, _setApp] = useAppStorage({ keyName: "app", defaultValue: null });
+    const [app, setApp] = useAppStorage({ keyName: "app", defaultValue: null });
     const [user, setUser] = useUserStorage({ keyName: "user", defaultValue: null });
 
     const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
@@ -62,7 +64,7 @@ export default function AuthProvider(props: PropsWithChildren) {
     };
 
     const value = useMemo(
-        () => ({ logout, setLoggedInUser, user }),
+        () => ({ logout, setLoggedInUser, setApp, setUser, user }),
         [user]
     );
 

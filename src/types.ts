@@ -1,3 +1,5 @@
+import { ModalProps as BootstrapModalProps } from 'react-bootstrap';
+
 import type { mastodon } from 'masto';
 
 
@@ -17,10 +19,10 @@ export type User = {
 };
 
 
-export interface ModalProps {
+export interface ModalProps extends BootstrapModalProps {
     dialogClassName?: "modal-sm" | "modal-lg" | "modal-xl" | "modal-fullscreen" | undefined,
     show: boolean,
     setShow: (show: boolean) => void,
     subtitle?: string | React.ReactNode,
-    title: string,
+    title?: string,
 };
