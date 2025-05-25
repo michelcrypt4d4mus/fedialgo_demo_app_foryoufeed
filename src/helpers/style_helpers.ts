@@ -11,6 +11,7 @@ export const RED = 'firebrick';
 export const TOOLTIP_ANCHOR = "tooltip-anchor";
 
 export const FEED_BACKGROUND_COLOR = '#15202b';
+export const FEED_BACKGROUND_COLOR_LITE = '#bcddfd';
 export const FOLLOWED_TAG_COLOR = 'yellow';
 export const FOLLOWED_USER_COLOR = 'cyan';
 export const FOLLOWED_USER_COLOR_FADED = "#2092a1";

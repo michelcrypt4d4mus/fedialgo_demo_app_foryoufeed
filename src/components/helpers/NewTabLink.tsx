@@ -19,7 +19,12 @@ export default function NewTabLink(props: NewTabLinkProps): ReactElement {
         <a
             className={className || "no_specified_class"}
             href={href}
-            onClick={(e) => onClick && onClick(e)}
+            onClick={(e) => {
+                if (onClick) {
+                    e.preventDefault(); // Prevent default action if onClick is provided
+                    onClick(e);
+                }
+            }}
             rel="noreferrer"
             style={style || {}}
             target="_blank"

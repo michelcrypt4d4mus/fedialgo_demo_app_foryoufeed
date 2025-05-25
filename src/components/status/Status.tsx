@@ -237,26 +237,29 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {/* Top bar with account and info icons */}
                     <div className="status__info">
                         {/* Top right icons + timestamp that link to the toot */}
-                        <NewTabLink className="status__relative-time" href={toot.uri} onClick={(e) => openToot(toot, e)}>
-                            <span className="status__visibility-icon">
-                                {toot.editedAt && infoIcon(InfoIconType.Edited)}
-                                {toot.inReplyToAccountId && infoIcon(InfoIconType.Reply)}
-                                {toot.trendingRank > 0 && infoIcon(InfoIconType.TrendingToot)}
-                                {toot.trendingLinks.length > 0 && infoIcon(InfoIconType.TrendingLink)}
-                                {toot.containsUserMention() && infoIcon(InfoIconType.Mention)}
-                                {toot.containsTagsMsg() && infoIcon(InfoIconType.Hashtags)}
-                                {toot.isDM() && infoIcon(InfoIconType.DM)}
-                                {toot.account.bot && infoIcon(InfoIconType.Bot)}
-                            </span>
+                        <div className="status__relative-time" style={{display: "inline-block"}}>
+                            <NewTabLink className="status__relative-time-icons" href={toot.uri} onClick={(e) => openToot(toot, e)}>
+                                <span className="status__visibility-icon">
+                                    {toot.editedAt && infoIcon(InfoIconType.Edited)}
+                                    {toot.inReplyToAccountId && infoIcon(InfoIconType.Reply)}
+                                    {toot.trendingRank > 0 && infoIcon(InfoIconType.TrendingToot)}
+                                    {toot.trendingLinks.length > 0 && infoIcon(InfoIconType.TrendingLink)}
+                                    {toot.containsUserMention() && infoIcon(InfoIconType.Mention)}
+                                    {toot.containsTagsMsg() && infoIcon(InfoIconType.Hashtags)}
+                                    {toot.isDM() && infoIcon(InfoIconType.DM)}
+                                    {toot.account.bot && infoIcon(InfoIconType.Bot)}
+                                </span>
 
-                            <time dateTime={toot.createdAt} title={toot.createdAt}>
-                                {timestampString(toot.createdAt)}
-                            </time>
+                                <time dateTime={toot.createdAt} title={toot.createdAt}>
+                                    {timestampString(toot.createdAt)}
+                                </time>
+                            </NewTabLink>
 
                             <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={openJSON}>
                                 {infoIcon(InfoIconType.ShowToot)}
                             </span>
-                        </NewTabLink>
+                        </div>
+
 
                         {/* Account name + avatar */}
                         <div title={toot.account.webfingerURI} className="status__display-name">
@@ -357,6 +360,7 @@ const baseIconStyle: CSSProperties = {
 };
 
 const openJSON: CSSProperties = {
+    cursor: "pointer",
     marginLeft: "10px"
 };
 

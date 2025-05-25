@@ -12,8 +12,8 @@ import { Toot } from 'fedialgo';
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { FEED_BACKGROUND_COLOR } from '../../helpers/style_helpers';
 import { errorMsg, logMsg } from '../../helpers/string_helpers';
+import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
@@ -205,9 +205,10 @@ const dropzoneStyle: CSSProperties = {
 };
 
 const formStyle: CSSProperties = {
-    backgroundColor: "lightgrey",// FEED_BACKGROUND_COLOR,
+    backgroundColor: FEED_BACKGROUND_COLOR_LITE, //"lightgrey",// FEED_BACKGROUND_COLOR,
     borderWidth: "5px",
     color: "black",
+    fontWeight: "700",
     marginTop: "15px",
 };
 

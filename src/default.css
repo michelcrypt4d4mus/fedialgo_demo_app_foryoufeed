@@ -3470,6 +3470,18 @@ body > [data-popper-placement] {
     order: 2;
 }
 
+/* Hacky copy of .status__relative-time */
+.status__relative-time-icons {
+    color: #606984;
+    /* display: block; */
+    /* flex: 0 0 auto; */
+    font-size: 15px;
+    height: 40px;
+    line-height: 22px;
+    order: 2;
+    text-decoration: none;
+}
+
 .notification__relative_time {
     color: #606984;
     float: right;
