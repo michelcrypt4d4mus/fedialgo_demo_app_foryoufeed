@@ -149,6 +149,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                 <Form.Group className="mb-3" style={{}}>
                     <Form.Control
                         as="textarea"
+                        autoFocus={true}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder={'Type your reply here...'}
                         rows={4}
@@ -168,7 +169,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                             <section>
                                 <div {...getRootProps()} style={dropzoneStyle}>
                                     <input {...getInputProps()} />
-                                    <p>Drag 'n' drop some files here, or click to select files</p>
+                                    <p>Drag 'n' drop some files on this colored area or click to select files to attach</p>
                                 </div>
                             </section>
                         )}
@@ -204,7 +205,7 @@ const dropzoneStyle: CSSProperties = {
 };
 
 const formStyle: CSSProperties = {
-    backgroundColor: "white",// FEED_BACKGROUND_COLOR,
+    backgroundColor: "lightgrey",// FEED_BACKGROUND_COLOR,
     borderWidth: "5px",
     color: "black",
     marginTop: "15px",
