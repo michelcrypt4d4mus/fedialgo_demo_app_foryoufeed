@@ -310,7 +310,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                             <span style={tagFontStyle}>{parse(toot.contentTagsParagraph())}</span>
                         </div>}
 
-                    {setThread && (toot.repliesCount > 0) &&
+                    {setThread && ((toot.repliesCount > 0) || !!toot.inReplyToAccountId) &&
                         <p style={{paddingTop: "8px"}}>
                             <a
                                 onClick={() => toot.getConversation().then(toots => setThread(toots))}
