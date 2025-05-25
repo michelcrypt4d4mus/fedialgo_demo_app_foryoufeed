@@ -31,7 +31,7 @@ import NewTabLink from '../helpers/NewTabLink';
 import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import useOnScreen from "../../hooks/useOnScreen";
-import { debugMsg, logSafe, timestampString } from '../../helpers/string_helpers';
+import { debugMsg, errorMsg, logMsg, logSafe, timestampString } from '../../helpers/string_helpers';
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
@@ -102,6 +102,12 @@ export default function StatusComponent(props: StatusComponentProps) {
         if (isOnScreen != hasBeenShown) logSafe(`Status on screen ${isOnScreen}: ${toot.describe()}`);
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
         setHasBeenShown(isOnScreen || hasBeenShown);
+
+        // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
+        toot.resolveID()
+            .then(() => logMsg(`Resolved: ${toot.describe()}`))
+            .catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
+
     }, [isLoading, isOnScreen])
 
     // Increase mediaInspectionIdx on Right Arrow
@@ -228,7 +234,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {/* Top bar with account and info icons */}
                     <div className="status__info">
                         {/* Top right icons + timestamp that link to the toot */}
-                        <NewTabLink className="status__relative-time" href={toot.uri}>
+                        <NewTabLink className="status__relative-time" href={toot.uri} onClick={(e) => openToot(toot, e)}>
                             <span className="status__visibility-icon">
                                 {toot.editedAt && infoIcon(InfoIconType.Edited)}
                                 {toot.inReplyToAccountId && infoIcon(InfoIconType.Reply)}

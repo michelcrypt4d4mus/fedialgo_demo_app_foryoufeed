@@ -7,20 +7,21 @@ import React, { CSSProperties, PropsWithChildren, ReactElement } from "react";
 interface NewTabLinkProps extends PropsWithChildren {
     className?: string;
     href: string;
+    onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
     style?: CSSProperties;
 };
 
 
 export default function NewTabLink(props: NewTabLinkProps): ReactElement {
-    const { children, className, href } = props;
-    const style = props.style || {};
+    const { children, className, href, onClick, style } = props;
 
     return (
         <a
             className={className || "no_specified_class"}
             href={href}
+            onClick={(e) => onClick && onClick(e)}
             rel="noreferrer"
-            style={style}
+            style={style || {}}
             target="_blank"
         >
             {children}
