@@ -11,7 +11,7 @@ import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
-import { AppStorage, useUserStorage, useLocalStorage } from "../../hooks/useLocalStorage";
+import { confirm } from "../helpers/Confirmation";
 import { logMsg, versionString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useAuthContext } from "../../hooks/useAuth";
@@ -47,7 +47,7 @@ export default function ExperimentalFeatures() {
 
     // Reset all state except for the user and server
     const wipeAll = async () => {
-        if (!window.confirm("Are you sure?")) return;  // TODO: use a better confirmation dialog
+        if (!(await confirm(`Are you sure you want to completely wipe all FediAlgo data and start over?`))) return;
         setError("");
         setApp(null);
         setUser(null);

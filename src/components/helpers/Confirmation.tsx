@@ -63,7 +63,7 @@ const Confirmation = (props: ConfirmationProps) => {
 export function confirm(
     confirmation: string,
     okLabel: string = "OK",
-    cancelLabel: string = "cancel",
+    cancelLabel: string = "Cancel",
     options: any = {}
 ) {
     return createConfirmation(confirmable(Confirmation))({
