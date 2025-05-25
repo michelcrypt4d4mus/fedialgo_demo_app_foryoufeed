@@ -36,7 +36,7 @@ export default function ExperimentalFeatures() {
     const [algoState, setAlgoState] = useState({});
     const [isLoadingState, setIsLoadingState] = useState(false);
     const [showStateModal, setShowStateModal] = useState(false);
-    const [showStatsModal, setShowStatsModall] = useState(false);
+    const [showStatsModal, setShowStatsModal] = useState(false);
 
     const showAlgoState = () => {
         logMsg(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
@@ -91,7 +91,7 @@ export default function ExperimentalFeatures() {
             />
 
             <StatsModal
-                setShow={setShowStatsModall}
+                setShow={setShowStatsModal}
                 show={showStatsModal}
                 title="FediAlgo Score Stats"
             />
@@ -104,7 +104,7 @@ export default function ExperimentalFeatures() {
                 <ul style={listStyle}>
                     {makeLabeledButton(SHOW_STATE, showAlgoState)}
                     <hr className="hr" />
-                    {makeLabeledButton(SCORE_STATS, () => setShowStatsModall(true))}
+                    {makeLabeledButton(SCORE_STATS, () => setShowStatsModal(true))}
                     <hr className="hr" />
                     {makeLabeledButton(LOAD_COMPLETE_USER_HISTORY, triggerPullAllUserData)}
                 </ul>
