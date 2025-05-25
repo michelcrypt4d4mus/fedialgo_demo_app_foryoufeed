@@ -23,7 +23,7 @@ interface ReplyModalProps extends ModalProps {
 
 export default function ReplyModal(props: ReplyModalProps) {
     let { dialogClassName, show, setShow, title, toot } = props;
-    const { algorithm } = useAlgorithm();
+    const { api } = useAlgorithm();
     const { setError } = useError();
 
     const [replyText, setReplyText] = React.useState<string>("");
@@ -38,7 +38,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                 setResolvedID(toot.id);
             });
         }
-    }, [algorithm, show])
+    }, [api, show])
 
     const submitReply = async () => {
         if (!resolvedID) {
@@ -50,6 +50,15 @@ export default function ReplyModal(props: ReplyModalProps) {
         }
 
         console.log(`Submitting reply to toot ID: ${resolvedID}, text: ${replyText}`);
+
+        api.v1.statuses.create({inReplyToId: resolvedID, status: replyText})
+            .then(() => {
+                console.log(`Reply submitted successfully!`);
+                setShow(false);
+            }).catch(err => {
+                console.error(`Error submitting reply: ${err}`);
+                setError(`Failed to submit reply: ${err.message}`);
+            });
     }
 
     return (
