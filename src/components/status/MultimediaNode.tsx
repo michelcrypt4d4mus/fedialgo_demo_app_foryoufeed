@@ -5,6 +5,7 @@ import { GIFV, Toot } from "fedialgo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
+import { FakeToot } from "../../types";
 import { warnMsg } from "../../helpers/string_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
@@ -14,7 +15,7 @@ const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 
 interface MultimediaNodeProps {
-    status: Toot;
+    status: FakeToot | Toot;
     setMediaInspectionIdx: (idx: number) => void;
 };
 

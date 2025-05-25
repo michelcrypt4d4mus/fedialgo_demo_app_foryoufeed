@@ -26,3 +26,13 @@ export interface ModalProps extends BootstrapModalProps {
     subtitle?: string | React.ReactNode,
     title: string,
 };
+
+
+// For rendering MultimediaNode component without a Toot
+export type FakeToot = {
+    audioAttachments: mastodon.v1.MediaAttachment[];
+    imageAttachments: mastodon.v1.MediaAttachment[];
+    mediaAttachments: mastodon.v1.MediaAttachment[];
+    videoAttachments: mastodon.v1.MediaAttachment[];
+    uri?: string;
+};

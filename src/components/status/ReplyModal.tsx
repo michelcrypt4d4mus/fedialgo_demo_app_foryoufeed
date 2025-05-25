@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import React, { CSSProperties, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 
-import { mastodon } from 'masto';
+import Dropzone from 'react-dropzone'
 import { Toot } from 'fedialgo';
 
 import StatusComponent from './Status';
@@ -26,6 +26,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const { api } = useAlgorithm();
     const { setError } = useError();
 
+    const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
 
@@ -71,14 +72,15 @@ export default function ReplyModal(props: ReplyModalProps) {
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
 
-            <Modal.Body >
+            <Modal.Body style={{color: "black", paddingLeft: "15px", paddingRight: "15px"}}>
                 <StatusComponent fontColor="black" hideLinkPreviews={true} status={toot}/>
 
-                <Form.Group className="mb-3" style={{paddingLeft: "15px", paddingRight: "15px"}}>
+                <Form.Group className="mb-3" style={{}}>
                     <Form.Control
                         as="textarea"
                         onChange={(e) => setReplyText(e.target.value)}
-                        // placeholder='Type your reply here...'
+                        // placeh
+                        // older='Type your reply here...'
                         rows={4}
                         style={formStyle}
                     />
@@ -87,6 +89,17 @@ export default function ReplyModal(props: ReplyModalProps) {
                         Submit Reply
                     </Button>
                 </Form.Group>
+
+                <Dropzone onDrop={acceptedFiles => console.log(`Accepted files:`, acceptedFiles)}>
+                    {({getRootProps, getInputProps}) => (
+                        <section>
+                            <div {...getRootProps()} style={dropzoneStyle}>
+                                <input {...getInputProps()} />
+                                <p>Drag 'n' drop some files here, or click to select files</p>
+                            </div>
+                        </section>
+                    )}
+                </Dropzone>
             </Modal.Body>
         </Modal>
     );
@@ -102,6 +115,14 @@ const buttonStyle: CSSProperties = {
 const charStyle: CSSProperties = {
     backgroundColor: FEED_BACKGROUND_COLOR,
     borderRadius: "15px",
+};
+
+const dropzoneStyle: CSSProperties = {
+    backgroundColor: "grey",
+    borderRadius: "15px",
+    height: "100px",
+    padding: "20px",
+    width: "100%",
 };
 
 const formStyle: CSSProperties = {
