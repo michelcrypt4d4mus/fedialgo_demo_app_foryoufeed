@@ -168,7 +168,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     // Build an action button (reply, reblog, fave, etc) that appears at the bottom of a toot
     const buildActionButton = (action: ButtonAction, onClick?: (e: React.MouseEvent) => void) => {
-        return <ActionButton action={action} onClick={onClick} toot={toot} />;
+        return <ActionButton action={action} onClick={onClick} setThread={setThread} toot={toot} />;
     };
 
     return (
@@ -297,16 +297,6 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div className="status__content__text status__content__text--visible translate" lang="en">
                             {parse(toot.contentNonTagsParagraphs())}
                         </div>
-
-                        {setThread &&
-                            <p style={{paddingTop: "12px"}}>
-                                <a
-                                    onClick={() => toot.getConversation().then(toots => setThread(toots))}
-                                    style={{cursor: "pointer", fontSize: "11px"}}
-                                >
-                                    ⇇ View the Thread
-                                </a>
-                            </p>}
                     </div>
 
                     {/* Preview card and attachment display */}
@@ -319,6 +309,16 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div className={contentClass} style={{paddingTop: "12px"}}>
                             <span style={tagFontStyle}>{parse(toot.contentTagsParagraph())}</span>
                         </div>}
+
+                    {setThread && (toot.repliesCount > 0) &&
+                        <p style={{paddingTop: "8px"}}>
+                            <a
+                                onClick={() => toot.getConversation().then(toots => setThread(toots))}
+                                style={{color: "grey", cursor: "pointer", fontSize: "11px"}}
+                            >
+                                ⇇ View the Thread
+                            </a>
+                        </p>}
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
                     <div className="status__action-bar" ref={statusRef}>

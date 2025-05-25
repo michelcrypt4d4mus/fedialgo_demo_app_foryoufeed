@@ -172,6 +172,7 @@ export default function Feed() {
                             <TopLevelAccordion startOpen={true} title="Thread">
                                 {thread.map((toot, index) => (
                                     <StatusComponent
+                                        fontColor="black"
                                         hideLinkPreviews={hideLinkPreviewsState[0]}
                                         key={toot.uri}
                                         status={toot}

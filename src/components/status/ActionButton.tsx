@@ -221,7 +221,7 @@ export default function ActionButton(props: ActionButtonProps) {
         };
     };
 
-    return <>
+    return (
         <button
             aria-hidden="false"
             aria-label={label}
@@ -242,7 +242,17 @@ export default function ActionButton(props: ActionButtonProps) {
                     </span>
                 </span>}
         </button>
-    </>;
+
+        // {action == TootAction.Reply &&
+        //     <a
+        //         onClick={(e) => {
+        //             toot.getConversation().then(toots => setThread(toots));
+        //         }}
+        //         style={{cursor: "pointer", fontSize: "11px"}}
+        //     >
+        //         {' '}View Replies
+        //     </a>}
+        );
 };
 
 
