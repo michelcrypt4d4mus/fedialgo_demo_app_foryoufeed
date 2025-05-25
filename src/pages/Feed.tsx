@@ -146,9 +146,9 @@ export default function Feed() {
                     variant="light"
                 />
 
-                <Col xs={12} md={6}>
+                <Col md={6} xs={12} >
                     {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
-                    <div className="sticky-top" style={isControlPanelStickyState[0] ? {} : {position: "relative"}} >
+                    <div className="sticky-top" style={isControlPanelStickyState[0] ? {} : {position: "relative"}}>
                         <div style={stickySwitchContainer}>
                             {buildStateCheckbox(`Stick Control Panel To Top`, isControlPanelStickyState, 'd-none d-sm-block')}
                             {buildStateCheckbox(`Hide Link Previews`, hideLinkPreviewsState)}

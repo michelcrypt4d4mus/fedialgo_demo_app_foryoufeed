@@ -97,19 +97,14 @@ export default function StatusComponent(props: StatusComponentProps) {
     const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
-    const [hasBeenShown, setHasBeenShown] = React.useState<boolean>(false);
 
+    // useEffect to handle things we want to do when the toot makes its first appearnace on screen
     useEffect(() => {
         if (isLoading || !isOnScreen) return;
-        if (isOnScreen != hasBeenShown) logSafe(`Status on screen ${isOnScreen}: ${toot.describe()}`);
-        toot.numTimesShown = (toot.numTimesShown || 0) + 1;
-        setHasBeenShown(isOnScreen || hasBeenShown);
 
         // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
-        toot.resolveID()
-            .then(() => logMsg(`Resolved: ${toot.describe()}`))
-            .catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
-
+        toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
+        toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
 
     // Increase mediaInspectionIdx on Right Arrow
