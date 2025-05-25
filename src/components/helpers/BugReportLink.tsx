@@ -12,7 +12,7 @@ export const BUG_REPORT_WEBFINGER_URI = `${BUG_REPORT_LABEL}@universeodon.com`;;
 
 export default function BugReportLink() {
     return <>
-        Report bugs: <a href={CRYPTADAMUS_MASTODON_URL} style={bugsLink} target="_blank">
+        Feedback/bug reports: <a href={CRYPTADAMUS_MASTODON_URL} style={bugsLink} target="_blank">
             {BUG_REPORT_LABEL}
         </a>
     </>;
