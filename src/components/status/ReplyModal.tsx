@@ -169,7 +169,10 @@ export default function ReplyModal(props: ReplyModalProps) {
                             <section>
                                 <div {...getRootProps()} style={dropzoneStyle}>
                                     <input {...getInputProps()} />
-                                    <p>Drag 'n' drop some files on this colored area or click to select files to attach</p>
+
+                                    <p style={{fontSize: "17px"}}>
+                                        Drag 'n' drop files on this colored area or click to select files to attach
+                                    </p>
                                 </div>
                             </section>
                         )}
@@ -208,8 +211,8 @@ const formStyle: CSSProperties = {
     backgroundColor: FEED_BACKGROUND_COLOR_LITE, //"lightgrey",// FEED_BACKGROUND_COLOR,
     borderWidth: "5px",
     color: "black",
-    fontWeight: "700",
-    marginTop: "15px",
+    fontSize: "22px",
+    marginTop: "13px",
 };
 
 const textStyle: CSSProperties = {
