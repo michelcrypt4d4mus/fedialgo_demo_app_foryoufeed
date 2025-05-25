@@ -41,6 +41,7 @@ export default function Feed() {
     // State variables
     const hideLinkPreviewsState = useState(false);
     const isControlPanelStickyState = useState(true);  // Left panel stickiness
+    const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [loadingStatus, setLoadingStatus] = useState<string>(null);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(DEFAULT_NUM_DISPLAYED_TOOTS);
     const [prevScrollY, setPrevScrollY] = useState(0);
@@ -50,6 +51,7 @@ export default function Feed() {
     const bottomRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
     const numShownToots = Math.max(DEFAULT_NUM_DISPLAYED_TOOTS, numDisplayedToots);
+    const leftColStyle: CSSProperties = isControlPanelStickyState[0] ? {} : {position: "relative"};
 
     // Reset all state except for the user and server
     const reset = async () => {
@@ -131,8 +133,8 @@ export default function Feed() {
 
 
     return (
-        <Container fluid style={{height: 'auto'}}>
-            <Row>
+        <Container fluid style={{height: "auto"}}>
+            <Row style={{cursor: isLoadingThread ? 'wait' : 'default'}}>
                 {/* Tooltip options: https://react-tooltip.com/docs/options */}
                 <Tooltip id={TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
 
@@ -149,7 +151,7 @@ export default function Feed() {
 
                 <Col md={6} xs={12} >
                     {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
-                    <div className="sticky-top" style={isControlPanelStickyState[0] ? {} : {position: "relative"}}>
+                    <div className="sticky-top left-col-scroll" style={leftColStyle}>
                         <div style={stickySwitchContainer}>
                             {buildStateCheckbox(`Stick Control Panel To Top`, isControlPanelStickyState, 'd-none d-sm-block')}
                             {buildStateCheckbox(`Hide Link Previews`, hideLinkPreviewsState)}
@@ -214,8 +216,10 @@ export default function Feed() {
                         {timeline.slice(0, numShownToots).map((toot) => (
                             <StatusComponent
                                 hideLinkPreviews={hideLinkPreviewsState[0]}
+                                isLoadingThread={isLoadingThread}
                                 key={toot.uri}
                                 setThread={setThread}
+                                setIsLoadingThread={setIsLoadingThread}
                                 status={toot}
                             />))}
 
@@ -236,22 +240,15 @@ export default function Feed() {
 };
 
 
-const bugsLink: CSSProperties = {
-    color: "lightgrey",
-    textDecoration: "none",
-};
-
 const controlPanelFooter: CSSProperties = {
     height: "auto",
     paddingLeft: "2px",
     paddingRight: "2px",
 };
 
-const bugReport: CSSProperties = {
-    ...controlPanelFooter,
-    color: "grey",
-    fontSize: "15px",
-    marginTop: "12px",
+const leftCol: CSSProperties = {
+    maxHeight: "100vh",
+    overflowY: "auto",
 };
 
 const loadingMsgStyle: CSSProperties = {

@@ -14018,6 +14018,17 @@ input[type="range"]::-ms-thumb {
     font-size: 12px;
 }
 
+.left-col-scroll {
+    max-height: 100vh;
+    overflow-y: auto;
+    -ms-overflow-style: none;  /* hide scrollbar IE and Edge */
+    scrollbar-width: none;     /* hide scrollbar Firefox */
+}
+
+.left-col-scroll::-webkit-scrollbar {
+    display: none;             /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
 #presetWeights {
     border-width: 1px;
     border-color: #31abb5;
