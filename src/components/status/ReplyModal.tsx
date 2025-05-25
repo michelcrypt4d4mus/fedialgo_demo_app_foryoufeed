@@ -137,8 +137,8 @@ export default function ReplyModal(props: ReplyModalProps) {
             show={show}
             style={{cursor: isAttaching ? 'wait' : 'default'}}
         >
-            <Modal.Header closeButton style={{backgroundColor: FEED_BACKGROUND_COLOR_LITE, color: "white"}}>
-
+            <Modal.Header closeButton style={headerStyle}>
+                <p>Reply to {toot.account.describe()}</p>
             </Modal.Header>
 
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
@@ -197,6 +197,9 @@ const buttonStyle: CSSProperties = {
 const dropzoneStyle: CSSProperties = {
     backgroundColor: "grey",
     borderRadius: "15px",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: "bold",
     height: "60px",
     marginTop: "12px",
     padding: "20px",
@@ -212,7 +215,8 @@ const formStyle: CSSProperties = {
     marginTop: "13px",
 };
 
-const textStyle: CSSProperties = {
+const headerStyle: CSSProperties = {
+    backgroundColor: FEED_BACKGROUND_COLOR_LITE,
     color: "black",
-    fontSize: "15px",
+    fontWeight: "bold",
 };
