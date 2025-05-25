@@ -155,8 +155,7 @@ export default function ActionButton(props: ActionButtonProps) {
 
             (async () => {
                 try {
-                    const resolvedToot = await toot.resolve();
-                    const selected = api.v1.statuses.$select(resolvedToot.id);
+                    const selected = api.v1.statuses.$select(await toot.resolveID());
 
                     if (action == TootAction.Bookmark) {
                         await (newState ? selected.bookmark() : selected.unbookmark());
