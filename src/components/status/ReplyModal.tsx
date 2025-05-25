@@ -75,12 +75,10 @@ export default function ReplyModal(props: ReplyModalProps) {
                 <StatusComponent fontColor="black" hideLinkPreviews={true} status={toot}/>
 
                 <Form.Group className="mb-3" style={{paddingLeft: "15px", paddingRight: "15px"}}>
-                    {/* <Form.Label style={{backgroundColor: "lightgrey"}}>Your Reply:</Form.Label> */}
-
                     <Form.Control
                         as="textarea"
                         onChange={(e) => setReplyText(e.target.value)}
-                        placeholder='Type your reply here...'
+                        // placeholder='Type your reply here...'
                         rows={4}
                         style={formStyle}
                     />

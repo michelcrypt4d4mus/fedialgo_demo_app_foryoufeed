@@ -237,7 +237,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {/* Top bar with account and info icons */}
                     <div className="status__info">
                         {/* Top right icons + timestamp that link to the toot */}
-                        <NewTabLink className="status__relative-time" href={toot.uri}>
+                        <NewTabLink className="status__relative-time" href={toot.uri} onClick={(e) => openToot(toot, e)}>
                             <span className="status__visibility-icon">
                                 {toot.editedAt && infoIcon(InfoIconType.Edited)}
                                 {toot.inReplyToAccountId && infoIcon(InfoIconType.Reply)}
