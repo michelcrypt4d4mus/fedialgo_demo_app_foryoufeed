@@ -7,7 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
-import TheAlgorithm from "fedialgo";
+import TheAlgorithm, { Toot } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import BugReportLink from "../components/helpers/BugReportLink";
@@ -15,6 +15,7 @@ import ExperimentalFeatures from "../components/experimental/ExperimentalFeature
 import FilterSetter from "../components/algorithm/FilterSetter";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
+import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
@@ -43,6 +44,7 @@ export default function Feed() {
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(DEFAULT_NUM_DISPLAYED_TOOTS);
     const [prevScrollY, setPrevScrollY] = useState(0);
     const [scrollPercentage, setScrollPercentage] = useState(0);
+    const [thread, setThread] = useState<Toot[]>([]);
 
     const bottomRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
@@ -166,6 +168,18 @@ export default function Feed() {
                         {algorithm && <TrendingInfo />}
                         {algorithm && <ExperimentalFeatures />}
 
+                        {(thread.length > 0) &&
+                            <TopLevelAccordion startOpen={true} title="Thread">
+                                {thread.map((toot, index) => (
+                                    <StatusComponent
+                                        fontColor="black"
+                                        hideLinkPreviews={hideLinkPreviewsState[0]}
+                                        key={toot.uri}
+                                        status={toot}
+                                    />
+                                ))}
+                            </TopLevelAccordion>}
+
                         <div style={stickySwitchContainer}>
                             {isLoading
                                 ? <LoadingSpinner message={loadingStatus} style={loadingMsgStyle} />
@@ -200,6 +214,7 @@ export default function Feed() {
                             <StatusComponent
                                 hideLinkPreviews={hideLinkPreviewsState[0]}
                                 key={toot.uri}
+                                setThread={setThread}
                                 status={toot}
                             />))}
 

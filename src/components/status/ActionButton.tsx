@@ -89,12 +89,13 @@ const ACTION_ICON_BASE_CLASS = `${ICON_BUTTON_CLASS} icon-button--with-counter`;
 interface ActionButtonProps {
     action: ButtonAction,
     onClick?: (e: React.MouseEvent) => void,
-    status: Toot,
+    setThread?: (toots: Toot[]) => void,
+    toot: Toot,
 };
 
 
 export default function ActionButton(props: ActionButtonProps) {
-    const { action, onClick, status } = props;
+    const { action, onClick, setThread, toot } = props;
     const { algorithm, api } = useAlgorithm();
     const { setError } = useError();
 
@@ -103,13 +104,13 @@ export default function ActionButton(props: ActionButtonProps) {
 
     const actionInfo = ACTION_INFO[action];
     let label = actionInfo.label || capitalCase(action);
-    let actionTarget: Account | Toot = status;
+    let actionTarget: Account | Toot = toot;
     let className = ACTION_ICON_BASE_CLASS;
     let buttonText: string;
     let icon = actionInfo.icon;
 
     if (isAccountAction(action)) {
-        actionTarget = status.account;
+        actionTarget = toot.account;
         className += ` ${ACCOUNT_ACTION_BUTTON_CLASS}`;
 
         if (action == AccountAction.Follow && actionTarget[actionInfo.booleanName]) {
@@ -117,12 +118,12 @@ export default function ActionButton(props: ActionButtonProps) {
             label = `Unfollow`;
         }
 
-        label += ` ${status.account.webfingerURI}`;
+        label += ` ${toot.account.webfingerURI}`;
     } else {
-        if (actionInfo.countName && status[actionInfo.countName] > 0) {
-            buttonText = status[actionInfo.countName]?.toLocaleString();
+        if (actionInfo.countName && toot[actionInfo.countName] > 0) {
+            buttonText = toot[actionInfo.countName]?.toLocaleString();
         } else if (action == TootAction.Score) {
-            buttonText = scoreString(status.scoreInfo?.score);
+            buttonText = scoreString(toot.scoreInfo?.score);
         }
     }
 
@@ -138,23 +139,23 @@ export default function ActionButton(props: ActionButtonProps) {
         return () => {
             if (isAccountAction(action)) return performAccountAction()();
 
-            const startingCount = status[actionInfo.countName] || 0;
-            const startingState = !!status[actionInfo.booleanName];
+            const startingCount = toot[actionInfo.countName] || 0;
+            const startingState = !!toot[actionInfo.booleanName];
             const newState = !startingState;
-            logMsg(`${action}() toot (startingState: ${startingState}, count: ${startingCount}): `, status);
+            logMsg(`${action}() toot (startingState: ${startingState}, count: ${startingCount}): `, toot);
             // Optimistically update the GUI (we will reset to original state if the server call fails later)
-            status[actionInfo.booleanName] = newState;
+            toot[actionInfo.booleanName] = newState;
             setCurrentState(newState);
 
             if (newState && actionInfo.countName && action != TootAction.Reply) {
-                status[actionInfo.countName] = startingCount + 1;
+                toot[actionInfo.countName] = startingCount + 1;
             } else {
-                status[actionInfo.countName] = startingCount ? (startingCount - 1) : 0;  // Avoid count going below 0
+                toot[actionInfo.countName] = startingCount ? (startingCount - 1) : 0;  // Avoid count going below 0
             }
 
             (async () => {
                 try {
-                    const resolvedToot = await status.resolve();
+                    const resolvedToot = await toot.resolve();
                     const selected = api.v1.statuses.$select(resolvedToot.id);
 
                     if (action == TootAction.Bookmark) {
@@ -171,10 +172,10 @@ export default function ActionButton(props: ActionButtonProps) {
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
                     const msg = `Failed to ${action} toot! (${error.message})`;
-                    console.error(`${msg} Resetting count to ${status[actionInfo.countName]}`, error);
+                    console.error(`${msg} Resetting count to ${toot[actionInfo.countName]}`, error);
                     setCurrentState(startingState);
-                    status[actionInfo.booleanName] = startingState;
-                    if (actionInfo.countName) status[actionInfo.countName] = startingCount;
+                    toot[actionInfo.booleanName] = startingState;
+                    if (actionInfo.countName) toot[actionInfo.countName] = startingCount;
                     setError(msg);
                 }
             })();
@@ -187,15 +188,15 @@ export default function ActionButton(props: ActionButtonProps) {
                 const confirmTxt = `Are you sure you want to ${label.toLowerCase()}?`;
                 if (!(await confirm(confirmTxt))) return;
 
-                const startingState = !!status.account[actionInfo.booleanName];
+                const startingState = !!toot.account[actionInfo.booleanName];
                 const newState = !startingState;
-                logMsg(`${action}() account (startingState: ${startingState}): `, status);
+                logMsg(`${action}() account (startingState: ${startingState}): `, toot);
                 // Optimistically update the GUI (we will reset to original state if the server call fails later)
-                status.account[actionInfo.booleanName] = newState;
+                toot.account[actionInfo.booleanName] = newState;
                 setCurrentState(newState);
 
                 try {
-                    const resolvedToot = await status.resolve();
+                    const resolvedToot = await toot.resolve();
                     const selected = api.v1.accounts.$select(resolvedToot.account.id);
 
                     if (action == AccountAction.Follow) {
@@ -211,7 +212,7 @@ export default function ActionButton(props: ActionButtonProps) {
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
                     setCurrentState(startingState);
-                    status.account[actionInfo.booleanName] = startingState;
+                    toot.account[actionInfo.booleanName] = startingState;
                     const msg = `${oAuthErrorMsg} (${error.message})`;
                     console.error(`${msg} Resetting state to ${startingState}`, error);
                     setError(msg);
@@ -241,7 +242,17 @@ export default function ActionButton(props: ActionButtonProps) {
                     </span>
                 </span>}
         </button>
-    );
+
+        // {action == TootAction.Reply &&
+        //     <a
+        //         onClick={(e) => {
+        //             toot.getConversation().then(toots => setThread(toots));
+        //         }}
+        //         style={{cursor: "pointer", fontSize: "11px"}}
+        //     >
+        //         {' '}View Replies
+        //     </a>}
+        );
 };
 
 
