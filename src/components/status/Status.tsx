@@ -72,13 +72,15 @@ const INFO_ICONS: Record<InfoIconType, IconInfo> = {
 interface StatusComponentProps {
     fontColor?: CSSProperties["color"],
     hideLinkPreviews?: boolean,
+    isLoadingThread?: boolean,
+    setIsLoadingThread?: (isLoading: boolean) => void,
     setThread?: (toots: Toot[]) => void,
     status: Toot,
 };
 
 
 export default function StatusComponent(props: StatusComponentProps) {
-    const { fontColor, hideLinkPreviews, setThread, status } = props;
+    const { fontColor, hideLinkPreviews, isLoadingThread, setIsLoadingThread, setThread, status } = props;
     const { isLoading } = useAlgorithm();
     const fontStyle = fontColor ? { color: fontColor } : {};
     const contentClass = fontColor ? "status__content__alt" : "status__content";
@@ -328,8 +330,12 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {setThread && ((toot.repliesCount > 0) || !!toot.inReplyToAccountId) &&
                         <p style={{paddingTop: "8px"}}>
                             <a
-                                onClick={() => toot.getConversation().then(toots => setThread(toots))}
-                                style={{color: "grey", cursor: "pointer", fontSize: "11px"}}
+                                onClick={() => {
+                                    console.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
+                                    setIsLoadingThread(true);
+                                    toot.getConversation().then(toots => setThread(toots)).finally(() => setIsLoadingThread(false));
+                                }}
+                                style={{color: "grey", cursor: isLoadingThread ? 'wait' : 'pointer', fontSize: "11px"}}
                             >
                                 ⇇ View the Thread
                             </a>
