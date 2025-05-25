@@ -25,6 +25,7 @@ const ACCEPT_ATTACHMENTS = {
 };
 
 const LOG_PREFIX = `<ReplyModal>`;
+const MAX_ATTACHMENTS = 4;
 
 const error = (msg: string, ...args: any[]) => errorMsg(`${LOG_PREFIX} ${msg}`, ...args);
 const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
@@ -43,6 +44,11 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
 
+    const logAndSetError = (msg: string, err: Error) => {
+        error(`${msg}`, err);
+        setError(`${msg}: ${err.message}`);
+    }
+
     useEffect(() => {
         if (show) {
             log(`useEffect (show=${show}, resolvedID=${resolvedID})`, toot);
@@ -57,13 +63,19 @@ export default function ReplyModal(props: ReplyModalProps) {
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         log(`Accepted files:`, acceptedFiles);
 
+        if (acceptedFiles.length + mediaAttachments.length > MAX_ATTACHMENTS) {
+            const msg = `No more than 4 files! Currently attached: ${mediaAttachments.length}, adding ${acceptedFiles.length}`;
+            error(msg);
+            setError(msg);
+            return;
+        }
+
         acceptedFiles.forEach((file) => {
             const reader = new FileReader()
             reader.onabort = () => error('file reading was aborted')
             reader.onerror = () => error('file reading has failed')
 
             reader.onload = () => {
-                // Do whatever you want with the file contents
                 log(`File read successfully:`, file.name, `size:`, file.size, `type:`, file.type);
                 const binaryStr = reader.result
 
@@ -73,15 +85,14 @@ export default function ReplyModal(props: ReplyModalProps) {
                         setMediaAttachments(prev => [...prev, media]);
                     })
                     .catch(err => {
-                        error(`Error uploading media: ${err}`);
-                        setError(`Failed to upload media: ${err.message}`);
+                        logAndSetError(`Failed to upload media "${file.name}"`, err);
                     });
             }
 
             reader.readAsArrayBuffer(file)
         })
 
-    }, [])
+    }, []);
 
     const submitReply = async () => {
         if (!resolvedID) {
@@ -92,24 +103,20 @@ export default function ReplyModal(props: ReplyModalProps) {
             return;
         }
 
-        console.log(`Submitting reply to toot ID: ${resolvedID}, text: ${replyText}`);
+        log(`Submitting reply to toot ID: ${resolvedID}, text: ${replyText}`);
+        const mediaIDs = mediaAttachments.map(m => m.id);
 
-        api.v1.statuses.create({inReplyToId: resolvedID, status: replyText})
+        api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: replyText})
             .then(() => {
                 log(`Reply submitted successfully!`);
                 setShow(false);
             }).catch(err => {
-                error(`Error submitting reply: ${err}`);
-                setError(`Failed to submit reply: ${err.message}`);
+                logAndSetError(`Failed to submit reply`, err);
             });
-    }
+    };
 
     return (
-        <Modal
-            dialogClassName={"modal-lg"}
-            onHide={() => setShow(false)}
-            show={show}
-        >
+        <Modal dialogClassName={"modal-lg"} onHide={() => setShow(false)} show={show}>
             <Modal.Header closeButton style={textStyle}>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
@@ -126,21 +133,21 @@ export default function ReplyModal(props: ReplyModalProps) {
                         style={formStyle}
                     />
 
+                    <Dropzone onDrop={onDrop} accept={ACCEPT_ATTACHMENTS}>
+                        {({getRootProps, getInputProps}) => (
+                            <section>
+                                <div {...getRootProps()} style={dropzoneStyle}>
+                                    <input {...getInputProps()} />
+                                    <p>Drag 'n' drop some files here, or click to select files</p>
+                                </div>
+                            </section>
+                        )}
+                    </Dropzone>
+
                     <Button onClick={() => submitReply()} style={{marginTop: "8px"}} variant="primary">
                         Submit Reply
                     </Button>
                 </Form.Group>
-
-                <Dropzone onDrop={onDrop} accept={ACCEPT_ATTACHMENTS}>
-                    {({getRootProps, getInputProps}) => (
-                        <section>
-                            <div {...getRootProps()} style={dropzoneStyle}>
-                                <input {...getInputProps()} />
-                                <p>Drag 'n' drop some files here, or click to select files</p>
-                            </div>
-                        </section>
-                    )}
-                </Dropzone>
 
                 {mediaAttachments.length > 0 &&
                     <MultimediaNode
@@ -172,8 +179,10 @@ const charStyle: CSSProperties = {
 const dropzoneStyle: CSSProperties = {
     backgroundColor: "grey",
     borderRadius: "15px",
-    height: "100px",
+    height: "60px",
+    marginTop: "5px",
     padding: "20px",
+    textAlign: "center",
     width: "100%",
 };
 
