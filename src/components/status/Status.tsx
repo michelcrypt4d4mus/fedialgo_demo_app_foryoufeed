@@ -32,7 +32,7 @@ import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import useOnScreen from "../../hooks/useOnScreen";
 import { debugMsg, logSafe, timestampString } from '../../helpers/string_helpers';
-import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR } from "../../helpers/style_helpers";
+import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
@@ -71,12 +71,13 @@ const INFO_ICONS: Record<InfoIconType, IconInfo> = {
 interface StatusComponentProps {
     fontColor?: CSSProperties["color"],
     hideLinkPreviews?: boolean,
+    setThread?: (toots: Toot[]) => void,
     status: Toot,
 };
 
 
 export default function StatusComponent(props: StatusComponentProps) {
-    const { fontColor, hideLinkPreviews, status } = props;
+    const { fontColor, hideLinkPreviews, setThread, status } = props;
     const { isLoading } = useAlgorithm();
     const fontStyle = fontColor ? { color: fontColor } : {};
     const contentClass = fontColor ? "status__content__alt" : "status__content";
@@ -167,7 +168,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     // Build an action button (reply, reblog, fave, etc) that appears at the bottom of a toot
     const buildActionButton = (action: ButtonAction, onClick?: (e: React.MouseEvent) => void) => {
-        return <ActionButton action={action} onClick={onClick} status={toot} />;
+        return <ActionButton action={action} onClick={onClick} toot={toot} />;
     };
 
     return (
@@ -296,6 +297,16 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div className="status__content__text status__content__text--visible translate" lang="en">
                             {parse(toot.contentNonTagsParagraphs())}
                         </div>
+
+                        {setThread &&
+                            <p style={{paddingTop: "12px"}}>
+                                <a
+                                    onClick={() => toot.getConversation().then(toots => setThread(toots))}
+                                    style={{cursor: "pointer", fontSize: "11px"}}
+                                >
+                                    ⇇ View the Thread
+                                </a>
+                            </p>}
                     </div>
 
                     {/* Preview card and attachment display */}

@@ -11,19 +11,20 @@ import { accordionBody, noPadding, titleStyle } from "../../helpers/style_helper
 interface TopLevelAccordionProps extends PropsWithChildren {
     bodyStyle?: CSSProperties,
     isActive?: boolean,
+    startOpen?: boolean,
     title: string,
 };
 
 
 export default function TopLevelAccordion(props: TopLevelAccordionProps) {
-    const { bodyStyle, isActive, title } = props;
+    const { bodyStyle, isActive, startOpen, title } = props;
 
     // Invert color scheme of title if active
     const className = isActive ? "filterHeader--rounded" : "blahblahblahblahblahblah";
     const style = {...titleStyle, color: isActive ? "white" : "black"};
 
     return (
-        <Accordion>
+        <Accordion defaultActiveKey={startOpen ? title : null}>
             <Accordion.Item eventKey={title}>
                 <Accordion.Header style={noPadding}>
                     <span className={className} style={style}>
