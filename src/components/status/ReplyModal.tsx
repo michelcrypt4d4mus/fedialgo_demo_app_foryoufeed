@@ -4,17 +4,30 @@
  */
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import React, { CSSProperties, useEffect } from 'react';
+import React, { CSSProperties, useCallback, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 
 import Dropzone from 'react-dropzone'
 import { Toot } from 'fedialgo';
 
+import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
 import { FEED_BACKGROUND_COLOR } from '../../helpers/style_helpers';
-import { ModalProps } from '../../types';
+import { errorMsg, logMsg } from '../../helpers/string_helpers';
+import { FakeToot, ModalProps } from '../../types';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
+
+const ACCEPT_ATTACHMENTS = {
+    'audio/*': ['.mp3', '.wav'],
+    'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
+    'video/*': ['.mp4', '.webm'],
+};
+
+const LOG_PREFIX = `<ReplyModal>`;
+
+const error = (msg: string, ...args: any[]) => errorMsg(`${LOG_PREFIX} ${msg}`, ...args);
+const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
 
 interface ReplyModalProps extends ModalProps {
     toot: Toot;
@@ -32,14 +45,43 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     useEffect(() => {
         if (show) {
-            console.log(`ReplyModal useEffect (show=${show}, resolvedID=${resolvedID})`, toot);
+            log(`useEffect (show=${show}, resolvedID=${resolvedID})`, toot);
 
             toot.resolveID().then(id => setResolvedID(id)).catch(err => {
-                console.error(`Error resolving toot ID: ${err}`);
+                error(`Error resolving toot ID: ${err}`);
                 setResolvedID(toot.id);
             });
         }
     }, [api, show])
+
+    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+        log(`Accepted files:`, acceptedFiles);
+
+        acceptedFiles.forEach((file) => {
+            const reader = new FileReader()
+            reader.onabort = () => error('file reading was aborted')
+            reader.onerror = () => error('file reading has failed')
+
+            reader.onload = () => {
+                // Do whatever you want with the file contents
+                log(`File read successfully:`, file.name, `size:`, file.size, `type:`, file.type);
+                const binaryStr = reader.result
+
+                api.v2.media.create({file: new Blob([binaryStr as ArrayBuffer], {type: file.type})})
+                    .then(media => {
+                        log(`Media uploaded successfully:`, media);
+                        setMediaAttachments(prev => [...prev, media]);
+                    })
+                    .catch(err => {
+                        error(`Error uploading media: ${err}`);
+                        setError(`Failed to upload media: ${err.message}`);
+                    });
+            }
+
+            reader.readAsArrayBuffer(file)
+        })
+
+    }, [])
 
     const submitReply = async () => {
         if (!resolvedID) {
@@ -54,10 +96,10 @@ export default function ReplyModal(props: ReplyModalProps) {
 
         api.v1.statuses.create({inReplyToId: resolvedID, status: replyText})
             .then(() => {
-                console.log(`Reply submitted successfully!`);
+                log(`Reply submitted successfully!`);
                 setShow(false);
             }).catch(err => {
-                console.error(`Error submitting reply: ${err}`);
+                error(`Error submitting reply: ${err}`);
                 setError(`Failed to submit reply: ${err.message}`);
             });
     }
@@ -79,8 +121,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                     <Form.Control
                         as="textarea"
                         onChange={(e) => setReplyText(e.target.value)}
-                        // placeh
-                        // older='Type your reply here...'
+                        // placeholder='Type your reply here...'
                         rows={4}
                         style={formStyle}
                     />
@@ -90,7 +131,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                     </Button>
                 </Form.Group>
 
-                <Dropzone onDrop={acceptedFiles => console.log(`Accepted files:`, acceptedFiles)}>
+                <Dropzone onDrop={onDrop} accept={ACCEPT_ATTACHMENTS}>
                     {({getRootProps, getInputProps}) => (
                         <section>
                             <div {...getRootProps()} style={dropzoneStyle}>
@@ -100,6 +141,17 @@ export default function ReplyModal(props: ReplyModalProps) {
                         </section>
                     )}
                 </Dropzone>
+
+                {mediaAttachments.length > 0 &&
+                    <MultimediaNode
+                        setMediaInspectionIdx={() => {}}  // No media inspection in reply modal
+                        status={{
+                            audioAttachments: [],
+                            imageAttachments: mediaAttachments,
+                            mediaAttachments: mediaAttachments,
+                            videoAttachments: [],
+                        } as FakeToot}
+                    />}
             </Modal.Body>
         </Modal>
     );
