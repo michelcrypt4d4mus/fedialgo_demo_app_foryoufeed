@@ -22,7 +22,7 @@ interface ReplyModalProps extends ModalProps {
 
 
 export default function ReplyModal(props: ReplyModalProps) {
-    let { dialogClassName, show, setShow, title, toot } = props;
+    const { show, setShow, title, toot } = props;
     const { api } = useAlgorithm();
     const { setError } = useError();
 
@@ -63,7 +63,7 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     return (
         <Modal
-            dialogClassName={dialogClassName || "modal-xl"}
+            dialogClassName={"modal-lg"}
             onHide={() => setShow(false)}
             show={show}
         >
@@ -72,24 +72,23 @@ export default function ReplyModal(props: ReplyModalProps) {
             </Modal.Header>
 
             <Modal.Body >
-                <StatusComponent fontColor="black" status={toot}/>
+                <StatusComponent fontColor="black" hideLinkPreviews={true} status={toot}/>
 
-                <Form>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                        <Form.Label>Example textarea</Form.Label>
+                <Form.Group className="mb-3" style={{paddingLeft: "15px", paddingRight: "15px"}}>
+                    {/* <Form.Label style={{backgroundColor: "lightgrey"}}>Your Reply:</Form.Label> */}
 
-                        <Form.Control
-                            as="textarea"
-                            onChange={(e) => setReplyText(e.target.value)}
-                            rows={4}
-                            style={formStyle}
-                        />
+                    <Form.Control
+                        as="textarea"
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder='Type your reply here...'
+                        rows={4}
+                        style={formStyle}
+                    />
 
-                        <Button onClick={() => submitReply()} variant="primary">
-                            Submit
-                        </Button>
-                    </Form.Group>
-                </Form>
+                    <Button onClick={() => submitReply()} style={{marginTop: "8px"}} variant="primary">
+                        Submit Reply
+                    </Button>
+                </Form.Group>
             </Modal.Body>
         </Modal>
     );
@@ -110,7 +109,7 @@ const charStyle: CSSProperties = {
 const formStyle: CSSProperties = {
     backgroundColor: FEED_BACKGROUND_COLOR,
     color: "white",
-    // borderRadius: "15px",
+    marginTop: "15px",
 };
 
 const textStyle: CSSProperties = {
