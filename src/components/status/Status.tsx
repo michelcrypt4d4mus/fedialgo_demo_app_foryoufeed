@@ -30,6 +30,7 @@ import MultimediaNode from "./MultimediaNode";
 import NewTabLink from '../helpers/NewTabLink';
 import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
+import ReplyModal from "./ReplyModal";
 import useOnScreen from "../../hooks/useOnScreen";
 import { debugMsg, errorMsg, logMsg, logSafe, timestampString } from '../../helpers/string_helpers';
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
@@ -93,6 +94,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     // idx of the mediaAttachment to show in the media inspection modal (-1 means no modal)
     const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
+    const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
     const [hasBeenShown, setHasBeenShown] = React.useState<boolean>(false);
@@ -212,6 +214,12 @@ export default function StatusComponent(props: StatusComponentProps) {
                 title="Raw Toot Object"
             />
 
+            <ReplyModal
+                toot={toot}
+                show={showReplyModal}
+                setShow={setShowReplyModal}
+            />
+
             {hasImageAttachments &&
                 <AttachmentsModal
                     mediaInspectionIdx={mediaInspectionIdx}
@@ -328,7 +336,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
                     <div className="status__action-bar" ref={statusRef}>
-                        {buildActionButton(TootAction.Reply, (e: React.MouseEvent) => openToot(toot, e))}
+                        {buildActionButton(TootAction.Reply, (e: React.MouseEvent) => setShowReplyModal(true))}
                         {buildActionButton(TootAction.Reblog)}
                         {buildActionButton(TootAction.Favourite)}
                         {buildActionButton(TootAction.Bookmark)}

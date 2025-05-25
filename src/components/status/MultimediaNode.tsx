@@ -1,11 +1,12 @@
 import React, { CSSProperties} from "react";
+import CloseButton from 'react-bootstrap/CloseButton';
 
 import 'react-lazy-load-image-component/src/effects/blur.css';  // For blur effect
-import { GIFV, Toot } from "fedialgo";
+import { GIFV, MediaCategory, Toot } from "fedialgo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
-import { warnMsg } from "../../helpers/string_helpers";
+import { errorMsg, warnMsg } from "../../helpers/string_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
@@ -14,14 +15,32 @@ const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 
 interface MultimediaNodeProps {
-    status: Toot;
+    mediaAttachments?: mastodon.v1.MediaAttachment[];
+    removeMediaAttachment?: (mediaID: string) => void;
     setMediaInspectionIdx: (idx: number) => void;
+    status?: Toot;
 };
 
 
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
-    const { status, setMediaInspectionIdx } = props;
-    const images = status.imageAttachments;
+    const { mediaAttachments, status, removeMediaAttachment, setMediaInspectionIdx } = props;
+    let audios: mastodon.v1.MediaAttachment[];
+    let images: mastodon.v1.MediaAttachment[];
+    let videos: mastodon.v1.MediaAttachment[];
+
+    if (status) {
+        audios = status.audioAttachments;
+        images = status.imageAttachments;
+        videos = status.videoAttachments;
+    } else if (mediaAttachments) {
+        audios = mediaAttachments.filter(m => m.type == MediaCategory.AUDIO);
+        images = mediaAttachments.filter(m => m.type == MediaCategory.IMAGE);
+        videos = mediaAttachments.filter(m => m.type == MediaCategory.VIDEO);
+    } else {
+        errorMsg("MultimediaNode called without mediaAttachments or status", props);
+        return <></>;
+    }
+
     let imageHeight = IMAGES_HEIGHT;
 
     // If there's one image try to show it full size; If there's more than one use old image handler.
@@ -40,17 +59,18 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                 style={{
                     height: "100%",
                     inset: "auto",
-                    width: 1 / status.mediaAttachments.length * 100 + "%"
+                    width: 1 / images.length * 100 + "%"
                 }}
             >
                 {HIDDEN_CANVAS}
+                {removeMediaAttachment && <CloseButton onClick={() => removeMediaAttachment(image.id)}/>}
 
                 <LazyLoadImage
                     alt={image.description}
                     effect="blur"
-                    onClick={() => setMediaInspectionIdx(idx)}
+                    onClick={() => !removeMediaAttachment && setMediaInspectionIdx(idx)}
                     src={image.previewUrl}
-                    style={imageStyle}
+                    style={{...imageStyle, cursor: removeMediaAttachment ? "default" : "pointer"}}
                     title={image.description}
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
                 />
@@ -58,16 +78,16 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         );
     };
 
-    if (status.imageAttachments.length > 0) {
+    if (images.length > 0) {
         return (
             <div className="media-gallery" style={{height: images.length > 1 ? '100%' : `${imageHeight}px`, ...style}}>
-                {status.imageAttachments.map((image, i) => makeImage(image, i))}
+                {images.map((image, i) => makeImage(image, i))}
             </div>
         );
-    } else if (status.videoAttachments.length > 0) {
+    } else if (videos.length > 0) {
         return (
             <div className="media-gallery" style={{height: `${VIDEO_HEIGHT}px`, ...style}}>
-                {status.videoAttachments.map((video, i) => {
+                {videos.map((video, i) => {
                     const sourceTag = <source src={video?.remoteUrl || video?.url} type="video/mp4" />;
                     let videoTag: React.ReactElement;
 
@@ -95,16 +115,16 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                 })}
             </div>
         );
-    } else if (status.audioAttachments.length > 0) {
+    } else if (audios.length > 0) {
         return (
             <div className="media-gallery" style={{height: `${imageHeight / 4}px`, ...style}}>
                 <audio controls style={{ width: "100%" }}>
-                    <source src={status.audioAttachments[0].remoteUrl} type="audio/mpeg" />
+                    <source src={audios[0].remoteUrl} type="audio/mpeg" />
                 </audio>
             </div>
         );
     } else {
-        warnMsg(`Unknown media type for status: ${status.uri}`, status);
+        warnMsg(`Unknown media type for status:`, status, `\nmediaAttachments:`, mediaAttachments);
     }
 };
 
@@ -122,7 +142,6 @@ const mediaItem: CSSProperties = {
 const imageStyle: CSSProperties = {
     ...fullSize,
     ...mediaItem,
-    cursor: "pointer",
     // failed attempt at fake border
     // filter: "drop-shadow(0 -5px 0 gray) drop-shadow(0 5px 0 gray) drop-shadow(-5px 0 0 gray) drop-shadow(5px 0 0 gray)",
     objectFit: "contain",
