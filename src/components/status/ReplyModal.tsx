@@ -13,7 +13,7 @@ import { Toot } from 'fedialgo';
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
 import { errorMsg, logMsg } from '../../helpers/string_helpers';
-import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
+import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE, PARTICIPATED_TAG_COLOR } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
@@ -137,8 +137,8 @@ export default function ReplyModal(props: ReplyModalProps) {
             show={show}
             style={{cursor: isAttaching ? 'wait' : 'default'}}
         >
-            <Modal.Header closeButton style={textStyle}>
-                <Modal.Title>{MODAL_TITLE}</Modal.Title>
+            <Modal.Header closeButton style={{backgroundColor: FEED_BACKGROUND_COLOR_LITE, color: "white"}}>
+
             </Modal.Header>
 
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
@@ -170,7 +170,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                                 <div {...getRootProps()} style={dropzoneStyle}>
                                     <input {...getInputProps()} />
 
-                                    <p style={{fontSize: "17px"}}>
+                                    <p style={{cursor: "pointer", fontSize: "16px", fontWeight: "bold"}}>
                                         Drag 'n' drop files on this colored area or click to select files to attach
                                     </p>
                                 </div>
@@ -178,9 +178,11 @@ export default function ReplyModal(props: ReplyModalProps) {
                         )}
                     </Dropzone>
 
-                    <Button onClick={() => submitReply()} style={buttonStyle} variant="primary">
-                        Submit Reply
-                    </Button>
+                    <div style={{justifyContent: "space-around", display: "flex"}}>
+                        <Button className="btn-lg" onClick={() => submitReply()} style={buttonStyle}>
+                            Submit Reply
+                        </Button>
+                    </div>
                 </Form.Group>
             </Modal.Body>
         </Modal>
@@ -189,12 +191,7 @@ export default function ReplyModal(props: ReplyModalProps) {
 
 
 const buttonStyle: CSSProperties = {
-    marginTop: "12px",
-};
-
-const charStyle: CSSProperties = {
-    backgroundColor: FEED_BACKGROUND_COLOR,
-    borderRadius: "15px",
+    marginTop: "20px",
 };
 
 const dropzoneStyle: CSSProperties = {
@@ -208,7 +205,7 @@ const dropzoneStyle: CSSProperties = {
 };
 
 const formStyle: CSSProperties = {
-    backgroundColor: FEED_BACKGROUND_COLOR_LITE, //"lightgrey",// FEED_BACKGROUND_COLOR,
+    backgroundColor: "white",// FEED_BACKGROUND_COLOR_LITE,//"lightblue", // FEED_BACKGROUND_COLOR_LITE, //"lightgrey",// FEED_BACKGROUND_COLOR,
     borderWidth: "5px",
     color: "black",
     fontSize: "22px",
@@ -217,4 +214,5 @@ const formStyle: CSSProperties = {
 
 const textStyle: CSSProperties = {
     color: "black",
+    fontSize: "15px",
 };
