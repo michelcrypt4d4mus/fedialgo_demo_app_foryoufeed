@@ -169,7 +169,7 @@ export default function Feed() {
                         {algorithm && <ExperimentalFeatures />}
 
                         {(thread.length > 0) &&
-                            <TopLevelAccordion startOpen={true} title="Thread">
+                            <TopLevelAccordion onExited={() => setThread([])} startOpen={true} title="Thread">
                                 {thread.map((toot, index) => (
                                     <StatusComponent
                                         fontColor="black"

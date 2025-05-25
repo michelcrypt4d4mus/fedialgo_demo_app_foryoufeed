@@ -11,13 +11,14 @@ import { accordionBody, noPadding, titleStyle } from "../../helpers/style_helper
 interface TopLevelAccordionProps extends PropsWithChildren {
     bodyStyle?: CSSProperties,
     isActive?: boolean,
+    onExited?: () => void,
     startOpen?: boolean,
     title: string,
 };
 
 
 export default function TopLevelAccordion(props: TopLevelAccordionProps) {
-    const { bodyStyle, isActive, startOpen, title } = props;
+    const { bodyStyle, isActive, onExited, startOpen, title } = props;
 
     // Invert color scheme of title if active
     const className = isActive ? "filterHeader--rounded" : "blahblahblahblahblahblah";
@@ -32,7 +33,7 @@ export default function TopLevelAccordion(props: TopLevelAccordionProps) {
                     </span>
                 </Accordion.Header>
 
-                <Accordion.Body style={{...accordionBody, ...(bodyStyle || {})}}>
+                <Accordion.Body onExited={onExited} style={{...accordionBody, ...(bodyStyle || {})}}>
                     {props.children}
                 </Accordion.Body>
             </Accordion.Item>
