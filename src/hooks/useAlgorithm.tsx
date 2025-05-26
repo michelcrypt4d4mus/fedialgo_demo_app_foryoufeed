@@ -81,7 +81,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
             setAlgorithm(algo);
             triggerLoadFxn(() => algo.triggerFeedUpdate(), setError, setIsLoading);
-            algorithm.serverInfo().then(info => setServerInfo(info));
+            algo.serverInfo().then(info => setServerInfo(info));
         };
 
         constructFeed();
