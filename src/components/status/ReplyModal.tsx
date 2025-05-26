@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Modal } from 'react-bootstrap';
 
-import Dropzone from 'react-dropzone'
+import Dropzone, { useDropzone } from 'react-dropzone'
 import { Toot } from 'fedialgo';
 
 import MultimediaNode from './MultimediaNode';
@@ -163,6 +163,8 @@ export default function ReplyModal(props: ReplyModalProps) {
             });
     };
 
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
+
     return (
         <Modal
             dialogClassName={"modal-lg"}
@@ -179,7 +181,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                     <StatusComponent hideLinkPreviews={true} status={toot}/>
                 </div>
 
-                <Form.Group className="mb-3" style={{}}>
+                <Form.Group className="mb-3" style={{cursor: cursor}}>
                     <Form.Control
                         as="textarea"
                         autoFocus={true}
@@ -196,24 +198,20 @@ export default function ReplyModal(props: ReplyModalProps) {
                             removeMediaAttachment={removeMediaAttachment}
                         />}
 
-                    <Dropzone onDrop={onDrop} accept={acceptedAttachments}>
-                        {({getRootProps, getInputProps}) => (
-                            <section>
-                                <div
-                                    style={{...dropzoneStyle, cursor: isAttaching ? cursor : "pointer"}}
-                                    {...getRootProps()}
-                                >
-                                    <input {...getInputProps()} />
+                    <div
+                        style={{...dropzoneStyle, cursor: isAttaching ? cursor : "pointer"}}
+                        {...getRootProps({className: 'dropzone'})}
+                    >
+                        <input {...getInputProps()} />
 
-                                    <p style={{fontSize: "16px", fontWeight: "bold"}}>
-                                        Drag 'n' drop files on this colored area or click to select files to attach
-                                    </p>
-                                </div>
-                            </section>
-                        )}
-                    </Dropzone>
+                        <p style={{fontSize: "16px", fontWeight: "bold"}}>
+                            {isDragActive
+                                ? "Drag files here"
+                                : "Drag 'n' drop files on this colored area or click to select files to attach"}
+                        </p>
+                    </div>
 
-                    <div style={{justifyContent: "space-around", display: "flex"}}>
+                    <div style={buttonContainer}>
                         <Button className="btn-lg" onClick={() => submitReply()} style={buttonStyle}>
                             Submit Reply
                         </Button>
@@ -227,6 +225,11 @@ export default function ReplyModal(props: ReplyModalProps) {
 
 const buttonStyle: CSSProperties = {
     marginTop: "20px",
+};
+
+const buttonContainer: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-around",
 };
 
 const dropzoneStyle: CSSProperties = {
