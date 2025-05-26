@@ -7,8 +7,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Modal } from 'react-bootstrap';
 
-import Dropzone, { useDropzone } from 'react-dropzone'
 import { Toot } from 'fedialgo';
+import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
@@ -109,7 +109,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             reader.onerror = () => logAndSetError('File reading has failed');
 
             reader.onload = () => {
-                log(`File read successfully (${fileInfo(file)})`);
+                log(`Uploading file (${fileInfo(file)})`);
 
                 api.v2.media.create({file: new Blob([reader.result as ArrayBuffer], {type: file.type})})
                     .then(media => {
