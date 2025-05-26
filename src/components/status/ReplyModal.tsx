@@ -100,14 +100,6 @@ export default function ReplyModal(props: ReplyModalProps) {
             return;
         }
 
-        if (attachmentsConfig?.supportedMimeTypes?.length) {
-            if (!acceptedFiles.every(f => attachmentsConfig.supportedMimeTypes.includes(f.type))) {
-                const msg = `Unsupported file type! Supported types: ${attachmentsConfig.supportedMimeTypes.join(', ')}`;
-                logAndSetError(msg);
-                return;
-            }
-        }
-
         setIsAttaching(true);
 
         acceptedFiles.forEach((file) => {
