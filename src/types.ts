@@ -26,3 +26,6 @@ export interface ModalProps extends BootstrapModalProps {
     subtitle?: string | React.ReactNode,
     title?: string,
 };
+
+
+export type MimeExtensions = Record<string, string[]>;

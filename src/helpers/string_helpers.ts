@@ -2,6 +2,7 @@
  * String manipulation helpers.
  */
 import TheAlgorithm from "fedialgo";
+import { MimeExtensions } from "../types";
 
 export const DEMO_APP = "DEMO APP";
 export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
@@ -34,6 +35,11 @@ const DATE_FORMAT = Intl.DateTimeFormat(
 );
 
 
+export function fileInfo(file: File): string {
+    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
+};
+
+
 // Log the browser's locale information to the console
 export const logLocaleInfo = (): void => {
     const msg = [
@@ -48,6 +54,36 @@ export const logLocaleInfo = (): void => {
 
     logMsg(`${msg.join(", ")}`);
 };
+
+
+// Build a map of MIME types to file extensions used by DropZone for image attachments etc.
+export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
+    const mimeExtensions = mimeTypes.reduce((acc, mimeType) => {
+        if (mimeType.startsWith('audio/')) {
+            acc['audio/*'] ||= [];
+            acc['audio/*'].push(mimeTypeExtension(mimeType));
+        } else if (mimeType.startsWith('image/')) {
+            acc['image/*'] ||= [];
+            acc['image/*'].push(mimeTypeExtension(mimeType));
+            if (mimeType === 'image/jpg') acc['image/*'].push('.jpeg'); // Add .jpeg extension support
+        } else if (mimeType.startsWith('video/')) {
+            acc['video/*'] ||= [];
+
+            if (mimeType === 'video/quicktime') {
+                acc['video/*'].push('.mov'); // Add .mov extension support
+            } else {
+                acc['video/*'].push(mimeTypeExtension(mimeType));
+            }
+        } else {
+            warnMsg(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
+        }
+
+        return acc;
+    }, {} as MimeExtensions);
+
+    console.debug(`Server accepted MIME types:`, mimeExtensions);
+    return mimeExtensions;
+}
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
@@ -121,7 +157,14 @@ export const versionString = () => {
 };
 
 
-const ordinalSuffix = (n: number): string => {
+// "image/png" => ".png"
+function mimeTypeExtension(mimeType: string): string {
+    const parts = mimeType.split('/');
+    return parts.length > 1 ? `.${parts[1]}` : '';
+};
+
+
+function ordinalSuffix(n: number): string {
     if (n > 3 && n < 21) return "th";
 
     switch (n % 10) {

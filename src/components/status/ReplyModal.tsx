@@ -12,14 +12,14 @@ import { Toot } from 'fedialgo';
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { errorMsg, logMsg } from '../../helpers/string_helpers';
-import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE, PARTICIPATED_TAG_COLOR } from '../../helpers/style_helpers';
+import { errorMsg, fileInfo, logMsg, warnMsg } from '../../helpers/string_helpers';
+import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
 
-const ACCEPT_ATTACHMENTS = {
+const DEFAULT_ACCEPT_ATTACHMENTS = {
     'audio/*': ['.mp3', '.wav'],
     'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
     'video/*': ['.mp4', '.webm'],
@@ -42,24 +42,27 @@ interface ReplyModalProps extends ModalProps {
 
 export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
-    const { api, serverInfo } = useAlgorithm();
+    const { api, mimeExtensions, serverInfo } = useAlgorithm();
     const { setError } = useError();
 
     const [isAttaching, setIsAttaching] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
+    const cursor = isAttaching ? 'wait' : 'default'
 
+    // Server configuration stuff
+    const acceptedAttachments = mimeExtensions || DEFAULT_ACCEPT_ATTACHMENTS;
     const statusConfig = serverInfo?.configuration?.statuses;
-    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxChars = statusConfig?.maxCharacters || DEFAULT_MAX_CHARACTERS;
     const maxMediaAttachments = statusConfig?.maxMediaAttachments || DEFAULT_MAX_ATTACHMENTS;
+    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxImageSize = attachmentsConfig?.imageSizeLimit || DEFAULT_MAX_IMAGE_SIZE;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || DEFAULT_MAX_VIDEO_SIZE;
 
     const logAndSetError = (msg: string, err?: Error) => {
         error(`${msg}`, err);
-        setError(`${msg}: ${err?.message}`);
+        setError(msg + (err ? ` (${err.message})` : ``));
     }
 
     const removeMediaAttachment = (mediaID: string) => {
@@ -78,26 +81,43 @@ export default function ReplyModal(props: ReplyModalProps) {
         }
     }, [api, show])
 
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
         log(`Accepted files:`, acceptedFiles);
 
-        if (acceptedFiles.length + mediaAttachments.length > maxMediaAttachments) {
-            const msg = `No more than 4 files! Currently attached: ${mediaAttachments.length}, adding ${acceptedFiles.length}`;
-            error(msg);
-            setError(msg);
+        if (fileRejections.length > 0) {
+            logAndSetError(`Invalid file type! ${fileRejections[0].errors[0].message}`);
             return;
+        } else if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
+            logAndSetError(`No more than ${maxMediaAttachments} files can be attached!`);
+            return;
+        } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
+            const msg = `Image file size exceeds ${maxImageSize / 1048576} MB limit!`;
+            logAndSetError(msg);
+            return;
+        } else if (acceptedFiles.some(f => f.type.startsWith('video/') && f.size > maxVideoSize)) {
+            const msg = `Video file size exceeds ${maxVideoSize / 1048576} MB limit!`;
+            logAndSetError(msg);
+            return;
+        }
+
+        if (attachmentsConfig?.supportedMimeTypes?.length) {
+            if (!acceptedFiles.every(f => attachmentsConfig.supportedMimeTypes.includes(f.type))) {
+                const msg = `Unsupported file type! Supported types: ${attachmentsConfig.supportedMimeTypes.join(', ')}`;
+                logAndSetError(msg);
+                return;
+            }
         }
 
         setIsAttaching(true);
 
         acceptedFiles.forEach((file) => {
-            log(`Processing file: "${file.name}", size: ${file.size}, type: ${file.type}. File:`, file);
+            log(`Processing ${fileInfo(file)}. File:`, file);
             const reader = new FileReader();
             reader.onabort = () => logAndSetError('File reading was aborted');
             reader.onerror = () => logAndSetError('File reading has failed');
 
             reader.onload = () => {
-                log(`File read successfully:`, file.name, `size:`, file.size, `type:`, file.type);
+                log(`File read successfully (${fileInfo(file)})`);
 
                 api.v2.media.create({file: new Blob([reader.result as ArrayBuffer], {type: file.type})})
                     .then(media => {
@@ -105,7 +125,10 @@ export default function ReplyModal(props: ReplyModalProps) {
                         setMediaAttachments(prev => [...prev, media]);
                     })
                     .catch(err => {
-                        logAndSetError(`Failed to upload media "${file.name}". ${OAUTH_ERROR_MSG}`, err);
+                        let msg = `Failed to upload media "${file.name}" (${file.type}).`;
+                        // TODO: this is a janky way to avoid putting OAUTH_ERROR_MSG in every error message
+                        if (!err.message.includes("Error processing thumbnail")) msg += ` ${OAUTH_ERROR_MSG}`;
+                        logAndSetError(msg, err);
                     })
                     .finally(() => {
                         setIsAttaching(false);
@@ -114,8 +137,6 @@ export default function ReplyModal(props: ReplyModalProps) {
 
             reader.readAsArrayBuffer(file);  // Must be called to actually process the file!
         });
-
-        log(`Finished processing ${acceptedFiles.length} files`);
     }, []);
 
     const submitReply = async () => {
@@ -147,7 +168,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             dialogClassName={"modal-lg"}
             onHide={() => setShow(false)}
             show={show}
-            style={{cursor: isAttaching ? 'wait' : 'default'}}
+            style={{cursor: cursor}}
         >
             <Modal.Header closeButton style={headerStyle}>
                 <p>Reply to {toot.account.describe()}</p>
@@ -175,13 +196,16 @@ export default function ReplyModal(props: ReplyModalProps) {
                             removeMediaAttachment={removeMediaAttachment}
                         />}
 
-                    <Dropzone onDrop={onDrop} accept={ACCEPT_ATTACHMENTS}>
+                    <Dropzone onDrop={onDrop} accept={acceptedAttachments}>
                         {({getRootProps, getInputProps}) => (
                             <section>
-                                <div {...getRootProps()} style={dropzoneStyle}>
+                                <div
+                                    style={{...dropzoneStyle, cursor: isAttaching ? cursor : "pointer"}}
+                                    {...getRootProps()}
+                                >
                                     <input {...getInputProps()} />
 
-                                    <p style={{cursor: "pointer", fontSize: "16px", fontWeight: "bold"}}>
+                                    <p style={{fontSize: "16px", fontWeight: "bold"}}>
                                         Drag 'n' drop files on this colored area or click to select files to attach
                                     </p>
                                 </div>
