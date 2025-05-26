@@ -34,6 +34,11 @@ const DATE_FORMAT = Intl.DateTimeFormat(
     {year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric"}
 );
 
+const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
+    acc[value] = `${value}/*`;
+    return acc;
+}, {} as Record<MediaCategory, string>);
+
 
 export function fileInfo(file: File): string {
     return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
@@ -67,19 +72,22 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
         }
 
         if (category == MediaCategory.AUDIO) {
-            acc['audio/*'] ||= [];
-            acc['audio/*'].push(mimeTypeExtension(mimeType));
+            acc[MIME_GROUPS[MediaCategory.AUDIO]] ||= [];
+            acc[MIME_GROUPS[MediaCategory.AUDIO]].push(mimeTypeExtension(mimeType));
         } else if (category == MediaCategory.IMAGE) {
-            acc['image/*'] ||= [];
-            acc['image/*'].push(mimeTypeExtension(mimeType));
-            if (mimeType === 'image/jpeg') acc['image/*'].push('.jpg'); // Add .jpg extension support
+            acc[MIME_GROUPS[MediaCategory.IMAGE]] ||= [];
+            acc[MIME_GROUPS[MediaCategory.IMAGE]].push(mimeTypeExtension(mimeType));
+
+            if (fileType === 'jpeg') {
+                acc[MIME_GROUPS[MediaCategory.IMAGE]].push('.jpg'); // Add .jpg extension support
+            }
         } else if (category == MediaCategory.VIDEO) {
-            acc['video/*'] ||= [];
+            acc[MIME_GROUPS[MediaCategory.VIDEO]] ||= [];
 
             if (mimeType === 'video/quicktime') {
-                acc['video/*'].push('.mov'); // Add .mov extension support
+                acc[MIME_GROUPS[MediaCategory.VIDEO]].push('.mov'); // Add .mov extension support
             } else {
-                acc['video/*'].push(mimeTypeExtension(mimeType));
+                acc[MIME_GROUPS[MediaCategory.VIDEO]].push(mimeTypeExtension(mimeType));
             }
         } else {
             warnMsg(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
