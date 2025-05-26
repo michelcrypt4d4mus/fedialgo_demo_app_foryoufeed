@@ -12,14 +12,14 @@ import { Toot } from 'fedialgo';
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { errorMsg, fileInfo, logMsg } from '../../helpers/string_helpers';
+import { errorMsg, fileInfo, logMsg, warnMsg } from '../../helpers/string_helpers';
 import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
 
-const ACCEPT_ATTACHMENTS = {
+const DEFAULT_ACCEPT_ATTACHMENTS = {
     'audio/*': ['.mp3', '.wav'],
     'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
     'video/*': ['.mp4', '.webm'],
@@ -50,12 +50,41 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
 
+    // Server configuration stuff
     const statusConfig = serverInfo?.configuration?.statuses;
-    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxChars = statusConfig?.maxCharacters || DEFAULT_MAX_CHARACTERS;
     const maxMediaAttachments = statusConfig?.maxMediaAttachments || DEFAULT_MAX_ATTACHMENTS;
+    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxImageSize = attachmentsConfig?.imageSizeLimit || DEFAULT_MAX_IMAGE_SIZE;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || DEFAULT_MAX_VIDEO_SIZE;
+    let acceptedAttachments: Record<string, string[]> = DEFAULT_ACCEPT_ATTACHMENTS;
+
+    if (attachmentsConfig?.supportedMimeTypes?.length) {
+        acceptedAttachments = attachmentsConfig.supportedMimeTypes.reduce((acc, mimeType) => {
+            if (mimeType.startsWith('audio/')) {
+                acc['audio/*'] ||= [];
+                acc['audio/*'].push(mimeTypeExtension(mimeType));
+            } else if (mimeType.startsWith('image/')) {
+                acc['image/*'] ||= [];
+                acc['image/*'].push(mimeTypeExtension(mimeType));
+                if (mimeType === 'image/jpg') acc['image/*'].push('.jpeg'); // Add .jpeg extension support
+            } else if (mimeType.startsWith('video/')) {
+                acc['video/*'] ||= [];
+
+                if (mimeType === 'video/quicktime') {
+                    acc['video/*'].push('.mov'); // Add .mov extension support
+                } else {
+                    acc['video/*'].push(mimeTypeExtension(mimeType));
+                }
+            } else {
+                warnMsg(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
+            }
+
+            return acc;
+        }, {} as Record<string, string[]>);
+
+        console.debug(`${LOG_PREFIX} Server accepted MIME typesg:`, acceptedAttachments);
+    }
 
     const logAndSetError = (msg: string, err?: Error) => {
         error(`${msg}`, err);
@@ -92,6 +121,14 @@ export default function ReplyModal(props: ReplyModalProps) {
             const msg = `Video file size exceeds ${maxVideoSize / 1048576} MB limit!`;
             logAndSetError(msg);
             return;
+        }
+
+        if (attachmentsConfig?.supportedMimeTypes?.length) {
+            if (!acceptedFiles.every(f => attachmentsConfig.supportedMimeTypes.includes(f.type))) {
+                const msg = `Unsupported file type! Supported types: ${attachmentsConfig.supportedMimeTypes.join(', ')}`;
+                logAndSetError(msg);
+                return;
+            }
         }
 
         setIsAttaching(true);
@@ -179,7 +216,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                             removeMediaAttachment={removeMediaAttachment}
                         />}
 
-                    <Dropzone onDrop={onDrop} accept={ACCEPT_ATTACHMENTS}>
+                    <Dropzone onDrop={onDrop} accept={DEFAULT_ACCEPT_ATTACHMENTS}>
                         {({getRootProps, getInputProps}) => (
                             <section>
                                 <div {...getRootProps()} style={dropzoneStyle}>
@@ -204,6 +241,12 @@ export default function ReplyModal(props: ReplyModalProps) {
     );
 };
 
+
+// "image/png" => ".png"
+function mimeTypeExtension(mimeType: string): string {
+    const parts = mimeType.split('/');
+    return parts.length > 1 ? `.${parts[1]}` : '';
+};
 
 const buttonStyle: CSSProperties = {
     marginTop: "20px",
