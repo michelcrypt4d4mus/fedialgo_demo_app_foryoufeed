@@ -80,10 +80,13 @@ export default function ReplyModal(props: ReplyModalProps) {
         }
     }, [api, show])
 
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
         log(`Accepted files:`, acceptedFiles);
 
-        if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
+        if (fileRejections.length > 0) {
+            logAndSetError(`Invalid file type! ${fileRejections[0].errors[0].message}`);
+            return;
+        } else if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
             logAndSetError(`No more than ${maxMediaAttachments} files can be attached!`);
             return;
         } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
