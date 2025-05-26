@@ -28,6 +28,8 @@ const ACCEPT_ATTACHMENTS = {
 const LOG_PREFIX = `<ReplyModal>`;
 const DEFAULT_MAX_CHARACTERS = 500;
 const DEFAULT_MAX_ATTACHMENTS = 4;
+const DEFAULT_MAX_IMAGE_SIZE = 10485760; // 10 MB
+const DEFAULT_MAX_VIDEO_SIZE = 41943040; // 40 MB
 const MODAL_TITLE = "Reply to Toot";
 
 const error = (msg: string, ...args: any[]) => errorMsg(`${LOG_PREFIX} ${msg}`, ...args);
@@ -49,8 +51,11 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
 
     const statusConfig = serverInfo?.configuration?.statuses;
+    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxChars = statusConfig?.maxCharacters || DEFAULT_MAX_CHARACTERS;
     const maxMediaAttachments = statusConfig?.maxMediaAttachments || DEFAULT_MAX_ATTACHMENTS;
+    const maxImageSize = attachmentsConfig?.imageSizeLimit || DEFAULT_MAX_IMAGE_SIZE;
+    const maxVideoSize = attachmentsConfig?.videoSizeLimit || DEFAULT_MAX_VIDEO_SIZE;
 
     const logAndSetError = (msg: string, err?: Error) => {
         error(`${msg}`, err);
@@ -86,7 +91,7 @@ export default function ReplyModal(props: ReplyModalProps) {
         setIsAttaching(true);
 
         acceptedFiles.forEach((file) => {
-            log(`Processing file:`, file.name, `size:`, file.size, `type:`, file.type);
+            log(`Processing file: "${file.name}", size: ${file.size}, type: ${file.type}. File:`, file);
             const reader = new FileReader();
             reader.onabort = () => logAndSetError('File reading was aborted');
             reader.onerror = () => logAndSetError('File reading has failed');
