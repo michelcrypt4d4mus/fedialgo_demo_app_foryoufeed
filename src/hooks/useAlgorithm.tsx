@@ -5,9 +5,10 @@ import React, { PropsWithChildren, createContext, useContext, useEffect, useStat
 
 import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";
+import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { LOADING_ERROR_MSG, errorMsg, logMsg, warnMsg } from "../helpers/string_helpers";
+import { LOADING_ERROR_MSG, buildMimeExtensions, errorMsg, logMsg, warnMsg } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
 const FOCUS = "focus";
@@ -19,6 +20,7 @@ interface AlgoContext {
     api?: mastodon.rest.Client,
     serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     isLoading?: boolean,
+    mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
     setShouldAutoUpdate?: (should: boolean) => void,
     shouldAutoUpdate?: boolean,
     timeline: Toot[],
@@ -36,6 +38,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [mimeExtensions, setMimeExtensions] = useState<MimeExtensions>({});  // Map of server's allowed MIME types to file extensions
     const [serverInfo, setServerInfo] = useState<mastodon.v1.Instance | mastodon.v2.Instance>(null);  // Instance info for the server
     const [shouldAutoUpdate, setShouldAutoUpdate] = useState<boolean>(false);  // Load new toots on refocus
     const [timeline, setTimeline] = useState<Toot[]>([]);  // contains timeline Toots
@@ -81,7 +84,11 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
             setAlgorithm(algo);
             triggerLoadFxn(() => algo.triggerFeedUpdate(), setError, setIsLoading);
-            algo.serverInfo().then(info => setServerInfo(info));
+
+            algo.serverInfo().then(info => {
+                setServerInfo(info);
+                setMimeExtensions(buildMimeExtensions(info.configuration.mediaAttachments.supportedMimeTypes));
+            });
         };
 
         constructFeed();
@@ -124,6 +131,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         algorithm,
         api,
         isLoading,
+        mimeExtensions,
         serverInfo,
         setShouldAutoUpdate,
         shouldAutoUpdate,

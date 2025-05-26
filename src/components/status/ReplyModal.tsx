@@ -42,7 +42,7 @@ interface ReplyModalProps extends ModalProps {
 
 export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
-    const { api, serverInfo } = useAlgorithm();
+    const { api, mimeExtensions, serverInfo } = useAlgorithm();
     const { setError } = useError();
 
     const [isAttaching, setIsAttaching] = useState(false);
@@ -51,40 +51,13 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
 
     // Server configuration stuff
+    const acceptedAttachments = mimeExtensions || DEFAULT_ACCEPT_ATTACHMENTS;
     const statusConfig = serverInfo?.configuration?.statuses;
     const maxChars = statusConfig?.maxCharacters || DEFAULT_MAX_CHARACTERS;
     const maxMediaAttachments = statusConfig?.maxMediaAttachments || DEFAULT_MAX_ATTACHMENTS;
     const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxImageSize = attachmentsConfig?.imageSizeLimit || DEFAULT_MAX_IMAGE_SIZE;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || DEFAULT_MAX_VIDEO_SIZE;
-    let acceptedAttachments: Record<string, string[]> = DEFAULT_ACCEPT_ATTACHMENTS;
-
-    if (attachmentsConfig?.supportedMimeTypes?.length) {
-        acceptedAttachments = attachmentsConfig.supportedMimeTypes.reduce((acc, mimeType) => {
-            if (mimeType.startsWith('audio/')) {
-                acc['audio/*'] ||= [];
-                acc['audio/*'].push(mimeTypeExtension(mimeType));
-            } else if (mimeType.startsWith('image/')) {
-                acc['image/*'] ||= [];
-                acc['image/*'].push(mimeTypeExtension(mimeType));
-                if (mimeType === 'image/jpg') acc['image/*'].push('.jpeg'); // Add .jpeg extension support
-            } else if (mimeType.startsWith('video/')) {
-                acc['video/*'] ||= [];
-
-                if (mimeType === 'video/quicktime') {
-                    acc['video/*'].push('.mov'); // Add .mov extension support
-                } else {
-                    acc['video/*'].push(mimeTypeExtension(mimeType));
-                }
-            } else {
-                warnMsg(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
-            }
-
-            return acc;
-        }, {} as Record<string, string[]>);
-
-        console.debug(`${LOG_PREFIX} Server accepted MIME typesg:`, acceptedAttachments);
-    }
 
     const logAndSetError = (msg: string, err?: Error) => {
         error(`${msg}`, err);
@@ -216,7 +189,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                             removeMediaAttachment={removeMediaAttachment}
                         />}
 
-                    <Dropzone onDrop={onDrop} accept={DEFAULT_ACCEPT_ATTACHMENTS}>
+                    <Dropzone onDrop={onDrop} accept={acceptedAttachments}>
                         {({getRootProps, getInputProps}) => (
                             <section>
                                 <div {...getRootProps()} style={dropzoneStyle}>
@@ -241,12 +214,6 @@ export default function ReplyModal(props: ReplyModalProps) {
     );
 };
 
-
-// "image/png" => ".png"
-function mimeTypeExtension(mimeType: string): string {
-    const parts = mimeType.split('/');
-    return parts.length > 1 ? `.${parts[1]}` : '';
-};
 
 const buttonStyle: CSSProperties = {
     marginTop: "20px",
