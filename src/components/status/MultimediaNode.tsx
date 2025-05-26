@@ -30,7 +30,6 @@ interface MultimediaNodeProps {
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
     const { mediaAttachments, removeMediaAttachment, toot } = props;
     const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
-    const hasImageAttachments = toot.imageAttachments.length > 0;
     let audios: mastodon.v1.MediaAttachment[];
     let images: mastodon.v1.MediaAttachment[];
     let videos: mastodon.v1.MediaAttachment[];
@@ -48,6 +47,8 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         errorMsg("MultimediaNode called without mediaAttachments or status", props);
         return <></>;
     }
+
+    const hasImageAttachments = images.length > 0;
 
     // If there's one image try to show it full size; If there's more than one use old image handler.
     if (images.length == 1 ) {
