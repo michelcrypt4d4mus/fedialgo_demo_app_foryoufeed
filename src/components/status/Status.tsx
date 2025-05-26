@@ -24,7 +24,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import ActionButton, { AccountAction, ButtonAction, TootAction } from "./ActionButton";
-import AttachmentsModal from './AttachmentsModal';
 import JsonModal from '../helpers/JsonModal';
 import MultimediaNode from "./MultimediaNode";
 import NewTabLink from '../helpers/NewTabLink';
@@ -90,12 +89,10 @@ export default function StatusComponent(props: StatusComponentProps) {
     // If it's a retoot set 'toot' to the original toot
     const toot = status.realToot();
     const hasAttachments = toot.mediaAttachments.length > 0;
-    const hasImageAttachments = toot.imageAttachments.length > 0;
     const isReblog = toot.reblogsBy.length > 0;
     const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
 
     // idx of the mediaAttachment to show in the media inspection modal (-1 means no modal)
-    const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
     const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
@@ -108,26 +105,6 @@ export default function StatusComponent(props: StatusComponentProps) {
         toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
-
-    // Increase mediaInspectionIdx on Right Arrow
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent): void => {
-            if (mediaInspectionIdx === -1) return;
-            let newIndex = mediaInspectionIdx;
-
-            if (e.key === "ArrowRight") {
-                newIndex += 1;
-            } else if (e.key === "ArrowLeft") {
-                newIndex -= 1;
-                if (newIndex < 0) newIndex = toot.mediaAttachments.length - 1;
-            }
-
-            setMediaInspectionIdx(newIndex % toot.mediaAttachments.length);
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [mediaInspectionIdx])
 
     // Build the account link(s) for the reblogger(s) that appears at top of a retoot
     const rebloggersLinks = (
@@ -216,13 +193,6 @@ export default function StatusComponent(props: StatusComponentProps) {
                 setShow={setShowReplyModal}
                 show={showReplyModal}
             />
-
-            {hasImageAttachments &&
-                <AttachmentsModal
-                    mediaInspectionIdx={mediaInspectionIdx}
-                    setMediaInspectionIdx={setMediaInspectionIdx}
-                    toot={toot}
-                />}
 
             <div aria-label={ariaLabel} className="status__wrapper status__wrapper-public focusable">
                 {/* Names of accounts that reblogged the toot (if any) */}
@@ -318,7 +288,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Preview card and attachment display */}
                     {toot.card && !hasAttachments && <PreviewCard card={toot.card} hideLinkPreviews={hideLinkPreviews} />}
-                    {hasAttachments && <MultimediaNode setMediaInspectionIdx={setMediaInspectionIdx} status={toot}/>}
+                    {hasAttachments && <MultimediaNode toot={toot}/>}
                     {toot.poll && <Poll poll={toot.poll} />}
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}

@@ -2,9 +2,9 @@
  * Modal that allows for inspection of tooted images etc upon clicking.
  */
 import React from 'react';
+import { Modal } from 'react-bootstrap';
 
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
-import { Modal } from 'react-bootstrap';
 
 interface AttachmentsModalProps {
     mediaInspectionIdx: number;
@@ -17,6 +17,7 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
     const { mediaInspectionIdx, setMediaInspectionIdx, toot } = props;
     const shouldShowModal = mediaInspectionIdx >= 0;
     let element: JSX.Element = <></>;
+    console.log(`AttachmentsModal: mediaInspectionIdx=${mediaInspectionIdx}, toot=${toot.id}, shouldShowModal=${shouldShowModal}`);
 
     if (shouldShowModal) {
         const media = toot.mediaAttachments[mediaInspectionIdx];
