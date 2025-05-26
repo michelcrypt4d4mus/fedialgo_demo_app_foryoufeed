@@ -26,7 +26,8 @@ const ACCEPT_ATTACHMENTS = {
 };
 
 const LOG_PREFIX = `<ReplyModal>`;
-const MAX_ATTACHMENTS = 4;
+const DEFAULT_MAX_CHARACTERS = 500;
+const DEFAULT_MAX_ATTACHMENTS = 4;
 const MODAL_TITLE = "Reply to Toot";
 
 const error = (msg: string, ...args: any[]) => errorMsg(`${LOG_PREFIX} ${msg}`, ...args);
@@ -39,13 +40,17 @@ interface ReplyModalProps extends ModalProps {
 
 export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
-    const { api } = useAlgorithm();
+    const { api, serverInfo } = useAlgorithm();
     const { setError } = useError();
 
     const [isAttaching, setIsAttaching] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
+
+    const statusConfig = serverInfo?.configuration?.statuses;
+    const maxChars = statusConfig?.maxCharacters || DEFAULT_MAX_CHARACTERS;
+    const maxMediaAttachments = statusConfig?.maxMediaAttachments || DEFAULT_MAX_ATTACHMENTS;
 
     const logAndSetError = (msg: string, err?: Error) => {
         error(`${msg}`, err);
@@ -71,7 +76,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         log(`Accepted files:`, acceptedFiles);
 
-        if (acceptedFiles.length + mediaAttachments.length > MAX_ATTACHMENTS) {
+        if (acceptedFiles.length + mediaAttachments.length > maxMediaAttachments) {
             const msg = `No more than 4 files! Currently attached: ${mediaAttachments.length}, adding ${acceptedFiles.length}`;
             error(msg);
             setError(msg);
@@ -114,6 +119,9 @@ export default function ReplyModal(props: ReplyModalProps) {
             return;
         } else if ((replyText.length + mediaAttachments.length) == 0) {
             setError("Reply cannot be empty!");
+            return;
+        } else if (replyText.length > maxChars) {
+            setError(`Reply text exceeds maximum length of ${maxChars} characters! Current length: ${replyText.length}`);
             return;
         }
 

@@ -17,6 +17,7 @@ const RELOAD_IF_OLDER_THAN_SECONDS = 60 * RELOAD_IF_OLDER_THAN_MINUTES;
 interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
+    serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     isLoading?: boolean,
     setShouldAutoUpdate?: (should: boolean) => void,
     shouldAutoUpdate?: boolean,
@@ -35,6 +36,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [serverInfo, setServerInfo] = useState<mastodon.v1.Instance | mastodon.v2.Instance>(null);  // Instance info for the server
     const [shouldAutoUpdate, setShouldAutoUpdate] = useState<boolean>(false);  // Load new toots on refocus
     const [timeline, setTimeline] = useState<Toot[]>([]);  // contains timeline Toots
 
@@ -79,6 +81,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
             setAlgorithm(algo);
             triggerLoadFxn(() => algo.triggerFeedUpdate(), setError, setIsLoading);
+            algorithm.serverInfo().then(info => setServerInfo(info));
         };
 
         constructFeed();
@@ -121,6 +124,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         algorithm,
         api,
         isLoading,
+        serverInfo,
         setShouldAutoUpdate,
         shouldAutoUpdate,
         timeline,
