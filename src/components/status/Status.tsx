@@ -163,8 +163,8 @@ export default function StatusComponent(props: StatusComponentProps) {
                     name: "toot.scoreInfo",
                     style: {fontSize: 16},
                 }}
-                show={showScoreModal}
                 setShow={setShowScoreModal}
+                show={showScoreModal}
                 subtitle={<ul>
                     <li>{'Poster:'} <span style={{fontWeight: 500}}>{parse(toot.account.displayNameFullHTML())}</span></li>
                     <li>{'Final Score:'} <code>{formatScore(toot.scoreInfo.score)}</code></li>
@@ -183,8 +183,8 @@ export default function StatusComponent(props: StatusComponentProps) {
                     style: {fontSize: 13},
                     theme: "brewer",
                 }}
-                show={showTootModal}
                 setShow={setShowTootModal}
+                show={showTootModal}
                 title="Raw Toot Object"
             />
 
