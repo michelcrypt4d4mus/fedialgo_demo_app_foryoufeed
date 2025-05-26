@@ -49,6 +49,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
+    const cursor = isAttaching ? 'wait' : 'default'
 
     // Server configuration stuff
     const acceptedAttachments = mimeExtensions || DEFAULT_ACCEPT_ATTACHMENTS;
@@ -124,7 +125,10 @@ export default function ReplyModal(props: ReplyModalProps) {
                         setMediaAttachments(prev => [...prev, media]);
                     })
                     .catch(err => {
-                        logAndSetError(`Failed to upload media "${file.name}". ${OAUTH_ERROR_MSG}`, err);
+                        let msg = `Failed to upload media "${file.name}" (${file.type}).`;
+                        // TODO: this is a janky way to avoid putting OAUTH_ERROR_MSG in every error message
+                        if (!err.message.includes("Error processing thumbnail")) msg += ` ${OAUTH_ERROR_MSG}`;
+                        logAndSetError(msg, err);
                     })
                     .finally(() => {
                         setIsAttaching(false);
@@ -164,7 +168,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             dialogClassName={"modal-lg"}
             onHide={() => setShow(false)}
             show={show}
-            style={{cursor: isAttaching ? 'wait' : 'default'}}
+            style={{cursor: cursor}}
         >
             <Modal.Header closeButton style={headerStyle}>
                 <p>Reply to {toot.account.describe()}</p>
@@ -195,10 +199,13 @@ export default function ReplyModal(props: ReplyModalProps) {
                     <Dropzone onDrop={onDrop} accept={acceptedAttachments}>
                         {({getRootProps, getInputProps}) => (
                             <section>
-                                <div {...getRootProps()} style={dropzoneStyle}>
+                                <div
+                                    style={{...dropzoneStyle, cursor: isAttaching ? cursor : "pointer"}}
+                                    {...getRootProps()}
+                                >
                                     <input {...getInputProps()} />
 
-                                    <p style={{cursor: "pointer", fontSize: "16px", fontWeight: "bold"}}>
+                                    <p style={{fontSize: "16px", fontWeight: "bold"}}>
                                         Drag 'n' drop files on this colored area or click to select files to attach
                                     </p>
                                 </div>
