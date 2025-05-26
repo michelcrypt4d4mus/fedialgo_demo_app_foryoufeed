@@ -24,7 +24,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import ActionButton, { AccountAction, ButtonAction, TootAction } from "./ActionButton";
-import AttachmentsModal from './AttachmentsModal';
 import JsonModal from '../helpers/JsonModal';
 import MultimediaNode from "./MultimediaNode";
 import NewTabLink from '../helpers/NewTabLink';
@@ -82,23 +81,21 @@ interface StatusComponentProps {
 export default function StatusComponent(props: StatusComponentProps) {
     const { fontColor, hideLinkPreviews, isLoadingThread, setIsLoadingThread, setThread, status } = props;
     const { isLoading } = useAlgorithm();
-    const fontStyle = fontColor ? { color: fontColor } : {};
     const contentClass = fontColor ? "status__content__alt" : "status__content";
-    const statusRef = useRef<HTMLDivElement>(null);
-    const isOnScreen = useOnScreen(statusRef);
+    const fontStyle = fontColor ? { color: fontColor } : {};
 
     // If it's a retoot set 'toot' to the original toot
     const toot = status.realToot();
     const hasAttachments = toot.mediaAttachments.length > 0;
-    const hasImageAttachments = toot.imageAttachments.length > 0;
     const isReblog = toot.reblogsBy.length > 0;
     const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
 
     // idx of the mediaAttachment to show in the media inspection modal (-1 means no modal)
-    const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
     const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
+    const statusRef = useRef<HTMLDivElement>(null);
+    const isOnScreen = useOnScreen(statusRef);
 
     // useEffect to handle things we want to do when the toot makes its first appearnace on screen
     useEffect(() => {
@@ -108,26 +105,6 @@ export default function StatusComponent(props: StatusComponentProps) {
         toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
-
-    // Increase mediaInspectionIdx on Right Arrow
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent): void => {
-            if (mediaInspectionIdx === -1) return;
-            let newIndex = mediaInspectionIdx;
-
-            if (e.key === "ArrowRight") {
-                newIndex += 1;
-            } else if (e.key === "ArrowLeft") {
-                newIndex -= 1;
-                if (newIndex < 0) newIndex = toot.mediaAttachments.length - 1;
-            }
-
-            setMediaInspectionIdx(newIndex % toot.mediaAttachments.length);
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [mediaInspectionIdx])
 
     // Build the account link(s) for the reblogger(s) that appears at top of a retoot
     const rebloggersLinks = (
@@ -211,18 +188,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                 title="Raw Toot Object"
             />
 
-            <ReplyModal
-                toot={toot}
-                setShow={setShowReplyModal}
-                show={showReplyModal}
-            />
-
-            {hasImageAttachments &&
-                <AttachmentsModal
-                    mediaInspectionIdx={mediaInspectionIdx}
-                    setMediaInspectionIdx={setMediaInspectionIdx}
-                    toot={toot}
-                />}
+            <ReplyModal setShow={setShowReplyModal} toot={toot} show={showReplyModal}/>
 
             <div aria-label={ariaLabel} className="status__wrapper status__wrapper-public focusable">
                 {/* Names of accounts that reblogged the toot (if any) */}
@@ -311,14 +277,14 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Text content of the toot */}
                     <div className={contentClass} style={fontStyle}>
-                        <div className="status__content__text status__content__text--visible translate" lang="en">
+                        <div className="status__content__text status__content__text--visible translate" lang={toot.language}>
                             {parse(toot.contentNonTagsParagraphs())}
                         </div>
                     </div>
 
-                    {/* Preview card and attachment display */}
+                    {/* Preview card and attachment display (media attachments are preferred over preview cards) */}
                     {toot.card && !hasAttachments && <PreviewCard card={toot.card} hideLinkPreviews={hideLinkPreviews} />}
-                    {hasAttachments && <MultimediaNode setMediaInspectionIdx={setMediaInspectionIdx} status={toot}/>}
+                    {hasAttachments && <MultimediaNode toot={toot}/>}
                     {toot.poll && <Poll poll={toot.poll} />}
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
@@ -343,7 +309,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
                     <div className="status__action-bar" ref={statusRef}>
-                        {buildActionButton(TootAction.Reply, (e: React.MouseEvent) => setShowReplyModal(true))}
+                        {buildActionButton(TootAction.Reply, () => setShowReplyModal(true))}
                         {buildActionButton(TootAction.Reblog)}
                         {buildActionButton(TootAction.Favourite)}
                         {buildActionButton(TootAction.Bookmark)}

@@ -1,4 +1,7 @@
-import React, { CSSProperties} from "react";
+/*
+ * Component to display multimedia content (images, videos, audios) in a single pane.
+ */
+import React, { CSSProperties } from "react";
 import CloseButton from 'react-bootstrap/CloseButton';
 
 import 'react-lazy-load-image-component/src/effects/blur.css';  // For blur effect
@@ -6,7 +9,8 @@ import { GIFV, MediaCategory, Toot } from "fedialgo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
-import { errorMsg, warnMsg } from "../../helpers/string_helpers";
+import AttachmentsModal from "./AttachmentsModal";
+import { debugMsg, errorMsg, warnMsg } from "../../helpers/string_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
@@ -14,24 +18,28 @@ const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hid
 const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 
+// Either toot or mediaAttachments must be given
+// If removeMediaAttachment is given, don't show the modal on clicking an image
 interface MultimediaNodeProps {
     mediaAttachments?: mastodon.v1.MediaAttachment[];
     removeMediaAttachment?: (mediaID: string) => void;
-    setMediaInspectionIdx: (idx: number) => void;
-    status?: Toot;
+    toot?: Toot;
 };
 
 
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
-    const { mediaAttachments, status, removeMediaAttachment, setMediaInspectionIdx } = props;
+    const { mediaAttachments, removeMediaAttachment, toot } = props;
+    const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
+    const hasImageAttachments = toot.imageAttachments.length > 0;
     let audios: mastodon.v1.MediaAttachment[];
     let images: mastodon.v1.MediaAttachment[];
     let videos: mastodon.v1.MediaAttachment[];
+    let imageHeight = IMAGES_HEIGHT;
 
-    if (status) {
-        audios = status.audioAttachments;
-        images = status.imageAttachments;
-        videos = status.videoAttachments;
+    if (toot) {
+        audios = toot.audioAttachments;
+        images = toot.imageAttachments;
+        videos = toot.videoAttachments;
     } else if (mediaAttachments) {
         audios = mediaAttachments.filter(m => m.type == MediaCategory.AUDIO);
         images = mediaAttachments.filter(m => m.type == MediaCategory.IMAGE);
@@ -40,8 +48,6 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         errorMsg("MultimediaNode called without mediaAttachments or status", props);
         return <></>;
     }
-
-    let imageHeight = IMAGES_HEIGHT;
 
     // If there's one image try to show it full size; If there's more than one use old image handler.
     if (images.length == 1 ) {
@@ -68,7 +74,11 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                 <LazyLoadImage
                     alt={image.description}
                     effect="blur"
-                    onClick={() => !removeMediaAttachment && setMediaInspectionIdx(idx)}
+                    onClick={() => {
+                        if (removeMediaAttachment) return;  // Don't open modal if removing media
+                        debugMsg(`Opening media inspection modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
+                        setMediaInspectionIdx(idx);
+                    }}
                     src={image.previewUrl}
                     style={{...imageStyle, cursor: removeMediaAttachment ? "default" : "pointer"}}
                     title={image.description}
@@ -79,11 +89,18 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     };
 
     if (images.length > 0) {
-        return (
+        return (<>
+            {!removeMediaAttachment &&
+                <AttachmentsModal
+                    mediaInspectionIdx={mediaInspectionIdx}
+                    setMediaInspectionIdx={setMediaInspectionIdx}
+                    toot={toot}
+                />}
+
             <div className="media-gallery" style={{height: images.length > 1 ? '100%' : `${imageHeight}px`, ...style}}>
                 {images.map((image, i) => makeImage(image, i))}
             </div>
-        );
+        </>);
     } else if (videos.length > 0) {
         return (
             <div className="media-gallery" style={{height: `${VIDEO_HEIGHT}px`, ...style}}>
@@ -124,7 +141,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
             </div>
         );
     } else {
-        warnMsg(`Unknown media type for status:`, status, `\nmediaAttachments:`, mediaAttachments);
+        warnMsg(`Unknown media type for status:`, toot, `\nmediaAttachments:`, mediaAttachments);
     }
 };
 

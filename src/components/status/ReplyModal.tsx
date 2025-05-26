@@ -44,7 +44,6 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     const [isAttaching, setIsAttaching] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
-    const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number | null>(null);
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
 
@@ -161,7 +160,6 @@ export default function ReplyModal(props: ReplyModalProps) {
                         <MultimediaNode
                             mediaAttachments={mediaAttachments}
                             removeMediaAttachment={removeMediaAttachment}
-                            setMediaInspectionIdx={setMediaInspectionIdx}
                         />}
 
                     <Dropzone onDrop={onDrop} accept={ACCEPT_ATTACHMENTS}>
