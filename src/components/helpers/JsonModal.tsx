@@ -34,8 +34,8 @@ interface JsonModalProps extends ModalProps {
 
 export default function JsonModal(props: JsonModalProps) {
     let { dialogClassName, infoTxt, json, jsonViewProps, show, setShow, subtitle, title } = props;
-    jsonViewProps ??= {};
-    jsonViewProps.style = { ...jsonViewStyle, ...(jsonViewProps.style || {}) };
+    jsonViewProps = {...DEFAULT_JSON_VIEW_PROPS, ...(jsonViewProps || {})};
+    jsonViewProps.style = {...jsonViewStyle, ...(jsonViewProps.style || {})};
     json ??= {};
 
     return (
@@ -56,7 +56,7 @@ export default function JsonModal(props: JsonModalProps) {
                     </div>}
 
                 <ReactJsonView
-                    {...{...DEFAULT_JSON_VIEW_PROPS, ...jsonViewProps}}
+                    {...jsonViewProps}
                     src={json || {}}
                 />
             </Modal.Body>
