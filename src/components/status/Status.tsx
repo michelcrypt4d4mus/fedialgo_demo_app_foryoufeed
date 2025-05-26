@@ -102,7 +102,8 @@ export default function StatusComponent(props: StatusComponentProps) {
         if (isLoading || !isOnScreen) return;
 
         // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
-        toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
+        // TODO: disable this for now as it increases storage demands for small instances
+        // toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
 
