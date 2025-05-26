@@ -81,10 +81,8 @@ interface StatusComponentProps {
 export default function StatusComponent(props: StatusComponentProps) {
     const { fontColor, hideLinkPreviews, isLoadingThread, setIsLoadingThread, setThread, status } = props;
     const { isLoading } = useAlgorithm();
-    const fontStyle = fontColor ? { color: fontColor } : {};
     const contentClass = fontColor ? "status__content__alt" : "status__content";
-    const statusRef = useRef<HTMLDivElement>(null);
-    const isOnScreen = useOnScreen(statusRef);
+    const fontStyle = fontColor ? { color: fontColor } : {};
 
     // If it's a retoot set 'toot' to the original toot
     const toot = status.realToot();
@@ -96,6 +94,8 @@ export default function StatusComponent(props: StatusComponentProps) {
     const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
+    const statusRef = useRef<HTMLDivElement>(null);
+    const isOnScreen = useOnScreen(statusRef);
 
     // useEffect to handle things we want to do when the toot makes its first appearnace on screen
     useEffect(() => {
@@ -188,11 +188,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                 title="Raw Toot Object"
             />
 
-            <ReplyModal
-                toot={toot}
-                setShow={setShowReplyModal}
-                show={showReplyModal}
-            />
+            <ReplyModal setShow={setShowReplyModal} toot={toot} show={showReplyModal}/>
 
             <div aria-label={ariaLabel} className="status__wrapper status__wrapper-public focusable">
                 {/* Names of accounts that reblogged the toot (if any) */}
@@ -281,12 +277,12 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Text content of the toot */}
                     <div className={contentClass} style={fontStyle}>
-                        <div className="status__content__text status__content__text--visible translate" lang="en">
+                        <div className="status__content__text status__content__text--visible translate" lang={toot.language}>
                             {parse(toot.contentNonTagsParagraphs())}
                         </div>
                     </div>
 
-                    {/* Preview card and attachment display */}
+                    {/* Preview card and attachment display (media attachments are preferred over preview cards) */}
                     {toot.card && !hasAttachments && <PreviewCard card={toot.card} hideLinkPreviews={hideLinkPreviews} />}
                     {hasAttachments && <MultimediaNode toot={toot}/>}
                     {toot.poll && <Poll poll={toot.poll} />}
@@ -313,7 +309,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
                     <div className="status__action-bar" ref={statusRef}>
-                        {buildActionButton(TootAction.Reply, (e: React.MouseEvent) => setShowReplyModal(true))}
+                        {buildActionButton(TootAction.Reply, () => setShowReplyModal(true))}
                         {buildActionButton(TootAction.Reblog)}
                         {buildActionButton(TootAction.Favourite)}
                         {buildActionButton(TootAction.Bookmark)}

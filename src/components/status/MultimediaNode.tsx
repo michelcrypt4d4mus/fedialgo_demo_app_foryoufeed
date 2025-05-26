@@ -56,26 +56,6 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         imageHeight = Math.min(IMAGES_HEIGHT, ...images.map(i => i.meta?.small?.height || IMAGES_HEIGHT));
     }
 
-    // Increase mediaInspectionIdx on Right Arrow
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent): void => {
-            if (mediaInspectionIdx === -1) return;
-            let newIndex = mediaInspectionIdx;
-
-            if (e.key === "ArrowRight") {
-                newIndex += 1;
-            } else if (e.key === "ArrowLeft") {
-                newIndex -= 1;
-                if (newIndex < 0) newIndex = toot.mediaAttachments.length - 1;
-            }
-
-            setMediaInspectionIdx(newIndex % toot.mediaAttachments.length);
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [mediaInspectionIdx])
-
     // Make a LazyLoadImage element for displaying an image within a Toot.
     const makeImage = (image: mastodon.v1.MediaAttachment, idx: number): React.ReactElement => {
         return (

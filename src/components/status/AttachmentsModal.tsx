@@ -1,7 +1,7 @@
 /*
  * Modal that allows for inspection of tooted images etc upon clicking.
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
@@ -37,6 +37,28 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
             console.warn(`[AttachmentsModal] Unknown type at toot.mediaAttachments[${mediaInspectionIdx}]`, toot);
         }
     }
+
+    // Increase mediaInspectionIdx on Right Arrow, decrease on Left Arrow.
+    useEffect(() => {
+        if (!toot.imageAttachments.length) return;
+
+        const handleKeyDown = (e: KeyboardEvent): void => {
+            if (mediaInspectionIdx < 0) return;
+            let newIndex = mediaInspectionIdx;
+
+            if (e.key === "ArrowRight") {
+                newIndex += 1;
+            } else if (e.key === "ArrowLeft") {
+                newIndex -= 1;
+                if (newIndex < 0) newIndex = toot.mediaAttachments.length - 1;
+            }
+
+            setMediaInspectionIdx(newIndex % toot.mediaAttachments.length);
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [mediaInspectionIdx, toot.imageAttachments])
 
     return (
         <Modal
