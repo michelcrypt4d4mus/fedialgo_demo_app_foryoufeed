@@ -12,8 +12,8 @@ import { Toot } from 'fedialgo';
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { errorMsg, logMsg } from '../../helpers/string_helpers';
-import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE, PARTICIPATED_TAG_COLOR } from '../../helpers/style_helpers';
+import { errorMsg, fileInfo, logMsg } from '../../helpers/string_helpers';
+import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
@@ -59,7 +59,7 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     const logAndSetError = (msg: string, err?: Error) => {
         error(`${msg}`, err);
-        setError(`${msg}: ${err?.message}`);
+        setError(msg + (err ? ` (${err.message})` : ``));
     }
 
     const removeMediaAttachment = (mediaID: string) => {
@@ -81,23 +81,29 @@ export default function ReplyModal(props: ReplyModalProps) {
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         log(`Accepted files:`, acceptedFiles);
 
-        if (acceptedFiles.length + mediaAttachments.length > maxMediaAttachments) {
-            const msg = `No more than 4 files! Currently attached: ${mediaAttachments.length}, adding ${acceptedFiles.length}`;
-            error(msg);
-            setError(msg);
+        if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
+            logAndSetError(`No more than ${maxMediaAttachments} files can be attached!`);
+            return;
+        } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
+            const msg = `Image file size exceeds ${maxImageSize / 1048576} MB limit!`;
+            logAndSetError(msg);
+            return;
+        } else if (acceptedFiles.some(f => f.type.startsWith('video/') && f.size > maxVideoSize)) {
+            const msg = `Video file size exceeds ${maxVideoSize / 1048576} MB limit!`;
+            logAndSetError(msg);
             return;
         }
 
         setIsAttaching(true);
 
         acceptedFiles.forEach((file) => {
-            log(`Processing file: "${file.name}", size: ${file.size}, type: ${file.type}. File:`, file);
+            log(`Processing ${fileInfo(file)}. File:`, file);
             const reader = new FileReader();
             reader.onabort = () => logAndSetError('File reading was aborted');
             reader.onerror = () => logAndSetError('File reading has failed');
 
             reader.onload = () => {
-                log(`File read successfully:`, file.name, `size:`, file.size, `type:`, file.type);
+                log(`File read successfully (${fileInfo(file)})`);
 
                 api.v2.media.create({file: new Blob([reader.result as ArrayBuffer], {type: file.type})})
                     .then(media => {
@@ -114,8 +120,6 @@ export default function ReplyModal(props: ReplyModalProps) {
 
             reader.readAsArrayBuffer(file);  // Must be called to actually process the file!
         });
-
-        log(`Finished processing ${acceptedFiles.length} files`);
     }, []);
 
     const submitReply = async () => {

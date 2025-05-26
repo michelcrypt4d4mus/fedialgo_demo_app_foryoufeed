@@ -34,6 +34,11 @@ const DATE_FORMAT = Intl.DateTimeFormat(
 );
 
 
+export function fileInfo(file: File): string {
+    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
+};
+
+
 // Log the browser's locale information to the console
 export const logLocaleInfo = (): void => {
     const msg = [
