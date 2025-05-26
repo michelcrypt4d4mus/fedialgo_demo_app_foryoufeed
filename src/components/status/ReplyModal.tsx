@@ -163,7 +163,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             });
     };
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
+    const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
 
     return (
         <Modal
