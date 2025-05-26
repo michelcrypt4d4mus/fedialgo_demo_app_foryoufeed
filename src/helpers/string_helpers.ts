@@ -1,7 +1,7 @@
 /*
  * String manipulation helpers.
  */
-import TheAlgorithm from "fedialgo";
+import TheAlgorithm, { MediaCategory } from "fedialgo";
 import { MimeExtensions } from "../types";
 
 export const DEMO_APP = "DEMO APP";
@@ -59,14 +59,21 @@ export const logLocaleInfo = (): void => {
 // Build a map of MIME types to file extensions used by DropZone for image attachments etc.
 export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
     const mimeExtensions = mimeTypes.reduce((acc, mimeType) => {
-        if (mimeType.startsWith('audio/')) {
+        const [category, fileType] = mimeType.split('/');
+
+        if (fileType.startsWith('x-') || fileType.includes('.')) {
+            console.debug(`Skipping invalid MIME extension: ${mimeType}`);
+            return acc;
+        }
+
+        if (category == MediaCategory.AUDIO) {
             acc['audio/*'] ||= [];
             acc['audio/*'].push(mimeTypeExtension(mimeType));
-        } else if (mimeType.startsWith('image/')) {
+        } else if (category == MediaCategory.IMAGE) {
             acc['image/*'] ||= [];
             acc['image/*'].push(mimeTypeExtension(mimeType));
-            if (mimeType === 'image/jpg') acc['image/*'].push('.jpeg'); // Add .jpeg extension support
-        } else if (mimeType.startsWith('video/')) {
+            if (mimeType === 'image/jpeg') acc['image/*'].push('.jpg'); // Add .jpg extension support
+        } else if (category == MediaCategory.VIDEO) {
             acc['video/*'] ||= [];
 
             if (mimeType === 'video/quicktime') {
