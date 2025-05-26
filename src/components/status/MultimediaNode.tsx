@@ -1,7 +1,7 @@
 /*
  * Component to display multimedia content (images, videos, audios) in a single pane.
  */
-import React, { CSSProperties, useEffect } from "react";
+import React, { CSSProperties } from "react";
 import CloseButton from 'react-bootstrap/CloseButton';
 
 import 'react-lazy-load-image-component/src/effects/blur.css';  // For blur effect
@@ -10,7 +10,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
-import { errorMsg, warnMsg } from "../../helpers/string_helpers";
+import { debugMsg, errorMsg, warnMsg } from "../../helpers/string_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
@@ -76,7 +76,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     effect="blur"
                     onClick={() => {
                         if (removeMediaAttachment) return;  // Don't open modal if removing media
-                        console.log(`Opening media inspection modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
+                        debugMsg(`Opening media inspection modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
                         setMediaInspectionIdx(idx);
                     }}
                     src={image.previewUrl}
@@ -90,7 +90,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
 
     if (images.length > 0) {
         return (<>
-            {hasImageAttachments &&
+            {!removeMediaAttachment &&
                 <AttachmentsModal
                     mediaInspectionIdx={mediaInspectionIdx}
                     setMediaInspectionIdx={setMediaInspectionIdx}

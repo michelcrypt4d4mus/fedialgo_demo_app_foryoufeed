@@ -17,7 +17,6 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
     const { mediaInspectionIdx, setMediaInspectionIdx, toot } = props;
     const shouldShowModal = mediaInspectionIdx >= 0;
     let element: JSX.Element = <></>;
-    console.log(`AttachmentsModal: mediaInspectionIdx=${mediaInspectionIdx}, toot=${toot.id}, shouldShowModal=${shouldShowModal}`);
 
     if (shouldShowModal) {
         const media = toot.mediaAttachments[mediaInspectionIdx];
