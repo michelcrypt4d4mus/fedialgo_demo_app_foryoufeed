@@ -3,10 +3,11 @@
  */
 import { MouseEvent } from "react";
 
-import { logMsg } from "./string_helpers";
+import { logMsg } from "./log_helpers";
 import { Toot, type TrendingWithHistory } from "fedialgo";
 
 export const isProduction = process.env.NODE_ENV === 'production';
+
 
 // Opens in new tab. For same tab do this:  window.location.href = statusURL;
 export function followUri(uri: string, e: React.MouseEvent): boolean {

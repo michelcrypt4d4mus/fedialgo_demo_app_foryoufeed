@@ -19,9 +19,10 @@ import {
     faVolumeMute
 } from "@fortawesome/free-solid-svg-icons";
 
+import { ComponentLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
-import { logMsg, scoreString } from "../../helpers/string_helpers";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
+import { scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
@@ -41,6 +42,12 @@ export enum TootAction {
 export type ButtonAction = AccountAction | TootAction;
 const isAccountAction = (value: string | ButtonAction) => isValueInStringEnum(AccountAction)(value);
 const isTootAction = (value: string | ButtonAction) => isValueInStringEnum(TootAction)(value);
+const logger = new ComponentLogger("ActionButton");
+
+// Sizing icons: https://docs.fontawesome.com/web/style/size
+const ACCOUNT_ACTION_BUTTON_CLASS = "fa-xs";
+const ICON_BUTTON_CLASS = "status__action-bar__button icon-button"
+const ACTION_ICON_BASE_CLASS = `${ICON_BUTTON_CLASS} icon-button--with-counter`;
 
 type ActionInfo = {
     booleanName?: KeysOfValueType<Account, boolean> | KeysOfValueType<Toot, boolean>,
@@ -81,11 +88,6 @@ const ACTION_INFO: Record<ButtonAction, ActionInfo> = {
         label: "Show Score",
     },
 };
-
-// Sizing icons: https://docs.fontawesome.com/web/style/size
-const ACCOUNT_ACTION_BUTTON_CLASS = "fa-xs";
-const ICON_BUTTON_CLASS = "status__action-bar__button icon-button"
-const ACTION_ICON_BASE_CLASS = `${ICON_BUTTON_CLASS} icon-button--with-counter`;
 
 interface ActionButtonProps {
     action: ButtonAction,
@@ -140,7 +142,7 @@ export default function ActionButton(props: ActionButtonProps) {
             const startingCount = toot[actionInfo.countName] || 0;
             const startingState = !!toot[actionInfo.booleanName];
             const newState = !startingState;
-            logMsg(`${action}() toot (startingState: ${startingState}, count: ${startingCount}): `, toot);
+            logger.log(`${action}() toot (startingState: ${startingState}, count: ${startingCount}): `, toot);
             // Optimistically update the GUI (we will reset to original state if the server call fails later)
             toot[actionInfo.booleanName] = newState;
             setCurrentState(newState);
@@ -165,11 +167,11 @@ export default function ActionButton(props: ActionButtonProps) {
                         throw new Error(`Unknown action: ${action}`);
                     }
 
-                    logMsg(`Successfully changed ${action} bool to ${newState}`);
+                    logger.log(`Successfully changed ${action} bool to ${newState}`);
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
                     const msg = `Failed to ${action} toot! (${error.message})`;
-                    console.error(`${msg} Resetting count to ${toot[actionInfo.countName]}`, error);
+                    logger.error(`${msg} Resetting count to ${toot[actionInfo.countName]}`, error);
                     setCurrentState(startingState);
                     toot[actionInfo.booleanName] = startingState;
                     if (actionInfo.countName) toot[actionInfo.countName] = startingCount;
@@ -187,7 +189,7 @@ export default function ActionButton(props: ActionButtonProps) {
 
                 const startingState = !!toot.account[actionInfo.booleanName];
                 const newState = !startingState;
-                logMsg(`${action}() account (startingState: ${startingState}): `, toot);
+                logger.log(`${action}() account (startingState: ${startingState}): `, toot);
                 // Optimistically update the GUI (we will reset to original state if the server call fails later)
                 toot.account[actionInfo.booleanName] = newState;
                 setCurrentState(newState);
@@ -205,13 +207,13 @@ export default function ActionButton(props: ActionButtonProps) {
                         throw new Error(`Unknown action: ${action}`);
                     }
 
-                    logMsg(`Successfully changed ${action} bool to ${newState}`);
+                    logger.log(`Successfully changed ${action} bool to ${newState}`);
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
                     setCurrentState(startingState);
                     toot.account[actionInfo.booleanName] = startingState;
                     const msg = `Failed to ${action} account! ${OAUTH_ERROR_MSG} (${error.message})`;
-                    console.error(`${msg} Resetting state to ${startingState}`, error);
+                    logger.error(`${msg} Resetting state to ${startingState}`, error);
                     setError(msg);
                 }
             })();

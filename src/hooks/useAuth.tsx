@@ -2,16 +2,15 @@
  * Authorization context for the app.
  */
 import axios from "axios";
-import React, { PropsWithChildren, createContext, useContext, useMemo } from "react";
+import { PropsWithChildren, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { logMsg, logSafe } from "../helpers/string_helpers";
+import { ComponentLogger } from "../helpers/log_helpers";
 import { useAppStorage, useUserStorage } from "./useLocalStorage";
-import { User } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
+import { User } from "../types";
 
-const LOG_PREFIX = `<AuthProvider>`;
-const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
+const logger = new ComponentLogger("AuthProvider");
 
 const AuthContext = createContext({
     setLoggedInUser: async (_user: User) => {},
@@ -38,14 +37,14 @@ export default function AuthProvider(props: PropsWithChildren) {
     //     username: "cryptadamus"
     // }
     const setLoggedInUser = async (user: User) => {
-        logSafe(`${LOG_PREFIX} setLoggedInUser() called, app:`, app, `\nuser:`, user);
+        logger.trace(`setLoggedInUser() called, app:`, app, `\nuser:`, user);
         setUser(user);
         navigate("/");
     };
 
     // call this function to sign out logged in user
     const logout = async (): Promise<void> => {
-        log("logout() called...")
+        logger.log("logout() called...")
         const body = new FormData();
         body.append("token", user.access_token);
         body.append("client_id", app.clientId)
@@ -58,7 +57,7 @@ export default function AuthProvider(props: PropsWithChildren) {
             // Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://universeodon.com/oauth/revoke. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.""
             const _logoutResponse = await axios.post(oauthRevokeURL, body);
         } catch (error) {
-            console.warn(`(Possibly innocuous) error while trying to logout "${error}":`, error);
+            logger.warn(`(Possibly innocuous) error while trying to logout "${error}":`, error);
         }
 
         setError("");

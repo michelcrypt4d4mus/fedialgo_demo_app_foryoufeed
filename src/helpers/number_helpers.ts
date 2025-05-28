@@ -1,6 +1,8 @@
 /*
  * Help with numbers.
  */
+import { warnMsg } from "./log_helpers";
+
 const SCORE_DIGITS = 3;  // Number of digits to display in the alternate score
 
 
@@ -25,7 +27,7 @@ export function formatScores(scores: object | number): object | number {
 // Round a number to a given number of digits
 export function formatScore(score: number): number {
     if (typeof score != "number") {
-        console.warn(`formatScore() called with non-number:`, score);
+        warnMsg(`formatScore() called with non-number:`, score);
         return score;
     }
 

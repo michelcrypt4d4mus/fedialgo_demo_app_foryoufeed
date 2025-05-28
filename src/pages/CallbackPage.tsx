@@ -6,13 +6,14 @@ import React, { useEffect } from 'react';
 import { createRestAPIClient } from "masto"
 import { useSearchParams } from 'react-router-dom';
 
-import { DEMO_APP, logMsg, logSafe } from '../helpers/string_helpers';
+import { ComponentLogger } from '../helpers/log_helpers';
 import { OAUTH_SCOPE_STR } from './LoginPage';
 import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
 import { User } from '../types';
 
+const logger = new ComponentLogger("CallbackPage");
 // const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
 // const GRANT_TYPE = "authorization_code";
 // const GRANT_TYPE = "client_credentials";
@@ -21,8 +22,7 @@ import { User } from '../types';
 export default function CallbackPage() {
     const { setError } = useError();
     const [searchParams] = useSearchParams();
-    logSafe(`[${DEMO_APP}] <CallbackPage> searchParams:`, searchParams);
-    const logThis = (msg: string, ...args: any[]) => logMsg(`<CallbackPage> ${msg}`, ...args);
+    logger.trace(`searchParams:`, searchParams);
 
     // Example of 'app' object
     // {
@@ -57,7 +57,7 @@ export default function CallbackPage() {
 
         // TODO: access_token is retrieved manually via fetch() instead of using the masto.js library
         const oauthTokenURI = `${app.website}/oauth/token`;
-        logSafe(`oAuth() oauthTokenURI: "${oauthTokenURI}"\napp:`, app, `\nuser:`, user, `\ncode: "${code}`);
+        logger.trace(`oAuth() oauthTokenURI: "${oauthTokenURI}"\napp:`, app, `\nuser:`, user, `\ncode: "${code}`);
         const oAuthResult = await fetch(oauthTokenURI, {method: 'POST', body});
         const json = await oAuthResult.json()
         const accessToken = json["access_token"];
@@ -66,7 +66,7 @@ export default function CallbackPage() {
         // Authenticate the user
         api.v1.accounts.verifyCredentials()
             .then((verifiedUser) => {
-                logSafe(`oAuth() api.v1.accounts.verifyCredentials() succeeded:`, verifiedUser);
+                logger.trace(`oAuth() api.v1.accounts.verifyCredentials() succeeded:`, verifiedUser);
 
                 const userData: User = {
                     access_token: accessToken,
@@ -76,18 +76,18 @@ export default function CallbackPage() {
                     username: verifiedUser.username,
                 };
 
-                setLoggedInUser(userData).then(() => logThis(`Logged in '${userData.username}'! User object:`, userData));
+                setLoggedInUser(userData).then(() => logger.log(`Logged in '${userData.username}'! User object:`, userData));
             }).catch((error) => {
-                console.error(`[${DEMO_APP}] <CallbackPage> api.v1.accounts.verifyCredentials() error:`, error);
+                logger.error(`api.v1.accounts.verifyCredentials() error:`, error);
                 setError(`Account verifyCredentials error:\n${error.toString()}`);
             });
 
         // Verify or register the app
         api.v1.apps.verifyCredentials()
             .then((verifyResponse) => {
-                logSafe(`oAuth() api.v1.apps.verifyCredentials() succeeded:`, verifyResponse);
+                logger.trace(`oAuth() api.v1.apps.verifyCredentials() succeeded:`, verifyResponse);
             }).catch((error) => {
-                console.error(`[${DEMO_APP}] <CallbackPage> oAuth() api.v1.apps.verifyCredentials() failure:`, error);
+                logger.error(`oAuth() api.v1.apps.verifyCredentials() failure:`, error);
                 setError(`Fedialgo App verifyCredentials error:\n${error.toString()}`);
             });
     };

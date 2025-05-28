@@ -18,7 +18,9 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import { logLocaleInfo, logMsg, logSafe } from "./helpers/string_helpers";
+import { ComponentLogger, logLocaleInfo } from "./helpers/log_helpers";
+
+const logger = new ComponentLogger("App.tsx");
 
 
 export default function App(): React.ReactElement {
@@ -32,12 +34,12 @@ export default function App(): React.ReactElement {
     // From: https://github.com/auth0/auth0-spa-js/issues/407
     if (window.location.href.includes('?code=')){
         const newUrl = window.location.href.replace(/\/(\?code=.*)/, '/#/callback$1')
-        logSafe(`<App.tsx> OAuth callback to "${window.location.href}", redirecting to "${newUrl}"`);
+        logger.trace(`<App.tsx> OAuth callback to "${window.location.href}", redirecting to "${newUrl}"`);
         window.location.href = newUrl;
     }
 
     if ('serviceWorker' in navigator) {
-        logMsg('Service Worker is supported, registering...');
+        logger.log('Service Worker is supported, registering...');
 
         // Service worker for github pages: https://gist.github.com/kosamari/7c5d1e8449b2fbc97d372675f16b566e
         try {
@@ -45,7 +47,7 @@ export default function App(): React.ReactElement {
                 navigator.serviceWorker.register('./service-worker.js');
             });
         } catch (error) {
-            console.error('Error registering service worker:', error);
+            logger.error('Error registering service worker:', error);
         }
     }
 
@@ -93,7 +95,7 @@ function NotFoundPage() {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    logMsg(`<NotFoundPage> You shouldn't be here! currentPath: "${currentPath}", location:`, location);
+    logger.log(`<NotFoundPage> You shouldn't be here! currentPath: "${currentPath}", location:`, location);
     useEffect(() => {navigate('/')}, [navigate]);
     return <div>Redirecting...</div>;
 };

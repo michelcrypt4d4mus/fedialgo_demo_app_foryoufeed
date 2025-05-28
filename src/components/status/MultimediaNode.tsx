@@ -1,7 +1,7 @@
 /*
  * Component to display multimedia content (images, videos, audios) in a single pane.
  */
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useCallback, useState } from "react";
 import CloseButton from 'react-bootstrap/CloseButton';
 
 import 'react-lazy-load-image-component/src/effects/blur.css';  // For blur effect
@@ -10,7 +10,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
-import { debugMsg, errorMsg, warnMsg } from "../../helpers/string_helpers";
+import { ComponentLogger } from "../../helpers/log_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
@@ -18,8 +18,10 @@ const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hid
 const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
 
+const logger = new ComponentLogger("MultimediaNode");
+
 // Either toot or mediaAttachments must be given
-// If removeMediaAttachment is given, don't show the modal on clicking an image
+// If toot is not given the image is not clickable to display the modal
 interface MultimediaNodeProps {
     mediaAttachments?: mastodon.v1.MediaAttachment[];
     removeMediaAttachment?: (mediaID: string) => void;
@@ -29,7 +31,7 @@ interface MultimediaNodeProps {
 
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
     const { mediaAttachments, removeMediaAttachment, toot } = props;
-    const [mediaInspectionIdx, setMediaInspectionIdx] = React.useState<number>(-1);
+    const [mediaInspectionIdx, setMediaInspectionIdx] = useState<number>(-1);
     let audios: mastodon.v1.MediaAttachment[];
     let images: mastodon.v1.MediaAttachment[];
     let videos: mastodon.v1.MediaAttachment[];
@@ -44,7 +46,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         images = mediaAttachments.filter(m => m.type == MediaCategory.IMAGE);
         videos = mediaAttachments.filter(m => m.type == MediaCategory.VIDEO);
     } else {
-        errorMsg("MultimediaNode called without mediaAttachments or status", props);
+        logger.error("Called without mediaAttachments or status", props);
         return <></>;
     }
 
@@ -58,8 +60,8 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     }
 
     // Make a LazyLoadImage element for displaying an image within a Toot.
-    const makeImage = (image: mastodon.v1.MediaAttachment, idx: number): React.ReactElement => {
-        return (
+    const makeImage = useCallback(
+        (image: mastodon.v1.MediaAttachment, idx: number): React.ReactElement => (
             <div
                 className="media-gallery__item"
                 key={image.previewUrl}
@@ -77,7 +79,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     effect="blur"
                     onClick={() => {
                         if (removeMediaAttachment) return;  // Don't open modal if removing media
-                        debugMsg(`Opening media inspection modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
+                        logger.debug(`Opening modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
                         setMediaInspectionIdx(idx);
                     }}
                     src={image.previewUrl}
@@ -86,12 +88,13 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
                 />
             </div>
-        );
-    };
+        ),
+        [hasImageAttachments, images, removeMediaAttachment, setMediaInspectionIdx]
+    );
 
     if (images.length > 0) {
         return (<>
-            {!removeMediaAttachment &&
+            {toot &&
                 <AttachmentsModal
                     mediaInspectionIdx={mediaInspectionIdx}
                     setMediaInspectionIdx={setMediaInspectionIdx}
@@ -142,7 +145,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
             </div>
         );
     } else {
-        warnMsg(`Unknown media type for status:`, toot, `\nmediaAttachments:`, mediaAttachments);
+        logger.warn(`Unknown media type for status:`, toot, `\nmediaAttachments:`, mediaAttachments);
     }
 };
 

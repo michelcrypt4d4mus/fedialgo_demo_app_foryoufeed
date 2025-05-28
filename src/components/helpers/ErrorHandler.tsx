@@ -2,12 +2,15 @@
  * Generic omponent to display a set of filter options with a switchbar at the top.
  * Note this doesn't handle errors from event handlers: https://kentcdodds.com/blog/use-react-error-boundary-to-handle-errors-in-react
  */
-import React, { CSSProperties, PropsWithChildren, createContext, useContext, useState } from "react";
+import { CSSProperties, PropsWithChildren, createContext, useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
 
 import { ErrorBoundary } from "react-error-boundary";
 
+import { ComponentLogger } from "../../helpers/log_helpers";
 import BugReportLink from "./BugReportLink";
+
+const logger = new ComponentLogger("ErrorHandler");
 
 interface ErrorContextProps {
     setError?: (error: string) => void,
@@ -21,7 +24,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
     const [errorMsg, setError] = useState<string>("");
 
     const errorPage = ({ error, resetErrorBoundary }) => {
-        console.error(`ErrorHandler: errorPage() called with error: ${error}`);
+        logger.error(`ErrorHandler: errorPage() called with error: ${error}`);
 
         return (
             <div style={{backgroundColor: "black", color: "white", fontSize: "16px", padding: "100px"}}>

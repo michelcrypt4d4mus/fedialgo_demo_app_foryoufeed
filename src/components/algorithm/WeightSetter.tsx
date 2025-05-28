@@ -10,12 +10,13 @@ import { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
 import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import WeightSlider from './WeightSlider';
-import { logMsg } from "../../helpers/string_helpers";
+import { ComponentLogger } from "../../helpers/log_helpers";
 import { roundedBox, titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
 const PRESET_MENU_TITLE = "Preset Algorithm Configurations";
+const logger = new ComponentLogger("WeightSetter");
 
 
 export default function WeightSetter() {
@@ -31,7 +32,7 @@ export default function WeightSetter() {
     // Update the user weightings stored in TheAlgorithm when a user moves a weight slider
     const updateWeights = async (newWeights: Weights): Promise<void> => {
         try {
-            logMsg(`updateWeights() called with:`, newWeights);
+            logger.log(`updateWeights() called with:`, newWeights);
             setUserWeights(newWeights);  // Note lack of await here
             algorithm.updateUserWeights(newWeights);
         } catch (error) {
@@ -41,7 +42,7 @@ export default function WeightSetter() {
 
     const updateWeightsToPreset = async (preset: string): Promise<void> => {
         try {
-            logMsg(`updateWeightsToPreset() called with:`, preset);
+            logger.log(`updateWeightsToPreset() called with:`, preset);
             await algorithm.updateUserWeightsToPreset(preset);
             setUserWeights(await algorithm.getUserWeights());
         } catch (error) {

@@ -1,7 +1,7 @@
 /*
  * Render a Status, also known as a Toot.
  */
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import parse from 'html-react-parser';
 // import Toast from 'react-bootstrap/Toast';
@@ -31,13 +31,15 @@ import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import ReplyModal from "./ReplyModal";
 import useOnScreen from "../../hooks/useOnScreen";
-import { debugMsg, errorMsg, logMsg, logSafe, timestampString } from '../../helpers/string_helpers';
+import { ComponentLogger } from "../../helpers/log_helpers";
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
+import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
+const logger = new ComponentLogger("StatusComponent");
 
 type IconInfo = {
     icon: IconDefinition,
@@ -102,52 +104,56 @@ export default function StatusComponent(props: StatusComponentProps) {
         if (isLoading || !isOnScreen) return;
 
         // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
-        // TODO: disable this for now as it increases storage demands for small instances
-        // toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
+        // TODO: disabled this for now as it increases storage demands for small instances
+        // toot.resolveID().catch((e) => logger.error(`Error resolving toot ID: ${toot.describe()}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
 
-    // Build the account link(s) for the reblogger(s) that appears at top of a retoot
-    const rebloggersLinks = (
-        <span>
-            {toot.reblogsBy.map((account, i) => {
-                const rebloggerLink = (
-                    <NewTabLink className="status__display-name muted" href={account.homserverURL()} key={i}>
-                        <bdi><strong>
-                            {parse(account.displayNameWithEmojis())}
-                        </strong></bdi>
-                    </NewTabLink>
-                );
 
-                return i < (toot.reblogsBy.length - 1) ? [rebloggerLink, ', '] : rebloggerLink;
-            })} retooted
-        </span>
+    // Build the account link(s) for the reblogger(s) that appears at top of a retoot
+    const rebloggersLinks = useMemo(
+        () => (
+            <span>
+                {toot.reblogsBy.map((account, i) => {
+                    const rebloggerLink = (
+                        <NewTabLink className="status__display-name muted" href={account.homserverURL()} key={i}>
+                            <bdi><strong>
+                                {parse(account.displayNameWithEmojis())}
+                            </strong></bdi>
+                        </NewTabLink>
+                    );
+
+                    return i < (toot.reblogsBy.length - 1) ? [rebloggerLink, ', '] : rebloggerLink;
+                })} retooted
+            </span>
+        ),
+        [toot.reblogsBy]
     );
 
     // Construct a colored font awesome icon to indicate some kind of property of the toot
-    const infoIcon = (iconType: InfoIconType): React.ReactElement => {
-        const iconInfo = INFO_ICONS[iconType];
-        let title = iconType as string;
-        let color = iconInfo.color;
+    const infoIcon = useCallback(
+        (iconType: InfoIconType): React.ReactElement => {
+            const iconInfo = INFO_ICONS[iconType];
+            let title = iconType as string;
+            let color = iconInfo.color;
 
-        if (iconType == InfoIconType.Edited) {
-            title += ` ${timestampString(toot.editedAt)}`;
-        } else if (iconType == InfoIconType.Hashtags) {
-            title = toot.containsTagsMsg();
+            if (iconType == InfoIconType.Edited) {
+                title += ` ${timestampString(toot.editedAt)}`;
+            } else if (iconType == InfoIconType.Hashtags) {
+                title = toot.containsTagsMsg();
 
-            if (toot.followedTags?.length) {
-                color = FOLLOWED_TAG_COLOR;
-            } else if (toot.trendingTags?.length) {
-                color = TRENDING_TAG_COLOR;
+                if (toot.followedTags?.length) {
+                    color = FOLLOWED_TAG_COLOR;
+                } else if (toot.trendingTags?.length) {
+                    color = TRENDING_TAG_COLOR;
+                }
             }
-        }
 
-        return <FontAwesomeIcon
-            icon={iconInfo.icon}
-            style={color ? {...baseIconStyle, color: color} : baseIconStyle}
-            title={title}
-        />;
-    };
+            const style = color ? {...baseIconStyle, color: color} : baseIconStyle;
+            return <FontAwesomeIcon icon={iconInfo.icon} style={style} title={title}/>;
+        },
+        [toot, toot.editedAt, toot.followedTags, toot.trendingTags]
+    );
 
     // Build an action button (reply, reblog, fave, etc) that appears at the bottom of a toot
     const buildActionButton = (action: ButtonAction, onClick?: (e: React.MouseEvent) => void) => {
@@ -298,11 +304,14 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <p style={{paddingTop: "8px"}}>
                             <a
                                 onClick={() => {
-                                    console.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
+                                    logger.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
                                     setIsLoadingThread(true);
-                                    toot.getConversation().then(toots => setThread(toots)).finally(() => setIsLoadingThread(false));
+
+                                    toot.getConversation()
+                                            .then(toots => setThread(toots))
+                                            .finally(() => setIsLoadingThread(false));
                                 }}
-                                style={{color: "grey", cursor: isLoadingThread ? 'wait' : 'pointer', fontSize: "11px"}}
+                                style={{...viewThreadStyle, cursor: isLoadingThread ? 'wait' : 'pointer'}}
                             >
                                 ⇇ View the Thread
                             </a>
@@ -341,4 +350,9 @@ const openJSON: CSSProperties = {
 const tagFontStyle: CSSProperties = {
     color: "#636f7a",
     fontSize: 13,
+};
+
+const viewThreadStyle: CSSProperties = {
+    color: "grey",
+    fontSize: "11px",
 };

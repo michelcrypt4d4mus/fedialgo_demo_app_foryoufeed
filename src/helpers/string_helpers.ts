@@ -1,8 +1,10 @@
 /*
  * String manipulation helpers.
  */
-import TheAlgorithm, { MediaCategory } from "fedialgo";
+import { MediaCategory } from "fedialgo";
+
 import { MimeExtensions } from "../types";
+import { debugMsg, errorMsg, warnMsg } from "./log_helpers";
 
 export const DEMO_APP = "DEMO APP";
 export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
@@ -17,14 +19,6 @@ const DEFAULT_LOCALE = "en-US";
 export const browserLocale = () => navigator?.language || DEFAULT_LOCALE;
 export const browserLanguage = () => browserLocale().split('-')[0];
 export const browserCountry = () => browserLocale().split('-')[1];
-
-// Log helpers
-export const errorMsg = (msg: string, ...args: any[]) => console.error(`[${DEMO_APP}] ${msg}`, ...args);
-export const warnMsg = (msg: string, ...args: any[]) => console.warn(`[${DEMO_APP}] ${msg}`, ...args);
-export const logMsg = (msg: string, ...args: any[]) => console.log(`[${DEMO_APP}] ${msg}`, ...args);
-export const infoMsg = (msg: string, ...args: any[]) => console.info(`[${DEMO_APP}] ${msg}`, ...args);
-export const debugMsg = (msg: string, ...args: any[]) => console.debug(`[${DEMO_APP}] ${msg}`, ...args);
-export const logSafe = (msg: string, ...args: any[]) => TheAlgorithm.isDebugMode && logMsg(msg, ...args);
 
 // for use with sort()
 export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
@@ -42,22 +36,6 @@ const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
 
 export function fileInfo(file: File): string {
     return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
-};
-
-
-// Log the browser's locale information to the console
-export const logLocaleInfo = (): void => {
-    const msg = [
-        `navigator.locale="${browserLocale()}"`,
-        `language="${browserLanguage()}"`,
-        `country="${browserCountry()}"`,
-        `process.env.NODE_ENV="${process.env.NODE_ENV}"`,
-        `process.env.FEDIALGO_DEBUG="${process.env.FEDIALGO_DEBUG}"`,
-        `TheAlgorithm.isDebugMode="${TheAlgorithm.isDebugMode}"`,
-        `process.env.FEDIALGO_VERSION="${process.env.FEDIALGO_VERSION}"`,
-    ];
-
-    logMsg(`${msg.join(", ")}`);
 };
 
 
@@ -92,9 +70,9 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
         return acc;
     }, {} as MimeExtensions);
 
-    console.debug(`Server accepted MIME types:`, mimeExtensions);
+    debugMsg(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
-}
+};
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
@@ -162,7 +140,7 @@ export const versionString = () => {
     try {
         return process.env.FEDIALGO_VERSION;
     } catch (e) {
-        console.error(`Error getting version string: ${e}`);
+        errorMsg(`Error getting version string: ${e}`);
         return `?.?.?`;
     }
 };

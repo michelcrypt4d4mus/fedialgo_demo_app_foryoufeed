@@ -13,11 +13,11 @@ interface NewTabLinkProps extends PropsWithChildren {
 
 
 export default function NewTabLink(props: NewTabLinkProps): ReactElement {
-    const { children, className, href, onClick, style } = props;
+    const { className, href, onClick, style } = props;
 
     return (
         <a
-            className={className || "no_specified_class"}
+            className={className || ""}
             href={href}
             onClick={(e) => {
                 if (onClick) {
@@ -29,7 +29,7 @@ export default function NewTabLink(props: NewTabLinkProps): ReactElement {
             style={style || {}}
             target="_blank"
         >
-            {children}
+            {props.children}
         </a>
     );
 };
