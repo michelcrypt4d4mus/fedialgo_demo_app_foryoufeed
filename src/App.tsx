@@ -18,7 +18,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import { logLocaleInfo, logMsg, logSafe } from "./helpers/string_helpers";
+import { logLocaleInfo, logMsg, logSafe } from "./helpers/log_helpers";
 
 
 export default function App(): React.ReactElement {
