@@ -91,25 +91,35 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     // Generate color and tooltip text for a hashtag checkbox
-    const getTooltipInfo = (name: string): CheckboxTooltip | undefined => {
-        if (filter.title == BooleanFilterName.HASHTAG) {
-            if (name in algorithm.userData.followedTags) {
-                return TOOLTIPS[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (trendingTagNames.includes(name)) {
-                return TOOLTIPS[TypeFilterName.TRENDING_HASHTAGS];
-            } else if (name in algorithm.userData.participatedHashtags) {
-                const tooltip = {...TOOLTIPS[TypeFilterName.PARTICIPATED_HASHTAGS]};
-                const numParticipations = algorithm.userData.participatedHashtags[name].numToots;
-                tooltip.text += ` ${numParticipations} times recently`;
-                tooltip.color = participatedColorArray[numParticipations - 1].toHexString();
-                return tooltip;
+    const getTooltipInfo = useCallback(
+        (name: string): CheckboxTooltip | undefined => {
+            if (filter.title == BooleanFilterName.HASHTAG) {
+                if (name in algorithm.userData.followedTags) {
+                    return TOOLTIPS[TypeFilterName.FOLLOWED_HASHTAGS];
+                } else if (trendingTagNames.includes(name)) {
+                    return TOOLTIPS[TypeFilterName.TRENDING_HASHTAGS];
+                } else if (name in algorithm.userData.participatedHashtags) {
+                    const tooltip = {...TOOLTIPS[TypeFilterName.PARTICIPATED_HASHTAGS]} as CheckboxTooltip;
+                    const numParticipations = algorithm.userData.participatedHashtags[name].numToots;
+                    tooltip.text += ` ${numParticipations} times recently`;
+                    tooltip.color = participatedColorArray[numParticipations - 1].toHexString();
+                    return tooltip;
+                }
+            } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
+                return TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
+            } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
+                return TOOLTIPS[BooleanFilterName.LANGUAGE];
             }
-        } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
-            return TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
-        } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
-            return TOOLTIPS[BooleanFilterName.LANGUAGE];
-        }
-    };
+        },
+        [
+            algorithm.userData.followedAccounts,
+            algorithm.userData.followedTags,
+            algorithm.userData.participatedHashtags,
+            algorithm.userData.preferredLanguage,
+            filter.title,
+            participatedColorArray,
+        ]
+    );
 
     const optionKeys: string[] = useMemo(
         () => {
