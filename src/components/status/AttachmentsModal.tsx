@@ -39,7 +39,7 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
 
     // Increase mediaInspectionIdx on Right Arrow, decrease on Left Arrow.
     useEffect(() => {
-        if (!toot.imageAttachments.length) return;
+        if (toot.imageAttachments.length <= 1) return;
 
         const handleKeyDown = (e: KeyboardEvent): void => {
             if (mediaInspectionIdx < 0) return;
