@@ -50,6 +50,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [replyText, setReplyText] = React.useState<string>("");
     const [resolvedID, setResolvedID] = React.useState<string | null>(null);
     const cursor = isAttaching ? 'wait' : 'default'
+    const isDisabled = isAttaching || replyText.trim().length === 0 || resolvedID === null;
 
     // Server configuration stuff
     const acceptedAttachments = mimeExtensions || DEFAULT_ACCEPT_ATTACHMENTS;
@@ -143,10 +144,11 @@ export default function ReplyModal(props: ReplyModalProps) {
             return;
         }
 
-        log(`Submitting reply to toot ID: ${resolvedID}, text: ${replyText}`);
+        const txt = toot.replyMentions().join(' ') + '\n\n' + replyText.trim();
+        log(`Submitting reply to toot ID: ${resolvedID}, text: ${txt}`);
         const mediaIDs = mediaAttachments.map(m => m.id);
 
-        api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: replyText})
+        api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: txt})
             .then(() => {
                 log(`Reply submitted successfully!`);
                 setShow(false);
@@ -204,8 +206,16 @@ export default function ReplyModal(props: ReplyModalProps) {
                     </div>
 
                     <div style={buttonContainer}>
-                        <Button className="btn-lg" onClick={() => submitReply()} style={buttonStyle}>
-                            Submit Reply
+                        <Button
+                            className="btn-lg"
+                            disabled={isDisabled}
+                            onClick={() => submitReply()} style={buttonStyle}
+                        >
+                            {isAttaching
+                                ? `Attaching...`
+                                : !resolvedID
+                                    ? 'Resolving toot ID...'
+                                    : `Submit Reply`}
                         </Button>
                     </div>
                 </Form.Group>

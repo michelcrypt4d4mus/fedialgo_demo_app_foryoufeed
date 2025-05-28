@@ -65,11 +65,7 @@ export const logLocaleInfo = (): void => {
 export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
     const mimeExtensions = mimeTypes.reduce((acc, mimeType) => {
         const [category, fileType] = mimeType.split('/');
-
-        if (fileType.startsWith('x-') || fileType.includes('.')) {
-            console.debug(`Skipping invalid MIME extension: ${mimeType}`);
-            return acc;
-        }
+        if (fileType.startsWith('x-') || fileType.includes('.')) return acc;  // skip invalid file extensions
 
         if (category == MediaCategory.AUDIO) {
             acc[MIME_GROUPS[MediaCategory.AUDIO]] ||= [];
