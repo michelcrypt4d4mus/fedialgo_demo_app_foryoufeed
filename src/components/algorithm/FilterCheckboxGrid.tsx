@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
 import tinygradient from "tinygradient";
-import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TypeFilterName, percentileSegments, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { compareStr, debugMsg } from "../../helpers/string_helpers";
@@ -19,6 +19,10 @@ export type CheckboxTooltip = {
     color: CSSProperties["color"];
     text: string;
 };
+
+// Percentiles to use for adjusting the participated tag color gradient
+const GRADIENT_ADJUST_PCTILES = [0.95, 0.98];
+const MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT = 40;
 
 const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
     [BooleanFilterName.LANGUAGE]: {
@@ -57,9 +61,23 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const participatedColorArray = useMemo(() => {
         const participatedTags = Object.values(algorithm.userData.participatedHashtags);
-        const maxParticipations = Math.max(...participatedTags.map(t => t.numToots));
-        const participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
-        return participatedColorGradient.rgb(Math.max(maxParticipations, 2));
+        const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
+        let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
+        let colorArray = participatedColorGradient.hsv(maxParticipations, false);
+
+        // Adjust the color gradient so there's more color variation in the low/middle range
+        if (participatedTags.length > MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT) {
+            try {
+                const highPercentiles = GRADIENT_ADJUST_PCTILES.map(p => Math.floor(maxParticipations * p));
+                const middleColors = highPercentiles.map(n => colorArray[n]).filter(Boolean);
+                participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
+                colorArray = participatedColorGradient.hsv(maxParticipations, false);
+            } catch (err) {
+                console.error(`Error adjusting participated tag color gradient:`, err);
+            }
+        }
+
+        return colorArray;
     }, [algorithm.userData.participatedHashtags]);
 
     const trendingTagNames = useMemo(
