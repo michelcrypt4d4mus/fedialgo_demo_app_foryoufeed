@@ -8,7 +8,7 @@ import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { ComponentLogger, logger.error, logger.log, logger.error } from "../helpers/log_helpers";
+import { ComponentLogger } from "../helpers/log_helpers";
 import { LOADING_ERROR_MSG, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
