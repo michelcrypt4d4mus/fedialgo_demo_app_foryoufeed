@@ -309,7 +309,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                             .then(toots => setThread(toots))
                                             .finally(() => setIsLoadingThread(false));
                                 }}
-                                style={{color: "grey", cursor: isLoadingThread ? 'wait' : 'pointer', fontSize: "11px"}}
+                                style={{...viewThreadStyle, cursor: isLoadingThread ? 'wait' : 'pointer'}}
                             >
                                 ⇇ View the Thread
                             </a>
@@ -348,4 +348,9 @@ const openJSON: CSSProperties = {
 const tagFontStyle: CSSProperties = {
     color: "#636f7a",
     fontSize: 13,
+};
+
+const viewThreadStyle: CSSProperties = {
+    color: "grey",
+    fontSize: "11px",
 };
