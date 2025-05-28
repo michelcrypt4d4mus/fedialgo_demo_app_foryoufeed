@@ -1,10 +1,11 @@
 /*
  * Modal that allows for inspection of tooted images etc upon clicking.
  */
-import React, { useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
+import { useEffect } from 'react';
 
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
+import { warnMsg } from '../../helpers/string_helpers';
 
 interface AttachmentsModalProps {
     mediaInspectionIdx: number;
@@ -22,18 +23,18 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
         const media = toot.mediaAttachments[mediaInspectionIdx];
 
         if (!media?.url) {
-            console.warn(`[AttachmentsModal] Invalid media.url at idx ${mediaInspectionIdx}. toot:`, toot);
+            warnMsg(`<AttachmentsModal> Invalid media.url at idx ${mediaInspectionIdx}. toot:`, toot);
         } else if (media.type == MediaCategory.IMAGE) {
             element = <img alt={media.description ?? ""} src={media.url} width={"100%"} />;
         } else if (VIDEO_TYPES.includes(media.type)) {
             element = (
-                <video width={"100%"} controls>
+                <video controls width={"100%"}>
                     <source src={media.url} type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
             );
         } else {
-            console.warn(`[AttachmentsModal] Unknown type at toot.mediaAttachments[${mediaInspectionIdx}]`, toot);
+            warnMsg(`<AttachmentsModal> Unknown type at toot.mediaAttachments[${mediaInspectionIdx}]`, toot);
         }
     }
 
