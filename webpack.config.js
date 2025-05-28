@@ -1,5 +1,5 @@
 /*
- * Simple node.js webserver w/out framework: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Node_server_without_framework
+ * Webpack configuration for the FediAlgo Demo App.
  */
 require('dotenv-flow').config();
 const path = require("path");
