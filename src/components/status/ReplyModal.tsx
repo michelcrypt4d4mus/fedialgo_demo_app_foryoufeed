@@ -124,7 +124,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                         logAndSetError(msg, err);
                     })
                     .finally(() => {
-                        setIsAttaching(false);
+                        setIsAttaching(false); // TODO: this sets isAttaching to false after one upload which is not ideal
                     });
             }
 

@@ -1,7 +1,7 @@
 /*
  * Render a Status, also known as a Toot.
  */
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import parse from 'html-react-parser';
 // import Toast from 'react-bootstrap/Toast';
@@ -102,52 +102,56 @@ export default function StatusComponent(props: StatusComponentProps) {
         if (isLoading || !isOnScreen) return;
 
         // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
-        // TODO: disable this for now as it increases storage demands for small instances
+        // TODO: disabled this for now as it increases storage demands for small instances
         // toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
 
-    // Build the account link(s) for the reblogger(s) that appears at top of a retoot
-    const rebloggersLinks = (
-        <span>
-            {toot.reblogsBy.map((account, i) => {
-                const rebloggerLink = (
-                    <NewTabLink className="status__display-name muted" href={account.homserverURL()} key={i}>
-                        <bdi><strong>
-                            {parse(account.displayNameWithEmojis())}
-                        </strong></bdi>
-                    </NewTabLink>
-                );
 
-                return i < (toot.reblogsBy.length - 1) ? [rebloggerLink, ', '] : rebloggerLink;
-            })} retooted
-        </span>
+    // Build the account link(s) for the reblogger(s) that appears at top of a retoot
+    const rebloggersLinks = useMemo(
+        () => (
+            <span>
+                {toot.reblogsBy.map((account, i) => {
+                    const rebloggerLink = (
+                        <NewTabLink className="status__display-name muted" href={account.homserverURL()} key={i}>
+                            <bdi><strong>
+                                {parse(account.displayNameWithEmojis())}
+                            </strong></bdi>
+                        </NewTabLink>
+                    );
+
+                    return i < (toot.reblogsBy.length - 1) ? [rebloggerLink, ', '] : rebloggerLink;
+                })} retooted
+            </span>
+        ),
+        [toot.reblogsBy]
     );
 
     // Construct a colored font awesome icon to indicate some kind of property of the toot
-    const infoIcon = (iconType: InfoIconType): React.ReactElement => {
-        const iconInfo = INFO_ICONS[iconType];
-        let title = iconType as string;
-        let color = iconInfo.color;
+    const infoIcon = useCallback(
+        (iconType: InfoIconType): React.ReactElement => {
+            const iconInfo = INFO_ICONS[iconType];
+            let title = iconType as string;
+            let color = iconInfo.color;
 
-        if (iconType == InfoIconType.Edited) {
-            title += ` ${timestampString(toot.editedAt)}`;
-        } else if (iconType == InfoIconType.Hashtags) {
-            title = toot.containsTagsMsg();
+            if (iconType == InfoIconType.Edited) {
+                title += ` ${timestampString(toot.editedAt)}`;
+            } else if (iconType == InfoIconType.Hashtags) {
+                title = toot.containsTagsMsg();
 
-            if (toot.followedTags?.length) {
-                color = FOLLOWED_TAG_COLOR;
-            } else if (toot.trendingTags?.length) {
-                color = TRENDING_TAG_COLOR;
+                if (toot.followedTags?.length) {
+                    color = FOLLOWED_TAG_COLOR;
+                } else if (toot.trendingTags?.length) {
+                    color = TRENDING_TAG_COLOR;
+                }
             }
-        }
 
-        return <FontAwesomeIcon
-            icon={iconInfo.icon}
-            style={color ? {...baseIconStyle, color: color} : baseIconStyle}
-            title={title}
-        />;
-    };
+            const style = color ? {...baseIconStyle, color: color} : baseIconStyle;
+            return <FontAwesomeIcon icon={iconInfo.icon} style={style} title={title}/>;
+        },
+        [toot, toot.editedAt, toot.followedTags, toot.trendingTags]
+    );
 
     // Build an action button (reply, reblog, fave, etc) that appears at the bottom of a toot
     const buildActionButton = (action: ButtonAction, onClick?: (e: React.MouseEvent) => void) => {
