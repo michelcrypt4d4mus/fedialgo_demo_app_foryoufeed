@@ -28,3 +28,45 @@ export const logLocaleInfo = (): void => {
 
     logMsg(`${msg.join(", ")}`);
 };
+
+
+// Log lines with "[DEMO APP] <ComponentName>" prefixed
+export class ComponentLogger {
+    componentName: string;
+    logPrefix: string;
+
+    constructor(componentName: string) {
+        this.componentName = componentName;
+        this.logPrefix = `[${DEMO_APP}] <${componentName}>`;
+    }
+
+    error(msg: string, ...args: any[]) {
+        console.error(this.makeMsg(msg), ...args);
+    }
+
+    warn(msg: string, ...args: any[]) {
+        console.warn(this.makeMsg(msg), ...args);
+    }
+
+    log(msg: string, ...args: any[]) {
+        console.log(this.makeMsg(msg), ...args);
+    }
+
+    info(msg: string, ...args: any[]) {
+        console.info(this.makeMsg(msg), ...args);
+    }
+
+    debug(msg: string, ...args: any[]) {
+        console.debug(this.makeMsg(msg), ...args);
+    }
+
+    // Only writes logs in debug mode
+    trace(msg: string, ...args: any[]) {
+        if (!TheAlgorithm.isDebugMode) return;
+        this.debug(msg, ...args);
+    }
+
+    private makeMsg(msg: string): string {
+        return `${this.logPrefix} ${msg}`;
+    }
+};
