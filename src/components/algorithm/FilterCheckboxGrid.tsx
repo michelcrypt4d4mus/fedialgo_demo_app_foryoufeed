@@ -5,7 +5,7 @@
  */
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { CSSProperties, ReactElement, useMemo } from "react";
+import { CSSProperties, ReactElement, useCallback, useMemo } from "react";
 
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
@@ -61,26 +61,29 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, minToots, sortByCount, highlightedOnly } = props;
     const { algorithm } = useAlgorithm();
 
-    const participatedColorArray = useMemo(() => {
-        const participatedTags = Object.values(algorithm.userData.participatedHashtags);
-        const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
-        let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
-        let colorArray = participatedColorGradient.hsv(maxParticipations, false);
+    const participatedColorArray = useMemo(
+        () => {
+            const participatedTags = Object.values(algorithm.userData.participatedHashtags);
+            const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
+            let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
+            let colorArray = participatedColorGradient.hsv(maxParticipations, false);
 
-        // Adjust the color gradient so there's more color variation in the low/middle range
-        if (participatedTags.length > MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT) {
-            try {
-                const highPercentiles = GRADIENT_ADJUST_PCTILES.map(p => Math.floor(maxParticipations * p));
-                const middleColors = highPercentiles.map(n => colorArray[n]).filter(Boolean);
-                participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
-                colorArray = participatedColorGradient.hsv(maxParticipations, false);
-            } catch (err) {
-                logger.error(`Error adjusting participated tag color gradient:`, err);
+            // Adjust the color gradient so there's more color variation in the low/middle range
+            if (participatedTags.length > MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT) {
+                try {
+                    const highPercentiles = GRADIENT_ADJUST_PCTILES.map(p => Math.floor(maxParticipations * p));
+                    const middleColors = highPercentiles.map(n => colorArray[n]).filter(Boolean);
+                    participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
+                    colorArray = participatedColorGradient.hsv(maxParticipations, false);
+                } catch (err) {
+                    logger.error(`Error adjusting participated tag color gradient:`, err);
+                }
             }
-        }
 
-        return colorArray;
-    }, [algorithm.userData.participatedHashtags]);
+            return colorArray;
+        },
+        [algorithm.userData.participatedHashtags]
+    );
 
     const trendingTagNames = useMemo(
         () => algorithm.trendingData.tags.map(tag => tag.name),
