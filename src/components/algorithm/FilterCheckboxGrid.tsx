@@ -3,9 +3,7 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import { CSSProperties, ReactElement, useCallback, useMemo } from "react";
+import { CSSProperties, ReactElement, useCallback, useMemo, useState } from "react";
 
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
@@ -14,6 +12,7 @@ import FilterCheckbox from "./FilterCheckbox";
 import { ComponentLogger } from "../../helpers/log_helpers";
 import { compareStr } from "../../helpers/string_helpers";
 import { FOLLOWED_TAG_COLOR, FOLLOWED_USER_COLOR, PARTICIPATED_TAG_COLOR, PARTICIPATED_TAG_COLOR_MIN, TRENDING_TAG_COLOR_FADED } from "../../helpers/style_helpers";
+import { gridify } from '../../helpers/react_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 export type CheckboxTooltip = {
@@ -24,7 +23,6 @@ export type CheckboxTooltip = {
 // Percentiles to use for adjusting the participated tag color gradient
 const GRADIENT_ADJUST_PCTILES = [0.95, 0.98];
 const MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT = 40;
-const logger = new ComponentLogger("FilterCheckboxGrid");
 
 const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
     [BooleanFilterName.LANGUAGE]: {
@@ -58,11 +56,14 @@ interface FilterCheckboxGridProps {
 
 
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
-    const { filter, minToots, sortByCount, highlightedOnly } = props;
+    const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
+
+    const [logger, _setLogger] = useState(new ComponentLogger("FilterCheckboxGrid", filter.title));
 
     const participatedColorArray = useMemo(
         () => {
+            logger.debug(`Rebuilding getTooltipInfo()...`);
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
             const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
             let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
@@ -118,77 +119,75 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             algorithm.userData.preferredLanguage,
             filter.title,
             participatedColorArray,
+            trendingTagNames,
         ]
     );
 
-    const optionKeys: string[] = useMemo(
-        () => {
-            let optionInfo = filter.optionInfo;
+    // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
+    const propertyCheckbox = useCallback(
+        (name: string, i: number) => {
+            return (
+                <FilterCheckbox
+                    capitalize={filter.title == BooleanFilterName.TYPE}
+                    isChecked={filter.validValues.includes(name)}
+                    key={`${filter.title}_${name}_${i}`}
+                    label={name}
+                    labelExtra={filter.optionInfo[name]}
+                    onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
+                    tooltip={getTooltipInfo(name)}
+                    url={(filter.title == BooleanFilterName.HASHTAG) && algorithm.tagUrl(name)}
+                />
+            );
+        },
+        [
+            algorithm.tagUrl,  // This shouldn't change return value even if algorithm changes; here just to be safe
+            filter.title,
+            filter.validValues,
+            filter.optionInfo,
+            getTooltipInfo,
+        ]
+    );
 
+    const optionGrid = useMemo(
+        () => {
+            logger.debug(`Rebuilding optionGrid...`);
+            let optionInfo = filter.optionInfo;
+            let optionKeys: string[];
+
+            // For filters w/many options only show choices with a min # of toots + already selected options
             if (minToots) {
-                // For "filtered" filters only allow options with a minimum number of toots (and active options)
                 optionInfo = Object.fromEntries(Object.entries(filter.optionInfo).filter(
                     ([option, numToots]) => {
                         if (filter.validValues.includes(option)) return true;
-                        if (numToots >= minToots) return (highlightedOnly ? !!getTooltipInfo(option) : true);
-                        return false;
+
+                        if (numToots >= minToots) {
+                            return (highlightedOnly ? !!getTooltipInfo(option) : true);
+                        } else {
+                            return false;
+                        }
                     }
                 ));
             }
 
             if (sortByCount) {
-                return sortKeysByValue(optionInfo);
+                optionKeys = sortKeysByValue(optionInfo);
             } else {
-                return Object.keys(optionInfo).sort((a, b) => compareStr(a, b));
+                optionKeys = Object.keys(optionInfo).sort((a, b) => compareStr(a, b));
             }
+
+            return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [
-            algorithm.userData.followedTags,
             filter.optionInfo,
             filter.title,
             filter.validValues,
+            getTooltipInfo,
             highlightedOnly,
             minToots,
+            propertyCheckbox,
             sortByCount,
         ]
     );
 
-    // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
-    const propertyCheckbox = (name: string, i: number) => {
-        const tooltip = getTooltipInfo(name);
-
-        return (
-            <FilterCheckbox
-                capitalize={filter.title == BooleanFilterName.TYPE}
-                isChecked={filter.validValues.includes(name)}
-                key={`${filter.title}_${name}_${i}`}
-                label={name}
-                labelExtra={filter.optionInfo[name]}
-                onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
-                tooltip={tooltip}
-                url={(filter.title == BooleanFilterName.HASHTAG) && algorithm.tagUrl(name)}
-            />
-        );
-    };
-
-    const gridify = (elements: ReactElement[]): ReactElement => {
-        if (!elements || elements.length === 0) return <></>;
-        const numCols = elements.length > 10 ? 3 : 2;
-
-        const columns = elements.reduce((cols, element, i) => {
-            const colIndex = i % numCols;
-            cols[colIndex] ??= [];
-            cols[colIndex].push(element);
-            return cols;
-        }, [] as ReactElement[][]);
-
-        return (
-            // Bootstrap Row/Col system margin and padding info: https://getbootstrap.com/docs/5.1/utilities/spacing/
-            <Row>
-                {columns.map((col, i) => <Col className="px-1" key={i}>{col}</Col>)}
-            </Row>
-        );
-    };
-
-    return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
+    return optionGrid;
 };
