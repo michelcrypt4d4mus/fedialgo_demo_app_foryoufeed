@@ -12,8 +12,15 @@ import { mastodon } from 'masto';
 
 const MAX_STATUS_CARD_LEN = 350;
 
+interface PreviewCardProps {
+    card: mastodon.v1.PreviewCard;
+    hideLinkPreviews: boolean;
+};
 
-export default function PreviewCard({ card, hideLinkPreviews }: { card: mastodon.v1.PreviewCard, hideLinkPreviews: boolean }) {
+
+export default function PreviewCard(props: PreviewCardProps): React.ReactElement {
+    const { card, hideLinkPreviews } = props;
+
     const headline = <>
         <span style={providerName}>
             [{card.providerName || extractDomain(card.url)}]
