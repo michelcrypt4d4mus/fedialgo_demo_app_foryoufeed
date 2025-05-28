@@ -7,6 +7,7 @@ import { Modal } from 'react-bootstrap';
 
 import ReactJsonView from '@microlink/react-json-view';
 
+import { debugMsg } from '../../helpers/string_helpers';
 import { globalFont } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 
@@ -37,6 +38,7 @@ export default function JsonModal(props: JsonModalProps) {
     jsonViewProps = {...DEFAULT_JSON_VIEW_PROPS, ...(jsonViewProps || {})};
     jsonViewProps.style = {...jsonViewStyle, ...(jsonViewProps.style || {})};
     json ??= {};
+    // debugMsg(`[JsonModal] Rendering modal with title: ${title}, subtitle: ${subtitle}, infoTxt: ${infoTxt}`, props);
 
     return (
         <Modal
