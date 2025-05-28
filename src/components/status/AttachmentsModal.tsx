@@ -5,7 +5,7 @@ import { Modal } from 'react-bootstrap';
 import { useEffect } from 'react';
 
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
-import { warnMsg } from '../../helpers/string_helpers';
+import { warnMsg } from '../../helpers/log_helpers';
 
 interface AttachmentsModalProps {
     mediaInspectionIdx: number;

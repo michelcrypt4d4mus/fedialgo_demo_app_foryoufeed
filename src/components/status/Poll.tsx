@@ -8,7 +8,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { mastodon } from 'masto';
 
-import { debugMsg, errorMsg } from '../../helpers/string_helpers';
+import { debugMsg, errorMsg } from '../../helpers/log_helpers';
 import { isAccessTokenRevokedError, timeString } from 'fedialgo';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from "../../components/helpers/ErrorHandler";

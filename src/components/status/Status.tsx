@@ -31,10 +31,11 @@ import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import ReplyModal from "./ReplyModal";
 import useOnScreen from "../../hooks/useOnScreen";
-import { debugMsg, errorMsg, logMsg, logSafe, timestampString } from '../../helpers/string_helpers';
+import { debugMsg, errorMsg, logMsg, logSafe } from "../../helpers/log_helpers";
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
+import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";

@@ -12,7 +12,8 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { errorMsg, fileInfo, logMsg, warnMsg } from '../../helpers/string_helpers';
+import { errorMsg, logMsg, warnMsg } from '../../helpers/log_helpers';
+import { fileInfo } from '../../helpers/string_helpers';
 import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';

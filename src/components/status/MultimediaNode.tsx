@@ -10,7 +10,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
-import { debugMsg, errorMsg, warnMsg } from "../../helpers/string_helpers";
+import { debugMsg, errorMsg, warnMsg } from "../../helpers/log_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;

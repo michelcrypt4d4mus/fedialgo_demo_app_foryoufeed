@@ -8,7 +8,8 @@ import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { LOADING_ERROR_MSG, buildMimeExtensions, errorMsg, logMsg, warnMsg } from "../helpers/string_helpers";
+import { errorMsg, logMsg, warnMsg } from "../helpers/log_helpers";
+import { LOADING_ERROR_MSG, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
 const FOCUS = "focus";

@@ -9,7 +9,8 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
-import { errorMsg, logMsg, logSafe, sanitizeServerUrl } from '../helpers/string_helpers';
+import { errorMsg, logMsg, logSafe } from '../helpers/log_helpers';
+import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { SHOWCASE_IMAGE_URL } from '../helpers/style_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
 // const showcase = require("../../public/assets/Showcase.jpg");

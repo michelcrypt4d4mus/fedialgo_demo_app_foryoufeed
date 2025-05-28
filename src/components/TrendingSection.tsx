@@ -6,6 +6,7 @@ import React, { CSSProperties } from "react";
 import { type TrendingObj } from "fedialgo";
 
 import SubAccordion from "./helpers/SubAccordion";
+import { debugMsg } from "../helpers/log_helpers";
 import { roundedBox } from "../helpers/style_helpers";
 
 export const LINK_FONT_SIZE = 16;
@@ -26,6 +27,7 @@ interface TrendingProps {
 export default function TrendingSection(props: TrendingProps) {
     const { footer, hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
     const linkStyle = hasCustomStyle ? tagLinkStyle : boldTagLinkStyle;
+    debugMsg(`<TrendingSection> Rendering section with title: ${title}, trendingObjs.length: ${trendingObjs.length}`, props);
 
     return (
         <SubAccordion key={title} title={title}>
