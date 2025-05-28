@@ -31,7 +31,7 @@ import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import ReplyModal from "./ReplyModal";
 import useOnScreen from "../../hooks/useOnScreen";
-import { debugMsg, errorMsg, logMsg, logSafe } from "../../helpers/log_helpers";
+import { ComponentLogger } from "../../helpers/log_helpers";
 import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
@@ -39,6 +39,7 @@ import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
+const logger = new ComponentLogger("StatusComponent");
 
 type IconInfo = {
     icon: IconDefinition,
@@ -104,7 +105,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
         // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
         // TODO: disabled this for now as it increases storage demands for small instances
-        // toot.resolveID().catch((e) => errorMsg(`Error resolving toot ID: ${toot.describe()}`, e));
+        // toot.resolveID().catch((e) => logger.error(`Error resolving toot ID: ${toot.describe()}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
 
@@ -303,7 +304,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <p style={{paddingTop: "8px"}}>
                             <a
                                 onClick={() => {
-                                    console.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
+                                    logger.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
                                     setIsLoadingThread(true);
 
                                     toot.getConversation()

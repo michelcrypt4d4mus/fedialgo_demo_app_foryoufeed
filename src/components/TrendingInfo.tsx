@@ -10,11 +10,13 @@ import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection, { LINK_FONT_SIZE } from "./TrendingSection";
+import { ComponentLogger } from "../helpers/log_helpers";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
 import { IMAGE_BACKGROUND_COLOR, accordionSubheader, linkesque, noPadding } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const DEFAULT_MAX_HASHTAGS_TO_SHOW = 100;
+const logger = new ComponentLogger("TrendingInfo");
 
 
 export default function TrendingInfo() {
@@ -40,7 +42,7 @@ export default function TrendingInfo() {
         const showAllText = `show all ${numTags} hashtags`;
 
         if (numTags <= DEFAULT_MAX_HASHTAGS_TO_SHOW) {
-            console.log(`No footer needed, only ${numTags} participated hashtags`);
+            logger.log(`No footer needed, only ${numTags} participated hashtags`);
             return null;
         }
 

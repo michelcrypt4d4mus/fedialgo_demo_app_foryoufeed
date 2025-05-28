@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { errorMsg, logMsg, warnMsg } from '../../helpers/log_helpers';
+import { ComponentLogger } from '../../helpers/log_helpers';
 import { fileInfo } from '../../helpers/string_helpers';
 import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
@@ -26,15 +26,11 @@ const DEFAULT_ACCEPT_ATTACHMENTS = {
     'video/*': ['.mp4', '.webm'],
 };
 
-const LOG_PREFIX = `<ReplyModal>`;
 const DEFAULT_MAX_CHARACTERS = 500;
 const DEFAULT_MAX_ATTACHMENTS = 4;
 const DEFAULT_MAX_IMAGE_SIZE = 10485760; // 10 MB
 const DEFAULT_MAX_VIDEO_SIZE = 41943040; // 40 MB
-const MODAL_TITLE = "Reply to Toot";
-
-const error = (msg: string, ...args: any[]) => errorMsg(`${LOG_PREFIX} ${msg}`, ...args);
-const log = (msg: string, ...args: any[]) => logMsg(`${LOG_PREFIX} ${msg}`, ...args);
+const logger = new ComponentLogger('ReplyModal');
 
 interface ReplyModalProps extends ModalProps {
     toot: Toot;
@@ -63,28 +59,29 @@ export default function ReplyModal(props: ReplyModalProps) {
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || DEFAULT_MAX_VIDEO_SIZE;
 
     const logAndSetError = (msg: string, err?: Error) => {
-        error(`${msg}`, err);
+        logger.error(`${msg}`, err);
         setError(msg + (err ? ` (${err.message})` : ``));
     }
 
     const removeMediaAttachment = (mediaID: string) => {
-        log(`Removing media attachment with ID: ${mediaID}`);
+        logger.log(`Removing media attachment with ID: ${mediaID}`);
         setMediaAttachments(prev => prev.filter(m => m.id !== mediaID));
     }
 
     useEffect(() => {
         if (show) {
-            log(`useEffect (show=${show}, resolvedID=${resolvedID})`, toot);
+            logger.log(`useEffect (show=${show}, resolvedID=${resolvedID})`, toot);
 
+            // TODO: this sets an invalid ID if resolution fails...
             toot.resolveID().then(id => setResolvedID(id)).catch(err => {
-                error(`Error resolving toot ID: ${err}`);
+                logger.error(`Error resolving toot ID: ${err}`);
                 setResolvedID(toot.id);
             });
         }
     }, [api, show])
 
     const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
-        log(`Accepted files:`, acceptedFiles);
+        logger.log(`Accepted files:`, acceptedFiles);
 
         if (fileRejections.length > 0) {
             logAndSetError(`Invalid file type! ${fileRejections[0].errors[0].message}`);
@@ -105,17 +102,17 @@ export default function ReplyModal(props: ReplyModalProps) {
         setIsAttaching(true);
 
         acceptedFiles.forEach((file) => {
-            log(`Processing ${fileInfo(file)}. File:`, file);
+            logger.log(`Processing ${fileInfo(file)}. File:`, file);
             const reader = new FileReader();
             reader.onabort = () => logAndSetError('File reading was aborted');
             reader.onerror = () => logAndSetError('File reading has failed');
 
             reader.onload = () => {
-                log(`Uploading file (${fileInfo(file)})`);
+                logger.log(`Uploading file (${fileInfo(file)})`);
 
                 api.v2.media.create({file: new Blob([reader.result as ArrayBuffer], {type: file.type})})
                     .then(media => {
-                        log(`Media uploaded successfully:`, media);
+                        logger.log(`Media uploaded successfully:`, media);
                         setMediaAttachments(prev => [...prev, media]);
                     })
                     .catch(err => {
@@ -146,12 +143,12 @@ export default function ReplyModal(props: ReplyModalProps) {
         }
 
         const txt = toot.replyMentions().join(' ') + '\n\n' + replyText.trim();
-        log(`Submitting reply to toot ID: ${resolvedID}, text: ${txt}`);
+        logger.log(`Submitting reply to toot ID: ${resolvedID}, text: ${txt}`);
         const mediaIDs = mediaAttachments.map(m => m.id);
 
         api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: txt})
             .then(() => {
-                log(`Reply submitted successfully!`);
+                logger.log(`Reply submitted successfully!`);
                 setShow(false);
             }).catch(err => {
                 logAndSetError(`Failed to submit reply`, err);

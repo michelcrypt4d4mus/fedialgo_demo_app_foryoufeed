@@ -4,8 +4,10 @@
 import { Modal } from 'react-bootstrap';
 import { useEffect } from 'react';
 
+import { ComponentLogger } from '../../helpers/log_helpers';
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
-import { warnMsg } from '../../helpers/log_helpers';
+
+const logger = new ComponentLogger("AttachmentsModal");
 
 interface AttachmentsModalProps {
     mediaInspectionIdx: number;
@@ -23,7 +25,7 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
         const media = toot.mediaAttachments[mediaInspectionIdx];
 
         if (!media?.url) {
-            warnMsg(`<AttachmentsModal> Invalid media.url at idx ${mediaInspectionIdx}. toot:`, toot);
+            logger.warn(`<AttachmentsModal> Invalid media.url at idx ${mediaInspectionIdx}. toot:`, toot);
         } else if (media.type == MediaCategory.IMAGE) {
             element = <img alt={media.description ?? ""} src={media.url} width={"100%"} />;
         } else if (VIDEO_TYPES.includes(media.type)) {
@@ -34,7 +36,7 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
                 </video>
             );
         } else {
-            warnMsg(`<AttachmentsModal> Unknown type at toot.mediaAttachments[${mediaInspectionIdx}]`, toot);
+            logger.warn(`<AttachmentsModal> Unknown type at toot.mediaAttachments[${mediaInspectionIdx}]`, toot);
         }
     }
 

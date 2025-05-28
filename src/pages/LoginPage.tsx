@@ -9,7 +9,7 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
-import { errorMsg, logMsg, logSafe } from '../helpers/log_helpers';
+import { ComponentLogger } from '../helpers/log_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { SHOWCASE_IMAGE_URL } from '../helpers/style_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
@@ -29,7 +29,7 @@ const OAUTH_SCOPES = [
 export const OAUTH_SCOPE_STR = OAUTH_SCOPES.join(" ");
 const DEFAULT_MASTODON_SERVER = "universeodon.com";
 const APP_NAME = `${FEDIALGO}Demo`;  // Name of the app that will be created in the user's Mastodon account
-const LOG_PREFIX = `<LoginPage>`;
+const logger = new ComponentLogger("LoginPage");
 
 
 export default function LoginPage() {
@@ -38,7 +38,6 @@ export default function LoginPage() {
     // TODO: why is this not using useAppStorage?
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
     const [server, setServer] = usePersistentState<string>(DEFAULT_MASTODON_SERVER, {storageKey: "server"});
-    const logCreds = (msg: string, ...args: any[]) => logSafe(`${LOG_PREFIX} ${msg}`, ...args);
 
     const oAuthLogin = async (): Promise<void> => {
         let sanitizedServer = server;
@@ -52,15 +51,15 @@ export default function LoginPage() {
 
         // OAuth won't allow HashRouter's "#" chars in redirectUris
         const redirectUri = `${window.location.origin}${window.location.pathname}`.replace(/\/+$/, '');
-        logMsg(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`); // TODO: remove this log line
+        logger.log(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`); // TODO: remove this log line
         const api = createRestAPIClient({url: sanitizedServer});
         let registeredApp;  // TODO: using 'App' type causes a type error
 
         if (_app?.clientId) {
-            logCreds(`Found existing app creds to use for '${sanitizedServer}':`, _app);
+            logger.trace(`Found existing app creds to use for '${sanitizedServer}':`, _app);
             registeredApp = _app;
         } else {
-            logCreds(`No existing app found, creating a new app for '${sanitizedServer}':`, _app);
+            logger.trace(`No existing app found, creating a new app for '${sanitizedServer}':`, _app);
 
             try {
                 // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
@@ -72,12 +71,12 @@ export default function LoginPage() {
                 });
             } catch (error) {
                 let msg = `Error creating app on Mastodon server:`;
-                errorMsg(msg, error);
+                logger.error(msg, error);
                 setError(`${msg} ${error}`);
                 return;
             }
 
-            logCreds("Created app with api.v1.apps.create(), response var 'registeredApp':", registeredApp);
+            logger.trace("Created app with api.v1.apps.create(), response var 'registeredApp':", registeredApp);
         }
 
         const query = stringifyQuery({
@@ -89,7 +88,7 @@ export default function LoginPage() {
 
         setApp({...registeredApp, redirectUri });
         const newUrl = `${sanitizedServer}/oauth/authorize?${query}`;
-        logCreds(`redirecting to "${newUrl}"...`);
+        logger.trace(`redirecting to "${newUrl}"...`);
         window.location.href = newUrl;
     };
 

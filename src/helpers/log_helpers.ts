@@ -37,27 +37,27 @@ export class ComponentLogger {
 
     constructor(componentName: string) {
         this.componentName = componentName;
-        this.logPrefix = `[${DEMO_APP}] <${componentName}>`;
+        this.logPrefix = `<${componentName}>`;
     }
 
     error(msg: string, ...args: any[]) {
-        console.error(this.makeMsg(msg), ...args);
+        errorMsg(this.makeMsg(msg), ...args);
     }
 
     warn(msg: string, ...args: any[]) {
-        console.warn(this.makeMsg(msg), ...args);
+        warnMsg(this.makeMsg(msg), ...args);
     }
 
     log(msg: string, ...args: any[]) {
-        console.log(this.makeMsg(msg), ...args);
+        logMsg(this.makeMsg(msg), ...args);
     }
 
     info(msg: string, ...args: any[]) {
-        console.info(this.makeMsg(msg), ...args);
+        infoMsg(this.makeMsg(msg), ...args);
     }
 
     debug(msg: string, ...args: any[]) {
-        console.debug(this.makeMsg(msg), ...args);
+        debugMsg(this.makeMsg(msg), ...args);
     }
 
     // Only writes logs in debug mode

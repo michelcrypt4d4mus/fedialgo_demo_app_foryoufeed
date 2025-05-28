@@ -11,16 +11,18 @@ import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
+import { ComponentLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
-import { logMsg, versionString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useAuthContext } from "../../hooks/useAuth";
 import { useError } from "../helpers/ErrorHandler";
+import { versionString } from "../../helpers/string_helpers";
 
 const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
 const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 const WIPE_ALL = "Wipe All User Data";
+const logger = new ComponentLogger("ExperimentalFeatures");
 
 const BUTTON_TEXT = {
     [SCORE_STATS]: "Show a bar chart of the scores of your timeline",
@@ -47,13 +49,13 @@ export default function ExperimentalFeatures() {
 
     // Show modal with algorithm internal state
     const showAlgoState = () => {
-        logMsg(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
+        logger.log(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
         setIsLoadingState(true);
 
         // Wait for the data to show up
         algorithm.getCurrentState()
             .then((currentState) => {
-                logMsg("FediAlgo state:", currentState);
+                logger.log("FediAlgo state:", currentState);
                 currentState.version = versionString();
                 setAlgoState(currentState);
                 setShowStateModal(true);

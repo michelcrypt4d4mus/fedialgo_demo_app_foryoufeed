@@ -10,13 +10,15 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
-import { debugMsg, errorMsg, warnMsg } from "../../helpers/log_helpers";
+import { ComponentLogger } from "../../helpers/log_helpers";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
 const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
 const IMAGES_HEIGHT = 314;
 const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
+
+const logger = new ComponentLogger("MultimediaNode");
 
 // Either toot or mediaAttachments must be given
 // If toot is not given the image is not clickable to display the modal
@@ -44,12 +46,11 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
         images = mediaAttachments.filter(m => m.type == MediaCategory.IMAGE);
         videos = mediaAttachments.filter(m => m.type == MediaCategory.VIDEO);
     } else {
-        errorMsg("MultimediaNode called without mediaAttachments or status", props);
+        logger.error("Called without mediaAttachments or status", props);
         return <></>;
     }
 
     const hasImageAttachments = images.length > 0;
-    // debugMsg(`MultimediaNode re-rendering: hasImageAttachments=${hasImageAttachments}, images.length=${images.length}, videos.length=${videos.length}, audios.length=${audios.length}`);
 
     // If there's one image try to show it full size; If there's more than one use old image handler.
     if (images.length == 1 ) {
@@ -78,7 +79,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     effect="blur"
                     onClick={() => {
                         if (removeMediaAttachment) return;  // Don't open modal if removing media
-                        debugMsg(`Opening modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
+                        logger.debug(`Opening modal for idx=${idx}, hasImageAttachments=${hasImageAttachments}`);
                         setMediaInspectionIdx(idx);
                     }}
                     src={image.previewUrl}
@@ -144,7 +145,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
             </div>
         );
     } else {
-        warnMsg(`Unknown media type for status:`, toot, `\nmediaAttachments:`, mediaAttachments);
+        logger.warn(`Unknown media type for status:`, toot, `\nmediaAttachments:`, mediaAttachments);
     }
 };
 

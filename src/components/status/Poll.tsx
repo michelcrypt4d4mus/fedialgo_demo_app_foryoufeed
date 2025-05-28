@@ -8,12 +8,13 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { mastodon } from 'masto';
 
-import { debugMsg, errorMsg } from '../../helpers/log_helpers';
+import { ComponentLogger } from '../../helpers/log_helpers';
 import { isAccessTokenRevokedError, timeString } from 'fedialgo';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from "../../components/helpers/ErrorHandler";
 
 const ALREADY_VOTED_MSG = `You have already voted`;
+const logger = new ComponentLogger('Poll');
 
 interface PollProps {
     poll: mastodon.v1.Poll,
@@ -49,7 +50,7 @@ export default function Poll(props: PollProps) {
     const disabled = poll.voted || expired || hasVoted || poll.ownVotes?.length > 0;
 
     const handleOptionChange = (choiceIndex: number) => {
-        debugMsg(`Poll option ${choiceIndex} changed, prev selected state:`, selected);
+        logger.debug(`Poll option ${choiceIndex} changed, prev selected state:`, selected);
 
         if (poll.multiple) {
             setSelected((prev) => ({...prev, [choiceIndex]: !prev[choiceIndex]}));
@@ -60,11 +61,11 @@ export default function Poll(props: PollProps) {
 
     const vote = async () => {
         const choiceIndexes = Object.keys(selected).filter((k) => selected[k]).map((n) => parseInt(n));
-        debugMsg('Vote clicked, selected is:', selected, '\nchoiceIndexes is:', choiceIndexes);
+        logger.debug('Vote clicked, selected is:', selected, '\nchoiceIndexes is:', choiceIndexes);
 
         try {
             await api.v1.polls.$select(poll.id).votes.create({choices: choiceIndexes});
-            debugMsg('Vote successful, selected:', selected, '\nchoiceIndexes:', choiceIndexes);
+            logger.debug('Vote successful, selected:', selected, '\nchoiceIndexes:', choiceIndexes);
             choiceIndexes.forEach((i) => poll.options[i].votesCount = (poll.options[i].votesCount || 0) + 1);
             poll.voted = true;
             poll.ownVotes = choiceIndexes;
@@ -73,7 +74,7 @@ export default function Poll(props: PollProps) {
             setRevealed(true);
             setHasVoted(true);
         } catch (error) {
-            errorMsg('Error voting:', error);
+            logger.error('Error voting:', error);
 
             if (isAccessTokenRevokedError(error)) {
                 setError('Your access token has been revoked. Please logout and back in again.');
@@ -114,7 +115,7 @@ export default function Poll(props: PollProps) {
                     <>
                         {/* TODO: should this be a Button, not a button? */}
                         <button className='poll__link' onClick={() => {
-                            debugMsg('See results clicked, current selected:', selected);
+                            logger.debug('See results clicked, current selected:', selected);
                             setRevealed(!revealed);
                         }}>
                             {revealed ? 'Hide' : 'See'} Results
@@ -124,7 +125,7 @@ export default function Poll(props: PollProps) {
 
                 {/* {showResults && !disabled && (
                     <>
-                        <button className='poll__link' onClick={() => console.log('Refresh clicked, current selected:', selected)}>
+                        <button className='poll__link' onClick={() => logger.log('Refresh clicked, current selected:', selected)}>
                             Refresh
                         </button>{' '}
                         ·{' '}

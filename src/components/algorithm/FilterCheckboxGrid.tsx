@@ -3,15 +3,16 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import React, { CSSProperties, ReactElement, useMemo } from "react";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import { CSSProperties, ReactElement, useMemo } from "react";
 
 import tinygradient from "tinygradient";
-import { BooleanFilter, BooleanFilterName, TypeFilterName, percentileSegments, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
-import { compareStr, debugMsg } from "../../helpers/string_helpers";
+import { ComponentLogger } from "../../helpers/log_helpers";
+import { compareStr } from "../../helpers/string_helpers";
 import { FOLLOWED_TAG_COLOR, FOLLOWED_USER_COLOR, PARTICIPATED_TAG_COLOR, PARTICIPATED_TAG_COLOR_MIN, TRENDING_TAG_COLOR_FADED } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
@@ -23,6 +24,7 @@ export type CheckboxTooltip = {
 // Percentiles to use for adjusting the participated tag color gradient
 const GRADIENT_ADJUST_PCTILES = [0.95, 0.98];
 const MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT = 40;
+const logger = new ComponentLogger("FilterCheckboxGrid");
 
 const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
     [BooleanFilterName.LANGUAGE]: {
@@ -73,7 +75,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
                 colorArray = participatedColorGradient.hsv(maxParticipations, false);
             } catch (err) {
-                console.error(`Error adjusting participated tag color gradient:`, err);
+                logger.error(`Error adjusting participated tag color gradient:`, err);
             }
         }
 

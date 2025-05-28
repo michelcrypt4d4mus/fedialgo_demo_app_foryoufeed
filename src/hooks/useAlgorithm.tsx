@@ -8,13 +8,14 @@ import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { errorMsg, logMsg, warnMsg } from "../helpers/log_helpers";
+import { ComponentLogger, logger.error, logger.log, logger.error } from "../helpers/log_helpers";
 import { LOADING_ERROR_MSG, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
 const FOCUS = "focus";
 const RELOAD_IF_OLDER_THAN_MINUTES = 5;
 const RELOAD_IF_OLDER_THAN_SECONDS = 60 * RELOAD_IF_OLDER_THAN_MINUTES;
+const logger = new ComponentLogger("AlgorithmProvider");
 
 interface AlgoContext {
     algorithm?: TheAlgorithm,
@@ -53,22 +54,22 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     // Initial load of the feed
     useEffect(() => {
         if (!user) {
-            console.warn(`constructFeed() useEffect called without user, skipping initial load`);
+            logger.warn(`constructFeed() useEffect called without user, skipping initial load`);
             return;
         }
 
         // Check that we have valid user credentials and load timeline toots, otherwise force a logout.
         const constructFeed = async (): Promise<void> => {
-            logMsg(`constructFeed() called with user ID ${user?.id} (feed already has ${timeline.length} toots)`);
+            logger.log(`constructFeed() called with user ID ${user?.id} (feed already has ${timeline.length} toots)`);
             let currentUser: mastodon.v1.Account;
 
             try {
                 currentUser = await api.v1.accounts.verifyCredentials();
             } catch (err) {
                 if (isAccessTokenRevokedError(err)) {
-                    warnMsg(`Access token has been revoked, logging out...`);
+                    logger.error(`Access token has been revoked, logging out...`);
                 } else {
-                    errorMsg(`Logging out, failed to verifyCredentials() with error:`, err);
+                    logger.error(`Logging out, failed to verifyCredentials() with error:`, err);
                 }
 
                 // TODO: we don't always actually logout here? Sometimes it just keeps working despite getting the error in logs
@@ -106,7 +107,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
             if (isLoading || algorithm.isLoading()) {
                 msg = `load in progress`;
-                if (!isLoading) warnMsg(`isLoading is true but ${msg}`);
+                if (!isLoading) logger.error(`isLoading is true but ${msg}`);
             } else {
                 const feedAgeInSeconds = algorithm.mostRecentHomeTootAgeInSeconds();
 
@@ -115,11 +116,11 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
                     should = feedAgeInSeconds > RELOAD_IF_OLDER_THAN_SECONDS;
                 } else {
                     msg = `${timeline.length} toots in feed but no most recent toot found!`;
-                    warnMsg(msg);
+                    logger.error(msg);
                 }
             }
 
-            logMsg(`shouldReloadFeed() returning ${should} (${msg})`);
+            logger.log(`shouldReloadFeed() returning ${should} (${msg})`);
             return should;
         };
 
@@ -159,17 +160,17 @@ const triggerLoadFxn = (
 
     loadFxn()
         .then(() => {
-            logMsg(`triggerLoadFxn finished`);
+            logger.log(`triggerLoadFxn finished`);
             setIsLoading(false);
         })
         .catch((err) => {
             if (err.message.includes(GET_FEED_BUSY_MSG)) {
                 // Don't flip the isLoading state if the feed is busy
-                warnMsg(`triggerLoadFxn ${LOADING_ERROR_MSG}`);
+                logger.error(`triggerLoadFxn ${LOADING_ERROR_MSG}`);
                 setError(LOADING_ERROR_MSG);
             } else {
                 const msg = `Failed to triggerLoadFxn with error:`;
-                errorMsg(msg, err);
+                logger.error(msg, err);
                 setError(`${msg} ${err}`);
                 setIsLoading(false);
             }

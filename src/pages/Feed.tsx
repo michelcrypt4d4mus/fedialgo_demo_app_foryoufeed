@@ -19,9 +19,9 @@ import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
+import { ComponentLogger } from "../helpers/log_helpers";
 import { confirm } from "../components/helpers/Confirmation";
 import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
-import { logMsg, warnMsg } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
 
@@ -32,6 +32,8 @@ const DEFAULT_NUM_DISPLAYED_TOOTS = 20;
 const AUTO_UPDATE_TOOLTIP_MSG = "If this box is checked the feed will be automatically updated when you focus this browser tab.";
 const DEFAULT_LOADING_MSG = "Loading (first time can take up to a minute or so)";
 const NO_TOOTS_MSG = "No toots in feed! Maybe check your filters settings?";
+
+const logger = new ComponentLogger("Feed");
 
 
 export default function Feed() {
@@ -83,7 +85,7 @@ export default function Feed() {
         const showMoreToots = () => {
             if (numDisplayedToots < timeline.length) {
                 const msg = `Showing ${numDisplayedToots} toots, adding ${NUM_TOOTS_TO_LOAD_ON_SCROLL} more`;
-                logMsg(`${msg} (${timeline.length} available in feed)`);
+                logger.log(`${msg} (${timeline.length} available in feed)`);
                 setNumDisplayedToots(numDisplayedToots + NUM_TOOTS_TO_LOAD_ON_SCROLL);
             }
         };
@@ -103,7 +105,7 @@ export default function Feed() {
 
             if (percentage <= 50 && numDisplayedToots > (DEFAULT_NUM_DISPLAYED_TOOTS * 2)) {
                 const newNumDisplayedToots = Math.floor(numDisplayedToots * 0.7);
-                logMsg(`Scroll percentage is less than 50%, lowering numDisplayedToots to ${newNumDisplayedToots}`);
+                logger.log(`Scroll percentage is less than 50%, lowering numDisplayedToots to ${newNumDisplayedToots}`);
                 setNumDisplayedToots(newNumDisplayedToots);
             }
         };

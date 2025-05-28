@@ -4,7 +4,7 @@
 import { MediaCategory } from "fedialgo";
 
 import { MimeExtensions } from "../types";
-import { warnMsg } from "./log_helpers";
+import { debugMsg, errorMsg, warnMsg } from "./log_helpers";
 
 export const DEMO_APP = "DEMO APP";
 export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
@@ -70,7 +70,7 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
         return acc;
     }, {} as MimeExtensions);
 
-    console.debug(`Server accepted MIME types:`, mimeExtensions);
+    debugMsg(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
 }
 
@@ -140,7 +140,7 @@ export const versionString = () => {
     try {
         return process.env.FEDIALGO_VERSION;
     } catch (e) {
-        console.error(`Error getting version string: ${e}`);
+        errorMsg(`Error getting version string: ${e}`);
         return `?.?.?`;
     }
 };
