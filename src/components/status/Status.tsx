@@ -304,7 +304,10 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 onClick={() => {
                                     console.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
                                     setIsLoadingThread(true);
-                                    toot.getConversation().then(toots => setThread(toots)).finally(() => setIsLoadingThread(false));
+
+                                    toot.getConversation()
+                                            .then(toots => setThread(toots))
+                                            .finally(() => setIsLoadingThread(false));
                                 }}
                                 style={{color: "grey", cursor: isLoadingThread ? 'wait' : 'pointer', fontSize: "11px"}}
                             >
