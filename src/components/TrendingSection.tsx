@@ -28,7 +28,7 @@ interface TrendingProps {
 export default function TrendingSection(props: TrendingProps) {
     const { footer, hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
     const linkStyle = hasCustomStyle ? tagLinkStyle : boldTagLinkStyle;
-    logger.debug(`Rendering section with title: ${title}, trendingObjs.length: ${trendingObjs.length}`, props);
+    // logger.debug(`Rendering section with title: ${title}, trendingObjs.length: ${trendingObjs.length}`, props);
 
     return (
         <SubAccordion key={title} title={title}>

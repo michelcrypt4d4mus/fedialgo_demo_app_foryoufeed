@@ -72,7 +72,7 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
 
     debugMsg(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
-}
+};
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
