@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
 import tinygradient from "tinygradient";
-import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TypeFilterName, percentileSegments, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { compareStr, debugMsg } from "../../helpers/string_helpers";
@@ -19,6 +19,9 @@ export type CheckboxTooltip = {
     color: CSSProperties["color"];
     text: string;
 };
+
+const MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT = 40;
+const GRADIENT_SEGMENTS = 10;
 
 const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
     [BooleanFilterName.LANGUAGE]: {
@@ -57,9 +60,30 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const participatedColorArray = useMemo(() => {
         const participatedTags = Object.values(algorithm.userData.participatedHashtags);
-        const maxParticipations = Math.max(...participatedTags.map(t => t.numToots));
-        const participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
-        return participatedColorGradient.rgb(Math.max(maxParticipations, 2));
+        const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
+        let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
+        let colorArray = participatedColorGradient.rgb(maxParticipations);
+
+        // Adjust the color gradient so there's more color variation in the low/middle range
+        if (participatedTags.length > MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT) {
+            try {
+                const segments = percentileSegments(participatedTags, t => t.numToots, GRADIENT_SEGMENTS);
+                console.debug(`Made ${segments.length} segments for participated tags (maxParticipations=${maxParticipations    })`, segments);
+                // const middleNumToots = [segments[segments.length - 3][0].numToots, segments[segments.length - 2][0].numToots];
+                const middleNumToots = [segments[segments.length - 1][0].numToots];
+                const highPercentiles = [Math.floor(maxParticipations * 0.95), Math.floor(maxParticipations * 0.98)];
+                // const middleColors = middleNumToots.map(n => colorArray[n]).filter(Boolean);
+                // const middleColors = [colorArray[ninetyPercentile]]; // Use the 90th percentile color
+                const middleColors = highPercentiles.map(n => colorArray[n]).filter(Boolean);
+                console.debug(`Adjusting participated tag color gradient for ${participatedTags.length} tags. middleNumToots:`, middleNumToots, `middleColors:`, middleColors);
+                participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
+                colorArray = participatedColorGradient.rgb(maxParticipations);
+            } catch (err) {
+                console.error(`Error adjusting participated tag color gradient:`, err);
+            }
+        }
+
+        return colorArray;
     }, [algorithm.userData.participatedHashtags]);
 
     const trendingTagNames = useMemo(
