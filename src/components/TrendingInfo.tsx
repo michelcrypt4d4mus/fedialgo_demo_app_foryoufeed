@@ -13,6 +13,7 @@ import { accordionSubheader, noPadding } from "../helpers/style_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
+import { sanitizeServerUrl } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const logger = new ComponentLogger("TrendingInfo");
@@ -26,15 +27,19 @@ export default function TrendingInfo() {
         () => (
             <TrendingSection
                 panelType={TrendingType.SERVERS}
-                infoTxt={(domain: string) => {
-                    const serverInfo = algorithm.trendingData.servers[domain];
-                    const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
-                    info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
-                    return info.join(', ');
+                linkRenderer={{
+                    infoTxt: (domain: string) => {
+                        const serverInfo = algorithm.trendingData.servers[domain];
+
+                        return [
+                            `MAU: ${serverInfo.MAU.toLocaleString()}`,
+                            `followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`
+                        ].join(', ');
+                    },
+                    linkLabel: (domain: string) => domain,
+                    linkUrl: (domain: string) => sanitizeServerUrl(domain),
+                    onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain), e)
                 }}
-                linkLabel={(domain: string) => domain as string}
-                linkUrl={(domain: string) => `https://${domain}`}
-                onClick={(domain: string, e) => followUri(`https://${domain}`, e)}
                 trendingObjs={Object.keys(algorithm.trendingData.servers)}
             />
         ),
@@ -53,19 +58,19 @@ export default function TrendingInfo() {
             <Accordion>
                 <TrendingSection
                     panelType={TrendingType.TAGS}
-                    infoTxt={trendingObjInfoTxt}
-                    linkLabel={tagNameMapper}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
+                    linkRenderer={{
+                        ...trendingObjLinkRenderer,
+                        linkLabel: tagNameMapper,
+                    }}
                     trendingObjs={algorithm.trendingData.tags}
                 />
 
                 <TrendingSection
                     panelType={TrendingType.LINKS}
-                    infoTxt={trendingObjInfoTxt}
-                    linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
+                    linkRenderer={{
+                        ...trendingObjLinkRenderer,
+                        linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
+                    }}
                     trendingObjs={algorithm.trendingData.links}
                 />
 
@@ -86,10 +91,11 @@ export default function TrendingInfo() {
 
                 <TrendingSection
                     panelType={ScoreName.PARTICIPATED_TAGS}
-                    infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
-                    linkLabel={tagNameMapper}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
+                    linkRenderer={{
+                        ...baseLinkRenderer,
+                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`,
+                        linkLabel: tagNameMapper,
+                    }}
                     trendingObjs={algorithm.userData.popularUserTags()}
                 />
             </Accordion>
@@ -111,6 +117,16 @@ const prefixedHtml = (text: string, prefix?: string): React.ReactElement => {
         {prefix?.length ? <span style={monospace}>{`[${prefix}]`}</span> : ''}
         <span style={bold}>{prefix?.length ? ' ' : ''}{text}</span>
     </>);
+};
+
+const baseLinkRenderer = {
+    linkUrl: linkMapper,
+    onClick: openTrendingLink
+};
+
+const trendingObjLinkRenderer = {
+    ...baseLinkRenderer,
+    infoTxt: trendingObjInfoTxt,
 };
 
 
