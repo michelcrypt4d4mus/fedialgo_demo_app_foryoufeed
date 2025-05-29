@@ -62,6 +62,9 @@ const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
             }
         },
     },
+    [BooleanFilterName.TYPE]: {
+        labelMapper: (name: string) => capitalCase(name),
+    },
 };
 
 interface FilterCheckboxGridProps {
@@ -148,7 +151,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         (name: string, i: number) => {
             return (
                 <FilterCheckbox
-                    capitalize={filter.title == BooleanFilterName.TYPE}
                     isChecked={filter.validValues.includes(name)}
                     key={`${filter.title}_${name}_${i}`}
                     label={filterConfig?.labelMapper ? filterConfig?.labelMapper(name) : name}

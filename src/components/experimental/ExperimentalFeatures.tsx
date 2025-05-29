@@ -132,7 +132,7 @@ export default function ExperimentalFeatures() {
                 </ul>
 
                 <hr className="hr hr-narrow" />
-                <FindFollowers style={{marginTop: "4px"}} />
+                <FindFollowers/>
             </div>
         </TopLevelAccordion>
     );
