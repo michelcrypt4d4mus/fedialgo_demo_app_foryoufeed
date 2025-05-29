@@ -2,7 +2,7 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { BooleanFilter } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
@@ -41,7 +41,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             isChecked={sortByCount}
             key={SwitchType.SORT_BY_COUNT}
             label={SwitchType.SORT_BY_COUNT}
-            onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
+            onChange={(e) => setSortByValue(e.target.checked)}         // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
         />,
     ];
 
@@ -52,14 +52,21 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                 isChecked={highlightedOnly}
                 key={SwitchType.HIGHLIGHTS_ONLY}
                 label={SwitchType.HIGHLIGHTS_ONLY}
-                onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
+                onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily trigger TheAlgorithm.filterFeed(). not a huge problem but not ideal.
             />,
         ]);
     }
 
-    // Add a slider for minimum # of toots if there's enough options in the panel to justify it
+    // Add a slider and tooltip for minimum # of toots if there's enough options in the panel to justify it
     if (showMinTootsSlider) {
         headerSwitches = headerSwitches.concat([
+            <Tooltip
+                delayShow={config.tooltips.minTootsSliderDelay}
+                id={minTootsTooltipAnchor}
+                place="bottom"
+                style={{...tooltipZIndex, fontWeight: "normal", }}
+            />,
+
             <div key={`${filter.title}-minTootsSlider`} style={{width: "23%"}}>
                 <a
                     data-tooltip-id={minTootsTooltipAnchor}
@@ -77,14 +84,6 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                     />
                 </a>
             </div>,
-
-            // Tooltip for the minToots slider
-            <Tooltip
-                delayShow={config.tooltips.minTootsSliderDelay}
-                id={minTootsTooltipAnchor}
-                place="bottom"
-                style={{...tooltipZIndex, fontWeight: "normal", }}
-            />,
         ]);
     }
 

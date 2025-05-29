@@ -9,7 +9,7 @@ import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingTyp
 import { MB } from "./helpers/number_helpers";
 
 
-// Enums
+// Enums  // TODO: move to types.ts?
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
     INVERT_SELECTION = "invertSelection",
@@ -17,7 +17,7 @@ export enum SwitchType {
 };
 
 
-// Exported types
+// Exported types  // TODO: move to types.ts?
 export type CheckboxTooltip = {
     anchor?: string;
     color?: CSSProperties["color"];

@@ -1,8 +1,8 @@
 /*
  * WIP: Component for displaying the trending hashtags in the Fediverse.
  */
-import React, { CSSProperties, useState } from "react";
 import { Button } from 'react-bootstrap';
+import { CSSProperties, useState } from "react";
 
 import { FEDIALGO } from 'fedialgo';
 

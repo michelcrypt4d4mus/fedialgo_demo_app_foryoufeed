@@ -50,7 +50,7 @@ export default function WeightSetter() {
         }
     };
 
-    const weightSlider = (scoreName: WeightName) => (
+    const makeWeightSlider = (scoreName: WeightName) => (
         <WeightSlider
             key={scoreName}
             scoreName={scoreName}
@@ -68,7 +68,7 @@ export default function WeightSetter() {
                 options={Object.keys(algorithm.weightPresets)}
             />
 
-            {Object.values(NonScoreWeightName).map((weight) => weightSlider(weight))}
+            {Object.values(NonScoreWeightName).map((weight) => makeWeightSlider(weight))}
             <div style={{height: '12px'}} />
 
             <div style={roundedBox}>
@@ -76,7 +76,7 @@ export default function WeightSetter() {
                     Weightings
                 </p>
 
-                {sortedScorers.map((scorer) => weightSlider(scorer.name))}
+                {sortedScorers.map((scorer) => makeWeightSlider(scorer.name))}
             </div>
         </TopLevelAccordion>
     );
