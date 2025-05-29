@@ -4,6 +4,10 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
+import { ScoreName, TrendingData, TrendingType } from "fedialgo";
+
+export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
+
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
 const KB = 1024;
 const MB = KB * KB;
@@ -78,12 +82,18 @@ type TootConfig = {
     scoreDigits: number;
 };
 
+type TrendingPanelCfg = {
+    description?: string;
+    hasCustomStyle?: boolean;
+    initialNumShown: number;
+    objTypeLabel?: string;
+    prependTrending?: boolean;
+    title?: string;
+};
+
 type TrendingConfig = {
     maxLengthForMulticolumn: number;
-    numHashtagsToShow: number;
-    numLinksToShow: number;
-    numServersToShow: number;
-    numTootsToShow: number;
+    panels: Record<TrendingPanel, TrendingPanelCfg>;
 };
 
 type WeightsConfig = {
@@ -182,10 +192,31 @@ class Config implements ConfigType {
 
     trending: TrendingConfig = {
         maxLengthForMulticolumn: 50,          // Maximum length of a trending object label to use multicolumn layout
-        numHashtagsToShow: 40,                // Default number of hashtags to show in trending sections
-        numLinksToShow: 30,                   // Default number of trending links to show
-        numServersToShow: 40,                 // TODO: should be unused, but kept for compatibility
-        numTootsToShow: 10,                   // Default number of toots to show in trending section
+        panels:  {
+            [TrendingType.LINKS]: {
+                hasCustomStyle: true,        // TODO: this sucks
+                initialNumShown: 30,
+                objTypeLabel: `trending ${TrendingType.LINKS}`
+            },
+            [ScoreName.PARTICIPATED_TAGS]: {
+                initialNumShown: 40,
+                objTypeLabel: "of your hashtags",
+                title: "Hashtags You Post About The Most",
+            },
+            [TrendingType.SERVERS]: {
+                description: "The Mastodon servers all these trending links, toots, and hashtags came from, sorted by the percentage of that server's monthly active users you follow:",
+                initialNumShown: 40,        // TODO: unused
+                title: "Fediverse Servers That Were Scraped",
+            },
+            [TrendingType.TAGS]: {
+                initialNumShown: 30,
+                objTypeLabel: "trending hashtags",
+            },
+            toots: {
+                initialNumShown: 10,
+                objTypeLabel: "trending toots",
+            },
+        },
     }
 
     weights: WeightsConfig = {

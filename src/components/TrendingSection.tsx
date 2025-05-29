@@ -4,60 +4,22 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
-import { ScoreName, type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
+import { type TrendingObj } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
 import { ComponentLogger } from "../helpers/log_helpers";
-import { config } from "../config";
+import { config, TrendingPanel } from "../config";
 import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
-export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
 type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;
     linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
     linkUrl: (obj: TrendingListObj) => string;
     onClick: (obj: TrendingListObj, e: React.MouseEvent) => void;
-}
-
-// TODO: should this be part of global config?
-type TrendingPanelCfg = {
-    description?: string;
-    hasCustomStyle?: boolean;
-    initialNumShown: number;
-    objTypeLabel?: string;
-    prependTrending?: boolean;
-    title?: string;
-};
-
-const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
-    [TrendingType.LINKS]: {
-        hasCustomStyle: true, // links are always styled with custom CSS
-        initialNumShown: config.trending.numLinksToShow,
-        objTypeLabel: `trending ${TrendingType.LINKS}`
-    },
-    [ScoreName.PARTICIPATED_TAGS]: {
-        initialNumShown: config.trending.numHashtagsToShow,
-        objTypeLabel: "of your hashtags",
-        title: "Hashtags You Post About The Most",
-    },
-    [TrendingType.SERVERS]: {
-        description: "The Mastodon servers all these trending links, toots, and hashtags came from, sorted by the percentage of that server's monthly active users you follow:",
-        initialNumShown: config.trending.numServersToShow, // unused
-        objTypeLabel: TrendingType.SERVERS, // unused
-        title: "Fediverse Servers That Were Scraped",
-    },
-    [TrendingType.TAGS]: {
-        initialNumShown: config.trending.numHashtagsToShow,
-        objTypeLabel: "trending hashtags",
-    },
-    toots: {
-        initialNumShown: config.trending.numTootsToShow,
-        objTypeLabel: "trending toots",
-    },
 };
 
 // Either objectRenderer() OR linkRender must be provided in TrendingProps.
@@ -79,7 +41,7 @@ export default function TrendingSection(props: TrendingProps) {
     }
 
     // Configuration from TRENDING_PANEL_CFG based on panelType prop
-    const panelCfg = TRENDING_PANEL_CFG[panelType];
+    const panelCfg = config.trending.panels[panelType];
     const objTypeLabel = panelCfg.objTypeLabel || panelType;
     const title = panelCfg.title || capitalCase(objTypeLabel);
     const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
@@ -117,7 +79,7 @@ export default function TrendingSection(props: TrendingProps) {
         () => {
             const objs = trendingObjs.slice(0, numShown);
 
-            // Short circuit the rendering for custom object renderers (meaning Toots)
+            // Short circuit the rendering for custom object renderers (so far that's means just Toots)
             if (objRenderer) {
                 return <>
                     {objs.map((obj, i) => objRenderer!(obj))}
