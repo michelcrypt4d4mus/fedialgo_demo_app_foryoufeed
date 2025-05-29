@@ -31,9 +31,10 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     let { capitalize, isChecked, label, labelExtra, onChange, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
 
-    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     labelExtra = (typeof labelExtra == "number") ? labelExtra.toLocaleString() : labelExtra;
     const labelStyle: CSSProperties = {...defaultLabelStyle};
+
+    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     let style: CSSProperties = {color: "black"};
     let tooltipAnchor = HASHTAG_ANCHOR;
 

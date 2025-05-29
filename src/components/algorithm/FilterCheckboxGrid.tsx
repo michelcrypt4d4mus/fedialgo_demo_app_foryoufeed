@@ -3,10 +3,11 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { CSSProperties, ReactElement, useCallback, useMemo, useState } from "react";
+import { CSSProperties, useCallback, useMemo } from "react";
 
 import tinygradient from "tinygradient";
-import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
+import { capitalCase } from "change-case";
+import { LANGUAGE_CODES, BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { ComponentLogger } from "../../helpers/log_helpers";
@@ -18,6 +19,10 @@ import { useAlgorithm } from "../../hooks/useAlgorithm";
 export type CheckboxTooltip = {
     color: CSSProperties["color"];
     text: string;
+};
+
+type FilterGridConfig = {
+    labelMapper: (name: string) => string;
 };
 
 // Percentiles to use for adjusting the participated tag color gradient
@@ -47,6 +52,18 @@ const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip
     },
 };
 
+const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
+    [BooleanFilterName.LANGUAGE]: {
+        labelMapper: (code: string) => {
+            if (code in LANGUAGE_CODES) {
+                return capitalCase(LANGUAGE_CODES[code]) + ` (${code})`;
+            } else {
+                return code;
+            }
+        },
+    },
+};
+
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
     highlightedOnly?: boolean,
@@ -58,8 +75,8 @@ interface FilterCheckboxGridProps {
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
-
-    const [logger, _setLogger] = useState(new ComponentLogger("FilterCheckboxGrid", filter.title));
+    const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
+    const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
 
     const participatedColorArray = useMemo(
         () => {
@@ -134,7 +151,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     capitalize={filter.title == BooleanFilterName.TYPE}
                     isChecked={filter.validValues.includes(name)}
                     key={`${filter.title}_${name}_${i}`}
-                    label={name}
+                    label={filterConfig?.labelMapper ? filterConfig?.labelMapper(name) : name}
                     labelExtra={filter.optionInfo[name]}
                     onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
                     tooltip={getTooltipInfo(name)}
