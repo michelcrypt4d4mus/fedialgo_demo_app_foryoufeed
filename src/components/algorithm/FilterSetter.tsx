@@ -4,6 +4,7 @@
  * are trending in the Fedivers.
  */
 import Accordion from 'react-bootstrap/esm/Accordion';
+import { useCallback } from 'react';
 
 import { capitalCase } from "change-case";
 
@@ -61,8 +62,9 @@ export default function FilterSetter() {
                             description={numericFilter.description}
                             key={`${numericFilter.title}_${i}`}
                             label={capitalCase(numericFilter.title)}
-                            maxValue={50}
+                            maxValue={config.filters.numeric.maxValue}
                             minValue={0}
+                            // TODO: useCallback() could save a lot of re-renders here maybe...
                             onChange={async (e) => {
                                 numericFilter.value = Number(e.target.value);
                                 algorithm.updateFilters(algorithm.filters);

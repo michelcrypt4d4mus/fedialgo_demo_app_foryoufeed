@@ -46,6 +46,7 @@ type FilterConfig = {
     numeric: {
         description: string;
         invertSelectionTooltip: string;
+        maxValue: number;
         title: string;
     };
     optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
@@ -184,6 +185,7 @@ class Config implements ConfigType {
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
             invertSelectionTooltip: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
+            maxValue: 50,                    // Maximum value for numeric filters
             title: "Interactions",
         },
         optionsList: {                       // Configure how the filter options list should be displayed
