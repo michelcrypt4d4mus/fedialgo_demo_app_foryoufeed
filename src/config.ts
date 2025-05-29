@@ -4,7 +4,7 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
-const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/";
+const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
 const KB = 1024;
 const MB = KB * KB;
 

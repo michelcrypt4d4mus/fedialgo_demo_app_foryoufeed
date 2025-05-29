@@ -49,7 +49,7 @@ export default function TrendingSection(props: TrendingProps) {
 
     return (
         <SubAccordion key={title} title={title}>
-            <div style={multicolumn ? multicolumnStyle : roundedBox}>
+            <div style={multicolumn ? multicolumnStyle : trendingListContainer}>
                 <ol style={listStyle}>
                     {multicolumn ? gridify(elements, 2, colStyle) : elements}
                 </ol>
@@ -83,10 +83,15 @@ const listStyle: CSSProperties = {
     paddingLeft: "20px",
 };
 
-const multicolumnStyle: CSSProperties = {
+const trendingListContainer: CSSProperties = {
     ...roundedBox,
+    paddingTop: "20px",
+};
+
+const multicolumnStyle: CSSProperties = {
+    ...trendingListContainer,
     paddingLeft: "35px",
-}
+};
 
 const tagLinkStyle: CSSProperties = {
     color: "black",
