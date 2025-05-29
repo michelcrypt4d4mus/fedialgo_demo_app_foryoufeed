@@ -4,7 +4,9 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
-import { ScoreName, TrendingData, TrendingType } from "fedialgo";
+import { capitalCase } from "change-case";
+
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType } from "fedialgo";
 
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
@@ -33,6 +35,12 @@ type FilterConfig = {
     defaultMinTootsToAppear: number;
     maxOptionLength: number;
     minOptionsToShowSlider: number;
+    optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
+};
+
+export type FilterGridConfig = {
+    labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    [SwitchType.HIGHLIGHTS_ONLY]?: boolean; // Whether to only show highlighted options
 };
 
 type LocaleConfig = {
@@ -138,6 +146,20 @@ class Config implements ConfigType {
         defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
         maxOptionLength: 21,                 // Maximum length of a filter option label
         minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
+        optionsList: {                       // Configure how the filter options list should be displayed
+            [BooleanFilterName.HASHTAG]: {
+                [SwitchType.HIGHLIGHTS_ONLY]: true,
+            },
+            [BooleanFilterName.LANGUAGE]: {
+                labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
+            },
+            [BooleanFilterName.TYPE]: {
+                labelMapper: (name: string) => capitalCase(name),
+            },
+            [BooleanFilterName.USER]: {
+                [SwitchType.HIGHLIGHTS_ONLY]: true,
+            }
+        },
     }
 
     locale: LocaleConfig = {

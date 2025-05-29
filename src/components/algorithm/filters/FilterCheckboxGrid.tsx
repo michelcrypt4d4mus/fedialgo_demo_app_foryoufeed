@@ -11,8 +11,7 @@ import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } fro
 import FilterCheckbox, { CheckboxTooltip } from "./FilterCheckbox";
 import { ComponentLogger } from "../../../helpers/log_helpers";
 import { compareStr } from "../../../helpers/string_helpers";
-import { config } from "../../../config";
-import { FILTER_CONFIG, FilterGridConfig } from "../BooleanFilterAccordionSection";
+import { config, FilterGridConfig } from "../../../config";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
@@ -51,7 +50,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
 
-    const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
+    const filterConfig: FilterGridConfig | undefined = config.filters.optionsList[filter.title];
     const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
 
     const participatedColorArray = useMemo(

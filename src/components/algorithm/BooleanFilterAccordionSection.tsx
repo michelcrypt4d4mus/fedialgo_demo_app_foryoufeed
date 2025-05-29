@@ -4,36 +4,15 @@
  */
 import { useMemo, useState } from "react";
 
-import { BooleanFilter, BooleanFilterName, LANGUAGE_CODES } from "fedialgo";
-import { capitalCase } from "change-case";
+import { BooleanFilter } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
 import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
-import { config, SwitchType } from "../../config";
+import { config, FilterGridConfig, SwitchType } from "../../config";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";
-
-export type FilterGridConfig = {
-    labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
-    [SwitchType.HIGHLIGHTS_ONLY]?: boolean; // Whether to only show highlighted options
-};
-
-export const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
-    [BooleanFilterName.HASHTAG]: {
-        [SwitchType.HIGHLIGHTS_ONLY]: true,
-    },
-    [BooleanFilterName.LANGUAGE]: {
-        labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
-    },
-    [BooleanFilterName.TYPE]: {
-        labelMapper: (name: string) => capitalCase(name),
-    },
-    [BooleanFilterName.USER]: {
-        [SwitchType.HIGHLIGHTS_ONLY]: true,
-    },
-};
 
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
@@ -45,7 +24,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     const showMinTootsSlider = Object.keys(filter.optionInfo).length > config.filters.minOptionsToShowSlider;
     const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}-min-toots`;
-    const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
+    const filterConfig: FilterGridConfig | undefined = config.filters.optionsList[filter.title];
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
     const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.defaultMinTootsToAppear : 0);
