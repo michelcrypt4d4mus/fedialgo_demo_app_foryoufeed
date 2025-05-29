@@ -4,7 +4,7 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, TrendingType, extractDomain } from "fedialgo";
+import { ScoreName, type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, TrendingType, extractDomain } from "fedialgo";
 
 import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
@@ -42,7 +42,7 @@ export default function TrendingInfo() {
     const scrapedServersSection = useMemo(
         () => (
             <TrendingSection
-                title="Fediverse Servers That Were Scraped"
+                panelType={TrendingType.SERVERS}
                 infoTxt={(domain: string) => {
                     const serverInfo = algorithm.trendingData.servers[domain];
                     const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
@@ -70,7 +70,7 @@ export default function TrendingInfo() {
 
             <Accordion>
                 <TrendingSection
-                    title={TrendingType.TAGS}
+                    panelType={TrendingType.TAGS}
                     infoTxt={trendingObjInfoTxt}
                     linkLabel={tagNameMapper}
                     linkUrl={linkMapper}
@@ -79,7 +79,7 @@ export default function TrendingInfo() {
                 />
 
                 <TrendingSection
-                    title={TrendingType.LINKS}
+                    panelType={TrendingType.LINKS}
                     infoTxt={trendingObjInfoTxt}
                     linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
                     linkUrl={linkMapper}
@@ -91,7 +91,7 @@ export default function TrendingInfo() {
                 {scrapedServersSection}
 
                 <TrendingSection
-                    title="Your Most Participated Hashtags"
+                    panelType={ScoreName.PARTICIPATED_TAGS}
                     infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
                     linkLabel={tagNameMapper}
                     linkUrl={linkMapper}

@@ -31,11 +31,6 @@ const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
 }, {} as Record<MediaCategory, string>);
 
 
-export function fileInfo(file: File): string {
-    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
-};
-
-
 // Build a map of MIME types to file extensions used by DropZone for image attachments etc.
 export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
     const mimeExtensions = mimeTypes.reduce((acc, mimeType) => {
@@ -70,6 +65,16 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
     debugMsg(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
 };
+
+
+// String summary of info about a file on the local filesystem
+export function fileInfo(file: File): string {
+    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
+};
+
+
+// Returns true if there's any capital letter in the string.
+export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash

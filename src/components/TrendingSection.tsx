@@ -4,7 +4,7 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
-import { type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
+import { ScoreName, type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
@@ -14,28 +14,42 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify } from "../helpers/react_helpers";
 import { trendingTypeForString } from "../helpers/string_helpers";
 
+export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
+
 type TrendingPanelCfg = {
     containerStyle?: CSSProperties;
+    description?: string;
     hasCustomStyle?: boolean;
     initialNumShown: number;
     objTypeLabel?: string;
     prependTrending?: boolean;
+    title?: string;
 };
 
-const TRENDING_PANEL_CFG: Record<keyof TrendingData, TrendingPanelCfg> = {
-    links: {
+const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
+    [TrendingType.LINKS]: {
+        // description: "These links have been shared by many denizens of the Fediverse recently:",
         hasCustomStyle: true, // links are always styled with custom CSS
         initialNumShown: config.trending.numLinksToShow,
+        objTypeLabel: `trending ${TrendingType.LINKS}`
     },
-    servers: {
-        containerStyle: {paddingLeft: "40px"},
-        initialNumShown: config.trending.numServersToShow, // unused
-    },
-    tags: {
+    [ScoreName.PARTICIPATED_TAGS]: {
         initialNumShown: config.trending.numHashtagsToShow,
-        objTypeLabel: "hashtags",
+        objTypeLabel: "of your hashtags",
+        title: "Hashtags You Post About The Most",
     },
-    toots: {
+    [TrendingType.SERVERS]: {
+        containerStyle: {paddingLeft: "40px"},
+        description: "These are the Mastodon servers whence all these trending links and toots etc. came.",
+        initialNumShown: config.trending.numServersToShow, // unused
+        objTypeLabel: TrendingType.SERVERS, // unused
+        title: "Fediverse Servers That Were Scraped",
+    },
+    [TrendingType.TAGS]: {
+        initialNumShown: config.trending.numHashtagsToShow,
+        objTypeLabel: "trending hashtags",
+    },
+    toots: {  // TODO: currently unused
         initialNumShown: config.trending.numTootsToShow,
     },
 };
@@ -48,25 +62,22 @@ interface TrendingProps {
     linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
     linkUrl: (obj: TrendingListObj) => string;
     onClick: (obj: TrendingListObj, e: React.MouseEvent) => void;
-    title: string;
+    panelType: TrendingPanel;
     trendingObjs: TrendingListObj[];
 };
 
 
 export default function TrendingSection(props: TrendingProps) {
-    let { infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
-    const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
+    let { infoTxt, linkLabel, linkUrl, onClick, panelType, trendingObjs } = props;
+    const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
+    // const objType = trendingTypeForString(panelType);
 
     // Get configuration for this kind of trending object
-    const objType = trendingTypeForString(title);
-    const panelCfg = TRENDING_PANEL_CFG[objType];
-    const objTypeLabel = panelCfg.objTypeLabel ?? objType;
-    title = capitalCase((title in TRENDING_PANEL_CFG) ? `Trending ${objTypeLabel || title}`: title);
-
-    const containerStyle = panelCfg.containerStyle ?? {};
+    const panelCfg = TRENDING_PANEL_CFG[panelType];
     const hasCustomStyle = panelCfg.hasCustomStyle ?? false;
     const initialNumShown = panelCfg.initialNumShown ?? trendingObjs.length;
-
+    const objTypeLabel = panelCfg.objTypeLabel ?? panelType;
+    const title = panelCfg.title ? panelCfg.title : capitalCase(`Trending ${objTypeLabel}`);
 
     // State
     const [currentNumShown, setCurrentNumShown] = useState(initialNumShown);
@@ -96,7 +107,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [currentNumShown, title, trendingObjs.length]
+        [currentNumShown, panelType, trendingObjs.length]
     );
 
     // Memoize because react profiler says trending panels are most expensive to render
@@ -107,6 +118,13 @@ export default function TrendingSection(props: TrendingProps) {
             const longestLabel = labels.find(label => label.length === maxLength) || "";
             const isSingleCol = hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);
             logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, isSingleCol=${isSingleCol})`);
+            let containerStyle: CSSProperties;
+
+            if (isSingleCol) {
+                containerStyle = {...singleColumn, ...(panelCfg.containerStyle ?? {})};
+            } else {
+                containerStyle = trendingListContainer;
+            }
 
             const elements = trendingObjs.slice(0, currentNumShown).map((obj, i) => (
                 <li key={i} style={listItemStyle}>
@@ -123,7 +141,9 @@ export default function TrendingSection(props: TrendingProps) {
             ));
 
             return (
-                <div style={isSingleCol ? {...singleColumn, ...containerStyle} : trendingListContainer }>
+                <div style={containerStyle}>
+                    {panelCfg.description && <p style={descriptionStyle}>{panelCfg.description}</p>}
+
                     <ol style={listStyle}>
                         {isSingleCol ? elements : gridify(elements, 2, colStyle)}
                     </ol>
@@ -136,7 +156,7 @@ export default function TrendingSection(props: TrendingProps) {
     );
 
     return (
-        <SubAccordion key={title} title={title}>
+        <SubAccordion key={panelType} title={title}>
             {trendingItemList}
         </SubAccordion>
     );
@@ -146,6 +166,13 @@ export default function TrendingSection(props: TrendingProps) {
 const colStyle: CSSProperties = {
     marginLeft: "5px",
     marginRight: "5px",
+};
+
+const descriptionStyle: CSSProperties = {
+    ...globalFont,
+    fontSize: config.theme.trendingObjFontSize,
+    marginBottom: "18px",
+    marginTop: "3px",
 };
 
 const footerContainer: CSSProperties = {
