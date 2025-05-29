@@ -36,6 +36,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
     const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
+    const isHashtagFilter = (filter.title != BooleanFilterName.HASHTAG);
+    const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     let findTooltip: (name: string) => CheckboxTooltip;  // Just initializing here at the top, is defined later
 
     const trendingTagNames = useMemo(
@@ -46,7 +48,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const participatedColorArray = useMemo(
         () => {
             // Only hashtags use the gradient. Return same EMPTY_GRADIENT object to avoid triggering re-rendering.
-            if (filter.title != BooleanFilterName.HASHTAG) return EMPTY_GRADIENT;
+            if (!isHashtagFilter) return EMPTY_GRADIENT;
 
             logger.trace(`Rebuilding participatedColorArray...`);
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
@@ -73,7 +75,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     // Different filters have different tooltip logic so we need to set up a real findTooltip function
-    if (filter.title == BooleanFilterName.HASHTAG) {
+    if (isHashtagFilter) {
         findTooltip = (name: string): CheckboxTooltip | undefined => {
             if (name in algorithm.userData.followedTags) {
                 return TOOLTIPS[TypeFilterName.FOLLOWED_HASHTAGS];
@@ -116,7 +118,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 labelExtra={filter.optionInfo[name]}
                 onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
                 tooltip={findTooltip(name)}
-                url={(filter.title == BooleanFilterName.HASHTAG) && algorithm.tagUrl(name)}
+                url={isHashtagFilter && algorithm.tagUrl(name)}
             />
         );
     };
@@ -148,10 +150,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         },
         [
             // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
-            [BooleanFilterName.USER, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedAccounts : undefined,
-            [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedTags : undefined,
-            [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
-            filter.title == BooleanFilterName.LANGUAGE ? algorithm.userData.preferredLanguage : undefined,
+            (isHashtagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
+            (isHashtagFilter || isTypeFilter) ? algorithm.userData.participatedHashtags : undefined,
+            (isTypeFilter || (filter.title == BooleanFilterName.USER)) ? algorithm.userData.followedAccounts : undefined,
+            (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,
