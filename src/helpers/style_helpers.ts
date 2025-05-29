@@ -89,7 +89,7 @@ export const roundedBox: CSSProperties = {
     paddingLeft: "25px",
     paddingRight: "20px",
     paddingBottom: "13px",
-    paddingTop: "20px",
+    paddingTop: "15px",
 };
 
 export const titleStyle: CSSProperties = {
