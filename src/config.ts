@@ -2,7 +2,9 @@
  * Configuration variables for the application.
  */
 type FilterConfig = {
+    defaultMinTootsToAppear: number;
     maxOptionLength: number;
+    minOptionsToShowSlider: number; // Optional, used for filters with many options
 };
 
 type StatsConfig = {
@@ -24,7 +26,9 @@ interface ConfigType {
 // App level config that is not user configurable
 class Config implements ConfigType {
     filters: FilterConfig = {
-        maxOptionLength: 21,  // Maximum length of a filter option label
+        defaultMinTootsToAppear: 5,  // Minimum number of toots for an option to appear in the filter
+        maxOptionLength: 21,         // Maximum length of a filter option label
+        minOptionsToShowSlider: 30,  // Minimum number of options to show the slider & hide low count options
     }
 
     stats: StatsConfig = {

@@ -12,6 +12,7 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
 import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
+import { config } from "../../config";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";
 
 export type FilterGridConfig = {
@@ -34,9 +35,6 @@ export const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
     },
 };
 
-const DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER = 5;
-const MIN_OPTIONS_TO_SHOW_SLIDER = 30;
-
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
 };
@@ -45,24 +43,26 @@ interface BooleanFilterAccordionProps {
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
     const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
-    const hasMinToots = Object.keys(filter.optionInfo).length > MIN_OPTIONS_TO_SHOW_SLIDER;
+    const hasMinToots = Object.keys(filter.optionInfo).length > config.filters.minOptionsToShowSlider;
     const switchTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
     const minTootsTooltipAnchor = `${switchTooltipAnchor}-min-toots`;
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(hasMinToots ? DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER : 0);
+    const [minToots, setMinToots] = useState(hasMinToots ? config.filters.defaultMinTootsToAppear : 0);
     const [sortByCount, setSortByValue] = useState(false);
+
+    const makeKey = (name: SwitchType) => `${filter.title}-${name}`;
 
     let switchbar = [
         <HeaderSwitch
             isChecked={filter.invertSelection}
-            key={SwitchType.INVERT_SELECTION}
+            key={makeKey(SwitchType.INVERT_SELECTION)}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
         />,
         <HeaderSwitch
             isChecked={sortByCount}
-            key={SwitchType.SORT_BY_COUNT}
+            key={makeKey(SwitchType.SORT_BY_COUNT)}
             label={SwitchType.SORT_BY_COUNT}
             onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
         />,
@@ -72,7 +72,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         switchbar = switchbar.concat([
             <HeaderSwitch
                 isChecked={highlightedOnly}
-                key={SwitchType.HIGHLIGHTS_ONLY}
+                key={makeKey(SwitchType.HIGHLIGHTS_ONLY)}  // TODO: this is probably useless but something is erroring...
                 label={SwitchType.HIGHLIGHTS_ONLY}
                 onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
             />,

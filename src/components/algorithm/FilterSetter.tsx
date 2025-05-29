@@ -32,12 +32,14 @@ export default function FilterSetter() {
     const numericFilterSwitchbar = [
         <HeaderSwitch
             isChecked={numericFilters.every((filter) => filter.invertSelection)}
+            key={SwitchType.INVERT_SELECTION + 'numericFilters'}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
             tooltipText="Show toots with less than the selected number of interactions"
         />,
     ];
 
+    // TODO: something in the numeric filter header switchbar is causing "unique key required" errors
     return (
         <TopLevelAccordion bodyStyle={noPadding} isActive={hasAnyActiveFilter} title="Feed Filters">
             {HEADER_SWITCH_TOOLTIP}
@@ -47,14 +49,13 @@ export default function FilterSetter() {
                 <FilterAccordionSection
                     description={"Filter based on minimum/maximum number of replies, retoots, etc"}
                     isActive={hasActiveNumericFilter}
-                    key={"numericFilters"}
                     switchbar={numericFilterSwitchbar}
                     title="Interactions"
                 >
                     {Object.entries(algorithm.filters.numericFilters).map(([name, numericFilter], i) => (
                         <Slider
                             description={numericFilter.description}
-                            key={`${name}_${i}`}
+                            key={`${numericFilter.title}_${i}`}
                             label={capitalCase(numericFilter.title)}
                             maxValue={50}
                             minValue={0}
