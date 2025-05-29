@@ -15,9 +15,36 @@ import { trendingTypeForString } from "../helpers/string_helpers";
 
 const NUM_SHOWN_FOR_TYPE: Record<keyof TrendingData, number | undefined> = {
     links: config.trending.numLinksToShow,
-    tags: config.trending.numHashtagsToShow,
     servers: config.trending.numServersToShow, // unused
+    tags: config.trending.numHashtagsToShow,
     toots: config.trending.numTootsToShow,
+};
+
+type TrendingPanelCfg = {
+    hasCustomStyle?: boolean;
+    initialNumShown: number;
+    objTypeLabel?: string;
+    containerStyle?: CSSProperties;
+};
+
+const TRENDING_PANEL_CFG: Record<keyof TrendingData, TrendingPanelCfg> = {
+    links: {
+        hasCustomStyle: true, // links are always styled with custom CSS
+        initialNumShown: config.trending.numLinksToShow,
+    },
+    servers: {
+        containerStyle: {
+            paddingLeft: "40px",
+        },
+        initialNumShown: config.trending.numServersToShow, // unused
+    },
+    tags: {
+        initialNumShown: config.trending.numHashtagsToShow,
+        objTypeLabel: "hashtags",
+    },
+    toots: {
+        initialNumShown: config.trending.numTootsToShow,
+    },
 };
 
 type TrendingListObj = TrendingObj | string;
@@ -34,18 +61,23 @@ interface TrendingProps {
 
 
 export default function TrendingSection(props: TrendingProps) {
-    const { hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
-    const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
-    const objType = trendingTypeForString(title);
+    const { infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
 
-    const initialNumShown = NUM_SHOWN_FOR_TYPE[objType] ?? trendingObjs.length;
+    // Get configuration for this kind of trending object
+    const objType = trendingTypeForString(title);
+    const panelCfg = TRENDING_PANEL_CFG[objType];
+    const containerStyle = panelCfg.containerStyle ?? {};
+    const hasCustomStyle = panelCfg.hasCustomStyle ?? false;
+    const initialNumShown = panelCfg.initialNumShown ?? trendingObjs.length;
+    const objTypeLabel = panelCfg.objTypeLabel ?? objType;
+
     const [currentNumShown, setCurrentNumShown] = useState(initialNumShown);
+    const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
         () => {
             if (trendingObjs.length <= initialNumShown) return null;
-            const objTypeLabel = objType == "tags" ? "hashtags" : objType;
 
             const toggleShown = () => {
                 if (currentNumShown === initialNumShown) {
@@ -76,8 +108,8 @@ export default function TrendingSection(props: TrendingProps) {
             const labels = trendingObjs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
-            const useMulticolumn = !hasCustomStyle && (maxLength <= config.trending.maxLengthForMulticolumn);
-            logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, useMulticolumn=${useMulticolumn})`);
+            const isSingleCol = hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);
+            logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, isSingleCol=${isSingleCol})`);
 
             const elements = trendingObjs.slice(0, currentNumShown).map((obj, i) => (
                 <li key={i} style={listItemStyle}>
@@ -94,9 +126,9 @@ export default function TrendingSection(props: TrendingProps) {
             ));
 
             return (
-                <div style={useMulticolumn ? trendingListContainer : singleColumn }>
+                <div style={isSingleCol ? {...singleColumn, ...containerStyle} : trendingListContainer }>
                     <ol style={listStyle}>
-                        {useMulticolumn ? gridify(elements, 2, colStyle) : elements}
+                        {isSingleCol ? elements : gridify(elements, 2, colStyle)}
                     </ol>
 
                     {footer}

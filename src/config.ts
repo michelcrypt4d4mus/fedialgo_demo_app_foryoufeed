@@ -180,7 +180,7 @@ class Config implements ConfigType {
         maxLengthForMulticolumn: 50,          // Maximum length of a trending object label to use multicolumn layout
         numHashtagsToShow: 40,                // Default number of hashtags to show in trending sections
         numLinksToShow: 30,                   // Default number of trending links to show
-        numServersToShow: 30,                 // TODO: unused, default number of servers to show in trending section
+        numServersToShow: 40,                 // TODO: should be unused, but kept for compatibility
         numTootsToShow: 50,                   // Default number of toots to show in trending section //TODO: unused
     }
 

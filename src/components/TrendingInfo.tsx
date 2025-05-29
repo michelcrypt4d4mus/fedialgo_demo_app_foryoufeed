@@ -80,7 +80,6 @@ export default function TrendingInfo() {
 
                 <TrendingSection
                     title="Links"
-                    hasCustomStyle={true}
                     infoTxt={trendingObjInfoTxt}
                     linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
                     linkUrl={linkMapper}
