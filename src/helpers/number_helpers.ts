@@ -4,6 +4,9 @@
 import { config } from "../config";
 import { warnMsg } from "./log_helpers";
 
+export const KB = 1024;
+export const MB = KB * KB;
+
 
 // Remove scores with a raw score of 0
 export function formatScores(scores: object | number): object | number {

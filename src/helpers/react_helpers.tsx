@@ -6,10 +6,10 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { CSSProperties, MouseEvent, ReactElement, useState } from "react";
 
-import { makeChunks } from 'fedialgo';
+import { makeChunks, Toot, type TrendingWithHistory } from 'fedialgo';
 
 import { logMsg } from "./log_helpers";
-import { Toot, type TrendingWithHistory } from "fedialgo";
+
 
 export const isProduction = process.env.NODE_ENV === 'production';
 

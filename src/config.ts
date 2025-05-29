@@ -5,27 +5,29 @@ import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import { capitalCase } from "change-case";
-
 import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
+import { MB } from "./helpers/number_helpers";
 
-export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
-export type CheckboxTooltip = {
-    anchor?: string;
-    color?: CSSProperties["color"];
-    text: string;
-};
-
+// Enums
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
     INVERT_SELECTION = "invertSelection",
     SORT_BY_COUNT = "sortByCount",
 };
 
-const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
-const KB = 1024;
-const MB = KB * KB;
 
+// Exported types
+export type CheckboxTooltip = {
+    anchor?: string;
+    color?: CSSProperties["color"];
+    text: string;
+};
+
+export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
+
+
+// Subconfig types
 type AppConfig = {
     changelogUrl: string;
     developerMastodonUrl: string;
@@ -120,11 +122,14 @@ type TrendingConfig = {
 
 type WeightsConfig = {
     defaultStepSize: number;
+    presetMenuLabel: string;
     scalingMultiplier: number;
 };
 
 
 // Constants for subconfig
+const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
+
 const THEME: ThemeConfig = {
     accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
     feedBackgroundColor: '#15202b',     // background color for the timeline
@@ -142,6 +147,7 @@ const THEME: ThemeConfig = {
 
 interface ConfigType {
     filters: FilterConfig;
+    locale: LocaleConfig;
     replies: ReplyConfig;
     stats: StatsConfig;
     theme: ThemeConfig;
@@ -289,6 +295,7 @@ class Config implements ConfigType {
 
     weights: WeightsConfig = {
         defaultStepSize: 0.02,                // Default step size for weight sliders
+        presetMenuLabel: "Preset Algorithm Configurations", // Label for the preset menu in the weights panel
         scalingMultiplier: 1.2,               // Multiplier for scaling weight sliders responsively
     }
 };

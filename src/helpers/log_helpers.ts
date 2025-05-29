@@ -5,8 +5,9 @@ import TheAlgorithm from "fedialgo";
 
 import { browserCountry, browserLanguage, browserLocale } from "./string_helpers";
 
-export const LOG_PREFIX = ("[DEMO APP]");
 
+// Log stuff with a prefix to distinguish it from other logs
+export const LOG_PREFIX = ("[DEMO APP]");
 export const errorMsg = (msg: string, ...args: any[]) => console.error(`${LOG_PREFIX} ${msg}`, ...args);
 export const warnMsg = (msg: string, ...args: any[]) => console.warn(`${LOG_PREFIX} ${msg}`, ...args);
 export const logMsg = (msg: string, ...args: any[]) => console.log(`${LOG_PREFIX} ${msg}`, ...args);
