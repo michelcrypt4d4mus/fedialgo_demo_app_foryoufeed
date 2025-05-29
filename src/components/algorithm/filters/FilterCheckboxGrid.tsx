@@ -35,6 +35,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const participatedColorArray = useMemo(
         () => {
             logger.trace(`Rebuilding participatedColorArray...`);
+            // TODO: we could jsut return empty array if this isn't the hashtag filter (no other filter uses the gradient)
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
             const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
             let participatedColorGradient = participatedGradient();

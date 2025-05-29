@@ -63,6 +63,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             <Tooltip
                 delayShow={config.tooltips.minTootsSliderDelay}
                 id={minTootsTooltipAnchor}
+                key={'minTootsTooltipAnchor-slider'}
                 place="bottom"
                 style={{...tooltipZIndex, fontWeight: "normal", }}
             />,

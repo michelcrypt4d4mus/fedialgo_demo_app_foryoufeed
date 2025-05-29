@@ -43,6 +43,11 @@ type FilterConfig = {
     defaultMinTootsToAppear: number;
     maxOptionLength: number;
     minOptionsToShowSlider: number;
+    numeric: {
+        description: string;
+        invertSelectionTooltip: string;
+        title: string;
+    };
     optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
 };
 
@@ -176,6 +181,11 @@ class Config implements ConfigType {
         defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
         maxOptionLength: 21,                 // Maximum length of a filter option label
         minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
+        numeric: {
+            description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
+            invertSelectionTooltip: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
+            title: "Interactions",
+        },
         optionsList: {                       // Configure how the filter options list should be displayed
             [BooleanFilterName.HASHTAG]: {
                 [SwitchType.HIGHLIGHTS_ONLY]: true,
