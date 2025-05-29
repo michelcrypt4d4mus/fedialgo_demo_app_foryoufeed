@@ -12066,6 +12066,10 @@ hr.spacer {
     height:1px
 }
 
+hr.hr-narrow {
+    margin: 4px;
+}
+
 .admin-wrapper .content .muted-hint, body .muted-hint {
     color:#9baec8
 }

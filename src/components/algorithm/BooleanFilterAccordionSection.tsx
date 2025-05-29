@@ -4,7 +4,7 @@
  */
 import React, { useState } from "react";
 
-import { BooleanFilter } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, LANGUAGE_CODES } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
@@ -20,7 +20,7 @@ export enum SwitchType {
 };
 
 const DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER = 5;
-const MIN_OPTIONS_TO_APPEAR_IN_FILTER = 30;
+const MIN_OPTIONS_TO_SHOW_SLIDER = 30;
 
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
@@ -29,7 +29,7 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
-    const hasMinToots = Object.keys(filter.optionInfo).length > MIN_OPTIONS_TO_APPEAR_IN_FILTER;
+    const hasMinToots = Object.keys(filter.optionInfo).length > MIN_OPTIONS_TO_SHOW_SLIDER;
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
     const [minToots, setMinToots] = useState(hasMinToots ? DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER : 0);
@@ -37,7 +37,6 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     const minTootsTooltipTxt = `Hide ${filter.title}s with less than ${minToots} toots`;
     const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
-    const makeSpacer = (key: string) => <div key={key} style={{width: "20px"}} />;
 
     const makeSwitch = (
         label: SwitchType,
@@ -113,3 +112,6 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         </FilterAccordionSection>
     );
 };
+
+
+const makeSpacer = (key: string) => <div key={key} style={{width: "20px"}} />;

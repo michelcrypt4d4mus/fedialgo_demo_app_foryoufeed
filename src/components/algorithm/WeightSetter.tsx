@@ -85,6 +85,5 @@ export default function WeightSetter() {
 
 const weightingsStyle: CSSProperties = {
     ...titleStyle,
-    marginBottom: "15px",
-    marginTop: "-5px",
+    marginBottom: "10px",
 };

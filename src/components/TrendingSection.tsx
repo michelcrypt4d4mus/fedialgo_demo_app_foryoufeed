@@ -1,7 +1,7 @@
 /*
  * Component for displaying a list of trending links, toots, or hashtags.
  */
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties, useMemo, useState } from "react";
 
 import { type TrendingObj } from "fedialgo";
 
@@ -29,7 +29,7 @@ interface TrendingProps {
 
 export default function TrendingSection(props: TrendingProps) {
     const { footer, multicolumn, hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
-    const [logger, _setLogger] = useState(new ComponentLogger("TrendingSection", title));
+    const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
     logger.trace(`Rendering ${trendingObjs.length} objects`);
 
     // The whole component is memoized so we don't bother memoizing here
@@ -49,7 +49,7 @@ export default function TrendingSection(props: TrendingProps) {
 
     return (
         <SubAccordion key={title} title={title}>
-            <div style={roundedBox}>
+            <div style={multicolumn ? multicolumnStyle : roundedBox}>
                 <ol style={listStyle}>
                     {multicolumn ? gridify(elements, 2, colStyle) : elements}
                 </ol>
@@ -82,6 +82,11 @@ const listStyle: CSSProperties = {
     paddingBottom: "10px",
     paddingLeft: "20px",
 };
+
+const multicolumnStyle: CSSProperties = {
+    ...roundedBox,
+    paddingLeft: "35px",
+}
 
 const tagLinkStyle: CSSProperties = {
     color: "black",
