@@ -5,6 +5,7 @@ import React, { CSSProperties, useState } from "react";
 
 import { type TrendingObj } from "fedialgo";
 
+import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { roundedBox } from "../helpers/style_helpers";
@@ -37,9 +38,9 @@ export default function TrendingSection(props: TrendingProps) {
                 <ol style={listStyle}>
                     {trendingObjs.map((obj, i) => (
                         <li key={i} style={listItemStyle}>
-                            <a href={linkUrl(obj)} onClick={e => onClick(obj, e)} style={linkStyle} target="_blank">
+                            <NewTabLink href={linkUrl(obj)} onClick={e => onClick(obj, e)} style={linkStyle}>
                                 {linkLabel(obj)}
-                            </a>
+                            </NewTabLink>
 
                             {infoTxt && <span style={infoTxtStyle}>({infoTxt(obj)})</span>}
                         </li>
