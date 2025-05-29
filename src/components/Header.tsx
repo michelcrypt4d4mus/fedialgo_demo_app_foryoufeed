@@ -1,8 +1,10 @@
-import React, { CSSProperties } from 'react';
+/*
+ * Header component on the feed page.
+ */
 import { Button, Col, Container, Row } from 'react-bootstrap';
+import { CSSProperties } from 'react';
 
 import { config } from '../config';
-import { CHANGELOG_URL, REPO_URL } from '../helpers/string_helpers';
 import { useAuthContext } from "../hooks/useAuth";
 
 const XS_VALUE = 4;  // React Bootstrap Grid System
@@ -42,7 +44,7 @@ export default function Header() {
                         className='text-center align-middle p-2'
                         style={{fontSize: 16, whiteSpace: "nowrap"}}
                     >
-                        <a href={REPO_URL} style={{color: "white"}} target="_blank">
+                        <a href={config.app.repoUrl} style={{color: "white"}} target="_blank">
                             Fedialgo Demo
                         </a>
 

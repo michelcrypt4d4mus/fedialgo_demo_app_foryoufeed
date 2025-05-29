@@ -7,7 +7,6 @@ import Navbar from "react-bootstrap/esm/Navbar";
 import Container from "react-bootstrap/Container";
 
 import { config } from "../config";
-import { REPO_URL } from "../helpers/string_helpers";
 
 
 export default function Footer() {
@@ -18,7 +17,7 @@ export default function Footer() {
 
                 <Nav className="me-auto">
                     {/* <Nav.Link href="/" style={navLink}>Home</Nav.Link> */}
-                    <Nav.Link href={REPO_URL} style={navLink}>
+                    <Nav.Link href={config.app.repoUrl} style={navLink}>
                         <img
                             alt="Github Logo"
                             className="d-inline-block align-top"
