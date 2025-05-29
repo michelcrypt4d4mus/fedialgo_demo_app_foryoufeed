@@ -55,7 +55,9 @@ type ThemeConfig = {
 
 type TimelineConfig = {
     autoloadOnFocusAfterMinutes: number;
+    defaultLoadingMsg: string;
     loadingErroMsg: string;
+    noTootsMsg: string;
     numTootsToLoadOnScroll: number;
     defaultNumDisplayedToots: number;
 };
@@ -94,10 +96,6 @@ interface ConfigType {
     weights: WeightsConfig;
 };
 
-// export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
-// export const LOADING_ERROR_MSG = `Currently loading, please wait a moment and try again.`;
-// export const REPO_NAME = HOMEPAGE ? HOMEPAGE.split('/').pop() : null;
-// export const REPO_URL = HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE;
 
 // App level config that is not user configurable
 class Config implements ConfigType {
@@ -152,7 +150,9 @@ class Config implements ConfigType {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,      // Autoload new toots if timeline is this old (and feature is enabled)
+        defaultLoadingMsg: "Loading (first time can take up to a minute or so)", // Message when first loading toots
         loadingErroMsg: `Currently loading, please wait a moment and try again.`, // Error message when busy
+        noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
         numTootsToLoadOnScroll: 10,          // Number of toots to load on scroll
         defaultNumDisplayedToots: 20,        // Default number of toots displayed in the timeline
     }

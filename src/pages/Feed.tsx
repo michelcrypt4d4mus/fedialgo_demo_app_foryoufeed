@@ -1,10 +1,10 @@
 /*
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
-import React, { CSSProperties, useState, useEffect, useMemo, useRef } from "react";
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import { CSSProperties, useState, useEffect, useMemo, useRef } from "react";
 
 import TheAlgorithm, { Toot } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
@@ -28,9 +28,6 @@ import { useError } from "../components/helpers/ErrorHandler";
 
 // Messaging constants
 const AUTO_UPDATE_TOOLTIP_MSG = "If this box is checked the feed will be automatically updated when you focus this browser tab.";
-const DEFAULT_LOADING_MSG = "Loading (first time can take up to a minute or so)";
-const NO_TOOTS_MSG = "No toots in feed! Maybe check your filters settings?";
-
 const logger = new ComponentLogger("Feed");
 
 
@@ -216,9 +213,9 @@ export default function Feed() {
 
                         {timeline.length == 0 && (
                             isLoading
-                                ? <LoadingSpinner isFullPage={true} message={DEFAULT_LOADING_MSG} />
+                                ? <LoadingSpinner isFullPage={true} message={config.timeline.defaultLoadingMsg} />
                                 : <div style={{...fullPageCenteredSpinner, fontSize: "20px"}}>
-                                      <p>{NO_TOOTS_MSG}</p>
+                                      <p>{config.timeline.noTootsMsg}</p>
                                   </div>
                             )}
 
