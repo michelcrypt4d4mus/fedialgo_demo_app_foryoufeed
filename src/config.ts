@@ -8,6 +8,12 @@ import { ScoreName, TrendingData, TrendingType } from "fedialgo";
 
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
+export enum SwitchType {
+    HIGHLIGHTS_ONLY = "highlightsOnly",
+    INVERT_SELECTION = "invertSelection",
+    SORT_BY_COUNT = "sortByCount",
+};
+
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
 const KB = 1024;
 const MB = KB * KB;
@@ -70,6 +76,7 @@ type TimelineConfig = {
 
 type TooltipConfig = {
     filterOptionDelay: number;
+    filterSwitchTooltips: Record<SwitchType, string>;
     gradientAdjustPctiles?: number[];
     headerDelay: number;
     minTagsForGradientAdjust?: number;
@@ -178,6 +185,11 @@ class Config implements ConfigType {
 
     tooltips: TooltipConfig = {
         filterOptionDelay: 500,               // Delay for filter option tooltips in milliseconds
+        filterSwitchTooltips: {
+            [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
+            [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
+            [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
+        },
         gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
         headerDelay: 500,                     // Delay for header tooltips in milliseconds
         minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment

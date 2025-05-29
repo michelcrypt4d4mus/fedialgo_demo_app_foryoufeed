@@ -6,13 +6,13 @@
 import Accordion from 'react-bootstrap/esm/Accordion';
 
 import { capitalCase } from "change-case";
-import { Tooltip } from 'react-tooltip';
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
 import FilterAccordionSection from "./FilterAccordionSection";
-import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
+import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
+import { config, SwitchType } from "../../config";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
 import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";

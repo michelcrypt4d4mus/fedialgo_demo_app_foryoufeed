@@ -10,9 +10,9 @@ import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
-import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
+import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
-import { config } from "../../config";
+import { config, SwitchType } from "../../config";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";
 
 export type FilterGridConfig = {
