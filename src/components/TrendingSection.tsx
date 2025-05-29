@@ -68,36 +68,34 @@ interface TrendingProps {
 export default function TrendingSection(props: TrendingProps) {
     let { infoTxt, linkLabel, linkUrl, onClick, panelType, trendingObjs } = props;
     const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
-    // const objType = trendingTypeForString(panelType);
 
     // Get configuration for this kind of trending object
     const panelCfg = TRENDING_PANEL_CFG[panelType];
     const hasCustomStyle = panelCfg.hasCustomStyle ?? false;
-    const initialNumShown = panelCfg.initialNumShown ?? trendingObjs.length;
     const objTypeLabel = panelCfg.objTypeLabel ?? panelType;
     const title = panelCfg.title ? panelCfg.title : capitalCase(objTypeLabel);
 
     // State
-    const [currentNumShown, setCurrentNumShown] = useState(initialNumShown);
+    const [currentNumShown, setCurrentNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
         () => {
-            if (trendingObjs.length <= initialNumShown) return null;
+            if (trendingObjs.length <= panelCfg.initialNumShown) return null;
 
             const toggleShown = () => {
-                if (currentNumShown === initialNumShown) {
+                if (currentNumShown === panelCfg.initialNumShown) {
                     setCurrentNumShown(trendingObjs.length);
                 } else {
-                    setCurrentNumShown(initialNumShown);
+                    setCurrentNumShown(panelCfg.initialNumShown);
                 }
             };
 
             return (
                 <div style={footerContainer}>
                     <div style={{width: "40%"}}>{'('}
-                        <a onClick={toggleShown} style={footerLink}>
-                            {currentNumShown == initialNumShown
+                        <a onClick={toggleShown} style={footerLinkText}>
+                            {currentNumShown == panelCfg.initialNumShown
                                 ? `show all ${trendingObjs.length} ${objTypeLabel}`
                                 : `show fewer ${objTypeLabel}`}
                         </a>{')'}
@@ -152,7 +150,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [currentNumShown, footer, hasCustomStyle, initialNumShown, trendingObjs, trendingObjs.length]
+        [currentNumShown, footer, hasCustomStyle, panelType, trendingObjs, trendingObjs.length]
     );
 
     return (
@@ -178,14 +176,15 @@ const descriptionStyle: CSSProperties = {
 const footerContainer: CSSProperties = {
     display: "flex",
     justifyContent: 'space-around',
+    marginBottom: "10px",
     width: "100%"
 };
 
-const footerLink: CSSProperties = {
+const footerLinkText: CSSProperties = {
     ...linkesque,
     color: "#1b5b61",
     fontFamily: "monospace",
-    fontSize: config.theme.trendingObjFontSize - 3,
+    fontSize: config.theme.trendingObjFontSize - 1,
     fontWeight: "bold",
 };
 
