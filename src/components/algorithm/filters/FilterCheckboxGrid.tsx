@@ -3,15 +3,15 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import tinycolor from "tinycolor2";
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
+import { alphabetize } from "../../../helpers/string_helpers";
 import { ComponentLogger } from "../../../helpers/log_helpers";
-import { compareStr } from "../../../helpers/string_helpers";
 import { config, CheckboxTooltip, FilterGridConfig } from "../../../config";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
@@ -33,8 +33,8 @@ interface FilterCheckboxGridProps {
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
-    const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
 
+    const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
     const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
     let findTooltip: (name: string) => CheckboxTooltip;  // Just initializing here at the top, is defined later
 
@@ -123,31 +123,27 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionGrid = useMemo(
         () => {
-            logger.trace(`Rebuilding optionGrid...`);
             let optionInfo = {...filter.optionInfo};
-            let optionKeys: string[];
+            logger.trace(`Rebuilding optionGrid for ${Object.keys(optionInfo).length} options...`);
 
             // For filters w/many options only show choices with a min # of toots + already selected options
             if (minToots) {
-                optionInfo = Object.fromEntries(Object.entries(filter.optionInfo).filter(
-                    ([option, numToots]) => {
-                        if (filter.validValues.includes(option)) return true;
+                optionInfo = Object.fromEntries(
+                    Object.entries(optionInfo).filter(
+                        ([optionName, numToots]) => {
+                            if (filter.validValues.includes(optionName)) return true;  // Always show selected options
 
-                        if (numToots >= minToots) {
-                            return (highlightedOnly ? !!findTooltip(option) : true);
-                        } else {
-                            return false;
+                            if (numToots >= minToots) {
+                                return (highlightedOnly ? !!findTooltip(optionName) : true);
+                            } else {
+                                return false;
+                            }
                         }
-                    }
-                ));
+                    )
+                );
             }
 
-            if (sortByCount) {
-                optionKeys = sortKeysByValue(optionInfo);
-            } else {
-                optionKeys = Object.keys(optionInfo).sort((a, b) => compareStr(a, b));
-            }
-
+            const optionKeys = sortByCount ? sortKeysByValue(optionInfo) : alphabetize(Object.keys(optionInfo));
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [

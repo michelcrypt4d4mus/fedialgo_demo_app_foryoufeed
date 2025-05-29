@@ -19,6 +19,7 @@ export const browserCountry = () => browserLocale().split('-')[1];
 
 // for use with sort()
 export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
+export const alphabetize = (arr: string[]) => arr.sort(compareStr);
 
 const DATE_FORMAT = Intl.DateTimeFormat(
     browserLocale(),
