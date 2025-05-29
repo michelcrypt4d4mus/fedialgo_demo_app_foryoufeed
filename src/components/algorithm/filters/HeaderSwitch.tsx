@@ -22,9 +22,9 @@ const SWITCH_TOOLTIPS: Record<SwitchType, string> = {
 };
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `${TOOLTIP_ANCHOR}-header-switch`;
-const HEADER_SWITCH_TOOLTIP_DELAY_MS = 500;
+const HEADER_SWITCH_TOOLTIP_DELAY_MS = 500;  // TODO: config
 
-// This must appear somewhere in the component tree for the switch tooltips to work
+// This must appear somewhere in the component tree for the header switch tooltips to work
 export const HEADER_SWITCH_TOOLTIP = (
     <Tooltip
         delayShow={HEADER_SWITCH_TOOLTIP_DELAY_MS}
@@ -46,17 +46,15 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
     const { isChecked, label, onChange, tooltipText } = props;
 
     return (
-        <a
-            data-tooltip-id={HEADER_SWITCH_TOOLTIP_ANCHOR}
-            data-tooltip-content={tooltipText || SWITCH_TOOLTIPS[label]}
-            key={label}
-        >
-            <FilterCheckbox
-                capitalize={true}
-                isChecked={isChecked}
-                label={label}
-                onChange={onChange}
-            />
-        </a>
+        <FilterCheckbox
+            capitalize={true}
+            isChecked={isChecked}
+            label={label}
+            onChange={onChange}
+            tooltip={{
+                anchor: HEADER_SWITCH_TOOLTIP_ANCHOR,
+                text: tooltipText || SWITCH_TOOLTIPS[label],
+            }}
+        />
     );
 };

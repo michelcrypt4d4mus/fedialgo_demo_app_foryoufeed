@@ -56,11 +56,13 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     let switchbar = [
         <HeaderSwitch
             isChecked={filter.invertSelection}
+            key={SwitchType.INVERT_SELECTION}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
         />,
         <HeaderSwitch
             isChecked={sortByCount}
+            key={SwitchType.SORT_BY_COUNT}
             label={SwitchType.SORT_BY_COUNT}
             onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
         />,
@@ -70,6 +72,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         switchbar = switchbar.concat([
             <HeaderSwitch
                 isChecked={highlightedOnly}
+                key={SwitchType.HIGHLIGHTS_ONLY}
                 label={SwitchType.HIGHLIGHTS_ONLY}
                 onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
             />,
@@ -78,7 +81,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     if (hasMinToots) {
         switchbar = switchbar.concat([
-            <div key="minTootsSlider" style={{width: "23%"}}>
+            <div key={`${filter.title}-minTootsSlider`} style={{width: "23%"}}>
                 <a
                     data-tooltip-id={minTootsTooltipAnchor}
                     data-tooltip-content={`Hide ${filter.title}s with less than ${minToots} toots`}

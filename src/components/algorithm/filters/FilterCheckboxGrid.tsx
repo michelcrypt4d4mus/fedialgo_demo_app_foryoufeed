@@ -8,18 +8,13 @@ import { CSSProperties, useCallback, useMemo } from "react";
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
-import FilterCheckbox from "./FilterCheckbox";
+import FilterCheckbox, { CheckboxTooltip } from "./FilterCheckbox";
 import { ComponentLogger } from "../../../helpers/log_helpers";
 import { compareStr } from "../../../helpers/string_helpers";
 import { FILTER_CONFIG, FilterGridConfig } from "../BooleanFilterAccordionSection";
 import { FOLLOWED_TAG_COLOR, FOLLOWED_USER_COLOR, PARTICIPATED_TAG_COLOR, PARTICIPATED_TAG_COLOR_MIN, TRENDING_TAG_COLOR_FADED } from "../../../helpers/style_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-
-export type CheckboxTooltip = {
-    color: CSSProperties["color"];
-    text: string;
-};
 
 // Percentiles to use for adjusting the participated tag color gradient
 const GRADIENT_ADJUST_PCTILES = [0.95, 0.98];

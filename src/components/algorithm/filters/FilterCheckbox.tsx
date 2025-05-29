@@ -5,16 +5,27 @@ import React, { CSSProperties, useState } from "react";
 import Form from 'react-bootstrap/esm/Form';
 
 import { capitalCase } from "change-case";
+import { Tooltip } from 'react-tooltip';
 
-import { CheckboxTooltip } from "./FilterCheckboxGrid";
 import { followUri } from "../../../helpers/react_helpers";
 import { linkesque } from "../../../helpers/style_helpers";
+import { tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
+
+export type CheckboxTooltip = {
+    anchor?: string;
+    color?: CSSProperties["color"];
+    text: string;
+};
 
 export const HASHTAG_ANCHOR = "user-hashtag-anchor";
 export const HIGHLIGHT = "highlighted";
+const HIGHLIGHTED_TOOLTIP_ANCHOR = `${HASHTAG_ANCHOR}-${HIGHLIGHT}`;
+const MAX_LABEL_LENGTH = 21; // TODO: config
 
-const MAX_LABEL_LENGTH = 21;
+export const HIGHLIGHTED_TOOLTIP = (
+    <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
+)
 
 interface FilterCheckboxProps {
     capitalize?: boolean,
@@ -31,16 +42,16 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     let { capitalize, isChecked, label, labelExtra, onChange, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
 
+    const [isCheckedState, setIsCheckedState] = useState(isChecked);
+
     labelExtra = (typeof labelExtra == "number") ? labelExtra.toLocaleString() : labelExtra;
     const labelStyle: CSSProperties = {...defaultLabelStyle};
-
-    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     let style: CSSProperties = {color: "black"};
-    let tooltipAnchor = HASHTAG_ANCHOR;
+    let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
 
-    if (tooltip) {
+    if (tooltip?.color) {
         style = {...highlightedCheckboxStyle, ...style, backgroundColor: tooltip.color};
-        tooltipAnchor += HIGHLIGHT;
+        tooltipAnchor = HIGHLIGHTED_TOOLTIP_ANCHOR;
     }
 
     if (capitalize) {

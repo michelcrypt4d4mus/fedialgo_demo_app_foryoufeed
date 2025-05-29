@@ -13,8 +13,8 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { HASHTAG_ANCHOR, HIGHLIGHT } from "./filters/FilterCheckbox";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
+import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
 import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
@@ -41,6 +41,7 @@ export default function FilterSetter() {
     return (
         <TopLevelAccordion bodyStyle={noPadding} isActive={hasAnyActiveFilter} title="Feed Filters">
             {HEADER_SWITCH_TOOLTIP}
+            {HIGHLIGHTED_TOOLTIP}
 
             <Accordion alwaysOpen>
                 <FilterAccordionSection
@@ -67,7 +68,6 @@ export default function FilterSetter() {
                     ))}
                 </FilterAccordionSection>
 
-                <Tooltip id={HASHTAG_ANCHOR + HIGHLIGHT} place="top" style={tooltipZIndex} />
                 {booleanFilters.map((f) => <BooleanFilterAccordionSection filter={f} key={f.title} />)}
             </Accordion>
         </TopLevelAccordion>

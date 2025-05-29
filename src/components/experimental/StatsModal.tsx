@@ -95,7 +95,7 @@ export default function StatsModal(props: ModalProps) {
 
                             return (
                                 <Line
-                                    animationDuration={500}
+                                    animationDuration={500}  // TODO: config
                                     dataKey={key}
                                     hide={hiddenLines.includes(key)}
                                     key={key}
