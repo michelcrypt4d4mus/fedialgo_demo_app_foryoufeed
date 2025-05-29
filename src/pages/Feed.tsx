@@ -44,7 +44,6 @@ export default function Feed() {
     const hideLinkPreviewsState = useState(false);
     const isControlPanelStickyState = useState(true);  // Left panel stickiness
     const [isLoadingThread, setIsLoadingThread] = useState(false);
-    const [loadingStatus, setLoadingStatus] = useState<string>(null);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(DEFAULT_NUM_DISPLAYED_TOOTS);
     const [prevScrollY, setPrevScrollY] = useState(0);
     const [scrollPercentage, setScrollPercentage] = useState(0);
@@ -104,26 +103,30 @@ export default function Feed() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isBottom, numDisplayedToots, prevScrollY, setNumDisplayedToots, setPrevScrollY, timeline]);
 
-    // Watch the algorithm.loadingStatus for changes because the renderer doesn't pick them up on its own (TODO: why?)
-    // TODO: this doesn't actually work, the "Finalizing Score" loadingStatus doesn't show up until there's a re-render
-    useEffect(() => {
-        if (!algorithm) return;
-        setLoadingStatus(algorithm.loadingStatus);
-    }, [algorithm, algorithm?.loadingStatus, isLoading]);
-
-    const finishedLoadingMsg = useMemo(
+    // Either a loading spinner or the number of toots scored + time it took
+    const controlPanelFooter = useMemo(
         () => {
-            let msg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
-            const lastLoadSeconds = algorithm?.lastLoadTimeInSeconds;
-            msg += lastLoadSeconds ? ` in ${lastLoadSeconds.toFixed(1)} seconds` : '';
+            if (isLoading || !algorithm) {
+                return <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
+            } else {
+                const lastLoadSeconds = algorithm?.lastLoadTimeInSeconds?.toFixed(1);
 
-            return (
-                <p style={loadingMsgStyle}>
-                    {msg} ({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
-                </p>
-            );
+                return (
+                    <p style={loadingMsgStyle}>
+                        Scored {(timeline?.length || 0).toLocaleString()} toots
+                        {lastLoadSeconds && ` in ${lastLoadSeconds} seconds`}
+                        {' '}({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
+                    </p>
+                );
+            }
         },
-        [isLoading, algorithm?.loadingStatus, algorithm?.lastLoadTimeInSeconds, timeline?.length]
+        [
+            algorithm,
+            algorithm?.loadingStatus,
+            algorithm?.lastLoadTimeInSeconds,
+            isLoading,
+            timeline?.length
+        ]
     );
 
     return (
@@ -178,9 +181,7 @@ export default function Feed() {
                             </TopLevelAccordion>}
 
                         <div style={stickySwitchContainer}>
-                            {isLoading
-                                ? <LoadingSpinner message={loadingStatus} style={loadingMsgStyle} />
-                                : finishedLoadingMsg}
+                            {controlPanelFooter}
 
                             <p style={scrollStatusMsg} className="d-none d-sm-block">
                                 {TheAlgorithm.isDebugMode
