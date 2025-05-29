@@ -13,23 +13,13 @@ import { useDropzone } from 'react-dropzone'
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
 import { ComponentLogger } from '../../helpers/log_helpers';
+import { config } from '../../config';
 import { fileInfo } from '../../helpers/string_helpers';
-import { FEED_BACKGROUND_COLOR, FEED_BACKGROUND_COLOR_LITE } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
 
-const DEFAULT_ACCEPT_ATTACHMENTS = {
-    'audio/*': ['.mp3', '.wav'],
-    'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
-    'video/*': ['.mp4', '.webm'],
-};
-
-const DEFAULT_MAX_CHARACTERS = 500;
-const DEFAULT_MAX_ATTACHMENTS = 4;
-const DEFAULT_MAX_IMAGE_SIZE = 10485760; // 10 MB
-const DEFAULT_MAX_VIDEO_SIZE = 41943040; // 40 MB
 const logger = new ComponentLogger('ReplyModal');
 
 interface ReplyModalProps extends ModalProps {
@@ -50,13 +40,13 @@ export default function ReplyModal(props: ReplyModalProps) {
     const isDisabled = isAttaching || replyText.trim().length === 0 || resolvedID === null;
 
     // Server configuration stuff
-    const acceptedAttachments = mimeExtensions || DEFAULT_ACCEPT_ATTACHMENTS;
+    const acceptedAttachments = mimeExtensions || config.replies.defaultAcceptedAttachments;
     const statusConfig = serverInfo?.configuration?.statuses;
-    const maxChars = statusConfig?.maxCharacters || DEFAULT_MAX_CHARACTERS;
-    const maxMediaAttachments = statusConfig?.maxMediaAttachments || DEFAULT_MAX_ATTACHMENTS;
+    const maxChars = statusConfig?.maxCharacters || config.replies.defaultMaxCharacters;
+    const maxMediaAttachments = statusConfig?.maxMediaAttachments || config.replies.defaultMaxAttachments;
     const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
-    const maxImageSize = attachmentsConfig?.imageSizeLimit || DEFAULT_MAX_IMAGE_SIZE;
-    const maxVideoSize = attachmentsConfig?.videoSizeLimit || DEFAULT_MAX_VIDEO_SIZE;
+    const maxImageSize = attachmentsConfig?.imageSizeLimit || config.replies.defaultMaxImageSize;
+    const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
     const logAndSetError = (msg: string, err?: Error) => {
         logger.error(`${msg}`, err);
@@ -169,7 +159,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             </Modal.Header>
 
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
-                <div style={{backgroundColor: FEED_BACKGROUND_COLOR, borderRadius: "3px"}}>
+                <div style={{backgroundColor: config.theme.feedBackgroundColor, borderRadius: "3px"}}>
                     <StatusComponent hideLinkPreviews={true} status={toot}/>
                 </div>
 
@@ -246,7 +236,7 @@ const dropzoneStyle: CSSProperties = {
 };
 
 const formStyle: CSSProperties = {
-    backgroundColor: "white",// FEED_BACKGROUND_COLOR_LITE,//"lightblue", // FEED_BACKGROUND_COLOR_LITE, //"lightgrey",// FEED_BACKGROUND_COLOR,
+    backgroundColor: "white",
     borderWidth: "5px",
     color: "black",
     fontSize: "22px",
@@ -254,7 +244,7 @@ const formStyle: CSSProperties = {
 };
 
 const headerStyle: CSSProperties = {
-    backgroundColor: FEED_BACKGROUND_COLOR_LITE,
+    backgroundColor: config.theme.feedBackgroundColorLite,
     color: "black",
     fontWeight: "bold",
 };

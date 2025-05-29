@@ -10,17 +10,6 @@ export const IMAGE_BACKGROUND_COLOR = "#C1C1C1";
 export const RED = 'firebrick';
 export const TOOLTIP_ANCHOR = "tooltip-anchor";
 
-export const FEED_BACKGROUND_COLOR = '#15202b';
-export const FEED_BACKGROUND_COLOR_LITE = '#bcddfd';
-export const FOLLOWED_TAG_COLOR = 'yellow';
-export const FOLLOWED_USER_COLOR = 'cyan';
-export const FOLLOWED_USER_COLOR_FADED = "#2092a1";
-export const PARTICIPATED_TAG_COLOR = "#92a14a";
-// export const PARTICIPATED_TAG_COLOR_FADED = "#c3d46e";
-export const PARTICIPATED_TAG_COLOR_MIN = "#d8deb9";
-export const TRENDING_TAG_COLOR = RED;
-export const TRENDING_TAG_COLOR_FADED = '#f08c8c';
-
 export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "red",
     "orange",

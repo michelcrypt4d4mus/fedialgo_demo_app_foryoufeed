@@ -3,7 +3,7 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { CSSProperties, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
@@ -11,34 +11,30 @@ import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } fro
 import FilterCheckbox, { CheckboxTooltip } from "./FilterCheckbox";
 import { ComponentLogger } from "../../../helpers/log_helpers";
 import { compareStr } from "../../../helpers/string_helpers";
+import { config } from "../../../config";
 import { FILTER_CONFIG, FilterGridConfig } from "../BooleanFilterAccordionSection";
-import { FOLLOWED_TAG_COLOR, FOLLOWED_USER_COLOR, PARTICIPATED_TAG_COLOR, PARTICIPATED_TAG_COLOR_MIN, TRENDING_TAG_COLOR_FADED } from "../../../helpers/style_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-// Percentiles to use for adjusting the participated tag color gradient
-const GRADIENT_ADJUST_PCTILES = [0.95, 0.98];
-const MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT = 40;
-
 const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
     [BooleanFilterName.LANGUAGE]: {
-        color: FOLLOWED_USER_COLOR,
+        color: config.theme.followedUserColor,
         text: `You post most in this language`,
     },
     [TypeFilterName.FOLLOWED_ACCOUNTS]: {
-        color: FOLLOWED_USER_COLOR,
+        color: config.theme.followedUserColor,
         text: `You follow this account`,
     },
     [TypeFilterName.FOLLOWED_HASHTAGS]: {
-        color: FOLLOWED_TAG_COLOR,
+        color: config.theme.followedTagColor,
         text: `You follow this hashtag`,
     },
     [TypeFilterName.PARTICIPATED_HASHTAGS]: {
-        color: PARTICIPATED_TAG_COLOR,
+        color: config.theme.participatedTagColor,
         text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
     },
     [TypeFilterName.TRENDING_HASHTAGS]: {
-        color: TRENDING_TAG_COLOR_FADED,
+        color: config.theme.trendingTagColor,
         text: `This hashtag is trending`,
     },
 };
@@ -63,15 +59,15 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             logger.trace(`Rebuilding participatedColorArray...`);
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
             const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
-            let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
+            let participatedColorGradient = participatedGradient();
             let colorArray = participatedColorGradient.hsv(maxParticipations, false);
 
             // Adjust the color gradient so there's more color variation in the low/middle range
-            if (participatedTags.length > MIN_PARTICIPATED_TAGS_FOR_GRADIENT_ADJUSTMENT) {
+            if (participatedTags.length > config.tooltips.minTagsForGradientAdjust) {
                 try {
-                    const highPercentiles = GRADIENT_ADJUST_PCTILES.map(p => Math.floor(maxParticipations * p));
-                    const middleColors = highPercentiles.map(n => colorArray[n]).filter(Boolean);
-                    participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
+                    const highPctiles = config.tooltips.gradientAdjustPctiles.map(p => Math.floor(maxParticipations * p));
+                    const middleColors = highPctiles.map(n => colorArray[n]).filter(Boolean);
+                    participatedColorGradient = participatedGradient(middleColors);
                     colorArray = participatedColorGradient.hsv(maxParticipations, false);
                 } catch (err) {
                     logger.warn(
@@ -189,4 +185,15 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     return optionGrid;
+};
+
+
+function participatedGradient(middleColors?: string[]): ReturnType<typeof tinygradient> {
+    middleColors = [
+        config.theme.participatedTagColorMin,
+        ...(middleColors || []),
+        config.theme.participatedTagColor,
+    ];
+
+    return tinygradient(...middleColors);
 };

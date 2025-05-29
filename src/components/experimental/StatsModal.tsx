@@ -11,9 +11,9 @@ import { MinMaxAvgScore, ScoreName, ScoreStats } from 'fedialgo';
 
 import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
 import { config } from '../../config';
-import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../../helpers/style_helpers';
 import { formatScore } from '../../helpers/number_helpers';
 import { ModalProps } from '../../types';
+import { RECHARTS_COLORS } from '../../helpers/style_helpers';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
@@ -120,7 +120,7 @@ const buttonStyle: CSSProperties = {
 };
 
 const charStyle: CSSProperties = {
-    backgroundColor: FEED_BACKGROUND_COLOR,
+    backgroundColor: config.theme.feedBackgroundColor,
     borderRadius: "15px",
 }
 

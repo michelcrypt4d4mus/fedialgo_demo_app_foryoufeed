@@ -22,7 +22,6 @@ export type CheckboxTooltip = {
 export const HASHTAG_ANCHOR = "user-hashtag-anchor";
 export const HIGHLIGHT = "highlighted";
 const HIGHLIGHTED_TOOLTIP_ANCHOR = `${HASHTAG_ANCHOR}-${HIGHLIGHT}`;
-const MAX_LABEL_LENGTH = config.filters.maxOptionLength;
 
 export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
@@ -61,7 +60,7 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     }
 
     if (label.length > config.filters.maxOptionLength) {
-        label = `${label.slice(0, MAX_LABEL_LENGTH)}...`;
+        label = `${label.slice(0, config.filters.maxOptionLength)}...`;
     }
 
     let labelNode = <span style={labelStyle}>{label}</span>;

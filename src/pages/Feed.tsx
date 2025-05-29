@@ -20,13 +20,11 @@ import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { buildStateCheckbox } from "../helpers/react_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
+import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
-import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
+import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
-
-const NUM_TOOTS_TO_LOAD_ON_SCROLL = 10;
-const DEFAULT_NUM_DISPLAYED_TOOTS = 20;
 
 // Messaging constants
 const AUTO_UPDATE_TOOLTIP_MSG = "If this box is checked the feed will be automatically updated when you focus this browser tab.";
@@ -44,7 +42,7 @@ export default function Feed() {
     const hideLinkPreviewsState = useState(false);
     const isControlPanelStickyState = useState(true);  // Left panel stickiness
     const [isLoadingThread, setIsLoadingThread] = useState(false);
-    const [numDisplayedToots, setNumDisplayedToots] = useState<number>(DEFAULT_NUM_DISPLAYED_TOOTS);
+    const [numDisplayedToots, setNumDisplayedToots] = useState<number>(config.timeline.defaultNumDisplayedToots);
     const [prevScrollY, setPrevScrollY] = useState(0);
     const [scrollPercentage, setScrollPercentage] = useState(0);
     const [thread, setThread] = useState<Toot[]>([]);
@@ -53,13 +51,13 @@ export default function Feed() {
     const bottomRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
     const leftColStyle: CSSProperties = isControlPanelStickyState[0] ? {} : {position: "relative"};
-    const numShownToots = Math.max(DEFAULT_NUM_DISPLAYED_TOOTS, numDisplayedToots);
+    const numShownToots = Math.max(config.timeline.defaultNumDisplayedToots, numDisplayedToots);
 
     // Reset all state except for the user and server
     const reset = async () => {
         if (!(await confirm(`Are you sure you want to clear all historical data?`))) return;
         setError("");
-        setNumDisplayedToots(DEFAULT_NUM_DISPLAYED_TOOTS);
+        setNumDisplayedToots(config.timeline.defaultNumDisplayedToots);
         if (!algorithm) return;
         await algorithm.reset();
         triggerFeedUpdate();
@@ -69,19 +67,17 @@ export default function Feed() {
     // TODO: this triggers twice: once when isbottom changes to true and again because numDisplayedToots
     //       is increased, triggering a second evaluation of the block
     useEffect(() => {
-        // Pull more toots to display from our local cached and sorted toot feed
-        // TODO: this should trigger the pulling of more toots from the server if we run out of local cache
         const showMoreToots = () => {
             if (numDisplayedToots < timeline.length) {
-                const msg = `Showing ${numDisplayedToots} toots, adding ${NUM_TOOTS_TO_LOAD_ON_SCROLL} more`;
-                logger.log(`${msg} (${timeline.length} available in feed)`);
-                setNumDisplayedToots(numDisplayedToots + NUM_TOOTS_TO_LOAD_ON_SCROLL);
+                const msg = `Showing ${numDisplayedToots} toots, adding ${config.timeline.numTootsToLoadOnScroll}`;
+                logger.log(`${msg} more (${timeline.length} available in feed)`);
+                setNumDisplayedToots(numDisplayedToots + config.timeline.numTootsToLoadOnScroll);
             }
         };
 
         // If the user scrolls to the bottom of the page, show more toots
         if (isBottom && timeline.length) showMoreToots();
-        // If there's less than numDisplayedToots in the feed set numDisplayedToots to the number of toots in the feed
+        // If there's less than numDisplayedToots in the feed set numDisplayedToots to the # of toots in the feed
         if (timeline?.length && timeline.length < numDisplayedToots) setNumDisplayedToots(timeline.length);
 
         const handleScroll = () => {
@@ -92,9 +88,9 @@ export default function Feed() {
             const percentage = (scrollPosition / totalScrollableHeight) * 100;
             setScrollPercentage(percentage);
 
-            if (percentage <= 50 && numDisplayedToots > (DEFAULT_NUM_DISPLAYED_TOOTS * 2)) {
+            if (percentage <= 50 && numDisplayedToots > (config.timeline.defaultNumDisplayedToots * 2)) {
                 const newNumDisplayedToots = Math.floor(numDisplayedToots * 0.7);
-                logger.log(`Scroll percentage is less than 50%, lowering numDisplayedToots to ${newNumDisplayedToots}`);
+                logger.log(`Scroll pctage less than 50%, lowering numDisplayedToots to ${newNumDisplayedToots}`);
                 setNumDisplayedToots(newNumDisplayedToots);
             }
         };
@@ -273,7 +269,7 @@ const scrollStatusMsg: CSSProperties = {
 };
 
 const statusesColStyle: CSSProperties = {
-    backgroundColor: FEED_BACKGROUND_COLOR,
+    backgroundColor: config.theme.feedBackgroundColor,
     borderRadius: '10px',
     height: 'auto',
 };

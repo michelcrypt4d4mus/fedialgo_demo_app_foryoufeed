@@ -7,8 +7,6 @@ import Slider from './Slider';
 import { config } from '../../config';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
-const SCALE_MULTIPLIER = 1.2;
-
 interface WeightSliderProps {
     scoreName: WeightName;
     updateWeights: (newWeights: StringNumberDict) => Promise<void>;
@@ -24,8 +22,8 @@ export default function WeightSlider(props: WeightSliderProps) {
     const info = algorithm.weightInfo[scoreName];
 
     const weightValues = Object.values(userWeights).filter(x => !isNaN(x)) ?? [0];
-    const defaultMin = Math.min(...weightValues) - 1 * SCALE_MULTIPLIER;
-    const defaultMax = Math.max(...weightValues) + 1 * SCALE_MULTIPLIER;
+    const defaultMin = Math.min(...weightValues) - 1 * config.weights.scalingMultiplier;
+    const defaultMax = Math.max(...weightValues) + 1 * config.weights.scalingMultiplier;
     const minValue = info.minValue ?? defaultMin;
 
     return (
