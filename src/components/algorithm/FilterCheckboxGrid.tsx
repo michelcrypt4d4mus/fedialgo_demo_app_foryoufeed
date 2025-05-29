@@ -6,12 +6,12 @@
 import { CSSProperties, useCallback, useMemo } from "react";
 
 import tinygradient from "tinygradient";
-import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { ComponentLogger } from "../../helpers/log_helpers";
 import { compareStr } from "../../helpers/string_helpers";
+import { FILTER_CONFIG, FilterGridConfig } from "./BooleanFilterAccordionSection";
 import { FOLLOWED_TAG_COLOR, FOLLOWED_USER_COLOR, PARTICIPATED_TAG_COLOR, PARTICIPATED_TAG_COLOR_MIN, TRENDING_TAG_COLOR_FADED } from "../../helpers/style_helpers";
 import { gridify } from '../../helpers/react_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
@@ -19,10 +19,6 @@ import { useAlgorithm } from "../../hooks/useAlgorithm";
 export type CheckboxTooltip = {
     color: CSSProperties["color"];
     text: string;
-};
-
-type FilterGridConfig = {
-    labelMapper: (name: string) => string;
 };
 
 // Percentiles to use for adjusting the participated tag color gradient
@@ -52,21 +48,6 @@ const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip
     },
 };
 
-const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
-    [BooleanFilterName.LANGUAGE]: {
-        labelMapper: (code: string) => {
-            if (code in LANGUAGE_CODES) {
-                return capitalCase(LANGUAGE_CODES[code]) + ` (${code})`;
-            } else {
-                return code;
-            }
-        },
-    },
-    [BooleanFilterName.TYPE]: {
-        labelMapper: (name: string) => capitalCase(name),
-    },
-};
-
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
     highlightedOnly?: boolean,
@@ -78,8 +59,9 @@ interface FilterCheckboxGridProps {
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
-    const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
+
     const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
+    const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
 
     const participatedColorArray = useMemo(
         () => {
