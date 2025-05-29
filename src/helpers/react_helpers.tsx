@@ -2,8 +2,9 @@
  * Navigation helpers for React components.
  */
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { CSSProperties, MouseEvent, ReactElement, useCallback, useMemo } from "react";
+import { MouseEvent, ReactElement, useState } from "react";
 
 import { logMsg } from "./log_helpers";
 import { Toot, type TrendingWithHistory } from "fedialgo";
@@ -39,6 +40,25 @@ export function openTrendingLink(obj: TrendingWithHistory, e: MouseEvent): boole
 ///////////////////////
 // Component Helpers //
 ///////////////////////
+
+// Build a checkbox for a boolean useState() variable
+export function buildStateCheckbox(
+    label: string,
+    state: ReturnType<typeof useState<boolean>>,
+    className?: string
+) {
+    return (
+        <Form.Check
+            checked={state[0]}
+            className={className || ''}
+            key={label}
+            label={label}
+            onChange={(e) => state[1](e.target.checked)}
+            type="checkbox"
+        />
+    );
+};
+
 
 // Create a grid of numCols columns. If numCols is not provided either 2 or 3 columns
 // will be created based on the number of 'elements' provided.
