@@ -25,6 +25,7 @@ interface FilterCheckboxGridProps {
 };
 
 
+// TODO: maybe rename this BooleanFilterCheckboxGrid?
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
@@ -34,8 +35,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const participatedColorArray = useMemo(
         () => {
+            if (filter.title != BooleanFilterName.HASHTAG) return [];  // Only hashtags use the gradient
+
             logger.trace(`Rebuilding participatedColorArray...`);
-            // TODO: we could jsut return empty array if this isn't the hashtag filter (no other filter uses the gradient)
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
             const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
             let participatedColorGradient = participatedGradient();
@@ -77,8 +79,15 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 } else if (name in algorithm.userData.participatedHashtags) {
                     const tooltip = {...TOOLTIPS[TypeFilterName.PARTICIPATED_HASHTAGS]} as CheckboxTooltip;
                     const numParticipations = algorithm.userData.participatedHashtags[name].numToots;
+                    const colorInstance = participatedColorArray[numParticipations - 1];
+
+                    if (colorInstance) {
+                        tooltip.color = colorInstance.toHexString();
+                    } else {
+                        logger.error(`No color found for tag "${name}" w/ ${numParticipations} participations!`, participatedColorArray);
+                    }
+
                     tooltip.text += ` ${numParticipations} times recently`;
-                    tooltip.color = participatedColorArray[numParticipations - 1].toHexString();
                     return tooltip;
                 }
             } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
