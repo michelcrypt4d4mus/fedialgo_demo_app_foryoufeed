@@ -9,16 +9,10 @@ import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
-import FilterCheckbox from "./FilterCheckbox";
 import FilterCheckboxGrid from "./FilterCheckboxGrid";
+import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";
-
-export enum SwitchType {
-    HIGHLIGHTS_ONLY = "highlightsOnly",
-    INVERT_SELECTION = "invertSelection",
-    SORT_BY_COUNT = "sortByCount",
-};
 
 export type FilterGridConfig = {
     labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
@@ -40,12 +34,6 @@ export const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
     },
 };
 
-const SWITCH_TOOLTIPS: Record<SwitchType, string> = {
-    [SwitchType.HIGHLIGHTS_ONLY]: "Only show the colored options",
-    [SwitchType.INVERT_SELECTION]: "Exclude selected options",
-    [SwitchType.SORT_BY_COUNT]: "Sort options by number of toots",
-};
-
 const DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER = 5;
 const MIN_OPTIONS_TO_SHOW_SLIDER = 30;
 
@@ -65,43 +53,26 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const [minToots, setMinToots] = useState(hasMinToots ? DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER : 0);
     const [sortByCount, setSortByValue] = useState(false);
 
-    const makeHeaderSwitch = (
-        label: SwitchType,
-        isChecked: boolean,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => void
-    ) => {
-        return (
-            <a data-tooltip-id={switchTooltipAnchor} data-tooltip-content={SWITCH_TOOLTIPS[label]} key={label}>
-                <FilterCheckbox
-                    capitalize={true}
-                    isChecked={isChecked}
-                    label={label}
-                    onChange={onChange}
-                />
-            </a>
-        );
-    };
-
     let switchbar = [
-        makeHeaderSwitch(
-            SwitchType.INVERT_SELECTION,
-            filter.invertSelection,
-            (e) => filter.invertSelection = e.target.checked // TODO: this is modifying the filter directly
-        ),
-        makeHeaderSwitch(
-            SwitchType.SORT_BY_COUNT,
-            sortByCount,
-            (e) => setSortByValue(e.target.checked) // TODO: this will unnecessarily call filterFeed
-        ),
+        <HeaderSwitch
+            isChecked={filter.invertSelection}
+            label={SwitchType.INVERT_SELECTION}
+            onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
+        />,
+        <HeaderSwitch
+            isChecked={sortByCount}
+            label={SwitchType.SORT_BY_COUNT}
+            onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
+        />,
     ];
 
     if (filterConfig?.[SwitchType.HIGHLIGHTS_ONLY]) {
         switchbar = switchbar.concat([
-            makeHeaderSwitch(
-                SwitchType.HIGHLIGHTS_ONLY,
-                highlightedOnly,
-                (e) => setHighlightedOnly(e.target.checked) // TODO: this will unnecessarily call filterFeed
-            ),
+            <HeaderSwitch
+                isChecked={highlightedOnly}
+                label={SwitchType.HIGHLIGHTS_ONLY}
+                onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
+            />,
         ]);
     }
 
@@ -134,7 +105,6 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             switchbar={switchbar}
             title={filter.title}
         >
-            <Tooltip delayShow={500} id={switchTooltipAnchor} place="bottom" style={tooltipZIndex}/>
             <Tooltip delayShow={50} id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
 
             <FilterCheckboxGrid

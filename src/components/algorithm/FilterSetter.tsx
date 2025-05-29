@@ -3,7 +3,6 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import React from "react";
 import Accordion from 'react-bootstrap/esm/Accordion';
 
 import { capitalCase } from "change-case";
@@ -11,11 +10,12 @@ import { Tooltip } from 'react-tooltip';
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
 import FilterAccordionSection from "./FilterAccordionSection";
-import FilterCheckbox, { HASHTAG_ANCHOR, HIGHLIGHT } from "./FilterCheckbox";
+import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
+import { HASHTAG_ANCHOR, HIGHLIGHT } from "./FilterCheckbox";
+import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";
-import { SwitchType } from "./BooleanFilterAccordionSection";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 
@@ -30,16 +30,18 @@ export default function FilterSetter() {
     const hasAnyActiveFilter = hasActiveNumericFilter || hasActiveBooleanFilter;
 
     const numericFilterSwitchbar = [
-        <FilterCheckbox
-            capitalize={true}
+        <HeaderSwitch
             isChecked={numericFilters.every((filter) => filter.invertSelection)}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
-        />
+            tooltipText="Show toots with less than the selected number of interactions"
+        />,
     ];
 
     return (
         <TopLevelAccordion bodyStyle={noPadding} isActive={hasAnyActiveFilter} title="Feed Filters">
+            {HEADER_SWITCH_TOOLTIP}
+
             <Accordion alwaysOpen>
                 <FilterAccordionSection
                     description={"Filter based on minimum/maximum number of replies, retoots, etc"}
