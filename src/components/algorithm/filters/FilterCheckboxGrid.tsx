@@ -148,9 +148,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         },
         [
             [BooleanFilterName.USER, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedAccounts : undefined,
-            [BooleanFilterName.USER, BooleanFilterName.HASHTAG].includes(filter.title) ? algorithm.userData.followedTags : undefined,
-            [BooleanFilterName.USER, BooleanFilterName.HASHTAG].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
-            [BooleanFilterName.LANGUAGE].includes(filter.title) ? algorithm.userData.preferredLanguage : undefined,
+            [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedTags : undefined,
+            [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
+            filter.title == BooleanFilterName.LANGUAGE ? algorithm.userData.preferredLanguage : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,
