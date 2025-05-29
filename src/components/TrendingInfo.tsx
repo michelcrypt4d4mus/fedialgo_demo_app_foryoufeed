@@ -76,11 +76,7 @@ export default function TrendingInfo() {
         () => {
             const numTags = algorithm.userData.popularUserTags().length;
             const showAllText = `show all ${numTags} hashtags`;
-
-            if (numTags <= config.trending.numUserHashtagsToShow) {
-                logger.debug(`No footer needed, only ${numTags} participated hashtags`);
-                return null;
-            }
+            let footer: React.ReactNode = null;
 
             const toggleAllPopularHashtags = () => {
                 if (userHashtagsToShow === config.trending.numUserHashtagsToShow) {
@@ -90,20 +86,22 @@ export default function TrendingInfo() {
                 }
             }
 
-            const participatedHashtagsFooter = (
-                <div style={{display: "flex", justifyContent: 'space-around', width: "100%"}}>
-                    <div style={{width: "40%"}}>
-                        {'('}<a onClick={toggleAllPopularHashtags} style={footerLink}>
-                            {userHashtagsToShow == config.trending.numUserHashtagsToShow ? showAllText : 'show less'}
-                        </a>{')'}
+            if (numTags > userHashtagsToShow) {
+                footer = (
+                    <div style={{display: "flex", justifyContent: 'space-around', width: "100%"}}>
+                        <div style={{width: "40%"}}>
+                            {'('}<a onClick={toggleAllPopularHashtags} style={footerLink}>
+                                {userHashtagsToShow == config.trending.numUserHashtagsToShow ? showAllText : 'show less'}
+                            </a>{')'}
+                        </div>
                     </div>
-                </div>
-            );
+                );
+            }
 
             return (
                 <TrendingSection
                     title="Your Most Participated Hashtags"
-                    footer={participatedHashtagsFooter}
+                    footer={footer}
                     infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
                     key={"participatedHashtags"}
                     linkLabel={tagNameMapper}

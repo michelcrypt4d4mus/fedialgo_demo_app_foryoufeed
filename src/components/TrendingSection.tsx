@@ -29,11 +29,23 @@ interface TrendingProps {
 
 export default function TrendingSection(props: TrendingProps) {
     const { footer, multicolumn, hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
+
+    const [numObjsShown, setNumObjsShown] = useState(30); // TODO: config
     const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
     logger.trace(`Rendering ${trendingObjs.length} objects`);
 
+            // const toggleAllPopularHashtags = () => {
+            //     if (userHashtagsToShow === config.trending.numUserHashtagsToShow) {
+            //         setUserHashtagsToShow(algorithm.userData.popularUserTags().length);
+            //     } else {
+            //         setUserHashtagsToShow(config.trending.numUserHashtagsToShow);
+            //     }
+            // }
+
+
+
     // The whole component is memoized so we don't bother memoizing here
-    const elements = trendingObjs.map((obj, i) => (
+    const elements = trendingObjs.slice(0, numObjsShown).map((obj, i) => (
         <li key={i} style={listItemStyle}>
             <NewTabLink
                 href={linkUrl(obj)}
@@ -73,7 +85,6 @@ const infoTxtStyle: CSSProperties = {
 
 const listItemStyle: CSSProperties = {
     marginBottom: "4px",
-    // marginTop: "7px",
 };
 
 const listStyle: CSSProperties = {
