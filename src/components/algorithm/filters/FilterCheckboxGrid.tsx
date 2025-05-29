@@ -34,7 +34,7 @@ const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip
         text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
     },
     [TypeFilterName.TRENDING_HASHTAGS]: {
-        color: config.theme.trendingTagColor,
+        color: config.theme.trendingTagColorFaded,
         text: `This hashtag is trending`,
     },
 };

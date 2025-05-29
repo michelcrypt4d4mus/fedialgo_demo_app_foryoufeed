@@ -68,6 +68,7 @@ type TooltipConfig = {
     gradientAdjustPctiles?: number[];
     headerDelay: number;
     minTagsForGradientAdjust?: number;
+    minTootsSliderDelay: number;
 };
 
 type TootConfig = {
@@ -168,6 +169,7 @@ class Config implements ConfigType {
         gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
         headerDelay: 500,                     // Delay for header tooltips in milliseconds
         minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment
+        minTootsSliderDelay: 50,              // Delay for the minimum toots slider tooltip in milliseconds
     }
 
     toots: TootConfig = {
