@@ -63,7 +63,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const participatedColorArray = useMemo(
         () => {
-            logger.debug(`Rebuilding getTooltipInfo()...`);
+            logger.trace(`Rebuilding participatedColorArray...`);
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
             const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2); // Ensure at least 2 for the gradient
             let participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, PARTICIPATED_TAG_COLOR);
@@ -77,7 +77,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     participatedColorGradient = tinygradient(PARTICIPATED_TAG_COLOR_MIN, ...middleColors, PARTICIPATED_TAG_COLOR);
                     colorArray = participatedColorGradient.hsv(maxParticipations, false);
                 } catch (err) {
-                    logger.error(`Error adjusting participated tag color gradient:`, err);
+                    logger.warn(
+                        `Error adjusting participatedTagColorGradient (maxParticipations=${maxParticipations}):`, err,
+                        `\nparticipatedTags=`, participatedTags, `, `
+                    );
                 }
             }
 
@@ -140,17 +143,17 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             );
         },
         [
-            algorithm.tagUrl,  // This shouldn't change return value even if algorithm changes; here just to be safe
+            algorithm.tagUrl,   // This shouldn't change return value even if algorithm changes; here just to be safe
+            filter.optionInfo,  // changes to optionInfo cause fedialgo to create a new object so this triggers
             filter.title,
-            filter.validValues,
-            filter.optionInfo,
+            filter.validValues, // changes to optionInfo cause fedialgo to create a new object so this triggers
             getTooltipInfo,
         ]
     );
 
     const optionGrid = useMemo(
         () => {
-            logger.debug(`Rebuilding optionGrid...`);
+            logger.trace(`Rebuilding optionGrid...`);
             let optionInfo = filter.optionInfo;
             let optionKeys: string[];
 

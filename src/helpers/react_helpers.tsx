@@ -40,11 +40,12 @@ export function openTrendingLink(obj: TrendingWithHistory, e: MouseEvent): boole
 // Component Helpers //
 ///////////////////////
 
-// Create a grid of 3 or 2 columns based on the number of elements.
+// Create a grid of numCols columns. If numCols is not provided either 2 or 3 columns
+// will be created based on the number of 'elements' provided.
 // Bootstrap Row/Col system margin and padding info: https://getbootstrap.com/docs/5.1/utilities/spacing/
-export function gridify(elements: ReactElement[]): ReactElement {
+export function gridify(elements: ReactElement[], numCols?: number): ReactElement {
     if (!elements || elements.length === 0) return <></>;
-    const numCols = elements.length > 10 ? 3 : 2;
+    numCols ||= elements.length > 10 ? 3 : 2;
 
     const columns = elements.reduce((cols, element, i) => {
         const colIndex = i % numCols;
