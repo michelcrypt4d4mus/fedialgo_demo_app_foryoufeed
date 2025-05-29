@@ -239,7 +239,8 @@ const leftCol: CSSProperties = {
     overflowY: "auto",
 };
 
-const loadingMsgStyle: CSSProperties = {
+// TODO: move to LoadingSpinner?
+export const loadingMsgStyle: CSSProperties = {
     fontSize: "16px",
     height: "auto",
     marginTop: "6px",
