@@ -4,7 +4,9 @@
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { MouseEvent, ReactElement, useState } from "react";
+import { CSSProperties, MouseEvent, ReactElement, useState } from "react";
+
+import { makeChunks } from 'fedialgo';
 
 import { logMsg } from "./log_helpers";
 import { Toot, type TrendingWithHistory } from "fedialgo";
@@ -63,20 +65,18 @@ export function buildStateCheckbox(
 // Create a grid of numCols columns. If numCols is not provided either 2 or 3 columns
 // will be created based on the number of 'elements' provided.
 // Bootstrap Row/Col system margin and padding info: https://getbootstrap.com/docs/5.1/utilities/spacing/
-export function gridify(elements: ReactElement[], numCols?: number): ReactElement {
-    if (!elements || elements.length === 0) return <></>;
+export function gridify(elements: ReactElement[], numCols?: number, colStyle?: CSSProperties): ReactElement {
+    if (elements.length == 0) return <></>;
     numCols ||= elements.length > 10 ? 3 : 2;
-
-    const columns = elements.reduce((cols, element, i) => {
-        const colIndex = i % numCols;
-        cols[colIndex] ??= [];
-        cols[colIndex].push(element);
-        return cols;
-    }, [] as ReactElement[][]);
+    const columns = makeChunks(elements, {numChunks: numCols});
 
     return (
         <Row>
-            {columns.map((col, i) => <Col className="px-1" key={i}>{col}</Col>)}
+            {columns.map((columnItems, i) => (
+                <Col className="px-1" key={i} style={colStyle || {}}>
+                    {columnItems}
+                </Col>
+            ))}
         </Row>
     );
 };

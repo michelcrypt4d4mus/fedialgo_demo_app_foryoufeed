@@ -137,20 +137,18 @@ export default function ExperimentalFeatures() {
 };
 
 
-const container: CSSProperties = {
-    ...roundedBox,
-    paddingBottom: "20px",
-    paddingLeft: "20px",
-    paddingRight: "20px",
-    paddingTop: "20px",
-};
-
 const buttonStyle: CSSProperties = {
     // borderColor: "black",
     // borderWidth: "1px",
     flex: 2,
     marginBottom: "5px",
     marginTop: "5px",
+};
+
+const container: CSSProperties = {
+    ...roundedBox,
+    paddingBottom: "20px",
+    paddingLeft: "20px",
 };
 
 const listElement: CSSProperties = {
@@ -163,8 +161,4 @@ const listElement: CSSProperties = {
 
 const listStyle: CSSProperties = {
     // listStyle: "disc",
-};
-
-const subheader: CSSProperties = {
-    marginBottom: "7px",
 };
