@@ -2,6 +2,7 @@
  * Configuration variables for the application.
  */
 import { CSSProperties } from "react";
+import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/";
 const KB = 1024;
@@ -12,6 +13,7 @@ type AppConfig = {
     developerMastodonUrl: string;
     headerIconUrl: string;
     homepage: string;
+    loadingSpinnerType: SpinnerProps['animation'];
     repoName: string | null;
     repoUrl: string;
     showcaseImageUrl: string;
@@ -66,6 +68,7 @@ type TooltipConfig = {
 };
 
 type TootConfig = {
+    imageHeight: number;
     maxPreviewCardLength: number;
 };
 
@@ -102,6 +105,7 @@ class Config implements ConfigType {
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
         homepage: HOMEPAGE,
+        loadingSpinnerType: 'grow',         // Type of loading spinner to use
         repoName: HOMEPAGE ? HOMEPAGE.split('/').pop() : null,
         repoUrl: HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE,
         showcaseImageUrl: "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.png",
@@ -160,6 +164,7 @@ class Config implements ConfigType {
     }
 
     toots: TootConfig = {
+        imageHeight: 314,                    // Default height for images in toots
         maxPreviewCardLength: 350,           // Maximum length of preview card description
     }
 
