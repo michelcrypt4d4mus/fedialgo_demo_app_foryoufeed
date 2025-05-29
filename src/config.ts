@@ -184,7 +184,7 @@ class Config implements ConfigType {
     filters: FilterConfig = {
         boolean: {
             defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
-            maxOptionLength: 21,                 // Maximum length of a filter option label
+            maxOptionLength: 19,                 // Maximum length of a filter option label
             minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
             optionsList: {                       // Configure how the filter options list should be displayed
                 [BooleanFilterName.HASHTAG]: {
