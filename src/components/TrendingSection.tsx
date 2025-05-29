@@ -35,7 +35,6 @@ type TrendingPanelCfg = {
 
 const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
     [TrendingType.LINKS]: {
-        // description: "These links have been shared by many denizens of the Fediverse recently:",
         hasCustomStyle: true, // links are always styled with custom CSS
         initialNumShown: config.trending.numLinksToShow,
         objTypeLabel: `trending ${TrendingType.LINKS}`
@@ -46,7 +45,7 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
         title: "Hashtags You Post About The Most",
     },
     [TrendingType.SERVERS]: {
-        description: "These are the Mastodon servers whence all these trending links and toots etc. came.",
+        description: "These are the Mastodon servers whence all these trending links, toots, and hashtags came.",
         initialNumShown: config.trending.numServersToShow, // unused
         objTypeLabel: TrendingType.SERVERS, // unused
         title: "Fediverse Servers That Were Scraped",
