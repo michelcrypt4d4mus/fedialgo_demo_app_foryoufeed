@@ -5,6 +5,7 @@
  */
 import { useCallback, useMemo } from "react";
 
+import tinycolor from "tinycolor2";
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
@@ -16,6 +17,7 @@ import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const TOOLTIPS = config.tooltips.filterOptionsTooltips;
+const EMPTY_ARRAY: tinycolor.Instance = [];
 
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
