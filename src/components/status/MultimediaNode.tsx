@@ -10,7 +10,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
-import { ComponentLogger } from "../../helpers/log_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
 
 // TODO: what is this for? It came from pkreissel's original implementation
@@ -18,7 +18,7 @@ const GALLERY_CLASS = `media-gallery__preview`;
 const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
 const VIDEO_HEIGHT = Math.floor(config.toots.imageHeight * 1.7);
 
-const logger = new ComponentLogger("MultimediaNode");
+const logger = getLogger("MultimediaNode");
 
 // Either toot or mediaAttachments must be given
 // If toot is not given the image is not clickable to display the modal

@@ -10,13 +10,13 @@ import { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
 import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import WeightSlider from './WeightSlider';
-import { ComponentLogger } from "../../helpers/log_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
 import { roundedBox, titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
-const logger = new ComponentLogger("WeightSetter");
+const logger = getLogger("WeightSetter");
 
 
 export default function WeightSetter() {

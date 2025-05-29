@@ -9,7 +9,7 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
-import { ComponentLogger } from '../helpers/log_helpers';
+import { getLogger } from '../helpers/log_helpers';
 import { config } from '../config';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
@@ -28,7 +28,7 @@ const OAUTH_SCOPES = [
 export const OAUTH_SCOPE_STR = OAUTH_SCOPES.join(" ");
 const DEFAULT_MASTODON_SERVER = "universeodon.com";
 const APP_NAME = `${FEDIALGO}Demo`;  // Name of the app that will be created in the user's Mastodon account
-const logger = new ComponentLogger("LoginPage");
+const logger = getLogger("LoginPage");
 
 
 export default function LoginPage() {

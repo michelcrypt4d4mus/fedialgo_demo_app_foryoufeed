@@ -1,18 +1,25 @@
 /*
  * Logging helpers.
  */
-import TheAlgorithm from "fedialgo";
+import TheAlgorithm, { ComponentLogger } from "fedialgo";
 
 import { browserCountry, browserLanguage, browserLocale } from "./string_helpers";
 
+export const LOG_PREFIX = ("[DEMO APP]");
+
 
 // Log stuff with a prefix to distinguish it from other logs
-export const LOG_PREFIX = ("[DEMO APP]");
 export const errorMsg = (msg: string, ...args: any[]) => console.error(`${LOG_PREFIX} ${msg}`, ...args);
 export const warnMsg = (msg: string, ...args: any[]) => console.warn(`${LOG_PREFIX} ${msg}`, ...args);
 export const logMsg = (msg: string, ...args: any[]) => console.log(`${LOG_PREFIX} ${msg}`, ...args);
 export const infoMsg = (msg: string, ...args: any[]) => console.info(`${LOG_PREFIX} ${msg}`, ...args);
 export const debugMsg = (msg: string, ...args: any[]) => console.debug(`${LOG_PREFIX} ${msg}`, ...args);
+
+
+// Make a ComponentLogger instance with a LOG_PREFIX
+export const getLogger = (componentName: string, subtitle?: string): ComponentLogger => {
+    return new ComponentLogger(LOG_PREFIX, componentName, subtitle);
+};
 
 
 // Log the browser's locale information to the console
@@ -28,48 +35,4 @@ export const logLocaleInfo = (): void => {
     ];
 
     logMsg(`${msg.join(", ")}`);
-};
-
-
-// Log lines with "[DEMO APP] <ComponentName>" prefixed
-export class ComponentLogger {
-    componentName: string;
-    logPrefix: string;
-    subtitle?: string;
-
-    constructor(componentName: string, subtitle?: string) {
-        this.componentName = componentName;
-        this.subtitle = subtitle;
-        this.logPrefix = `<${componentName}>` + (subtitle ? ` (${subtitle})` : "");
-    }
-
-    error(msg: string, ...args: any[]) {
-        errorMsg(this.makeMsg(msg), ...args);
-    }
-
-    warn(msg: string, ...args: any[]) {
-        warnMsg(this.makeMsg(msg), ...args);
-    }
-
-    log(msg: string, ...args: any[]) {
-        logMsg(this.makeMsg(msg), ...args);
-    }
-
-    info(msg: string, ...args: any[]) {
-        infoMsg(this.makeMsg(msg), ...args);
-    }
-
-    debug(msg: string, ...args: any[]) {
-        debugMsg(this.makeMsg(msg), ...args);
-    }
-
-    // Only writes logs in debug mode
-    trace(msg: string, ...args: any[]) {
-        if (!TheAlgorithm.isDebugMode) return;
-        this.debug(msg, ...args);
-    }
-
-    private makeMsg(msg: string): string {
-        return `${this.logPrefix} ${msg}`;
-    }
 };

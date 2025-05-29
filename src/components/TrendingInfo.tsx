@@ -10,13 +10,13 @@ import StatusComponent from "./status/Status";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection from "./TrendingSection";
 import { accordionSubheader, noPadding } from "../helpers/style_helpers";
-import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { sanitizeServerUrl } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
-const logger = new ComponentLogger("TrendingInfo");
+const logger = getLogger("TrendingInfo");
 
 
 export default function TrendingInfo() {

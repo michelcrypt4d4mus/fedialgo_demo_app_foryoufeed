@@ -11,8 +11,8 @@ import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } fro
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
-import { ComponentLogger } from "../../../helpers/log_helpers";
 import { config, CheckboxTooltip, FilterGridConfig } from "../../../config";
+import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
@@ -34,7 +34,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
 
-    const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
+    const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
     const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
     let findTooltip: (name: string) => CheckboxTooltip;  // Just initializing here at the top, is defined later
 
@@ -147,10 +147,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [
+            // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
             [BooleanFilterName.USER, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedAccounts : undefined,
-            [BooleanFilterName.USER, BooleanFilterName.HASHTAG].includes(filter.title) ? algorithm.userData.followedTags : undefined,
-            [BooleanFilterName.USER, BooleanFilterName.HASHTAG].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
-            [BooleanFilterName.LANGUAGE].includes(filter.title) ? algorithm.userData.preferredLanguage : undefined,
+            [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedTags : undefined,
+            [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
+            filter.title == BooleanFilterName.LANGUAGE ? algorithm.userData.preferredLanguage : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,

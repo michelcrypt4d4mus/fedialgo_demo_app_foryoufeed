@@ -8,12 +8,12 @@ import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { ComponentLogger } from "../helpers/log_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { Events, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
-const logger = new ComponentLogger("AlgorithmProvider");
+const logger = getLogger("AlgorithmProvider");
 
 interface AlgoContext {
     algorithm?: TheAlgorithm,

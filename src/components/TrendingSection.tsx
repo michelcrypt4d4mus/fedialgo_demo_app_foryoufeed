@@ -8,7 +8,7 @@ import { type TrendingObj } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
-import { ComponentLogger } from "../helpers/log_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { config, TrendingPanel } from "../config";
 import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
@@ -33,7 +33,7 @@ interface TrendingProps {
 
 export default function TrendingSection(props: TrendingProps) {
     let { linkRenderer, objRenderer, panelType, trendingObjs } = props;
-    const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
+    const logger = useMemo(() => getLogger("TrendingSection", panelType), [panelType]);
 
     if (!objRenderer && !linkRenderer) {
         logger.error("TrendingSection must have either objRenderer() or linkRenderer! props:", props);

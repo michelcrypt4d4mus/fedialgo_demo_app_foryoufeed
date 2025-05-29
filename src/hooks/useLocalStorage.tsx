@@ -4,7 +4,7 @@
 import { useState } from "react";
 
 import { App, User } from "../types";
-import { ComponentLogger } from "../helpers/log_helpers";
+import { getLogger } from "../helpers/log_helpers";
 
 type StorageKey = {
     keyName: string;
@@ -23,7 +23,7 @@ export interface UserStorage extends StorageKey {
 
 export const useAppStorage = (key: AppStorage) => useLocalStorage<AppStorage>(key);
 export const useUserStorage = (key: UserStorage) => useLocalStorage<UserStorage>(key);
-const logger = new ComponentLogger("useLocalStorage");
+const logger = getLogger("useLocalStorage");
 
 
 export const useLocalStorage = <T extends StorageKey,>(key: T): [T["defaultValue"], (value: T["defaultValue"]) => void] => {
