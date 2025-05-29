@@ -97,7 +97,7 @@ export default function TrendingSection(props: TrendingProps) {
                 <div style={footerContainer}>
                     <div style={{width: "40%"}}>{'('}
                         <a onClick={toggleShown} style={footerLink}>
-                            {currentNumShown === initialNumShown
+                            {currentNumShown == initialNumShown
                                 ? `show all ${trendingObjs.length} ${objTypeLabel}`
                                 : `show fewer ${objTypeLabel}`}
                         </a>{')'}
@@ -183,8 +183,9 @@ const footerContainer: CSSProperties = {
 
 const footerLink: CSSProperties = {
     ...linkesque,
-    color: "navy",
-    fontSize: "16px",
+    color: "#1b5b61",
+    fontFamily: "monospace",
+    fontSize: config.theme.trendingObjFontSize - 3,
     fontWeight: "bold",
 };
 

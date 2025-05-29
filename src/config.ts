@@ -42,6 +42,7 @@ type StatsConfig = {
 };
 
 type ThemeConfig = {
+    accordionOpenBlue: CSSProperties['color'];
     feedBackgroundColor: CSSProperties['backgroundColor'];
     feedBackgroundColorLite: CSSProperties['backgroundColor'];
     followedTagColor: CSSProperties['color'];
@@ -143,6 +144,7 @@ class Config implements ConfigType {
     }
 
     theme: ThemeConfig = {
+        accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
         feedBackgroundColor: '#15202b',     // background color for the timeline
         feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
         followedTagColor: 'yellow',           // Color for followed tags

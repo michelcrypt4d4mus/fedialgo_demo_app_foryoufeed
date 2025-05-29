@@ -124,13 +124,6 @@ const bold: CSSProperties = {
     fontWeight: "bold",
 };
 
-const footerLink: CSSProperties = {
-    ...linkesque,
-    color: "blue",
-    fontSize: "16px",
-    fontWeight: "bold",
-};
-
 const monospace: CSSProperties = {
     fontFamily: "monospace",
     fontSize: config.theme.trendingObjFontSize - 3,

@@ -13946,9 +13946,10 @@ input[type="range"]::-ms-thumb {
     width: 12px;
 }
 
-.accordion-button:not(.collapsed){
+.accordion-button:not(.collapsed) {
     background-color: #7ac5cc;
 }
+
 .accordion-button.collapsed {
     /* color: red; */
     /* padding: 1px; */
