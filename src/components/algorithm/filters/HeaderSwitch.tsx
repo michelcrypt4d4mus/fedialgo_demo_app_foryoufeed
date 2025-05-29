@@ -18,8 +18,8 @@ export enum SwitchType {
 
 const SWITCH_TOOLTIPS: Record<SwitchType, string> = {
     [SwitchType.HIGHLIGHTS_ONLY]: "Only show the colored options",
-    [SwitchType.INVERT_SELECTION]: "Exclude selected options",
-    [SwitchType.SORT_BY_COUNT]: "Sort the list of options by the number of toots",
+    [SwitchType.INVERT_SELECTION]: "Exclude the selected options",
+    [SwitchType.SORT_BY_COUNT]: "Sort the options by the number of toots instead of alphabetically",
 };
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `${TOOLTIP_ANCHOR}-header-switch`;
