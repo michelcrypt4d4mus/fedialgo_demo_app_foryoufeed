@@ -34,10 +34,12 @@ export const logLocaleInfo = (): void => {
 export class ComponentLogger {
     componentName: string;
     logPrefix: string;
+    subtitle?: string;
 
-    constructor(componentName: string) {
+    constructor(componentName: string, subtitle?: string) {
         this.componentName = componentName;
-        this.logPrefix = `<${componentName}>`;
+        this.subtitle = subtitle;
+        this.logPrefix = `<${componentName}>` + (subtitle ? ` (${subtitle})` : "");
     }
 
     error(msg: string, ...args: any[]) {

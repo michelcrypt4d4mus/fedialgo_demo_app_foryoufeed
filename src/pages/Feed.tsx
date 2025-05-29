@@ -1,10 +1,9 @@
 /*
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
-import React, { CSSProperties, useState, useEffect, useRef } from "react";
+import React, { CSSProperties, useState, useEffect, useMemo, useRef } from "react";
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
 import TheAlgorithm, { Toot } from "fedialgo";
@@ -19,6 +18,7 @@ import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
+import { buildStateCheckbox } from "../helpers/react_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { confirm } from "../components/helpers/Confirmation";
 import { FEED_BACKGROUND_COLOR, TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
@@ -44,16 +44,16 @@ export default function Feed() {
     const hideLinkPreviewsState = useState(false);
     const isControlPanelStickyState = useState(true);  // Left panel stickiness
     const [isLoadingThread, setIsLoadingThread] = useState(false);
-    const [loadingStatus, setLoadingStatus] = useState<string>(null);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(DEFAULT_NUM_DISPLAYED_TOOTS);
     const [prevScrollY, setPrevScrollY] = useState(0);
     const [scrollPercentage, setScrollPercentage] = useState(0);
     const [thread, setThread] = useState<Toot[]>([]);
 
+    // Computed variables etc.
     const bottomRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
-    const numShownToots = Math.max(DEFAULT_NUM_DISPLAYED_TOOTS, numDisplayedToots);
     const leftColStyle: CSSProperties = isControlPanelStickyState[0] ? {} : {position: "relative"};
+    const numShownToots = Math.max(DEFAULT_NUM_DISPLAYED_TOOTS, numDisplayedToots);
 
     // Reset all state except for the user and server
     const reset = async () => {
@@ -65,20 +65,9 @@ export default function Feed() {
         triggerFeedUpdate();
     };
 
-    const finishedLoadingMsg = (lastLoadTimeInSeconds: number | null) => {
-        let msg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
-        if (lastLoadTimeInSeconds) msg += ` in ${lastLoadTimeInSeconds.toFixed(1)} seconds`;
-
-        return (
-            <p style={loadingMsgStyle}>
-                {msg} ({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
-            </p>
-        );
-    };
-
     // Show more toots when the user scrolls to bottom of the page
     // TODO: this triggers twice: once when isbottom changes to true and again because numDisplayedToots
-    //       is increased, triggerng a second evaluation of the block
+    //       is increased, triggering a second evaluation of the block
     useEffect(() => {
         // Pull more toots to display from our local cached and sorted toot feed
         // TODO: this should trigger the pulling of more toots from the server if we run out of local cache
@@ -114,25 +103,31 @@ export default function Feed() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isBottom, numDisplayedToots, prevScrollY, setNumDisplayedToots, setPrevScrollY, timeline]);
 
-    // Watch the algorithm.loadingStatus for changes because the renderer doesn't pick them up on its own (TODO: why?)
-    // TODO: this doesn't actually work, the "Finalizing Score" loadingStatus doesn't show up usually
-    useEffect(() => {
-        if (!algorithm) return;
-        setLoadingStatus(algorithm.loadingStatus);
-    }, [algorithm, algorithm?.loadingStatus, isLoading]);
+    // Either a loading spinner or the number of toots scored + time it took
+    const controlPanelFooter = useMemo(
+        () => {
+            if (isLoading || !algorithm) {
+                return <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
+            } else {
+                const lastLoadSeconds = algorithm?.lastLoadTimeInSeconds?.toFixed(1);
 
-
-    const buildStateCheckbox = (label: string, state: ReturnType<typeof useState<boolean>>, className?: string) => (
-        <Form.Check
-            checked={state[0]}
-            className={className || ''}
-            key={label}
-            label={label}
-            onChange={(e) => state[1](e.target.checked)}
-            type="checkbox"
-        />
+                return (
+                    <p style={loadingMsgStyle}>
+                        Scored {(timeline?.length || 0).toLocaleString()} toots
+                        {lastLoadSeconds && ` in ${lastLoadSeconds} seconds`}
+                        {' '}({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
+                    </p>
+                );
+            }
+        },
+        [
+            algorithm,
+            algorithm?.loadingStatus,
+            algorithm?.lastLoadTimeInSeconds,
+            isLoading,
+            timeline?.length
+        ]
     );
-
 
     return (
         <Container fluid style={{height: "auto"}}>
@@ -186,9 +181,7 @@ export default function Feed() {
                             </TopLevelAccordion>}
 
                         <div style={stickySwitchContainer}>
-                            {isLoading
-                                ? <LoadingSpinner message={loadingStatus} style={loadingMsgStyle} />
-                                : finishedLoadingMsg(algorithm?.lastLoadTimeInSeconds)}
+                            {controlPanelFooter}
 
                             <p style={scrollStatusMsg} className="d-none d-sm-block">
                                 {TheAlgorithm.isDebugMode

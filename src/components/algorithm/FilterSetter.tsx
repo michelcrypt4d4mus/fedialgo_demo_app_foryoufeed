@@ -41,9 +41,6 @@ export default function FilterSetter() {
     return (
         <TopLevelAccordion bodyStyle={noPadding} isActive={hasAnyActiveFilter} title="Feed Filters">
             <Accordion alwaysOpen>
-                <Tooltip id={HASHTAG_ANCHOR + HIGHLIGHT} place="top" style={tooltipZIndex} />
-                {booleanFilters.map((f) => <BooleanFilterAccordionSection filter={f} key={f.title} />)}
-
                 <FilterAccordionSection
                     description={"Filter based on minimum/maximum number of replies, retoots, etc"}
                     isActive={hasActiveNumericFilter}
@@ -67,6 +64,9 @@ export default function FilterSetter() {
                         />
                     ))}
                 </FilterAccordionSection>
+
+                <Tooltip id={HASHTAG_ANCHOR + HIGHLIGHT} place="top" style={tooltipZIndex} />
+                {booleanFilters.map((f) => <BooleanFilterAccordionSection filter={f} key={f.title} />)}
             </Accordion>
         </TopLevelAccordion>
     );

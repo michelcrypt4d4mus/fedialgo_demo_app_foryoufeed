@@ -32,6 +32,7 @@ export default function TrendingInfo() {
                 key={"hashtags"}
                 linkLabel={tagNameMapper}
                 linkUrl={linkMapper}
+                multicolumn={true}
                 onClick={openTrendingLink}
                 trendingObjs={algorithm.trendingData.tags}
             />
@@ -71,37 +72,6 @@ export default function TrendingInfo() {
         [algorithm.trendingData.toots]
     );
 
-    const participatedHashtagsFooter = useMemo(
-        (): React.ReactNode => {
-            const numTags = algorithm.userData.popularUserTags().length;
-            const showAllText = `show all ${numTags} hashtags`;
-
-            if (numTags <= DEFAULT_MAX_HASHTAGS_TO_SHOW) {
-                logger.log(`No footer needed, only ${numTags} participated hashtags`);
-                return null;
-            }
-
-            const toggleAllPopularHashtags = () => {
-                if (maxHashtagsToShow === DEFAULT_MAX_HASHTAGS_TO_SHOW) {
-                    setMaxHashtagsToShow(algorithm.userData.popularUserTags().length);
-                } else {
-                    setMaxHashtagsToShow(DEFAULT_MAX_HASHTAGS_TO_SHOW);
-                }
-            }
-
-            return (
-                <div style={{display: "flex", justifyContent: 'space-around', width: "100%"}}>
-                    <div style={{width: "40%"}}>
-                        {'('}<a onClick={toggleAllPopularHashtags} style={footerLink}>
-                            {maxHashtagsToShow === DEFAULT_MAX_HASHTAGS_TO_SHOW ? showAllText : 'show less'}
-                        </a>{')'}
-                    </div>
-                </div>
-            );
-        },
-        [algorithm.userData, maxHashtagsToShow]
-    );
-
     const mostParticipatedHashtagsSection = useMemo(
         () => {
             const numTags = algorithm.userData.popularUserTags().length;
@@ -138,6 +108,7 @@ export default function TrendingInfo() {
                     key={"participatedHashtags"}
                     linkLabel={tagNameMapper}
                     linkUrl={linkMapper}
+                    multicolumn={true}
                     onClick={openTrendingLink}
                     trendingObjs={algorithm.userData.popularUserTags().slice(0, maxHashtagsToShow)}
                 />
