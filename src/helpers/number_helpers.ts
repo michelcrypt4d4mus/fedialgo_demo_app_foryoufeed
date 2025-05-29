@@ -1,9 +1,8 @@
 /*
  * Help with numbers.
  */
+import { config } from "../config";
 import { warnMsg } from "./log_helpers";
-
-const SCORE_DIGITS = 3;  // Number of digits to display in the alternate score
 
 
 // Remove scores with a raw score of 0
@@ -31,6 +30,6 @@ export function formatScore(score: number): number {
         return score;
     }
 
-    if (Math.abs(score) < Math.pow(10, -1 * SCORE_DIGITS)) return score;
-    return Number(score.toPrecision(SCORE_DIGITS));
+    if (Math.abs(score) < Math.pow(10, -1 * config.toots.scoreDigits)) return score;
+    return Number(score.toPrecision(config.toots.scoreDigits));
 };

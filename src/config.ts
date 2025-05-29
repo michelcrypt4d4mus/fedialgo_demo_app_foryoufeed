@@ -70,6 +70,7 @@ type TooltipConfig = {
 type TootConfig = {
     imageHeight: number;
     maxPreviewCardLength: number;
+    scoreDigits: number;
 };
 
 type TrendingConfig = {
@@ -166,6 +167,7 @@ class Config implements ConfigType {
     toots: TootConfig = {
         imageHeight: 314,                    // Default height for images in toots
         maxPreviewCardLength: 350,           // Maximum length of preview card description
+        scoreDigits: 3,                      // Number of digits to display in the score
     }
 
     trending: TrendingConfig = {
