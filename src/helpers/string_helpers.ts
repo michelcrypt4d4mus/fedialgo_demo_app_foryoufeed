@@ -7,6 +7,11 @@ import { config } from "../config";
 import { debugMsg, errorMsg, warnMsg } from "./log_helpers";
 import { MimeExtensions } from "../types";
 
+// Window events: https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event
+export enum Events {
+    FOCUS = "focus",
+};
+
 export const DEMO_APP = "DEMO APP";
 export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
 export const LOADING_ERROR_MSG = `Currently loading, please wait a moment and try again.`;

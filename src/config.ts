@@ -6,11 +6,6 @@ import { CSSProperties } from "react";
 const KB = 1024;
 const MB = KB * KB;
 
-type TimelineConfig = {
-    numTootsToLoadOnScroll: number;
-    defaultNumDisplayedToots: number;
-};
-
 type FilterConfig = {
     defaultMinTootsToAppear: number;
     maxOptionLength: number;
@@ -43,6 +38,12 @@ type ThemeConfig = {
     participatedTagColorMin: CSSProperties['color'];
     trendingTagColor: CSSProperties['color'];
     trendingTagColorFaded: CSSProperties['color'];
+};
+
+type TimelineConfig = {
+    autoloadOnFocusAfterMinutes: number;
+    numTootsToLoadOnScroll: number;
+    defaultNumDisplayedToots: number;
 };
 
 type TooltipConfig = {
@@ -119,6 +120,7 @@ class Config implements ConfigType {
     }
 
     timeline: TimelineConfig = {
+        autoloadOnFocusAfterMinutes: 5,      // Autoload new toots if timeline is this old (and feature is enabled)
         numTootsToLoadOnScroll: 10,          // Number of toots to load on scroll
         defaultNumDisplayedToots: 20,        // Default number of toots displayed in the timeline
     }
