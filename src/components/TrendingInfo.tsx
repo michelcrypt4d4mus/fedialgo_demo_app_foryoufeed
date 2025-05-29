@@ -24,25 +24,33 @@ export default function TrendingInfo() {
 
     // Memoize because trending panels are apparently our most expensive renders
     const scrapedServersSection = useMemo(
-        () => (
-            <TrendingSection
-                panelType={TrendingType.SERVERS}
-                linkRenderer={{
-                    infoTxt: (domain: string) => {
-                        const serverInfo = algorithm.trendingData.servers[domain];
+        () => {
+            const domains = Object.keys(algorithm.trendingData.servers).sort((a, b) => {
+                const aInfo = algorithm.trendingData.servers[a];
+                const bInfo = algorithm.trendingData.servers[b];
+                return bInfo.followedPctOfMAU - aInfo.followedPctOfMAU;
+            });
 
-                        return [
-                            `MAU: ${serverInfo.MAU.toLocaleString()}`,
-                            `followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`
-                        ].join(', ');
-                    },
-                    linkLabel: (domain: string) => domain,
-                    linkUrl: (domain: string) => sanitizeServerUrl(domain),
-                    onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain), e)
-                }}
-                trendingObjs={Object.keys(algorithm.trendingData.servers)}
-            />
-        ),
+            return (
+                <TrendingSection
+                    panelType={TrendingType.SERVERS}
+                    linkRenderer={{
+                        infoTxt: (domain: string) => {
+                            const serverInfo = algorithm.trendingData.servers[domain];
+
+                            return [
+                                `MAU: ${serverInfo.MAU.toLocaleString()}`,
+                                `followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`
+                            ].join(', ');
+                        },
+                        linkLabel: (domain: string) => domain,
+                        linkUrl: (domain: string) => sanitizeServerUrl(domain),
+                        onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain), e)
+                    }}
+                    trendingObjs={domains}
+                />
+            );
+        },
         [algorithm.trendingData.servers]
     );
 

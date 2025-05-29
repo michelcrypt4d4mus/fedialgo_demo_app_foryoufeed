@@ -45,7 +45,7 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
         title: "Hashtags You Post About The Most",
     },
     [TrendingType.SERVERS]: {
-        description: "These are the Mastodon servers whence all these trending links, toots, and hashtags came.",
+        description: "The Mastodon servers all these trending links, toots, and hashtags came from, sorted by the percentage of that server's monthly active users you follow:",
         initialNumShown: config.trending.numServersToShow, // unused
         objTypeLabel: TrendingType.SERVERS, // unused
         title: "Fediverse Servers That Were Scraped",
