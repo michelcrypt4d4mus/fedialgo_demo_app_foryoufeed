@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 
 import parse from 'html-react-parser';
 import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
 import { mastodon } from 'masto';
 
 import { titleStyle } from "../../helpers/style_helpers";
-import { User } from '../../types';
+import { useAlgorithm } from '../../hooks/useAlgorithm';
+import { useAuthContext } from '../../hooks/useAuth';
 
 const NUM_SUGGESTIONS = 4;
 
 
-export default function FindFollowers({ api, user }: { api: mastodon.rest.Client, user: User }) {
-    const [suggestions, setSuggestions] = useState<mastodon.v1.Suggestion[]>([]);
+export default function FindFollowers(): React.ReactElement {
+    const { user } = useAuthContext();
+    const { api } = useAlgorithm();
+
     const [open, setOpen] = useState<boolean>(false);
+    const [suggestions, setSuggestions] = useState<mastodon.v1.Suggestion[]>([]);
 
     useEffect(() => {
         if (!open || suggestions.length > 0) return;
@@ -39,8 +43,8 @@ export default function FindFollowers({ api, user }: { api: mastodon.rest.Client
     };
 
     return (
-        <Accordion>
-            <Accordion.Item eventKey="0">
+        <Accordion style={accordionStyle}>
+            <Accordion.Item eventKey="findfollowers">
                 <Accordion.Header>
                     <p style={titleStyle}>
                         Find Followers
@@ -49,8 +53,7 @@ export default function FindFollowers({ api, user }: { api: mastodon.rest.Client
 
                 <Accordion.Body onEnter={() => setOpen(true)}>
                     <Row className="g-4 m-3">
-                        {suggestions.length == 0 && (
-                            <div>If this does not work, log out and login again</div>)}
+                        {suggestions.length == 0 && <div>If this does not work, log out and login again</div>}
 
                         {suggestions
                             .filter((suggestion: mastodon.v1.Suggestion) => suggestion.source === "past_interactions")
@@ -115,4 +118,9 @@ export default function FindFollowers({ api, user }: { api: mastodon.rest.Client
             </Accordion.Item>
         </Accordion>
     );
+};
+
+
+const accordionStyle: CSSProperties = {
+    marginTop: "10px",
 };

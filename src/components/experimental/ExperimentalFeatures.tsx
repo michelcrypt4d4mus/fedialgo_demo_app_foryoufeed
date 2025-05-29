@@ -18,22 +18,24 @@ import { useAuthContext } from "../../hooks/useAuth";
 import { useError } from "../helpers/ErrorHandler";
 import { versionString } from "../../helpers/string_helpers";
 
+const DELETE_ALL = "Delete All User Data";
 const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
 const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
-const WIPE_ALL = "Wipe All User Data";
+
 const logger = new ComponentLogger("ExperimentalFeatures");
 
 const BUTTON_TEXT = {
+    [DELETE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors." +
+                  " You'll need to reauthenticate afterwards.",
     [SCORE_STATS]: "Show a bar chart of the scores of your timeline",
     [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state`,
-    [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed. " +
-                                  "Takes time & resources proportional to the number of times you've tooted.",
-    [WIPE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors.",
+    [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed." +
+                                  " Takes time & resources proportional to the number of times you've tooted.",
 };
 
 export const OAUTH_ERROR_MSG = `You may have used ${FEDIALGO} before it requested` +
-        ` appropriate permissions. This can be fixed with the "${WIPE_ALL}" button in the Experimental Features` +
+        ` appropriate permissions. This can be fixed with the "${DELETE_ALL}" button in the Experimental Features` +
         ` section or by manually clearing all your cookies for this site.`;
 
 
@@ -121,16 +123,16 @@ export default function ExperimentalFeatures() {
             <div style={container}>
                 <ul style={listStyle}>
                     {makeLabeledButton(SHOW_STATE, showAlgoState)}
-                    <hr className="hr" />
+                    <hr className="hr hr-narrow" />
                     {makeLabeledButton(SCORE_STATS, () => setShowStatsModal(true))}
-                    <hr className="hr" />
+                    <hr className="hr hr-narrow" />
                     {makeLabeledButton(LOAD_COMPLETE_USER_HISTORY, triggerPullAllUserData)}
-                    <hr className="hr" />
-                    {makeLabeledButton(WIPE_ALL, wipeAll, "danger")}
+                    <hr className="hr hr-narrow" />
+                    {makeLabeledButton(DELETE_ALL, wipeAll, "danger")}
                 </ul>
 
-                <hr className="hr" />
-                <FindFollowers api={api} user={user} />
+                <hr className="hr hr-narrow" />
+                <FindFollowers style={{marginTop: "4px"}} />
             </div>
         </TopLevelAccordion>
     );
@@ -156,7 +158,7 @@ const listElement: CSSProperties = {
     display: "flex",
     flexDirection: "row",
     fontSize: "18px",
-    marginBottom: "7px",
+    marginBottom: "2px",
 };
 
 const listStyle: CSSProperties = {
