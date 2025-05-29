@@ -1,7 +1,7 @@
 /*
  * Context to hold the TheAlgorithm variable
  */
-import React, { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
 
 import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";
@@ -10,7 +10,7 @@ import { useError } from "../components/helpers/ErrorHandler";
 
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
-import { LOADING_ERROR_MSG, Events, buildMimeExtensions } from "../helpers/string_helpers";
+import { Events, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
 const logger = new ComponentLogger("AlgorithmProvider");
