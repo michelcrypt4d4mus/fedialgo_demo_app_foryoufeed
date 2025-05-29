@@ -150,8 +150,8 @@ export default function TrendingInfo() {
                 {trendingTagsSection}
                 {trendingLinksSection}
                 {trendingTootSection}
-                {mostParticipatedHashtagsSection}
                 {scrapedServersSection}
+                {mostParticipatedHashtagsSection}
             </Accordion>
         </TopLevelAccordion>
     );
