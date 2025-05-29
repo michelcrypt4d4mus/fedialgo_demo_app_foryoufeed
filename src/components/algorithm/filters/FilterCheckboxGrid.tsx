@@ -147,6 +147,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [
+            // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
             [BooleanFilterName.USER, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedAccounts : undefined,
             [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedTags : undefined,
             [BooleanFilterName.HASHTAG, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
