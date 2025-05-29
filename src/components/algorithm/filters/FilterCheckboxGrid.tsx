@@ -3,7 +3,7 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
 import tinygradient from "tinygradient";
@@ -106,11 +106,26 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         findTooltip = (name: string) => undefined;
     }
 
+    const [filterFailure, setFilterFailure] = useState<boolean>(false);
+    let hasFailed = false;
+
     // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
     const propertyCheckbox = (name: string, i: number) => {
+        let isEnabled = false;
+
+        try {
+            // isEnabled = filter.validValues.includes(name)
+            isEnabled = (hasFailed || filterFailure) ? filter.validValues.includes(name) : filter.isThisSelectionEnabled(name);
+        } catch (err) {
+            logger.error(`Error checking if option "${name}" is enabled, typeof filter.isThisSelectionEnabled="${typeof filter.isThisSelectionEnabled}"`, err, `\nfilter:`, filter);
+            hasFailed = true;
+            setFilterFailure(true);
+        }
+
         return (
             <FilterCheckbox
-                isChecked={filter.isOptionEnabled(name)}
+                isChecked={filter.isThisSelectionEnabled(name)}
+                // isChecked={isEnabled}
                 key={`${filter.title}_${name}_${i}`}
                 label={filterConfig?.labelMapper ? filterConfig?.labelMapper(name) : name}
                 labelExtra={filter.optionInfo[name]}
@@ -131,7 +146,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 optionInfo = Object.fromEntries(
                     Object.entries(optionInfo).filter(
                         ([optionName, numToots]) => {
-                            if (filter.isOptionEnabled(optionName)) return true;  // Always show selected options
+                            if (filter.validValues.includes(optionName)) return true;  // Always show selected options
 
                             if (numToots >= minToots) {
                                 return (highlightedOnly ? !!findTooltip(optionName) : true);
@@ -151,9 +166,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             algorithm.userData.followedTags,
             algorithm.userData.participatedHashtags,
             algorithm.userData.preferredLanguage,
+            filter,
             filter.optionInfo,
             filter.title,
             filter.validValues,
+            findTooltip,
             highlightedOnly,
             minToots,
             sortByCount,

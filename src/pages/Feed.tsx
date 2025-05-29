@@ -122,6 +122,18 @@ export default function Feed() {
         ]
     );
 
+    // const triggerFilterCheck = () => {
+    //     const typefilter = algorithm.filters.booleanFilters["type"];
+
+    //     try {
+    //         typefilter.isThisSelectionEnabled('woop') //filterFailure ? filter.validValues.includes(name) : filter.isThisSelectionEnabled(name);
+    //         logger.log(`Filter check successful, filter.isThisSelectionEnabled is a function`);
+    //     } catch (err) {
+    //         logger.error(`Error checking if option "${name}" is enabled, typeof filter.isThisSelectionEnabled="${typeof typefilter.isThisSelectionEnabled}"`, err, `\nfilter:`, typefilter);
+    //     }
+    // }
+
+
     return (
         <Container fluid style={{height: "auto"}}>
             <Row style={{cursor: isLoadingThread ? 'wait' : 'default'}}>
@@ -181,6 +193,12 @@ export default function Feed() {
                                     ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
                                     : <BugReportLink />}
                             </p>
+
+                            {/* <p style={scrollStatusMsg} className="d-none d-sm-block">
+                                <a onClick={() => triggerFilterCheck()} style={linkesque}>
+                                    (check filters)
+                                </a>
+                            </p> */}
                         </div>
                     </div>
                 </Col>
