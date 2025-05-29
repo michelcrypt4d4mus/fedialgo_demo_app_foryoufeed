@@ -190,7 +190,7 @@ const descriptionStyle: CSSProperties = {
 const footerContainer: CSSProperties = {
     display: "flex",
     justifyContent: 'space-around',
-    marginBottom: "8px",
+    marginBottom: "5px",
     width: "100%"
 };
 
