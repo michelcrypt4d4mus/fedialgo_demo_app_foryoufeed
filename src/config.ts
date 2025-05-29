@@ -42,6 +42,7 @@ type StatsConfig = {
 };
 
 type ThemeConfig = {
+    accordionOpenBlue: CSSProperties['color'];
     feedBackgroundColor: CSSProperties['backgroundColor'];
     feedBackgroundColorLite: CSSProperties['backgroundColor'];
     followedTagColor: CSSProperties['color'];
@@ -68,6 +69,7 @@ type TooltipConfig = {
     gradientAdjustPctiles?: number[];
     headerDelay: number;
     minTagsForGradientAdjust?: number;
+    minTootsSliderDelay: number;
 };
 
 type TootConfig = {
@@ -142,6 +144,7 @@ class Config implements ConfigType {
     }
 
     theme: ThemeConfig = {
+        accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
         feedBackgroundColor: '#15202b',     // background color for the timeline
         feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
         followedTagColor: 'yellow',           // Color for followed tags
@@ -168,6 +171,7 @@ class Config implements ConfigType {
         gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
         headerDelay: 500,                     // Delay for header tooltips in milliseconds
         minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment
+        minTootsSliderDelay: 50,              // Delay for the minimum toots slider tooltip in milliseconds
     }
 
     toots: TootConfig = {
@@ -181,7 +185,7 @@ class Config implements ConfigType {
         numHashtagsToShow: 40,                // Default number of hashtags to show in trending sections
         numLinksToShow: 30,                   // Default number of trending links to show
         numServersToShow: 40,                 // TODO: should be unused, but kept for compatibility
-        numTootsToShow: 50,                   // Default number of toots to show in trending section //TODO: unused
+        numTootsToShow: 10,                   // Default number of toots to show in trending section
     }
 
     weights: WeightsConfig = {

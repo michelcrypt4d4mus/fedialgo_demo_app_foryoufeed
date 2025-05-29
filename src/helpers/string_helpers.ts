@@ -1,7 +1,7 @@
 /*
  * String manipulation helpers.
  */
-import { MediaCategory, type TrendingData } from "fedialgo";
+import { MediaCategory, type TrendingData, TrendingType } from "fedialgo";
 
 import { config } from "../config";
 import { debugMsg, errorMsg, warnMsg } from "./log_helpers";
@@ -29,11 +29,6 @@ const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
     acc[value] = `${value}/*`;
     return acc;
 }, {} as Record<MediaCategory, string>);
-
-
-export function fileInfo(file: File): string {
-    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
-};
 
 
 // Build a map of MIME types to file extensions used by DropZone for image attachments etc.
@@ -70,6 +65,16 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
     debugMsg(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
 };
+
+
+// String summary of info about a file on the local filesystem
+export function fileInfo(file: File): string {
+    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
+};
+
+
+// Returns true if there's any capital letter in the string.
+export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
@@ -135,14 +140,16 @@ export const timestampString = (_timestamp: string): string => {
 // Figure out the type of trending object based on the string.
 // TODO: this is janky, but it works for now.
 export function trendingTypeForString(str: string): keyof TrendingData {
-    if (str.toLowerCase().includes('hashtags')) {
-        return 'tags';
-    } else if (str.toLowerCase().includes('links')) {
-        return 'links';
-    } else if (str.toLowerCase().includes('servers')) {
-        return 'servers'; // unused
-    } else if (str.toLowerCase().includes('toots')) {
-        return 'toots';
+    str = str.toLowerCase().trim();
+
+    if (str.endsWith(TrendingType.TAGS) || str.includes('hashtags')) {
+        return TrendingType.TAGS;
+    } else if (str.includes('links')) {
+        return TrendingType.LINKS;
+    } else if (str.includes('servers')) {
+        return TrendingType.SERVERS;
+    } else if (str.includes('toots')) {
+        return 'toots';  // TODO: TrendingType has STATUSES, not TOOTS
     } else {
         throw new Error(`Unknown trending object type for title: "${str}"`);
     }

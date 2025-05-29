@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/esm/Form';
 import { capitalCase } from "change-case";
 
 import { accordionBody, globalFont } from "../../helpers/style_helpers";
+import { hasAnyCapitalLetters } from "../../helpers/string_helpers";
 
 export interface SubAccordionProps extends PropsWithChildren {
     description?: string,
@@ -25,7 +26,8 @@ export default function SubAccordion(props: SubAccordionProps) {
             <Accordion.Header>
                 <Form.Label style={subHeaderLabel}>
                     <span className={headerClass} key={1}>
-                        {capitalCase(title)}
+                        {/* // TODO janky workaround bc capitalCase() turns apostrophes into spaces */}
+                        {hasAnyCapitalLetters(title) ? title : capitalCase(title)}
                     </span>
 
                     {description &&

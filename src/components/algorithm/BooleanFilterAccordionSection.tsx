@@ -2,7 +2,7 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { BooleanFilter, BooleanFilterName, LANGUAGE_CODES } from "fedialgo";
 import { capitalCase } from "change-case";
@@ -42,45 +42,45 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
+
+    const showMinTootsSlider = Object.keys(filter.optionInfo).length > config.filters.minOptionsToShowSlider;
+    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}-min-toots`;
     const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
-    const hasMinToots = Object.keys(filter.optionInfo).length > config.filters.minOptionsToShowSlider;
-    const switchTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
-    const minTootsTooltipAnchor = `${switchTooltipAnchor}-min-toots`;
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(hasMinToots ? config.filters.defaultMinTootsToAppear : 0);
+    const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.defaultMinTootsToAppear : 0);
     const [sortByCount, setSortByValue] = useState(false);
 
-    const makeKey = (name: SwitchType) => `${filter.title}-${name}`;
-
-    let switchbar = [
+    let headerSwitches = [
         <HeaderSwitch
             isChecked={filter.invertSelection}
-            key={makeKey(SwitchType.INVERT_SELECTION)}
+            key={SwitchType.INVERT_SELECTION}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
         />,
         <HeaderSwitch
             isChecked={sortByCount}
-            key={makeKey(SwitchType.SORT_BY_COUNT)}
+            key={SwitchType.SORT_BY_COUNT}
             label={SwitchType.SORT_BY_COUNT}
             onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
         />,
     ];
 
+    // Add a highlights-only switch if configured
     if (filterConfig?.[SwitchType.HIGHLIGHTS_ONLY]) {
-        switchbar = switchbar.concat([
+        headerSwitches = headerSwitches.concat([
             <HeaderSwitch
                 isChecked={highlightedOnly}
-                key={makeKey(SwitchType.HIGHLIGHTS_ONLY)}  // TODO: this is probably useless but something is erroring...
+                key={SwitchType.HIGHLIGHTS_ONLY}
                 label={SwitchType.HIGHLIGHTS_ONLY}
                 onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
             />,
         ]);
     }
 
-    if (hasMinToots) {
-        switchbar = switchbar.concat([
+    // Add a slider for minimum # of toots if there's enough options in the panel to justify it
+    if (showMinTootsSlider) {
+        headerSwitches = headerSwitches.concat([
             <div key={`${filter.title}-minTootsSlider`} style={{width: "23%"}}>
                 <a
                     data-tooltip-id={minTootsTooltipAnchor}
@@ -97,7 +97,15 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                         width={"80%"}
                     />
                 </a>
-            </div>
+            </div>,
+
+            // Tooltip for the minToots slider
+            <Tooltip
+                delayShow={config.tooltips.minTootsSliderDelay}
+                id={minTootsTooltipAnchor}
+                place="bottom"
+                style={{...tooltipZIndex, fontWeight: "normal", }}
+            />,
         ]);
     }
 
@@ -105,11 +113,9 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         <FilterAccordionSection
             description={filter.description}
             isActive={filter.validValues.length > 0}
-            switchbar={switchbar}
+            switchbar={headerSwitches}
             title={filter.title}
         >
-            <Tooltip delayShow={50} id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
-
             <FilterCheckboxGrid
                 filter={filter}
                 highlightedOnly={highlightedOnly}
