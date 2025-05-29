@@ -40,6 +40,12 @@ export const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
     },
 };
 
+const SWITCH_TOOLTIPS: Record<SwitchType, string> = {
+    [SwitchType.HIGHLIGHTS_ONLY]: "Only show the colored options",
+    [SwitchType.INVERT_SELECTION]: "Exclude selected options",
+    [SwitchType.SORT_BY_COUNT]: "Sort options by number of toots",
+};
+
 const DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER = 5;
 const MIN_OPTIONS_TO_SHOW_SLIDER = 30;
 
@@ -52,13 +58,12 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const { filter } = props;
     const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
     const hasMinToots = Object.keys(filter.optionInfo).length > MIN_OPTIONS_TO_SHOW_SLIDER;
+    const switchTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
+    const minTootsTooltipAnchor = `${switchTooltipAnchor}-min-toots`;
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
     const [minToots, setMinToots] = useState(hasMinToots ? DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER : 0);
     const [sortByCount, setSortByValue] = useState(false);
-
-    const minTootsTooltipTxt = `Hide ${filter.title}s with less than ${minToots} toots`;
-    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
 
     const makeHeaderSwitch = (
         label: SwitchType,
@@ -66,13 +71,14 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         onChange: (e: ChangeEvent<HTMLInputElement>) => void
     ) => {
         return (
-            <FilterCheckbox
-                capitalize={true}
-                isChecked={isChecked}
-                key={label}
-                label={label}
-                onChange={onChange}
-            />
+            <a data-tooltip-id={switchTooltipAnchor} data-tooltip-content={SWITCH_TOOLTIPS[label]} key={label}>
+                <FilterCheckbox
+                    capitalize={true}
+                    isChecked={isChecked}
+                    label={label}
+                    onChange={onChange}
+                />
+            </a>
         );
     };
 
@@ -101,10 +107,11 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     if (hasMinToots) {
         switchbar = switchbar.concat([
-            <div style={{width: "23%"}} key={"minTootsSlider"}>
-                <Tooltip id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
-
-                <a data-tooltip-id={minTootsTooltipAnchor} data-tooltip-content={minTootsTooltipTxt}>
+            <div key="minTootsSlider" style={{width: "23%"}}>
+                <a
+                    data-tooltip-id={minTootsTooltipAnchor}
+                    data-tooltip-content={`Hide ${filter.title}s with less than ${minToots} toots`}
+                >
                     <Slider
                         hideValueBox={true}
                         label="Minimum"
@@ -127,6 +134,9 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             switchbar={switchbar}
             title={filter.title}
         >
+            <Tooltip delayShow={500} id={switchTooltipAnchor} place="bottom" style={tooltipZIndex}/>
+            <Tooltip delayShow={50} id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
+
             <FilterCheckboxGrid
                 filter={filter}
                 highlightedOnly={highlightedOnly}
