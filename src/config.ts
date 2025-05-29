@@ -213,12 +213,12 @@ class Config implements ConfigType {
             [ScoreName.PARTICIPATED_TAGS]: {
                 initialNumShown: 40,
                 objTypeLabel: "of your hashtags",
-                title: "Hashtags You Post About The Most",
+                title: "Hashtags You Often Post About",
             },
             [TrendingType.SERVERS]: {
                 description: "The Mastodon servers all these trending links, toots, and hashtags came from, sorted by the percentage of that server's monthly active users you follow:",
                 initialNumShown: 40,        // TODO: unused
-                title: "Fediverse Servers That Were Scraped",
+                title: "Servers Telling Us What's Trending In The Fediverse",
             },
             [TrendingType.TAGS]: {
                 initialNumShown: 30,
