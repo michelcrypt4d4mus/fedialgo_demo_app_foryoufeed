@@ -4,14 +4,15 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
-import { ScoreName, type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
+import { ScoreName, Toot, type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
+import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
-import { gridify } from "../helpers/react_helpers";
+import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
@@ -20,6 +21,7 @@ type TrendingPanelCfg = {
     description?: string;
     hasCustomStyle?: boolean;
     initialNumShown: number;
+    objRenderer?: (obj: TrendingListObj) => React.ReactElement;
     objTypeLabel?: string;
     prependTrending?: boolean;
     title?: string;
@@ -47,8 +49,17 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
         initialNumShown: config.trending.numHashtagsToShow,
         objTypeLabel: "trending hashtags",
     },
-    toots: {  // TODO: currently unused
+    toots: {
         initialNumShown: config.trending.numTootsToShow,
+        objRenderer: (toot: Toot) => (
+            <StatusComponent
+                fontColor="black"
+                hideLinkPreviews={false}
+                key={toot.uri}
+                status={toot}
+            />
+        ),
+        objTypeLabel: "trending toots",
     },
 };
 
@@ -69,8 +80,7 @@ export default function TrendingSection(props: TrendingProps) {
     const panelCfg = TRENDING_PANEL_CFG[panelType];
     const objTypeLabel = panelCfg.objTypeLabel || panelType;
     const title = panelCfg.title || capitalCase(objTypeLabel);
-
-    // State
+    // numShown saved as state so we can toggle the number of items shown in the panel
     const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
     const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
 
@@ -105,6 +115,17 @@ export default function TrendingSection(props: TrendingProps) {
     // Memoize because react profiler says trending panels are most expensive to render
     const trendingItemList = useMemo(
         () => {
+            const objs = trendingObjs.slice(0, numShown);
+
+            // Short circuit the rendering for custom object renderers (meaning Toots)
+            if (panelCfg.objRenderer) {
+                return <>
+                    {objs.map((obj, i) => panelCfg.objRenderer!(obj))}
+                    {verticalSpacer(20, `trending-footer-${panelType}`)}
+                    {footer}
+                </>;
+            }
+
             const labels = trendingObjs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
@@ -120,7 +141,7 @@ export default function TrendingSection(props: TrendingProps) {
                 containerStyle = trendingListContainer;
             }
 
-            const elements = trendingObjs.slice(0, numShown).map((obj, i) => (
+            const elements = objs.map((obj, i) => (
                 <li key={i} style={listItemStyle}>
                     <NewTabLink
                         href={linkUrl(obj)}

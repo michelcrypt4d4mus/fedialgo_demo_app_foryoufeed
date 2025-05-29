@@ -185,7 +185,7 @@ class Config implements ConfigType {
         numHashtagsToShow: 40,                // Default number of hashtags to show in trending sections
         numLinksToShow: 30,                   // Default number of trending links to show
         numServersToShow: 40,                 // TODO: should be unused, but kept for compatibility
-        numTootsToShow: 50,                   // Default number of toots to show in trending section //TODO: unused
+        numTootsToShow: 10,                   // Default number of toots to show in trending section
     }
 
     weights: WeightsConfig = {

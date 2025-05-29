@@ -22,23 +22,6 @@ const logger = new ComponentLogger("TrendingInfo");
 export default function TrendingInfo() {
     const { algorithm } = useAlgorithm();
 
-    // Trending toots have special handling since they are displayed with StatusComponents
-    const trendingTootSection = useMemo(
-        () => (
-            <SubAccordion key={"toots"} title={"Trending Toots"}>
-                {algorithm.trendingData.toots.map((toot) => (
-                    <StatusComponent
-                        fontColor="black"
-                        hideLinkPreviews={false}
-                        key={toot.uri}
-                        status={toot}
-                    />
-                ))}
-            </SubAccordion>
-        ),
-        [algorithm.trendingData.toots]
-    );
-
     const scrapedServersSection = useMemo(
         () => (
             <TrendingSection
@@ -87,7 +70,16 @@ export default function TrendingInfo() {
                     trendingObjs={algorithm.trendingData.links}
                 />
 
-                {trendingTootSection}
+                <TrendingSection
+                    panelType={"toots"}
+                    trendingObjs={algorithm.trendingData.toots}
+                    // these are all junk that is unused but required args (for now)
+                    infoTxt={trendingObjInfoTxt}
+                    linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
+                    linkUrl={linkMapper}
+                    onClick={() => logger.warn("Clicked on a trending toot, shouldn't be possible!")}
+                />
+
                 {scrapedServersSection}
 
                 <TrendingSection

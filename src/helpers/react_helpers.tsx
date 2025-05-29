@@ -85,5 +85,10 @@ export function gridify(elements: ReactElement[], numCols?: number, colStyle?: C
 // create a horizontal spacer of a given width
 export function horizontalSpacer(width: number, key?: string): ReactElement {
     // return <span style={{display: "inline-block", width: `${width}px`}} />;
-    return <div key={key || ''} style={{width: "20px"}} />
+    return <div key={key || ''} style={{width: `${width}px`}} />
+};
+
+
+export function verticalSpacer(height: number, key?: string): ReactElement {
+    return <div key={key || ''} style={{height: `${height}px`, width: "100%"}} />
 };
