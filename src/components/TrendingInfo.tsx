@@ -4,7 +4,7 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, extractDomain } from "fedialgo";
+import { type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, TrendingType, extractDomain } from "fedialgo";
 
 import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
@@ -22,9 +22,10 @@ const logger = new ComponentLogger("TrendingInfo");
 export default function TrendingInfo() {
     const { algorithm } = useAlgorithm();
 
+    // Trending toots have special handling since they are displayed with StatusComponents
     const trendingTootSection = useMemo(
         () => (
-            <SubAccordion key={"toots"} title={"Toots"}>
+            <SubAccordion key={"toots"} title={"Trending Toots"}>
                 {algorithm.trendingData.toots.map((toot) => (
                     <StatusComponent
                         fontColor="black"
@@ -41,7 +42,7 @@ export default function TrendingInfo() {
     const scrapedServersSection = useMemo(
         () => (
             <TrendingSection
-                title="Servers That Were Scraped"
+                title="Fediverse Servers That Were Scraped"
                 infoTxt={(domain: string) => {
                     const serverInfo = algorithm.trendingData.servers[domain];
                     const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
@@ -58,7 +59,6 @@ export default function TrendingInfo() {
         [algorithm.trendingData.servers]
     );
 
-
     return (
         <TopLevelAccordion bodyStyle={noPadding} title="What's Trending">
             <div style={accordionSubheader}>
@@ -70,7 +70,7 @@ export default function TrendingInfo() {
 
             <Accordion>
                 <TrendingSection
-                    title="Hashtags"
+                    title={TrendingType.TAGS}
                     infoTxt={trendingObjInfoTxt}
                     linkLabel={tagNameMapper}
                     linkUrl={linkMapper}
@@ -79,7 +79,7 @@ export default function TrendingInfo() {
                 />
 
                 <TrendingSection
-                    title="Links"
+                    title={TrendingType.LINKS}
                     infoTxt={trendingObjInfoTxt}
                     linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
                     linkUrl={linkMapper}

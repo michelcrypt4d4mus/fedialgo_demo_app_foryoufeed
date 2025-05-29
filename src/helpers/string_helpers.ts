@@ -1,7 +1,7 @@
 /*
  * String manipulation helpers.
  */
-import { MediaCategory, type TrendingData } from "fedialgo";
+import { MediaCategory, type TrendingData, TrendingType } from "fedialgo";
 
 import { config } from "../config";
 import { debugMsg, errorMsg, warnMsg } from "./log_helpers";
@@ -135,14 +135,16 @@ export const timestampString = (_timestamp: string): string => {
 // Figure out the type of trending object based on the string.
 // TODO: this is janky, but it works for now.
 export function trendingTypeForString(str: string): keyof TrendingData {
-    if (str.toLowerCase().includes('hashtags')) {
-        return 'tags';
-    } else if (str.toLowerCase().includes('links')) {
-        return 'links';
-    } else if (str.toLowerCase().includes('servers')) {
-        return 'servers'; // unused
-    } else if (str.toLowerCase().includes('toots')) {
-        return 'toots';
+    str = str.toLowerCase().trim();
+
+    if (str.endsWith(TrendingType.TAGS) || str.includes('hashtags')) {
+        return TrendingType.TAGS;
+    } else if (str.includes('links')) {
+        return TrendingType.LINKS;
+    } else if (str.includes('servers')) {
+        return TrendingType.SERVERS;
+    } else if (str.includes('toots')) {
+        return 'toots';  // TODO: TrendingType has STATUSES, not TOOTS
     } else {
         throw new Error(`Unknown trending object type for title: "${str}"`);
     }

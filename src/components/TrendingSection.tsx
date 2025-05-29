@@ -3,7 +3,8 @@
  */
 import React, { CSSProperties, useMemo, useState } from "react";
 
-import { type TrendingData, type TrendingObj } from "fedialgo";
+import { capitalCase } from "change-case";
+import { type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
@@ -13,18 +14,12 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify } from "../helpers/react_helpers";
 import { trendingTypeForString } from "../helpers/string_helpers";
 
-const NUM_SHOWN_FOR_TYPE: Record<keyof TrendingData, number | undefined> = {
-    links: config.trending.numLinksToShow,
-    servers: config.trending.numServersToShow, // unused
-    tags: config.trending.numHashtagsToShow,
-    toots: config.trending.numTootsToShow,
-};
-
 type TrendingPanelCfg = {
+    containerStyle?: CSSProperties;
     hasCustomStyle?: boolean;
     initialNumShown: number;
     objTypeLabel?: string;
-    containerStyle?: CSSProperties;
+    prependTrending?: boolean;
 };
 
 const TRENDING_PANEL_CFG: Record<keyof TrendingData, TrendingPanelCfg> = {
@@ -33,9 +28,7 @@ const TRENDING_PANEL_CFG: Record<keyof TrendingData, TrendingPanelCfg> = {
         initialNumShown: config.trending.numLinksToShow,
     },
     servers: {
-        containerStyle: {
-            paddingLeft: "40px",
-        },
+        containerStyle: {paddingLeft: "40px"},
         initialNumShown: config.trending.numServersToShow, // unused
     },
     tags: {
@@ -61,18 +54,22 @@ interface TrendingProps {
 
 
 export default function TrendingSection(props: TrendingProps) {
-    const { infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
+    let { infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
+    const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
 
     // Get configuration for this kind of trending object
     const objType = trendingTypeForString(title);
     const panelCfg = TRENDING_PANEL_CFG[objType];
+    const objTypeLabel = panelCfg.objTypeLabel ?? objType;
+    title = capitalCase((title in TRENDING_PANEL_CFG) ? `Trending ${objTypeLabel || title}`: title);
+
     const containerStyle = panelCfg.containerStyle ?? {};
     const hasCustomStyle = panelCfg.hasCustomStyle ?? false;
     const initialNumShown = panelCfg.initialNumShown ?? trendingObjs.length;
-    const objTypeLabel = panelCfg.objTypeLabel ?? objType;
 
+
+    // State
     const [currentNumShown, setCurrentNumShown] = useState(initialNumShown);
-    const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
