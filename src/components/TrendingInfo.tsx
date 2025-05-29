@@ -13,6 +13,7 @@ import { accordionSubheader, noPadding } from "../helpers/style_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
+import { sanitizeServerUrl } from "../helpers/string_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const logger = new ComponentLogger("TrendingInfo");
@@ -29,13 +30,15 @@ export default function TrendingInfo() {
                 linkRenderer={{
                     infoTxt: (domain: string) => {
                         const serverInfo = algorithm.trendingData.servers[domain];
-                        const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
-                        info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
-                        return info.join(', ');
+
+                        return [
+                            `MAU: ${serverInfo.MAU.toLocaleString()}`,
+                            `followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`
+                        ].join(', ');
                     },
-                    linkLabel: (domain: string) => domain as string,
-                    linkUrl: (domain: string) => `https://${domain}`,
-                    onClick: (domain: string, e) => followUri(`https://${domain}`, e)
+                    linkLabel: (domain: string) => domain,
+                    linkUrl: (domain: string) => sanitizeServerUrl(domain),
+                    onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain), e)
                 }}
                 trendingObjs={Object.keys(algorithm.trendingData.servers)}
             />
@@ -56,10 +59,8 @@ export default function TrendingInfo() {
                 <TrendingSection
                     panelType={TrendingType.TAGS}
                     linkRenderer={{
-                        infoTxt: trendingObjInfoTxt,
+                        ...trendingObjLinkRenderer,
                         linkLabel: tagNameMapper,
-                        linkUrl: linkMapper,
-                        onClick: openTrendingLink
                     }}
                     trendingObjs={algorithm.trendingData.tags}
                 />
@@ -67,10 +68,8 @@ export default function TrendingInfo() {
                 <TrendingSection
                     panelType={TrendingType.LINKS}
                     linkRenderer={{
-                        infoTxt: trendingObjInfoTxt,
+                        ...trendingObjLinkRenderer,
                         linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
-                        linkUrl: linkMapper,
-                        onClick: openTrendingLink
                     }}
                     trendingObjs={algorithm.trendingData.links}
                 />
@@ -93,10 +92,9 @@ export default function TrendingInfo() {
                 <TrendingSection
                     panelType={ScoreName.PARTICIPATED_TAGS}
                     linkRenderer={{
+                        ...baseLinkRenderer,
                         infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`,
                         linkLabel: tagNameMapper,
-                        linkUrl: linkMapper,
-                        onClick: openTrendingLink
                     }}
                     trendingObjs={algorithm.userData.popularUserTags()}
                 />
@@ -119,6 +117,16 @@ const prefixedHtml = (text: string, prefix?: string): React.ReactElement => {
         {prefix?.length ? <span style={monospace}>{`[${prefix}]`}</span> : ''}
         <span style={bold}>{prefix?.length ? ' ' : ''}{text}</span>
     </>);
+};
+
+const baseLinkRenderer = {
+    linkUrl: linkMapper,
+    onClick: openTrendingLink
+};
+
+const trendingObjLinkRenderer = {
+    ...baseLinkRenderer,
+    infoTxt: trendingObjInfoTxt,
 };
 
 
