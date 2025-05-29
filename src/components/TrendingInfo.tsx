@@ -26,15 +26,17 @@ export default function TrendingInfo() {
         () => (
             <TrendingSection
                 panelType={TrendingType.SERVERS}
-                infoTxt={(domain: string) => {
-                    const serverInfo = algorithm.trendingData.servers[domain];
-                    const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
-                    info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
-                    return info.join(', ');
+                linkRenderer={{
+                    infoTxt: (domain: string) => {
+                        const serverInfo = algorithm.trendingData.servers[domain];
+                        const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
+                        info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
+                        return info.join(', ');
+                    },
+                    linkLabel: (domain: string) => domain as string,
+                    linkUrl: (domain: string) => `https://${domain}`,
+                    onClick: (domain: string, e) => followUri(`https://${domain}`, e)
                 }}
-                linkLabel={(domain: string) => domain as string}
-                linkUrl={(domain: string) => `https://${domain}`}
-                onClick={(domain: string, e) => followUri(`https://${domain}`, e)}
                 trendingObjs={Object.keys(algorithm.trendingData.servers)}
             />
         ),
@@ -53,19 +55,23 @@ export default function TrendingInfo() {
             <Accordion>
                 <TrendingSection
                     panelType={TrendingType.TAGS}
-                    infoTxt={trendingObjInfoTxt}
-                    linkLabel={tagNameMapper}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
+                    linkRenderer={{
+                        infoTxt: trendingObjInfoTxt,
+                        linkLabel: tagNameMapper,
+                        linkUrl: linkMapper,
+                        onClick: openTrendingLink
+                    }}
                     trendingObjs={algorithm.trendingData.tags}
                 />
 
                 <TrendingSection
                     panelType={TrendingType.LINKS}
-                    infoTxt={trendingObjInfoTxt}
-                    linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
+                    linkRenderer={{
+                        infoTxt: trendingObjInfoTxt,
+                        linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
+                        linkUrl: linkMapper,
+                        onClick: openTrendingLink
+                    }}
                     trendingObjs={algorithm.trendingData.links}
                 />
 
@@ -86,10 +92,12 @@ export default function TrendingInfo() {
 
                 <TrendingSection
                     panelType={ScoreName.PARTICIPATED_TAGS}
-                    infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
-                    linkLabel={tagNameMapper}
-                    linkUrl={linkMapper}
-                    onClick={openTrendingLink}
+                    linkRenderer={{
+                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`,
+                        linkLabel: tagNameMapper,
+                        linkUrl: linkMapper,
+                        onClick: openTrendingLink
+                    }}
                     trendingObjs={algorithm.userData.popularUserTags()}
                 />
             </Accordion>

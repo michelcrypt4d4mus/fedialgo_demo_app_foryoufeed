@@ -4,10 +4,9 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
-import { ScoreName, Toot, type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
+import { ScoreName, type TrendingData, type TrendingObj, TrendingType } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
-import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
@@ -17,6 +16,14 @@ import { gridify, verticalSpacer } from "../helpers/react_helpers";
 export type TrendingListObj = TrendingObj | string;
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
+type LinkRenderer = {
+    infoTxt?: (obj: TrendingListObj) => string;
+    linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
+    linkUrl: (obj: TrendingListObj) => string;
+    onClick: (obj: TrendingListObj, e: React.MouseEvent) => void;
+}
+
+// TODO: should this be part of global config?
 type TrendingPanelCfg = {
     description?: string;
     hasCustomStyle?: boolean;
@@ -54,32 +61,29 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
     },
 };
 
-// Either objectRenderer() OR linkLabel() + linkUrl() + onClick() must be provided in TrendingProps.
+// Either objectRenderer() OR linkRender must be provided in TrendingProps.
 interface TrendingProps {
-    infoTxt?: (obj: TrendingListObj) => string;
-    linkLabel?: (obj: TrendingListObj) => React.ReactElement | string;
-    linkUrl?: (obj: TrendingListObj) => string;
+    linkRenderer?: LinkRenderer;
     objRenderer?: (obj: TrendingListObj) => React.ReactElement;
-    onClick?: (obj: TrendingListObj, e: React.MouseEvent) => void;
     panelType: TrendingPanel;
     trendingObjs: TrendingListObj[];
 };
 
 
 export default function TrendingSection(props: TrendingProps) {
-    let { infoTxt, linkLabel, linkUrl, onClick, objRenderer, panelType, trendingObjs } = props;
+    let { linkRenderer, objRenderer, panelType, trendingObjs } = props;
+    const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
 
-    if (!objRenderer && !(linkLabel && linkUrl && onClick)) {
-        throw new Error("TrendingSection requires either objRenderer() OR linkLabel() + linkUrl() + onClick() props.");
+    if (!objRenderer && !linkRenderer) {
+        logger.error("TrendingSection must have either objRenderer() or linkRenderer! props:", props);
+        throw new Error("TrendingSection needs either objRenderer() or linkRenderer! props:");
     }
 
     // Configuration from TRENDING_PANEL_CFG based on panelType prop
     const panelCfg = TRENDING_PANEL_CFG[panelType];
     const objTypeLabel = panelCfg.objTypeLabel || panelType;
     const title = panelCfg.title || capitalCase(objTypeLabel);
-    // numShown saved as state so we can toggle the number of items shown in the panel
     const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
-    const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
@@ -123,6 +127,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </>;
             }
 
+            const { infoTxt, linkLabel, linkUrl, onClick } = linkRenderer!;
             const labels = trendingObjs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
