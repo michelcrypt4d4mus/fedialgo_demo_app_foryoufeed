@@ -4,20 +4,30 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
-import { ScoreName, TrendingData, TrendingType } from "fedialgo";
+import { capitalCase } from "change-case";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
+import { MB } from "./helpers/number_helpers";
 
-export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
+// Enums  // TODO: move to types.ts?
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
     INVERT_SELECTION = "invertSelection",
     SORT_BY_COUNT = "sortByCount",
 };
 
-const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
-const KB = 1024;
-const MB = KB * KB;
 
+// Exported types  // TODO: move to types.ts?
+export type CheckboxTooltip = {
+    anchor?: string;
+    color?: CSSProperties["color"];
+    text: string;
+};
+
+export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
+
+
+// Subconfig types
 type AppConfig = {
     changelogUrl: string;
     developerMastodonUrl: string;
@@ -33,6 +43,12 @@ type FilterConfig = {
     defaultMinTootsToAppear: number;
     maxOptionLength: number;
     minOptionsToShowSlider: number;
+    optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
+};
+
+export type FilterGridConfig = {
+    labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    [SwitchType.HIGHLIGHTS_ONLY]?: boolean; // Whether to only show highlighted options
 };
 
 type LocaleConfig = {
@@ -76,7 +92,8 @@ type TimelineConfig = {
 
 type TooltipConfig = {
     filterOptionDelay: number;
-    filterSwitchTooltips: Record<SwitchType, string>;
+    filterOptionsTooltips: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
+    filterHeaderSwitchTooltips: Record<SwitchType, string>;
     gradientAdjustPctiles?: number[];
     headerDelay: number;
     minTagsForGradientAdjust?: number;
@@ -105,11 +122,32 @@ type TrendingConfig = {
 
 type WeightsConfig = {
     defaultStepSize: number;
+    presetMenuLabel: string;
     scalingMultiplier: number;
 };
 
+
+// Constants for subconfig
+const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
+
+const THEME: ThemeConfig = {
+    accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
+    feedBackgroundColor: '#15202b',     // background color for the timeline
+    feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
+    followedTagColor: 'yellow',           // Color for followed tags
+    followedUserColor: 'cyan',            // Color for followed users
+    followedUserColorFaded: '#2092a1',  // Faded color for followed users
+    participatedTagColor: '#92a14a',    // Color for participated tags
+    participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
+    trendingObjFontSize: 16,              // Font size for trending objects
+    trendingTagColor: 'firebrick',        // Color for trending tags
+    trendingTagColorFaded: '#f08c8c',   // Faded color for trending tags
+};
+
+
 interface ConfigType {
     filters: FilterConfig;
+    locale: LocaleConfig;
     replies: ReplyConfig;
     stats: StatsConfig;
     theme: ThemeConfig;
@@ -138,6 +176,20 @@ class Config implements ConfigType {
         defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
         maxOptionLength: 21,                 // Maximum length of a filter option label
         minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
+        optionsList: {                       // Configure how the filter options list should be displayed
+            [BooleanFilterName.HASHTAG]: {
+                [SwitchType.HIGHLIGHTS_ONLY]: true,
+            },
+            [BooleanFilterName.LANGUAGE]: {
+                labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
+            },
+            [BooleanFilterName.TYPE]: {
+                labelMapper: (name: string) => capitalCase(name),
+            },
+            [BooleanFilterName.USER]: {
+                [SwitchType.HIGHLIGHTS_ONLY]: true,
+            }
+        },
     }
 
     locale: LocaleConfig = {
@@ -160,19 +212,7 @@ class Config implements ConfigType {
         animationDuration: 500,               // Duration of stats animations in milliseconds
     }
 
-    theme: ThemeConfig = {
-        accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-        feedBackgroundColor: '#15202b',     // background color for the timeline
-        feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
-        followedTagColor: 'yellow',           // Color for followed tags
-        followedUserColor: 'cyan',            // Color for followed users
-        followedUserColorFaded: '#2092a1',  // Faded color for followed users
-        participatedTagColor: '#92a14a',    // Color for participated tags
-        participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
-        trendingObjFontSize: 16,              // Font size for trending objects
-        trendingTagColor: 'firebrick',        // Color for trending tags
-        trendingTagColorFaded: '#f08c8c',   // Faded color for trending tags
-    }
+    theme: ThemeConfig = THEME;
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
@@ -185,7 +225,29 @@ class Config implements ConfigType {
 
     tooltips: TooltipConfig = {
         filterOptionDelay: 500,               // Delay for filter option tooltips in milliseconds
-        filterSwitchTooltips: {
+        filterOptionsTooltips: {              // Text that appears on highlighted filter options
+            [BooleanFilterName.LANGUAGE]: {
+                color: THEME.followedUserColor,
+                text: `You post most in this language`,
+            },
+            [TypeFilterName.FOLLOWED_ACCOUNTS]: {
+                color: THEME.followedUserColor,
+                text: `You follow this account`,
+            },
+            [TypeFilterName.FOLLOWED_HASHTAGS]: {
+                color: THEME.followedTagColor,
+                text: `You follow this hashtag`,
+            },
+            [TypeFilterName.PARTICIPATED_HASHTAGS]: {
+                color: THEME.participatedTagColor,
+                text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
+            },
+            [TypeFilterName.TRENDING_HASHTAGS]: {
+                color: THEME.trendingTagColorFaded,
+                text: `This hashtag is trending`,
+            },
+        },
+        filterHeaderSwitchTooltips: {
             [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
             [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
             [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
@@ -213,12 +275,12 @@ class Config implements ConfigType {
             [ScoreName.PARTICIPATED_TAGS]: {
                 initialNumShown: 40,
                 objTypeLabel: "of your hashtags",
-                title: "Hashtags You Post About The Most",
+                title: "Hashtags You Often Post About",
             },
             [TrendingType.SERVERS]: {
                 description: "The Mastodon servers all these trending links, toots, and hashtags came from, sorted by the percentage of that server's monthly active users you follow:",
                 initialNumShown: 40,        // TODO: unused
-                title: "Fediverse Servers That Were Scraped",
+                title: "Servers Telling Us What's Trending In The Fediverse",
             },
             [TrendingType.TAGS]: {
                 initialNumShown: 30,
@@ -233,6 +295,7 @@ class Config implements ConfigType {
 
     weights: WeightsConfig = {
         defaultStepSize: 0.02,                // Default step size for weight sliders
+        presetMenuLabel: "Preset Algorithm Configurations", // Label for the preset menu in the weights panel
         scalingMultiplier: 1.2,               // Multiplier for scaling weight sliders responsively
     }
 };

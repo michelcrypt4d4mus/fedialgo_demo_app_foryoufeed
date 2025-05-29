@@ -1,8 +1,8 @@
 /*
  * WIP: Component for displaying the trending hashtags in the Fediverse.
  */
-import React, { CSSProperties, useState } from "react";
 import { Button } from 'react-bootstrap';
+import { CSSProperties, useState } from "react";
 
 import { FEDIALGO } from 'fedialgo';
 
@@ -28,8 +28,8 @@ const logger = new ComponentLogger("ExperimentalFeatures");
 const BUTTON_TEXT = {
     [DELETE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors." +
                   " You'll need to reauthenticate afterwards.",
-    [SCORE_STATS]: "Show a bar chart of the scores of your timeline.",
-    [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state.`,
+    [SCORE_STATS]: "Show some charts breaking down the way your timeline is being scored when looked at in deciles.",
+    [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state and configuration.`,
     [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed." +
                                   " Takes time & resources proportional to the number of times you've tooted.",
 };

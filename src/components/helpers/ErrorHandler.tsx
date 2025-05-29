@@ -10,6 +10,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ComponentLogger } from "../../helpers/log_helpers";
 import BugReportLink from "./BugReportLink";
 
+
 const logger = new ComponentLogger("ErrorHandler");
 
 interface ErrorContextProps {

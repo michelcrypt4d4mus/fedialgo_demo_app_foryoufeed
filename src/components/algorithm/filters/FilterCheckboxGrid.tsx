@@ -8,36 +8,14 @@ import { useCallback, useMemo } from "react";
 import tinygradient from "tinygradient";
 import { BooleanFilter, BooleanFilterName, TypeFilterName, sortKeysByValue } from "fedialgo";
 
-import FilterCheckbox, { CheckboxTooltip } from "./FilterCheckbox";
+import FilterCheckbox from "./FilterCheckbox";
 import { ComponentLogger } from "../../../helpers/log_helpers";
 import { compareStr } from "../../../helpers/string_helpers";
-import { config } from "../../../config";
-import { FILTER_CONFIG, FilterGridConfig } from "../BooleanFilterAccordionSection";
+import { config, CheckboxTooltip, FilterGridConfig } from "../../../config";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-const TOOLTIPS: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip} = {
-    [BooleanFilterName.LANGUAGE]: {
-        color: config.theme.followedUserColor,
-        text: `You post most in this language`,
-    },
-    [TypeFilterName.FOLLOWED_ACCOUNTS]: {
-        color: config.theme.followedUserColor,
-        text: `You follow this account`,
-    },
-    [TypeFilterName.FOLLOWED_HASHTAGS]: {
-        color: config.theme.followedTagColor,
-        text: `You follow this hashtag`,
-    },
-    [TypeFilterName.PARTICIPATED_HASHTAGS]: {
-        color: config.theme.participatedTagColor,
-        text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
-    },
-    [TypeFilterName.TRENDING_HASHTAGS]: {
-        color: config.theme.trendingTagColorFaded,
-        text: `This hashtag is trending`,
-    },
-};
+const TOOLTIPS = config.tooltips.filterOptionsTooltips;
 
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
@@ -51,7 +29,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
 
-    const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
+    const filterConfig: FilterGridConfig | undefined = config.filters.optionsList[filter.title];
     const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
 
     const participatedColorArray = useMemo(

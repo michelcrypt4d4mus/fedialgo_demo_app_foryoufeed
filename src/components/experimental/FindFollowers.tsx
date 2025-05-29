@@ -4,26 +4,41 @@ import parse from 'html-react-parser';
 import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
 import { mastodon } from 'masto';
 
+import LoadingSpinner from '../helpers/LoadingSpinner';
+import { ComponentLogger } from '../../helpers/log_helpers';
+import { loadingMsgStyle } from '../../pages/Feed';
 import { titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useAuthContext } from '../../hooks/useAuth';
 
 const NUM_SUGGESTIONS = 4;
 
+const logger = new ComponentLogger("FindFollowers");
+
 
 export default function FindFollowers(): React.ReactElement {
     const { user } = useAuthContext();
     const { api } = useAlgorithm();
 
+    const [isFinding, setIsFinding] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<mastodon.v1.Suggestion[]>([]);
 
     useEffect(() => {
         if (!open || suggestions.length > 0) return;
+        setIsFinding(true);
 
-        api.v2.suggestions.list().then((res) => {
-            setSuggestions(res);
-        });
+        (Promise.resolve(api.v2.suggestions.list()) as Promise<mastodon.v1.Suggestion[]>)
+            .then((res) => {
+                logger.debug("Fetched suggestions:", res);
+                setSuggestions(res);
+            })
+            .catch((err) => {
+                logger.error("Error fetching suggestions:", err);
+            })
+            .finally(() => {
+                setIsFinding(false);
+            });
     }, [open]);
 
     const follow = (id: string) => {
@@ -53,7 +68,12 @@ export default function FindFollowers(): React.ReactElement {
 
                 <Accordion.Body onEnter={() => setOpen(true)}>
                     <Row className="g-4 m-3">
-                        {suggestions.length == 0 && <div>If this does not work, log out and login again</div>}
+                        {suggestions.length == 0 &&
+                            <div>
+                                {isFinding && <LoadingSpinner message={`Finding followers...`} style={loadingMsgStyle} />}
+                                <br/>
+                                If this does not work, log out and login again
+                            </div>}
 
                         {suggestions
                             .filter((suggestion: mastodon.v1.Suggestion) => suggestion.source === "past_interactions")

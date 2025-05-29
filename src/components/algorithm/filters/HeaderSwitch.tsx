@@ -41,7 +41,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
             onChange={onChange}
             tooltip={{
                 anchor: HEADER_SWITCH_TOOLTIP_ANCHOR,
-                text: tooltipText || config.tooltips.filterSwitchTooltips[label],
+                text: tooltipText || config.tooltips.filterHeaderSwitchTooltips[label],
             }}
         />
     );

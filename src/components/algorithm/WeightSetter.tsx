@@ -3,7 +3,7 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import React, { CSSProperties, useState, useEffect } from "react";
+import { CSSProperties, useState, useEffect } from "react";
 
 import { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
 
@@ -11,11 +11,11 @@ import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import WeightSlider from './WeightSlider';
 import { ComponentLogger } from "../../helpers/log_helpers";
+import { config } from "../../config";
 import { roundedBox, titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
-const PRESET_MENU_TITLE = "Preset Algorithm Configurations";
 const logger = new ComponentLogger("WeightSetter");
 
 
@@ -50,7 +50,7 @@ export default function WeightSetter() {
         }
     };
 
-    const weightSlider = (scoreName: WeightName) => (
+    const makeWeightSlider = (scoreName: WeightName) => (
         <WeightSlider
             key={scoreName}
             scoreName={scoreName}
@@ -63,12 +63,12 @@ export default function WeightSetter() {
         <TopLevelAccordion title={"Feed Algorithm Control Panel"}>
             <LabeledDropdownButton
                 id="presetWeights"
-                initialLabel={PRESET_MENU_TITLE}
+                initialLabel={config.weights.presetMenuLabel}
                 onClick={updateWeightsToPreset}
                 options={Object.keys(algorithm.weightPresets)}
             />
 
-            {Object.values(NonScoreWeightName).map((weight) => weightSlider(weight))}
+            {Object.values(NonScoreWeightName).map((weight) => makeWeightSlider(weight))}
             <div style={{height: '12px'}} />
 
             <div style={roundedBox}>
@@ -76,7 +76,7 @@ export default function WeightSetter() {
                     Weightings
                 </p>
 
-                {sortedScorers.map((scorer) => weightSlider(scorer.name))}
+                {sortedScorers.map((scorer) => makeWeightSlider(scorer.name))}
             </div>
         </TopLevelAccordion>
     );
