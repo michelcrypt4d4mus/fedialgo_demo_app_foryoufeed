@@ -39,17 +39,20 @@ type AppConfig = {
     showcaseImageUrl: string;
 };
 
+
 type FilterConfig = {
-    defaultMinTootsToAppear: number;
-    maxOptionLength: number;
-    minOptionsToShowSlider: number;
+    boolean: {
+        defaultMinTootsToAppear: number;
+        maxOptionLength: number;          // Maximum length of a filter option label
+        minOptionsToShowSlider: number;   // Minimum number of options to show the slider & hide low count options
+        optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
+    };
     numeric: {
         description: string;
         invertSelectionTooltip: string;
         maxValue: number;
         title: string;
     };
-    optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
 };
 
 export type FilterGridConfig = {
@@ -179,37 +182,39 @@ class Config implements ConfigType {
     }
 
     filters: FilterConfig = {
-        defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
-        maxOptionLength: 21,                 // Maximum length of a filter option label
-        minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
+        boolean: {
+            defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
+            maxOptionLength: 21,                 // Maximum length of a filter option label
+            minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
+            optionsList: {                       // Configure how the filter options list should be displayed
+                [BooleanFilterName.HASHTAG]: {
+                    [SwitchType.HIGHLIGHTS_ONLY]: true,
+                },
+                [BooleanFilterName.LANGUAGE]: {
+                    labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
+                },
+                [BooleanFilterName.TYPE]: {
+                    labelMapper: (name: string) => capitalCase(name),
+                },
+                [BooleanFilterName.USER]: {
+                    [SwitchType.HIGHLIGHTS_ONLY]: true,
+                }
+            },
+        },
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
             invertSelectionTooltip: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
-            maxValue: 50,                    // Maximum value for numeric filters
+            maxValue: 50,                          // Maximum value for numeric filters
             title: "Interactions",
-        },
-        optionsList: {                       // Configure how the filter options list should be displayed
-            [BooleanFilterName.HASHTAG]: {
-                [SwitchType.HIGHLIGHTS_ONLY]: true,
-            },
-            [BooleanFilterName.LANGUAGE]: {
-                labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
-            },
-            [BooleanFilterName.TYPE]: {
-                labelMapper: (name: string) => capitalCase(name),
-            },
-            [BooleanFilterName.USER]: {
-                [SwitchType.HIGHLIGHTS_ONLY]: true,
-            }
         },
     }
 
     locale: LocaleConfig = {
-        defaultLocale: 'en-CA',              // Default locale for the application
+        defaultLocale: 'en-CA',                    // Default locale for the application
     }
 
     replies: ReplyConfig = {
-        defaultAcceptedAttachments: {        // Default in case the user's server doesn't provide this info
+        defaultAcceptedAttachments: {              // Default in case the user's server doesn't provide this info
             'audio/*': ['.mp3', '.wav'],
             'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
             'video/*': ['.mp4', '.webm'],

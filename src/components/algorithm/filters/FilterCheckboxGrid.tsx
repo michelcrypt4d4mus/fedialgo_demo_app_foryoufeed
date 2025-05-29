@@ -29,8 +29,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightedOnly, minToots, sortByCount } = props;
     const { algorithm } = useAlgorithm();
 
-    const filterConfig: FilterGridConfig | undefined = config.filters.optionsList[filter.title];
     const logger = useMemo(() => new ComponentLogger("FilterCheckboxGrid", filter.title), [filter.title]);
+    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
 
     const participatedColorArray = useMemo(
         () => {
