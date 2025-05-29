@@ -2,14 +2,14 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import React, { ChangeEvent, useState } from "react";
+import { useState } from "react";
 
 import { BooleanFilter, BooleanFilterName, LANGUAGE_CODES } from "fedialgo";
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
-import FilterCheckboxGrid from "./FilterCheckboxGrid";
+import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
 import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";

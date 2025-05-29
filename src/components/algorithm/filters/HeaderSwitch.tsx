@@ -6,7 +6,7 @@ import { ChangeEvent } from "react";
 
 import { Tooltip } from 'react-tooltip';
 
-import FilterCheckbox from "../FilterCheckbox";
+import FilterCheckbox from "./FilterCheckbox";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../../helpers/style_helpers";
 
 export enum SwitchType {

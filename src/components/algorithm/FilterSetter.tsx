@@ -13,7 +13,7 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { HASHTAG_ANCHOR, HIGHLIGHT } from "./FilterCheckbox";
+import { HASHTAG_ANCHOR, HIGHLIGHT } from "./filters/FilterCheckbox";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";

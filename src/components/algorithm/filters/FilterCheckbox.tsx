@@ -7,9 +7,9 @@ import Form from 'react-bootstrap/esm/Form';
 import { capitalCase } from "change-case";
 
 import { CheckboxTooltip } from "./FilterCheckboxGrid";
-import { followUri } from "../../helpers/react_helpers";
-import { linkesque } from "../../helpers/style_helpers";
-import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { followUri } from "../../../helpers/react_helpers";
+import { linkesque } from "../../../helpers/style_helpers";
+import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 export const HASHTAG_ANCHOR = "user-hashtag-anchor";
 export const HIGHLIGHT = "highlighted";
