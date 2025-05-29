@@ -53,8 +53,8 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
         labelStyle.fontSize = "14px";
     }
 
-    if (label.length > config.filters.maxOptionLength) {
-        label = `${label.slice(0, config.filters.maxOptionLength)}...`;
+    if (label.length > config.filters.boolean.maxOptionLength) {
+        label = `${label.slice(0, config.filters.boolean.maxOptionLength)}...`;
     }
 
     let labelNode = <span style={labelStyle}>{label}</span>;

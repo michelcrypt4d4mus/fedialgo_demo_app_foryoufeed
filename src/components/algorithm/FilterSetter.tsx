@@ -4,6 +4,7 @@
  * are trending in the Fedivers.
  */
 import Accordion from 'react-bootstrap/esm/Accordion';
+import { useCallback } from 'react';
 
 import { capitalCase } from "change-case";
 
@@ -12,15 +13,19 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
+import { ComponentLogger } from '../../helpers/log_helpers';
 import { config, SwitchType } from "../../config";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
 import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
+const logger = new ComponentLogger("FilterSetter");
+
 
 export default function FilterSetter() {
     const { algorithm } = useAlgorithm();
+    logger.trace("Rendering...");
 
     // Filter for 'visible' because the APP filters are currently hidden
     const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => f.visible);
@@ -32,10 +37,10 @@ export default function FilterSetter() {
     const numericFilterSwitchbar = [
         <HeaderSwitch
             isChecked={numericFilters.every((filter) => filter.invertSelection)}
-            key={SwitchType.INVERT_SELECTION + 'numericFilters'}
+            key={SwitchType.INVERT_SELECTION + '--numericFilters'}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
-            tooltipText="Show toots with less than the selected number of interactions"
+            tooltipText={config.filters.numeric.invertSelectionTooltip}
         />,
     ];
 
@@ -47,18 +52,19 @@ export default function FilterSetter() {
 
             <Accordion alwaysOpen>
                 <FilterAccordionSection
-                    description={"Filter based on minimum/maximum number of replies, retoots, etc"}
+                    description={config.filters.numeric.description}
                     isActive={hasActiveNumericFilter}
                     switchbar={numericFilterSwitchbar}
-                    title="Interactions"
+                    title={config.filters.numeric.title}
                 >
                     {Object.entries(algorithm.filters.numericFilters).map(([name, numericFilter], i) => (
                         <Slider
                             description={numericFilter.description}
                             key={`${numericFilter.title}_${i}`}
                             label={capitalCase(numericFilter.title)}
-                            maxValue={50}
+                            maxValue={config.filters.numeric.maxValue}
                             minValue={0}
+                            // TODO: useCallback() could save a lot of re-renders here maybe...
                             onChange={async (e) => {
                                 numericFilter.value = Number(e.target.value);
                                 algorithm.updateFilters(algorithm.filters);

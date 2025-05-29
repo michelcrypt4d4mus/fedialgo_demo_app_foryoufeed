@@ -60,7 +60,7 @@ export default function TrendingSection(props: TrendingProps) {
             };
 
             return (
-                <div style={footerContainer}>
+                <div key={`footer-${title}`} style={footerContainer}>
                     <div style={{width: "40%"}}>{'('}
                         <a onClick={toggleShown} style={footerLinkText}>
                             {numShown == panelCfg.initialNumShown
@@ -82,7 +82,7 @@ export default function TrendingSection(props: TrendingProps) {
             // Short circuit the rendering for custom object renderers (so far that's means just Toots)
             if (objRenderer) {
                 return <>
-                    {objs.map((obj, i) => objRenderer!(obj))}
+                    {objs.map((obj, i) => objRenderer(obj))}
                     {verticalSpacer(20, `trending-footer-${panelType}`)}
                     {footer}
                 </>;
@@ -93,7 +93,7 @@ export default function TrendingSection(props: TrendingProps) {
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
             const isSingleCol = panelCfg.hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);
-            logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, isSingleCol=${isSingleCol})`);
+            logger.trace(`Rebuilding trendingItemList, longest label="${longestLabel}" (len=${maxLength}, isSingleCol=${isSingleCol})`);
             let containerStyle: CSSProperties;
 
             if (panelCfg.hasCustomStyle) {
@@ -105,7 +105,7 @@ export default function TrendingSection(props: TrendingProps) {
             }
 
             const elements = objs.map((obj, i) => (
-                <li key={i} style={listItemStyle}>
+                <li key={`${title}-${i}-list-item`} style={listItemStyle}>
                     <NewTabLink
                         href={linkUrl(obj)}
                         onClick={(e) => onClick(obj, e)}
@@ -140,6 +140,12 @@ export default function TrendingSection(props: TrendingProps) {
     );
 };
 
+
+const boldTagLinkStyle: CSSProperties = {
+    ...globalFont,
+    fontSize: config.theme.trendingObjFontSize - 2,
+    fontWeight: "bold",
+};
 
 const colStyle: CSSProperties = {
     marginLeft: "5px",
@@ -187,12 +193,6 @@ const listStyle: CSSProperties = {
     listStyle: "numeric",
     paddingBottom: "10px",
     paddingLeft: "25px",
-};
-
-const boldTagLinkStyle: CSSProperties = {
-    ...globalFont,
-    fontSize: config.theme.trendingObjFontSize - 2,
-    fontWeight: "bold",
 };
 
 const trendingListContainer: CSSProperties = {
