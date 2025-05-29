@@ -11,17 +11,17 @@ import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection, { LINK_FONT_SIZE } from "./TrendingSection";
 import { ComponentLogger } from "../helpers/log_helpers";
+import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
 import { IMAGE_BACKGROUND_COLOR, accordionSubheader, linkesque, noPadding } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
-const DEFAULT_MAX_HASHTAGS_TO_SHOW = 100;
 const logger = new ComponentLogger("TrendingInfo");
 
 
 export default function TrendingInfo() {
     const { algorithm } = useAlgorithm();
-    const [maxHashtagsToShow, setMaxHashtagsToShow] = useState(DEFAULT_MAX_HASHTAGS_TO_SHOW);
+    const [userHashtagsToShow, setUserHashtagsToShow] = useState(config.trending.numUserHashtagsToShow);
 
     // React profiler said the trending sections was the most expensive component to render, so memoize the pieces
     const trendingTagsSection = useMemo(
@@ -77,16 +77,16 @@ export default function TrendingInfo() {
             const numTags = algorithm.userData.popularUserTags().length;
             const showAllText = `show all ${numTags} hashtags`;
 
-            if (numTags <= DEFAULT_MAX_HASHTAGS_TO_SHOW) {
+            if (numTags <= config.trending.numUserHashtagsToShow) {
                 logger.debug(`No footer needed, only ${numTags} participated hashtags`);
                 return null;
             }
 
             const toggleAllPopularHashtags = () => {
-                if (maxHashtagsToShow === DEFAULT_MAX_HASHTAGS_TO_SHOW) {
-                    setMaxHashtagsToShow(algorithm.userData.popularUserTags().length);
+                if (userHashtagsToShow === config.trending.numUserHashtagsToShow) {
+                    setUserHashtagsToShow(algorithm.userData.popularUserTags().length);
                 } else {
-                    setMaxHashtagsToShow(DEFAULT_MAX_HASHTAGS_TO_SHOW);
+                    setUserHashtagsToShow(config.trending.numUserHashtagsToShow);
                 }
             }
 
@@ -94,7 +94,7 @@ export default function TrendingInfo() {
                 <div style={{display: "flex", justifyContent: 'space-around', width: "100%"}}>
                     <div style={{width: "40%"}}>
                         {'('}<a onClick={toggleAllPopularHashtags} style={footerLink}>
-                            {maxHashtagsToShow === DEFAULT_MAX_HASHTAGS_TO_SHOW ? showAllText : 'show less'}
+                            {userHashtagsToShow == config.trending.numUserHashtagsToShow ? showAllText : 'show less'}
                         </a>{')'}
                     </div>
                 </div>
@@ -110,11 +110,11 @@ export default function TrendingInfo() {
                     linkUrl={linkMapper}
                     multicolumn={true}
                     onClick={openTrendingLink}
-                    trendingObjs={algorithm.userData.popularUserTags().slice(0, maxHashtagsToShow)}
+                    trendingObjs={algorithm.userData.popularUserTags().slice(0, userHashtagsToShow)}
                 />
             );
         },
-        [algorithm.userData.participatedHashtags, maxHashtagsToShow]
+        [algorithm.userData.participatedHashtags, userHashtagsToShow]
     );
 
     const scrapedServersSection = useMemo(
