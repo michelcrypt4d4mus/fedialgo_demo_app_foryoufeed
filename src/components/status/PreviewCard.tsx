@@ -10,7 +10,7 @@ import { extractDomain } from 'fedialgo';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
-const MAX_STATUS_CARD_LEN = 350;
+import { config } from '../../config';
 
 interface PreviewCardProps {
     card: mastodon.v1.PreviewCard;
@@ -60,7 +60,7 @@ export default function PreviewCard(props: PreviewCardProps): React.ReactElement
                 {headline}
 
                 <p className='status-card__description' style={{marginTop: "2px"}}>
-                    {card.description.slice(0, MAX_STATUS_CARD_LEN)}
+                    {card.description.slice(0, config.toots.maxPreviewCardLength)}
                 </p>
             </div>
         </NewTabLink>

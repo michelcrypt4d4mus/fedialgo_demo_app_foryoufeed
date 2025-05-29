@@ -32,7 +32,7 @@ import PreviewCard from "./PreviewCard";
 import ReplyModal from "./ReplyModal";
 import useOnScreen from "../../hooks/useOnScreen";
 import { ComponentLogger } from "../../helpers/log_helpers";
-import { FOLLOWED_TAG_COLOR, PARTICIPATED_TAG_COLOR, TRENDING_TAG_COLOR, linkesque } from "../../helpers/style_helpers";
+import { config } from "../../config";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { timestampString } from '../../helpers/string_helpers';
@@ -62,12 +62,12 @@ const INFO_ICONS: Record<InfoIconType, IconInfo> = {
     [InfoIconType.Bot]:          {icon: faRobot, color: "#196273"},
     [InfoIconType.DM]:           {icon: faLock, color: "purple"},
     [InfoIconType.Edited]:       {icon: faPencil},
-    [InfoIconType.Hashtags]:     {icon: faHashtag, color: PARTICIPATED_TAG_COLOR},
+    [InfoIconType.Hashtags]:     {icon: faHashtag, color: config.theme.participatedTagColor},
     [InfoIconType.Mention]:      {icon: faBolt, color: "green"},
     [InfoIconType.Reply]:        {icon: faReply, color: "blue"},
     [InfoIconType.ShowToot]:     {icon: faUpRightFromSquare},
-    [InfoIconType.TrendingLink]: {icon: faLink, color: TRENDING_TAG_COLOR},
-    [InfoIconType.TrendingToot]: {icon: faFireFlameCurved, color: TRENDING_TAG_COLOR},
+    [InfoIconType.TrendingLink]: {icon: faLink, color: config.theme.trendingTagColor},
+    [InfoIconType.TrendingToot]: {icon: faFireFlameCurved, color: config.theme.trendingTagColor},
 };
 
 interface StatusComponentProps {
@@ -143,9 +143,9 @@ export default function StatusComponent(props: StatusComponentProps) {
                 title = toot.containsTagsMsg();
 
                 if (toot.followedTags?.length) {
-                    color = FOLLOWED_TAG_COLOR;
+                    color = config.theme.followedTagColor;
                 } else if (toot.trendingTags?.length) {
-                    color = TRENDING_TAG_COLOR;
+                    color = config.theme.trendingTagColor;
                 }
             }
 

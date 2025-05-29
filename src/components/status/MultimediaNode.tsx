@@ -11,12 +11,12 @@ import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
 import { ComponentLogger } from "../../helpers/log_helpers";
+import { config } from "../../config";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
 const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
-const IMAGES_HEIGHT = 314;
-const VIDEO_HEIGHT = Math.floor(IMAGES_HEIGHT * 1.7);
+const VIDEO_HEIGHT = Math.floor(config.toots.imageHeight * 1.7);
 
 const logger = new ComponentLogger("MultimediaNode");
 
@@ -35,7 +35,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     let audios: mastodon.v1.MediaAttachment[];
     let images: mastodon.v1.MediaAttachment[];
     let videos: mastodon.v1.MediaAttachment[];
-    let imageHeight = IMAGES_HEIGHT;
+    let imageHeight = config.toots.imageHeight;
 
     if (toot) {
         audios = toot.audioAttachments;
@@ -54,9 +54,12 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
 
     // If there's one image try to show it full size; If there's more than one use old image handler.
     if (images.length == 1 ) {
-        imageHeight = images[0].meta?.small?.height || IMAGES_HEIGHT;
+        imageHeight = images[0].meta?.small?.height || config.toots.imageHeight;
     } else {
-        imageHeight = Math.min(IMAGES_HEIGHT, ...images.map(i => i.meta?.small?.height || IMAGES_HEIGHT));
+        imageHeight = Math.min(
+            config.toots.imageHeight,
+            ...images.map(i => i.meta?.small?.height || config.toots.imageHeight)
+        );
     }
 
     // Make a LazyLoadImage element for displaying an image within a Toot.
@@ -156,7 +159,7 @@ const fullSize: CSSProperties = {
 };
 
 const mediaItem: CSSProperties = {
-    backgroundColor: "black", // IMAGE_BACKGROUND_COLOR,
+    backgroundColor: "black",
     borderRadius: "15px",
 };
 

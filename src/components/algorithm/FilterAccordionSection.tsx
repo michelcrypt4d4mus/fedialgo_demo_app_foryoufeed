@@ -1,11 +1,11 @@
 /*
  * Generic omponent to display a set of filter options with a switchbar at the top.
  */
-import React, { CSSProperties, ReactElement } from "react";
-
 import Form from 'react-bootstrap/esm/Form';
+import { CSSProperties, ReactElement } from "react";
 
 import SubAccordion, { SubAccordionProps } from "../helpers/SubAccordion";
+import { horizontalSpacer } from '../../helpers/react_helpers';
 import { roundedBox } from "../../helpers/style_helpers";
 
 interface FilterAccordionSectionProps extends SubAccordionProps {
@@ -14,7 +14,12 @@ interface FilterAccordionSectionProps extends SubAccordionProps {
 
 
 export default function FilterAccordionSection(props: FilterAccordionSectionProps) {
-    const { switchbar } = props;
+    let { switchbar } = props;
+
+    // Default spacing is too far off center if there's only two switches
+    if (switchbar.length == 2) {
+        switchbar = [horizontalSpacer(20, '1'), ...switchbar, horizontalSpacer(20, '2')];
+    }
 
     return (
         <SubAccordion {...props}>

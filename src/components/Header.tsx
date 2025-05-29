@@ -1,8 +1,10 @@
-import React, { CSSProperties } from 'react';
+/*
+ * Header component on the feed page.
+ */
 import { Button, Col, Container, Row } from 'react-bootstrap';
+import { CSSProperties } from 'react';
 
-import { CRYPTADAMUS_ICON_URL } from '../helpers/style_helpers';
-import { CHANGELOG_URL, REPO_URL } from '../helpers/string_helpers';
+import { config } from '../config';
 import { useAuthContext } from "../hooks/useAuth";
 
 const XS_VALUE = 4;  // React Bootstrap Grid System
@@ -34,7 +36,7 @@ export default function Header() {
                 <Col xs={XS_VALUE} className='text-center p-0'>
                     <img
                         className="d-inline-block align-middle"
-                        src={CRYPTADAMUS_ICON_URL}
+                        src={config.app.headerIconUrl}
                         style={avatarStyle}
                     />
 
@@ -42,12 +44,12 @@ export default function Header() {
                         className='text-center align-middle p-2'
                         style={{fontSize: 16, whiteSpace: "nowrap"}}
                     >
-                        <a href={REPO_URL} style={{color: "white"}} target="_blank">
+                        <a href={config.app.repoUrl} style={{color: "white"}} target="_blank">
                             Fedialgo Demo
                         </a>
 
                         {' '}<span style={{color: "lightgrey", fontSize: 10}}>(
-                            <a href={CHANGELOG_URL} style={{color: "grey"}} target="_blank">
+                            <a href={config.app.changelogUrl} style={{color: "grey"}} target="_blank">
                                 v{process.env.FEDIALGO_VERSION}
                             </a>
                         )</span>

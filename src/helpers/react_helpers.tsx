@@ -80,3 +80,10 @@ export function gridify(elements: ReactElement[], numCols?: number, colStyle?: C
         </Row>
     );
 };
+
+
+// create a horizontal spacer of a given width
+export function horizontalSpacer(width: number, key?: string): ReactElement {
+    // return <span style={{display: "inline-block", width: `${width}px`}} />;
+    return <div key={key || ''} style={{width: "20px"}} />
+};

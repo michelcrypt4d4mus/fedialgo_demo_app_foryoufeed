@@ -1,13 +1,11 @@
 /*
  * Slider that sets a weight for the algorithm.
  */
-import React from 'react';
-
-import Slider, { DEFAULT_STEP_SIZE } from './Slider';
 import { type StringNumberDict, type WeightName } from "fedialgo";
-import { useAlgorithm } from '../../hooks/useAlgorithm';
 
-const SCALE_MULTIPLIER = 1.2;
+import Slider from './Slider';
+import { config } from '../../config';
+import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 interface WeightSliderProps {
     scoreName: WeightName;
@@ -24,8 +22,8 @@ export default function WeightSlider(props: WeightSliderProps) {
     const info = algorithm.weightInfo[scoreName];
 
     const weightValues = Object.values(userWeights).filter(x => !isNaN(x)) ?? [0];
-    const defaultMin = Math.min(...weightValues) - 1 * SCALE_MULTIPLIER;
-    const defaultMax = Math.max(...weightValues) + 1 * SCALE_MULTIPLIER;
+    const defaultMin = Math.min(...weightValues) - 1 * config.weights.scalingMultiplier;
+    const defaultMax = Math.max(...weightValues) + 1 * config.weights.scalingMultiplier;
     const minValue = info.minValue ?? defaultMin;
 
     return (
@@ -40,7 +38,9 @@ export default function WeightSlider(props: WeightSliderProps) {
                 newWeights[scoreName] = Number(e.target.value);
                 await updateWeights(newWeights);
             }}
-            stepSize={(info.minValue && info.minValue < DEFAULT_STEP_SIZE) ? minValue : DEFAULT_STEP_SIZE}
+            stepSize={(info.minValue && (info.minValue < config.weights.defaultStepSize))
+                         ? minValue
+                         : config.weights.defaultStepSize}
             value={userWeights[scoreName]}
         />
     );

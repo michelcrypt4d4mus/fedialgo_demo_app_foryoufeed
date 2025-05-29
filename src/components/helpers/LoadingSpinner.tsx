@@ -1,12 +1,12 @@
 /*
  * Loading spinner.
  */
-import React, { CSSProperties } from 'react';
 import Spinner from 'react-bootstrap/esm/Spinner';
+import { CSSProperties } from 'react';
 
 import { READY_TO_LOAD_MSG } from "fedialgo";
 
-const ANIMATION = "grow";  // "border" is the other option
+import { config } from '../../config';
 
 interface LoadingSpinnerProps {
     isFullPage?: boolean,
@@ -22,8 +22,8 @@ export default function LoadingSpinner(props: LoadingSpinnerProps) {
     return (
         <div style={{...spinnerStyle, ...(style || {})}}>
             {isFullPage
-                ? <Spinner animation={ANIMATION} />
-                : <Spinner animation={ANIMATION} size="sm" />}
+                ? <Spinner animation={config.app.loadingSpinnerType} />
+                : <Spinner animation={config.app.loadingSpinnerType} size="sm" />}
 
             <div style={{marginLeft: "12px"}}>
                 <p>{`${message || READY_TO_LOAD_MSG}...`}</p>

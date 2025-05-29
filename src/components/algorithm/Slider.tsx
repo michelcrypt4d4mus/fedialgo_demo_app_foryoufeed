@@ -4,7 +4,7 @@
 import React, { ChangeEvent, CSSProperties } from 'react';
 import Form from 'react-bootstrap/esm/Form';
 
-export const DEFAULT_STEP_SIZE = 0.02;
+import { config } from '../../config';
 
 interface SliderProps {
     description?: string;
@@ -23,7 +23,7 @@ export default function Slider(props: SliderProps) {
     const { description, hideValueBox, label, minValue, maxValue, onChange, stepSize, value, width } = props;
     if (!value && value != 0) return;
 
-    let step = stepSize ?? (minValue >= 0 ? DEFAULT_STEP_SIZE : 1);
+    let step = stepSize ?? (minValue >= 0 ? config.weights.defaultStepSize : 1);
     let decimals = 2;
 
     if (stepSize == 1) {
@@ -67,8 +67,8 @@ export default function Slider(props: SliderProps) {
     ];
 
     return (
-        <Form.Group className="me-2">
-            <div style={{...labelContainer}} id="outer_doop">
+        <Form.Group className="me-2" key={`${label}_sliderForm`}>
+            <div style={{...labelContainer}}>
                 {hideValueBox ? divs.reverse() : divs}
             </div>
         </Form.Group>

@@ -4,22 +4,7 @@
  */
 import { CSSProperties } from "react";
 
-export const CRYPTADAMUS_ICON_URL = "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg";
-export const SHOWCASE_IMAGE_URL = "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.png";
-export const IMAGE_BACKGROUND_COLOR = "#C1C1C1";
-export const RED = 'firebrick';
 export const TOOLTIP_ANCHOR = "tooltip-anchor";
-
-export const FEED_BACKGROUND_COLOR = '#15202b';
-export const FEED_BACKGROUND_COLOR_LITE = '#bcddfd';
-export const FOLLOWED_TAG_COLOR = 'yellow';
-export const FOLLOWED_USER_COLOR = 'cyan';
-export const FOLLOWED_USER_COLOR_FADED = "#2092a1";
-export const PARTICIPATED_TAG_COLOR = "#92a14a";
-// export const PARTICIPATED_TAG_COLOR_FADED = "#c3d46e";
-export const PARTICIPATED_TAG_COLOR_MIN = "#d8deb9";
-export const TRENDING_TAG_COLOR = RED;
-export const TRENDING_TAG_COLOR_FADED = '#f08c8c';
 
 export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "red",

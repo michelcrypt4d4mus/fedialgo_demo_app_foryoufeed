@@ -9,12 +9,10 @@ import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
 import { ComponentLogger } from "../helpers/log_helpers";
-import { LOADING_ERROR_MSG, buildMimeExtensions } from "../helpers/string_helpers";
+import { config } from "../config";
+import { LOADING_ERROR_MSG, Events, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
-const FOCUS = "focus";
-const RELOAD_IF_OLDER_THAN_MINUTES = 5;
-const RELOAD_IF_OLDER_THAN_SECONDS = 60 * RELOAD_IF_OLDER_THAN_MINUTES;
 const logger = new ComponentLogger("AlgorithmProvider");
 
 interface AlgoContext {
@@ -96,7 +94,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         constructFeed();
     }, [setAlgorithm, user]);
 
-    // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after RELOAD_IF_OLDER_THAN_SECONDS
+    // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after configured amount of time
     useEffect(() => {
         if (!user || !algorithm) return;
 
@@ -113,7 +111,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
                 if (feedAgeInSeconds) {
                     msg = `feed is ${feedAgeInSeconds.toFixed(0)}s old`;
-                    should = feedAgeInSeconds > RELOAD_IF_OLDER_THAN_SECONDS;
+                    should = feedAgeInSeconds > config.timeline.autoloadOnFocusAfterMinutes * 60;
                 } else {
                     msg = `${timeline.length} toots in feed but no most recent toot found!`;
                     logger.error(msg);
@@ -125,8 +123,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         };
 
         const handleFocus = () => document.hasFocus() && shouldReloadFeed() && triggerFeedUpdate();
-        window.addEventListener(FOCUS, handleFocus);
-        return () => window.removeEventListener(FOCUS, handleFocus);
+        window.addEventListener(Events.FOCUS, handleFocus);
+        return () => window.removeEventListener(Events.FOCUS, handleFocus);
     }, [algorithm, isLoading, timeline, triggerFeedUpdate, user]);
 
     const algoContext: AlgoContext = {
@@ -166,8 +164,8 @@ const triggerLoadFxn = (
         .catch((err) => {
             if (err.message.includes(GET_FEED_BUSY_MSG)) {
                 // Don't flip the isLoading state if the feed is busy
-                logger.error(`triggerLoadFxn ${LOADING_ERROR_MSG}`);
-                setError(LOADING_ERROR_MSG);
+                logger.error(`triggerLoadFxn ${config.timeline.loadingErroMsg}`);
+                setError(config.timeline.loadingErroMsg);
             } else {
                 const msg = `Failed to triggerLoadFxn with error:`;
                 logger.error(msg, err);

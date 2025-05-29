@@ -2,25 +2,38 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import React, { ChangeEvent, useState } from "react";
+import { useState } from "react";
 
 import { BooleanFilter, BooleanFilterName, LANGUAGE_CODES } from "fedialgo";
+import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
-import FilterCheckbox from "./FilterCheckbox";
-import FilterCheckboxGrid from "./FilterCheckboxGrid";
+import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
+import HeaderSwitch, { SwitchType } from "./filters/HeaderSwitch";
 import Slider from "./Slider";
+import { config } from "../../config";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../helpers/style_helpers";
 
-export enum SwitchType {
-    HIGHLIGHTS_ONLY = "highlightsOnly",
-    INVERT_SELECTION = "invertSelection",
-    SORT_BY_COUNT = "sortByCount",
+export type FilterGridConfig = {
+    labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    [SwitchType.HIGHLIGHTS_ONLY]?: boolean; // Whether to only show highlighted options
 };
 
-const DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER = 5;
-const MIN_OPTIONS_TO_SHOW_SLIDER = 30;
+export const FILTER_CONFIG: {[key in BooleanFilterName]?: FilterGridConfig} = {
+    [BooleanFilterName.HASHTAG]: {
+        [SwitchType.HIGHLIGHTS_ONLY]: true,
+    },
+    [BooleanFilterName.LANGUAGE]: {
+        labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
+    },
+    [BooleanFilterName.TYPE]: {
+        labelMapper: (name: string) => capitalCase(name),
+    },
+    [BooleanFilterName.USER]: {
+        [SwitchType.HIGHLIGHTS_ONLY]: true,
+    },
+};
 
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
@@ -29,58 +42,50 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
-    const hasMinToots = Object.keys(filter.optionInfo).length > MIN_OPTIONS_TO_SHOW_SLIDER;
+    const filterConfig: FilterGridConfig | undefined = FILTER_CONFIG[filter.title];
+    const hasMinToots = Object.keys(filter.optionInfo).length > config.filters.minOptionsToShowSlider;
+    const switchTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
+    const minTootsTooltipAnchor = `${switchTooltipAnchor}-min-toots`;
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(hasMinToots ? DEFAULT_MIN_TOOTS_TO_APPEAR_IN_FILTER : 0);
+    const [minToots, setMinToots] = useState(hasMinToots ? config.filters.defaultMinTootsToAppear : 0);
     const [sortByCount, setSortByValue] = useState(false);
 
-    const minTootsTooltipTxt = `Hide ${filter.title}s with less than ${minToots} toots`;
-    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}`;
-
-    const makeSwitch = (
-        label: SwitchType,
-        isChecked: boolean,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => void
-    ) => {
-        return (
-            <FilterCheckbox
-                capitalize={true}
-                isChecked={isChecked}
-                key={label}
-                label={label}
-                onChange={onChange}
-            />
-        );
-    };
+    const makeKey = (name: SwitchType) => `${filter.title}-${name}`;
 
     let switchbar = [
-        makeSwitch(
-            SwitchType.INVERT_SELECTION,
-            filter.invertSelection,
-            (e) => filter.invertSelection = e.target.checked // TODO: this is modifying the filter directly
-        ),
-        makeSwitch(
-            SwitchType.SORT_BY_COUNT,
-            sortByCount,
-            (e) => setSortByValue(e.target.checked) // TODO: this will unnecessarily call filterFeed
-        ),
+        <HeaderSwitch
+            isChecked={filter.invertSelection}
+            key={makeKey(SwitchType.INVERT_SELECTION)}
+            label={SwitchType.INVERT_SELECTION}
+            onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
+        />,
+        <HeaderSwitch
+            isChecked={sortByCount}
+            key={makeKey(SwitchType.SORT_BY_COUNT)}
+            label={SwitchType.SORT_BY_COUNT}
+            onChange={(e) => setSortByValue(e.target.checked)} // TODO: this will unnecessarily call filterFeed
+        />,
     ];
 
-    if (!hasMinToots) {
-        switchbar = [makeSpacer("spacer1"), ...switchbar, makeSpacer("spacer2")];
-    } else {
+    if (filterConfig?.[SwitchType.HIGHLIGHTS_ONLY]) {
         switchbar = switchbar.concat([
-            makeSwitch(
-                SwitchType.HIGHLIGHTS_ONLY,
-                highlightedOnly,
-                (e) => setHighlightedOnly(e.target.checked) // TODO: this will unnecessarily call filterFeed
-            ),
+            <HeaderSwitch
+                isChecked={highlightedOnly}
+                key={makeKey(SwitchType.HIGHLIGHTS_ONLY)}  // TODO: this is probably useless but something is erroring...
+                label={SwitchType.HIGHLIGHTS_ONLY}
+                onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily call filterFeed
+            />,
+        ]);
+    }
 
-            <div style={{width: "23%"}} key={"minTootsSlider"}>
-                <Tooltip id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
-
-                <a data-tooltip-id={minTootsTooltipAnchor} data-tooltip-content={minTootsTooltipTxt}>
+    if (hasMinToots) {
+        switchbar = switchbar.concat([
+            <div key={`${filter.title}-minTootsSlider`} style={{width: "23%"}}>
+                <a
+                    data-tooltip-id={minTootsTooltipAnchor}
+                    data-tooltip-content={`Hide ${filter.title}s with less than ${minToots} toots`}
+                >
                     <Slider
                         hideValueBox={true}
                         label="Minimum"
@@ -103,6 +108,8 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             switchbar={switchbar}
             title={filter.title}
         >
+            <Tooltip delayShow={50} id={minTootsTooltipAnchor} place="bottom" style={tooltipZIndex}/>
+
             <FilterCheckboxGrid
                 filter={filter}
                 highlightedOnly={highlightedOnly}
@@ -112,6 +119,3 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         </FilterAccordionSection>
     );
 };
-
-
-const makeSpacer = (key: string) => <div key={key} style={{width: "20px"}} />;
