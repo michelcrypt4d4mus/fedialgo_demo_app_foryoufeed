@@ -7,6 +7,7 @@ import { ChangeEvent } from "react";
 import { Tooltip } from 'react-tooltip';
 
 import FilterCheckbox from "./FilterCheckbox";
+import { config } from "../../../config";
 import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../../helpers/style_helpers";
 
 export enum SwitchType {
@@ -22,12 +23,11 @@ const SWITCH_TOOLTIPS: Record<SwitchType, string> = {
 };
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `${TOOLTIP_ANCHOR}-header-switch`;
-const HEADER_SWITCH_TOOLTIP_DELAY_MS = 500;  // TODO: config
 
 // This must appear somewhere in the component tree for the header switch tooltips to work
 export const HEADER_SWITCH_TOOLTIP = (
     <Tooltip
-        delayShow={HEADER_SWITCH_TOOLTIP_DELAY_MS}
+        delayShow={config.tooltips.headerDelay}
         id={HEADER_SWITCH_TOOLTIP_ANCHOR}
         place="top"
         style={tooltipZIndex}

@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/esm/Form';
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 
+import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { linkesque } from "../../../helpers/style_helpers";
 import { tooltipZIndex } from "../../../helpers/style_helpers";
@@ -21,7 +22,7 @@ export type CheckboxTooltip = {
 export const HASHTAG_ANCHOR = "user-hashtag-anchor";
 export const HIGHLIGHT = "highlighted";
 const HIGHLIGHTED_TOOLTIP_ANCHOR = `${HASHTAG_ANCHOR}-${HIGHLIGHT}`;
-const MAX_LABEL_LENGTH = 21; // TODO: config
+const MAX_LABEL_LENGTH = config.filters.maxOptionLength;
 
 export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
@@ -57,8 +58,10 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     if (capitalize) {
         label = capitalCase(label);
         labelStyle.fontSize = "14px";
-    } else {
-        label = (label.length > (MAX_LABEL_LENGTH - 2)) ? `${label.slice(0, MAX_LABEL_LENGTH)}...` : label;
+    }
+
+    if (label.length > config.filters.maxOptionLength) {
+        label = `${label.slice(0, MAX_LABEL_LENGTH)}...`;
     }
 
     let labelNode = <span style={labelStyle}>{label}</span>;

@@ -10,6 +10,7 @@ import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } f
 import { MinMaxAvgScore, ScoreName, ScoreStats } from 'fedialgo';
 
 import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
+import { config } from '../../config';
 import { FEED_BACKGROUND_COLOR, RECHARTS_COLORS } from '../../helpers/style_helpers';
 import { formatScore } from '../../helpers/number_helpers';
 import { ModalProps } from '../../types';
@@ -95,12 +96,11 @@ export default function StatsModal(props: ModalProps) {
 
                             return (
                                 <Line
-                                    animationDuration={500}  // TODO: config
+                                    animationDuration={config.stats.animationDuration}
                                     dataKey={key}
                                     hide={hiddenLines.includes(key)}
                                     key={key}
                                     legendType='line'
-                                    // isAnimationActive={false}
                                     stroke={RECHARTS_COLORS[i]}
                                     strokeWidth={2}
                                 />
