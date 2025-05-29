@@ -17,7 +17,6 @@ import { trendingTypeForString } from "../helpers/string_helpers";
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
 type TrendingPanelCfg = {
-    containerStyle?: CSSProperties;
     description?: string;
     hasCustomStyle?: boolean;
     initialNumShown: number;
@@ -39,7 +38,6 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
         title: "Hashtags You Post About The Most",
     },
     [TrendingType.SERVERS]: {
-        containerStyle: {paddingLeft: "40px"},
         description: "These are the Mastodon servers whence all these trending links and toots etc. came.",
         initialNumShown: config.trending.numServersToShow, // unused
         objTypeLabel: TrendingType.SERVERS, // unused
@@ -77,7 +75,7 @@ export default function TrendingSection(props: TrendingProps) {
     const hasCustomStyle = panelCfg.hasCustomStyle ?? false;
     const initialNumShown = panelCfg.initialNumShown ?? trendingObjs.length;
     const objTypeLabel = panelCfg.objTypeLabel ?? panelType;
-    const title = panelCfg.title ? panelCfg.title : capitalCase(`Trending ${objTypeLabel}`);
+    const title = panelCfg.title ? panelCfg.title : capitalCase(objTypeLabel);
 
     // State
     const [currentNumShown, setCurrentNumShown] = useState(initialNumShown);
@@ -120,8 +118,10 @@ export default function TrendingSection(props: TrendingProps) {
             logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, isSingleCol=${isSingleCol})`);
             let containerStyle: CSSProperties;
 
-            if (isSingleCol) {
-                containerStyle = {...singleColumn, ...(panelCfg.containerStyle ?? {})};
+            if (hasCustomStyle) {
+                containerStyle = singleColumn;
+            } else if (isSingleCol) {
+                containerStyle = singleColumnPadded;
             } else {
                 containerStyle = trendingListContainer;
             }
@@ -206,7 +206,7 @@ const listStyle: CSSProperties = {
     fontSize: config.theme.trendingObjFontSize,
     listStyle: "numeric",
     paddingBottom: "10px",
-    paddingLeft: "20px",
+    paddingLeft: "25px",
 };
 
 const boldTagLinkStyle: CSSProperties = {
@@ -223,4 +223,9 @@ const trendingListContainer: CSSProperties = {
 const singleColumn: CSSProperties = {
     ...trendingListContainer,
     paddingLeft: "22px",
+};
+
+const singleColumnPadded: CSSProperties = {
+    ...singleColumn,
+    paddingLeft: "40px",
 };
