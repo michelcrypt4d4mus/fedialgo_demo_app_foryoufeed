@@ -6,8 +6,8 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/esm/Navbar";
 import Container from "react-bootstrap/Container";
 
-import { CRYPTADAMUS_ICON_URL } from "../helpers/style_helpers";
-import { CRYPTADAMUS_MASTODON_URL, REPO_URL } from "../helpers/string_helpers";
+import { config } from "../config";
+import { REPO_URL } from "../helpers/string_helpers";
 
 
 export default function Footer() {
@@ -29,11 +29,11 @@ export default function Footer() {
                         <span className="p-2"> Code on Github</span>
                     </Nav.Link>
 
-                    <Nav.Link href={CRYPTADAMUS_MASTODON_URL} style={navLink}>
+                    <Nav.Link href={config.app.developerMastodonUrl} style={navLink}>
                         <img
                             alt="Michel de Cryptadamus Logo"
                             className="d-inline-block align-top"
-                            src={CRYPTADAMUS_ICON_URL}
+                            src={config.app.headerIconUrl}
                             style={elementStyle}
                         />
 

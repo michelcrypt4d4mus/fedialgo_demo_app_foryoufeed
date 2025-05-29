@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 
-import { CRYPTADAMUS_ICON_URL } from '../helpers/style_helpers';
+import { config } from '../config';
 import { CHANGELOG_URL, REPO_URL } from '../helpers/string_helpers';
 import { useAuthContext } from "../hooks/useAuth";
 
@@ -34,7 +34,7 @@ export default function Header() {
                 <Col xs={XS_VALUE} className='text-center p-0'>
                     <img
                         className="d-inline-block align-middle"
-                        src={CRYPTADAMUS_ICON_URL}
+                        src={config.app.headerIconUrl}
                         style={avatarStyle}
                     />
 
@@ -47,7 +47,7 @@ export default function Header() {
                         </a>
 
                         {' '}<span style={{color: "lightgrey", fontSize: 10}}>(
-                            <a href={CHANGELOG_URL} style={{color: "grey"}} target="_blank">
+                            <a href={config.app.changelogUrl} style={{color: "grey"}} target="_blank">
                                 v{process.env.FEDIALGO_VERSION}
                             </a>
                         )</span>

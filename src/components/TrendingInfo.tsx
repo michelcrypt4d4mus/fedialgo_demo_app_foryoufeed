@@ -10,10 +10,10 @@ import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection, { LINK_FONT_SIZE } from "./TrendingSection";
+import { accordionSubheader, linkesque, noPadding } from "../helpers/style_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
-import { IMAGE_BACKGROUND_COLOR, accordionSubheader, linkesque, noPadding } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const logger = new ComponentLogger("TrendingInfo");
@@ -188,13 +188,4 @@ const footerLink: CSSProperties = {
 const monospace: CSSProperties = {
     fontFamily: "monospace",
     fontSize: LINK_FONT_SIZE - 3,
-};
-
-const imageStyle: CSSProperties = {
-    backgroundColor: IMAGE_BACKGROUND_COLOR,
-    borderRadius: "15px",
-    maxHeight: "200px",
-    objectFit: "contain",
-    objectPosition: "top",
-    width: "70%",
 };

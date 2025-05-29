@@ -164,8 +164,8 @@ const triggerLoadFxn = (
         .catch((err) => {
             if (err.message.includes(GET_FEED_BUSY_MSG)) {
                 // Don't flip the isLoading state if the feed is busy
-                logger.error(`triggerLoadFxn ${LOADING_ERROR_MSG}`);
-                setError(LOADING_ERROR_MSG);
+                logger.error(`triggerLoadFxn ${config.timeline.loadingErroMsg}`);
+                setError(config.timeline.loadingErroMsg);
             } else {
                 const msg = `Failed to triggerLoadFxn with error:`;
                 logger.error(msg, err);

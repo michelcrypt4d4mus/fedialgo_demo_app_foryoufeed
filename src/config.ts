@@ -3,8 +3,19 @@
  */
 import { CSSProperties } from "react";
 
+const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/";
 const KB = 1024;
 const MB = KB * KB;
+
+type AppConfig = {
+    changelogUrl: string;
+    developerMastodonUrl: string;
+    headerIconUrl: string;
+    homepage: string;
+    repoName: string | null;
+    repoUrl: string;
+    showcaseImageUrl: string;
+};
 
 type FilterConfig = {
     defaultMinTootsToAppear: number;
@@ -42,6 +53,7 @@ type ThemeConfig = {
 
 type TimelineConfig = {
     autoloadOnFocusAfterMinutes: number;
+    loadingErroMsg: string;
     numTootsToLoadOnScroll: number;
     defaultNumDisplayedToots: number;
 };
@@ -78,9 +90,23 @@ interface ConfigType {
     weights: WeightsConfig;
 };
 
+// export const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE;
+// export const LOADING_ERROR_MSG = `Currently loading, please wait a moment and try again.`;
+// export const REPO_NAME = HOMEPAGE ? HOMEPAGE.split('/').pop() : null;
+// export const REPO_URL = HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE;
 
 // App level config that is not user configurable
 class Config implements ConfigType {
+    app: AppConfig = {
+        changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md`,
+        developerMastodonUrl: "https://universeodon.com/@cryptadamist",
+        headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
+        homepage: HOMEPAGE,
+        repoName: HOMEPAGE ? HOMEPAGE.split('/').pop() : null,
+        repoUrl: HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE,
+        showcaseImageUrl: "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.png",
+    }
+
     filters: FilterConfig = {
         defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
         maxOptionLength: 21,                 // Maximum length of a filter option label
@@ -121,6 +147,7 @@ class Config implements ConfigType {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,      // Autoload new toots if timeline is this old (and feature is enabled)
+        loadingErroMsg: `Currently loading, please wait a moment and try again.`, // Error message when busy
         numTootsToLoadOnScroll: 10,          // Number of toots to load on scroll
         defaultNumDisplayedToots: 20,        // Default number of toots displayed in the timeline
     }

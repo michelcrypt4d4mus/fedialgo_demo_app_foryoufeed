@@ -2,18 +2,15 @@
  * Simple component for links that open in a new tab.
  */
 
-import React, { CSSProperties } from "react";
+import { CSSProperties } from "react";
 
-import { CRYPTADAMUS_MASTODON_URL } from "../../helpers/string_helpers";
-
-export const BUG_REPORT_LABEL = `@cryptadamist`;
-export const BUG_REPORT_WEBFINGER_URI = `${BUG_REPORT_LABEL}@universeodon.com`;;
+import { config } from "../../config";
 
 
 export default function BugReportLink() {
     return <>
-        Report bugs: <a href={CRYPTADAMUS_MASTODON_URL} style={bugsLink} target="_blank">
-            {BUG_REPORT_LABEL}
+        Report bugs: <a href={config.app.developerMastodonUrl} style={bugsLink} target="_blank">
+            {config.app.developerMastodonUrl.split('/').pop()}
         </a>
     </>;
 };

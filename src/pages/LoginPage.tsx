@@ -10,10 +10,9 @@ import { usePersistentState } from "react-persistent-state";
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
 import { ComponentLogger } from '../helpers/log_helpers';
+import { config } from '../config';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
-import { SHOWCASE_IMAGE_URL } from '../helpers/style_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
-// const showcase = require("../../public/assets/Showcase.jpg");
 
 // Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
 const OAUTH_SCOPES = [
@@ -94,9 +93,7 @@ export default function LoginPage() {
 
     return (
         <div className='vh-100' style={loginContainer}>
-            {/* TODO? use file-loader to get webpack to handle this */}
-            {/* <img src={"/assets/Showcase.jpg"} style={previewImage}/> */}
-            <img src={SHOWCASE_IMAGE_URL} alt="FediAlgo Showcase" style={previewImage} />
+            <img src={config.app.showcaseImageUrl} alt="FediAlgo Showcase" style={previewImage} />
 
             <div>
                 <p style={{ lineHeight: 1.3, marginBottom: "10px", marginTop: "13px", textAlign: "center" }}>

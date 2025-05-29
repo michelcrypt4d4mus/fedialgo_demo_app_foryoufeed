@@ -3,15 +3,15 @@
  */
 import TheAlgorithm from "fedialgo";
 
-import { DEMO_APP, browserCountry, browserLanguage, browserLocale } from "./string_helpers";
+import { browserCountry, browserLanguage, browserLocale } from "./string_helpers";
 
+export const LOG_PREFIX = ("[DEMO APP]");
 
-export const errorMsg = (msg: string, ...args: any[]) => console.error(`[${DEMO_APP}] ${msg}`, ...args);
-export const warnMsg = (msg: string, ...args: any[]) => console.warn(`[${DEMO_APP}] ${msg}`, ...args);
-export const logMsg = (msg: string, ...args: any[]) => console.log(`[${DEMO_APP}] ${msg}`, ...args);
-export const infoMsg = (msg: string, ...args: any[]) => console.info(`[${DEMO_APP}] ${msg}`, ...args);
-export const debugMsg = (msg: string, ...args: any[]) => console.debug(`[${DEMO_APP}] ${msg}`, ...args);
-export const logSafe = (msg: string, ...args: any[]) => TheAlgorithm.isDebugMode && logMsg(msg, ...args);
+export const errorMsg = (msg: string, ...args: any[]) => console.error(`${LOG_PREFIX} ${msg}`, ...args);
+export const warnMsg = (msg: string, ...args: any[]) => console.warn(`${LOG_PREFIX} ${msg}`, ...args);
+export const logMsg = (msg: string, ...args: any[]) => console.log(`${LOG_PREFIX} ${msg}`, ...args);
+export const infoMsg = (msg: string, ...args: any[]) => console.info(`${LOG_PREFIX} ${msg}`, ...args);
+export const debugMsg = (msg: string, ...args: any[]) => console.debug(`${LOG_PREFIX} ${msg}`, ...args);
 
 
 // Log the browser's locale information to the console

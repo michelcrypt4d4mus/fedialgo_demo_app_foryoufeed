@@ -156,7 +156,7 @@ const fullSize: CSSProperties = {
 };
 
 const mediaItem: CSSProperties = {
-    backgroundColor: "black", // IMAGE_BACKGROUND_COLOR,
+    backgroundColor: "black",
     borderRadius: "15px",
 };
 
