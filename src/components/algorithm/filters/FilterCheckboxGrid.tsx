@@ -94,38 +94,23 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 return tooltip;
             }
         }
-    } else if (filter.title == BooleanFilterName.USER) {
-        findTooltip = (name: string) => {
-            return algorithm.userData.followedAccounts[name] && TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
-        }
     } else if (filter.title == BooleanFilterName.LANGUAGE) {
         findTooltip = (name: string) => {
             return (name == algorithm.userData.preferredLanguage) && TOOLTIPS[BooleanFilterName.LANGUAGE];
         }
+    } else if (filter.title == BooleanFilterName.USER) {
+        findTooltip = (name: string) => {
+            return algorithm.userData.followedAccounts[name] && TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
+        }
     } else {
-        findTooltip = (name: string) => undefined;
+        findTooltip = (_name: string) => undefined;
     }
-
-    const [filterFailure, setFilterFailure] = useState<boolean>(false);
-    let hasFailed = false;
 
     // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
     const propertyCheckbox = (name: string, i: number) => {
-        let isEnabled = false;
-
-        try {
-            // isEnabled = filter.validValues.includes(name)
-            isEnabled = (hasFailed || filterFailure) ? filter.validValues.includes(name) : filter.isThisSelectionEnabled(name);
-        } catch (err) {
-            logger.error(`Error checking if option "${name}" is enabled, typeof filter.isThisSelectionEnabled="${typeof filter.isThisSelectionEnabled}"`, err, `\nfilter:`, filter);
-            hasFailed = true;
-            setFilterFailure(true);
-        }
-
         return (
             <FilterCheckbox
                 isChecked={filter.isThisSelectionEnabled(name)}
-                // isChecked={isEnabled}
                 key={`${filter.title}_${name}_${i}`}
                 label={filterConfig?.labelMapper ? filterConfig?.labelMapper(name) : name}
                 labelExtra={filter.optionInfo[name]}
@@ -138,15 +123,15 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionGrid = useMemo(
         () => {
+            logger.trace(`Rebuilding optionGrid for ${Object.keys(filter.optionInfo).length} options...`);
             let optionInfo = {...filter.optionInfo};
-            logger.trace(`Rebuilding optionGrid for ${Object.keys(optionInfo).length} options...`);
 
             // For filters w/many options only show choices with a min # of toots + already selected options
             if (minToots) {
                 optionInfo = Object.fromEntries(
                     Object.entries(optionInfo).filter(
                         ([optionName, numToots]) => {
-                            if (filter.validValues.includes(optionName)) return true;  // Always show selected options
+                            if (filter.isThisSelectionEnabled(optionName)) return true;  // Always show selected options
 
                             if (numToots >= minToots) {
                                 return (highlightedOnly ? !!findTooltip(optionName) : true);
@@ -162,15 +147,13 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [
-            algorithm.userData.followedAccounts,
-            algorithm.userData.followedTags,
-            algorithm.userData.participatedHashtags,
-            algorithm.userData.preferredLanguage,
-            filter,
+            [BooleanFilterName.USER, BooleanFilterName.TYPE].includes(filter.title) ? algorithm.userData.followedAccounts : undefined,
+            [BooleanFilterName.USER, BooleanFilterName.HASHTAG].includes(filter.title) ? algorithm.userData.followedTags : undefined,
+            [BooleanFilterName.USER, BooleanFilterName.HASHTAG].includes(filter.title) ? algorithm.userData.participatedHashtags : undefined,
+            [BooleanFilterName.LANGUAGE].includes(filter.title) ? algorithm.userData.preferredLanguage : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,
-            findTooltip,
             highlightedOnly,
             minToots,
             sortByCount,
