@@ -110,7 +110,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const propertyCheckbox = (name: string, i: number) => {
         return (
             <FilterCheckbox
-                isChecked={filter.validValues.includes(name)}
+                isChecked={filter.isOptionEnabled(name)}
                 key={`${filter.title}_${name}_${i}`}
                 label={filterConfig?.labelMapper ? filterConfig?.labelMapper(name) : name}
                 labelExtra={filter.optionInfo[name]}
@@ -131,7 +131,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 optionInfo = Object.fromEntries(
                     Object.entries(optionInfo).filter(
                         ([optionName, numToots]) => {
-                            if (filter.validValues.includes(optionName)) return true;  // Always show selected options
+                            if (filter.isOptionEnabled(optionName)) return true;  // Always show selected options
 
                             if (numToots >= minToots) {
                                 return (highlightedOnly ? !!findTooltip(optionName) : true);
