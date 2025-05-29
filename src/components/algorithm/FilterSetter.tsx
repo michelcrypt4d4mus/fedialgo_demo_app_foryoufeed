@@ -13,14 +13,14 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { ComponentLogger } from '../../helpers/log_helpers';
+import { getLogger } from '../../helpers/log_helpers';
 import { config, SwitchType } from "../../config";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
 import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
-const logger = new ComponentLogger("FilterSetter");
+const logger = getLogger("FilterSetter");
 
 
 export default function FilterSetter() {

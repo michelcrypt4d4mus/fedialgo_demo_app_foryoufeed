@@ -7,11 +7,11 @@ import { Modal } from "react-bootstrap";
 
 import { ErrorBoundary } from "react-error-boundary";
 
-import { ComponentLogger } from "../../helpers/log_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 import BugReportLink from "./BugReportLink";
 
 
-const logger = new ComponentLogger("ErrorHandler");
+const logger = getLogger("ErrorHandler");
 
 interface ErrorContextProps {
     setError?: (error: string) => void,

@@ -18,9 +18,9 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import { ComponentLogger, logLocaleInfo } from "./helpers/log_helpers";
+import { getLogger, logLocaleInfo } from "./helpers/log_helpers";
 
-const logger = new ComponentLogger("App.tsx");
+const logger = getLogger("App.tsx");
 
 
 export default function App(): React.ReactElement {

@@ -5,12 +5,12 @@ import axios from "axios";
 import { PropsWithChildren, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { ComponentLogger } from "../helpers/log_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { useAppStorage, useUserStorage } from "./useLocalStorage";
 import { useError } from "../components/helpers/ErrorHandler";
 import { User } from "../types";
 
-const logger = new ComponentLogger("AuthProvider");
+const logger = getLogger("AuthProvider");
 
 const AuthContext = createContext({
     setLoggedInUser: async (_user: User) => {},

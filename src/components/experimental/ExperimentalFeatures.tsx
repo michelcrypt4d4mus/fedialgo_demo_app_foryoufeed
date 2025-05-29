@@ -11,7 +11,7 @@ import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
-import { ComponentLogger } from "../../helpers/log_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useAuthContext } from "../../hooks/useAuth";
@@ -23,7 +23,7 @@ const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
 const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 
-const logger = new ComponentLogger("ExperimentalFeatures");
+const logger = getLogger("ExperimentalFeatures");
 
 const BUTTON_TEXT = {
     [DELETE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors." +

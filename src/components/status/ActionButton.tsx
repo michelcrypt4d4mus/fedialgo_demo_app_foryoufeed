@@ -19,7 +19,7 @@ import {
     faVolumeMute
 } from "@fortawesome/free-solid-svg-icons";
 
-import { ComponentLogger } from "../../helpers/log_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
 import { scoreString } from "../../helpers/string_helpers";
@@ -42,7 +42,7 @@ export enum TootAction {
 export type ButtonAction = AccountAction | TootAction;
 const isAccountAction = (value: string | ButtonAction) => isValueInStringEnum(AccountAction)(value);
 const isTootAction = (value: string | ButtonAction) => isValueInStringEnum(TootAction)(value);
-const logger = new ComponentLogger("ActionButton");
+const logger = getLogger("ActionButton");
 
 // Sizing icons: https://docs.fontawesome.com/web/style/size
 const ACCOUNT_ACTION_BUTTON_CLASS = "fa-xs";

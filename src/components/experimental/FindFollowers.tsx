@@ -5,7 +5,7 @@ import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
 import { mastodon } from 'masto';
 
 import LoadingSpinner from '../helpers/LoadingSpinner';
-import { ComponentLogger } from '../../helpers/log_helpers';
+import { getLogger } from '../../helpers/log_helpers';
 import { loadingMsgStyle } from '../../pages/Feed';
 import { titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from '../../hooks/useAlgorithm';
@@ -13,7 +13,7 @@ import { useAuthContext } from '../../hooks/useAuth';
 
 const NUM_SUGGESTIONS = 4;
 
-const logger = new ComponentLogger("FindFollowers");
+const logger = getLogger("FindFollowers");
 
 
 export default function FindFollowers(): React.ReactElement {

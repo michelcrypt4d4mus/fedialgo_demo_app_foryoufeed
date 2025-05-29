@@ -31,7 +31,7 @@ import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import ReplyModal from "./ReplyModal";
 import useOnScreen from "../../hooks/useOnScreen";
-import { ComponentLogger } from "../../helpers/log_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
@@ -39,7 +39,7 @@ import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
-const logger = new ComponentLogger("StatusComponent");
+const logger = getLogger("StatusComponent");
 
 type IconInfo = {
     icon: IconDefinition,

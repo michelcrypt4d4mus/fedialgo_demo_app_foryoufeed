@@ -8,13 +8,13 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { mastodon } from 'masto';
 
-import { ComponentLogger } from '../../helpers/log_helpers';
+import { getLogger } from '../../helpers/log_helpers';
 import { isAccessTokenRevokedError, timeString } from 'fedialgo';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from "../../components/helpers/ErrorHandler";
 
 const ALREADY_VOTED_MSG = `You have already voted`;
-const logger = new ComponentLogger('Poll');
+const logger = getLogger('Poll');
 
 interface PollProps {
     poll: mastodon.v1.Poll,

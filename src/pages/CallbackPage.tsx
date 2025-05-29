@@ -6,14 +6,14 @@ import React, { useEffect } from 'react';
 import { createRestAPIClient } from "masto"
 import { useSearchParams } from 'react-router-dom';
 
-import { ComponentLogger } from '../helpers/log_helpers';
+import { getLogger } from '../helpers/log_helpers';
 import { OAUTH_SCOPE_STR } from './LoginPage';
 import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
 import { User } from '../types';
 
-const logger = new ComponentLogger("CallbackPage");
+const logger = getLogger("CallbackPage");
 // const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
 // const GRANT_TYPE = "authorization_code";
 // const GRANT_TYPE = "client_credentials";

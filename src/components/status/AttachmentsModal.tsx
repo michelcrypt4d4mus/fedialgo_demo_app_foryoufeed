@@ -4,10 +4,10 @@
 import { Modal } from 'react-bootstrap';
 import { useEffect } from 'react';
 
-import { ComponentLogger } from '../../helpers/log_helpers';
+import { getLogger } from '../../helpers/log_helpers';
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
 
-const logger = new ComponentLogger("AttachmentsModal");
+const logger = getLogger("AttachmentsModal");
 
 interface AttachmentsModalProps {
     mediaInspectionIdx: number;

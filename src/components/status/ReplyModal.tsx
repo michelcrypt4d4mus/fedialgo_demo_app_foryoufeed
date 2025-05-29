@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { ComponentLogger } from '../../helpers/log_helpers';
+import { getLogger } from '../../helpers/log_helpers';
 import { config } from '../../config';
 import { fileInfo } from '../../helpers/string_helpers';
 import { ModalProps } from '../../types';
@@ -20,7 +20,7 @@ import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
 
-const logger = new ComponentLogger('ReplyModal');
+const logger = getLogger('ReplyModal');
 
 interface ReplyModalProps extends ModalProps {
     toot: Toot;

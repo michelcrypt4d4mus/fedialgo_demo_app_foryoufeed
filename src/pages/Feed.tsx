@@ -19,7 +19,7 @@ import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { buildStateCheckbox } from "../helpers/react_helpers";
-import { ComponentLogger } from "../helpers/log_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
@@ -28,7 +28,7 @@ import { useError } from "../components/helpers/ErrorHandler";
 
 // Messaging constants
 const AUTO_UPDATE_TOOLTIP_MSG = "If this box is checked the feed will be automatically updated when you focus this browser tab.";
-const logger = new ComponentLogger("Feed");
+const logger = getLogger("Feed");
 
 
 export default function Feed() {
