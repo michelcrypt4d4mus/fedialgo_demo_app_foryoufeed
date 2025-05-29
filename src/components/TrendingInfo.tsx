@@ -4,13 +4,12 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { ScoreName, type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, TrendingType, extractDomain } from "fedialgo";
+import { ScoreName, Toot, type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, TrendingType, extractDomain } from "fedialgo";
 
 import StatusComponent from "./status/Status";
-import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection from "./TrendingSection";
-import { accordionSubheader, linkesque, noPadding } from "../helpers/style_helpers";
+import { accordionSubheader, noPadding } from "../helpers/style_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
@@ -22,6 +21,7 @@ const logger = new ComponentLogger("TrendingInfo");
 export default function TrendingInfo() {
     const { algorithm } = useAlgorithm();
 
+    // Memoize because trending panels are apparently our most expensive renders
     const scrapedServersSection = useMemo(
         () => (
             <TrendingSection
@@ -32,7 +32,6 @@ export default function TrendingInfo() {
                     info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
                     return info.join(', ');
                 }}
-                key={"servers"}
                 linkLabel={(domain: string) => domain as string}
                 linkUrl={(domain: string) => `https://${domain}`}
                 onClick={(domain: string, e) => followUri(`https://${domain}`, e)}
@@ -72,12 +71,15 @@ export default function TrendingInfo() {
 
                 <TrendingSection
                     panelType={"toots"}
+                    objRenderer={(toot: Toot) => (
+                        <StatusComponent
+                            fontColor="black"
+                            hideLinkPreviews={false}
+                            key={toot.uri}
+                            status={toot}
+                        />
+                    )}
                     trendingObjs={algorithm.trendingData.toots}
-                    // these are all junk that is unused but required args (for now)
-                    infoTxt={trendingObjInfoTxt}
-                    linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
-                    linkUrl={linkMapper}
-                    onClick={() => logger.warn("Clicked on a trending toot, shouldn't be possible!")}
                 />
 
                 {scrapedServersSection}

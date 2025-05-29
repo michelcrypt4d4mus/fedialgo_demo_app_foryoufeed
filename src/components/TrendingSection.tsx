@@ -21,7 +21,6 @@ type TrendingPanelCfg = {
     description?: string;
     hasCustomStyle?: boolean;
     initialNumShown: number;
-    objRenderer?: (obj: TrendingListObj) => React.ReactElement;
     objTypeLabel?: string;
     prependTrending?: boolean;
     title?: string;
@@ -51,30 +50,28 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
     },
     toots: {
         initialNumShown: config.trending.numTootsToShow,
-        objRenderer: (toot: Toot) => (
-            <StatusComponent
-                fontColor="black"
-                hideLinkPreviews={false}
-                key={toot.uri}
-                status={toot}
-            />
-        ),
         objTypeLabel: "trending toots",
     },
 };
 
+// Either objectRenderer() OR linkLabel() + linkUrl() + onClick() must be provided in TrendingProps.
 interface TrendingProps {
     infoTxt?: (obj: TrendingListObj) => string;
-    linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
-    linkUrl: (obj: TrendingListObj) => string;
-    onClick: (obj: TrendingListObj, e: React.MouseEvent) => void;
+    linkLabel?: (obj: TrendingListObj) => React.ReactElement | string;
+    linkUrl?: (obj: TrendingListObj) => string;
+    objRenderer?: (obj: TrendingListObj) => React.ReactElement;
+    onClick?: (obj: TrendingListObj, e: React.MouseEvent) => void;
     panelType: TrendingPanel;
     trendingObjs: TrendingListObj[];
 };
 
 
 export default function TrendingSection(props: TrendingProps) {
-    let { infoTxt, linkLabel, linkUrl, onClick, panelType, trendingObjs } = props;
+    let { infoTxt, linkLabel, linkUrl, onClick, objRenderer, panelType, trendingObjs } = props;
+
+    if (!objRenderer && !(linkLabel && linkUrl && onClick)) {
+        throw new Error("TrendingSection requires either objRenderer() OR linkLabel() + linkUrl() + onClick() props.");
+    }
 
     // Configuration from TRENDING_PANEL_CFG based on panelType prop
     const panelCfg = TRENDING_PANEL_CFG[panelType];
@@ -118,9 +115,9 @@ export default function TrendingSection(props: TrendingProps) {
             const objs = trendingObjs.slice(0, numShown);
 
             // Short circuit the rendering for custom object renderers (meaning Toots)
-            if (panelCfg.objRenderer) {
+            if (objRenderer) {
                 return <>
-                    {objs.map((obj, i) => panelCfg.objRenderer!(obj))}
+                    {objs.map((obj, i) => objRenderer!(obj))}
                     {verticalSpacer(20, `trending-footer-${panelType}`)}
                     {footer}
                 </>;
@@ -193,7 +190,7 @@ const descriptionStyle: CSSProperties = {
 const footerContainer: CSSProperties = {
     display: "flex",
     justifyContent: 'space-around',
-    marginBottom: "10px",
+    marginBottom: "8px",
     width: "100%"
 };
 
