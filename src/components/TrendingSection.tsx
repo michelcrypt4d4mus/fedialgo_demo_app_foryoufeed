@@ -12,8 +12,8 @@ import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify } from "../helpers/react_helpers";
-import { trendingTypeForString } from "../helpers/string_helpers";
 
+export type TrendingListObj = TrendingObj | string;
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
 type TrendingPanelCfg = {
@@ -52,10 +52,7 @@ const TRENDING_PANEL_CFG: Record<TrendingPanel, TrendingPanelCfg> = {
     },
 };
 
-type TrendingListObj = TrendingObj | string;
-
 interface TrendingProps {
-    hasCustomStyle?: boolean;
     infoTxt?: (obj: TrendingListObj) => string;
     linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
     linkUrl: (obj: TrendingListObj) => string;
@@ -67,16 +64,15 @@ interface TrendingProps {
 
 export default function TrendingSection(props: TrendingProps) {
     let { infoTxt, linkLabel, linkUrl, onClick, panelType, trendingObjs } = props;
-    const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
 
-    // Get configuration for this kind of trending object
+    // Configuration from TRENDING_PANEL_CFG based on panelType prop
     const panelCfg = TRENDING_PANEL_CFG[panelType];
-    const hasCustomStyle = panelCfg.hasCustomStyle ?? false;
-    const objTypeLabel = panelCfg.objTypeLabel ?? panelType;
-    const title = panelCfg.title ? panelCfg.title : capitalCase(objTypeLabel);
+    const objTypeLabel = panelCfg.objTypeLabel || panelType;
+    const title = panelCfg.title || capitalCase(objTypeLabel);
 
     // State
-    const [currentNumShown, setCurrentNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
+    const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
+    const logger = useMemo(() => new ComponentLogger("TrendingSection", panelType), [panelType]);
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
@@ -84,10 +80,10 @@ export default function TrendingSection(props: TrendingProps) {
             if (trendingObjs.length <= panelCfg.initialNumShown) return null;
 
             const toggleShown = () => {
-                if (currentNumShown === panelCfg.initialNumShown) {
-                    setCurrentNumShown(trendingObjs.length);
+                if (numShown === panelCfg.initialNumShown) {
+                    setNumShown(trendingObjs.length);
                 } else {
-                    setCurrentNumShown(panelCfg.initialNumShown);
+                    setNumShown(panelCfg.initialNumShown);
                 }
             };
 
@@ -95,7 +91,7 @@ export default function TrendingSection(props: TrendingProps) {
                 <div style={footerContainer}>
                     <div style={{width: "40%"}}>{'('}
                         <a onClick={toggleShown} style={footerLinkText}>
-                            {currentNumShown == panelCfg.initialNumShown
+                            {numShown == panelCfg.initialNumShown
                                 ? `show all ${trendingObjs.length} ${objTypeLabel}`
                                 : `show fewer ${objTypeLabel}`}
                         </a>{')'}
@@ -103,7 +99,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [currentNumShown, panelType, trendingObjs.length]
+        [numShown, panelType, trendingObjs.length]
     );
 
     // Memoize because react profiler says trending panels are most expensive to render
@@ -112,11 +108,11 @@ export default function TrendingSection(props: TrendingProps) {
             const labels = trendingObjs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
-            const isSingleCol = hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);
+            const isSingleCol = panelCfg.hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);
             logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, isSingleCol=${isSingleCol})`);
             let containerStyle: CSSProperties;
 
-            if (hasCustomStyle) {
+            if (panelCfg.hasCustomStyle) {
                 containerStyle = singleColumn;
             } else if (isSingleCol) {
                 containerStyle = singleColumnPadded;
@@ -124,12 +120,12 @@ export default function TrendingSection(props: TrendingProps) {
                 containerStyle = trendingListContainer;
             }
 
-            const elements = trendingObjs.slice(0, currentNumShown).map((obj, i) => (
+            const elements = trendingObjs.slice(0, numShown).map((obj, i) => (
                 <li key={i} style={listItemStyle}>
                     <NewTabLink
                         href={linkUrl(obj)}
                         onClick={(e) => onClick(obj, e)}
-                        style={hasCustomStyle ? linkFont : boldTagLinkStyle}
+                        style={panelCfg.hasCustomStyle ? linkFont : boldTagLinkStyle}
                     >
                         {linkLabel(obj)}
                     </NewTabLink>
@@ -150,7 +146,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [currentNumShown, footer, hasCustomStyle, panelType, trendingObjs, trendingObjs.length]
+        [numShown, footer, panelCfg, panelType, trendingObjs, trendingObjs.length]
     );
 
     return (
