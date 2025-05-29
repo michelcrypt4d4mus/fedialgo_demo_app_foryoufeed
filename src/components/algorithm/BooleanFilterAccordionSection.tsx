@@ -2,7 +2,7 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 import { BooleanFilter, BooleanFilterName, LANGUAGE_CODES } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
@@ -41,8 +41,8 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const makeSwitch = (
         label: SwitchType,
         isChecked: boolean,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>
-    ) => void) => {
+        onChange: (e: ChangeEvent<HTMLInputElement>) => void
+    ) => {
         return (
             <FilterCheckbox
                 capitalize={true}
