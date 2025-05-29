@@ -1,7 +1,7 @@
 /*
  * WIP: Component for displaying the trending hashtags in the Fediverse.
  */
-import React, { CSSProperties, useCallback, useMemo, useState } from "react";
+import React, { CSSProperties, useMemo, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
 import { type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, extractDomain } from "fedialgo";
@@ -9,7 +9,7 @@ import { type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, e
 import StatusComponent from "./status/Status";
 import SubAccordion from "./helpers/SubAccordion";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
-import TrendingSection, { LINK_FONT_SIZE } from "./TrendingSection";
+import TrendingSection from "./TrendingSection";
 import { accordionSubheader, linkesque, noPadding } from "../helpers/style_helpers";
 import { ComponentLogger } from "../helpers/log_helpers";
 import { config } from "../config";
@@ -21,40 +21,6 @@ const logger = new ComponentLogger("TrendingInfo");
 
 export default function TrendingInfo() {
     const { algorithm } = useAlgorithm();
-    const [userHashtagsToShow, setUserHashtagsToShow] = useState(config.trending.numUserHashtagsToShow);
-
-    // React profiler said the trending sections was the most expensive component to render, so memoize the pieces
-    const trendingTagsSection = useMemo(
-        () => (
-            <TrendingSection
-                title="Hashtags"
-                infoTxt={trendingObjInfoTxt}
-                key={"hashtags"}
-                linkLabel={tagNameMapper}
-                linkUrl={linkMapper}
-                multicolumn={true}
-                onClick={openTrendingLink}
-                trendingObjs={algorithm.trendingData.tags}
-            />
-        ),
-        [algorithm.trendingData.tags]
-    );
-
-    const trendingLinksSection = useMemo(
-        () => (
-            <TrendingSection
-                title="Links"
-                hasCustomStyle={true}
-                key={"links"}
-                infoTxt={trendingObjInfoTxt}
-                linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
-                linkUrl={linkMapper}
-                onClick={openTrendingLink}
-                trendingObjs={algorithm.trendingData.links}
-            />
-        ),
-        [algorithm.trendingData.links]
-    );
 
     const trendingTootSection = useMemo(
         () => (
@@ -72,55 +38,12 @@ export default function TrendingInfo() {
         [algorithm.trendingData.toots]
     );
 
-    const mostParticipatedHashtagsSection = useMemo(
-        () => {
-            const numTags = algorithm.userData.popularUserTags().length;
-            const showAllText = `show all ${numTags} hashtags`;
-            let footer: React.ReactNode = null;
-
-            const toggleAllPopularHashtags = () => {
-                if (userHashtagsToShow === config.trending.numUserHashtagsToShow) {
-                    setUserHashtagsToShow(algorithm.userData.popularUserTags().length);
-                } else {
-                    setUserHashtagsToShow(config.trending.numUserHashtagsToShow);
-                }
-            }
-
-            if (numTags > userHashtagsToShow) {
-                footer = (
-                    <div style={{display: "flex", justifyContent: 'space-around', width: "100%"}}>
-                        <div style={{width: "40%"}}>
-                            {'('}<a onClick={toggleAllPopularHashtags} style={footerLink}>
-                                {userHashtagsToShow == config.trending.numUserHashtagsToShow ? showAllText : 'show less'}
-                            </a>{')'}
-                        </div>
-                    </div>
-                );
-            }
-
-            return (
-                <TrendingSection
-                    title="Your Most Participated Hashtags"
-                    footer={footer}
-                    infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
-                    key={"participatedHashtags"}
-                    linkLabel={tagNameMapper}
-                    linkUrl={linkMapper}
-                    multicolumn={true}
-                    onClick={openTrendingLink}
-                    trendingObjs={algorithm.userData.popularUserTags().slice(0, userHashtagsToShow)}
-                />
-            );
-        },
-        [algorithm.userData.participatedHashtags, userHashtagsToShow]
-    );
-
     const scrapedServersSection = useMemo(
         () => (
             <TrendingSection
                 title="Servers That Were Scraped"
                 infoTxt={(domain: string) => {
-                    const serverInfo = algorithm.mastodonServers[domain];
+                    const serverInfo = algorithm.trendingData.servers[domain];
                     const info = [`MAU: ${serverInfo.MAU.toLocaleString()}`];
                     info.push(`followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`);
                     return info.join(', ');
@@ -129,10 +52,10 @@ export default function TrendingInfo() {
                 linkLabel={(domain: string) => domain as string}
                 linkUrl={(domain: string) => `https://${domain}`}
                 onClick={(domain: string, e) => followUri(`https://${domain}`, e)}
-                trendingObjs={Object.keys(algorithm.mastodonServers)}
+                trendingObjs={Object.keys(algorithm.trendingData.servers)}
             />
         ),
-        [algorithm.mastodonServers]
+        [algorithm.trendingData.servers]
     );
 
 
@@ -140,16 +63,42 @@ export default function TrendingInfo() {
         <TopLevelAccordion bodyStyle={noPadding} title="What's Trending">
             <div style={accordionSubheader}>
                 <p style={{}}>
-                    Trending data was scraped from {Object.keys(algorithm.mastodonServers).length} Mastodon servers.
+                    Trending data was scraped from {Object.keys(algorithm.trendingData.servers).length}
+                    {' '}Mastodon servers.
                 </p>
             </div>
 
             <Accordion>
-                {trendingTagsSection}
-                {trendingLinksSection}
+                <TrendingSection
+                    title="Hashtags"
+                    infoTxt={trendingObjInfoTxt}
+                    linkLabel={tagNameMapper}
+                    linkUrl={linkMapper}
+                    onClick={openTrendingLink}
+                    trendingObjs={algorithm.trendingData.tags}
+                />
+
+                <TrendingSection
+                    title="Links"
+                    hasCustomStyle={true}
+                    infoTxt={trendingObjInfoTxt}
+                    linkLabel={(link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url))}
+                    linkUrl={linkMapper}
+                    onClick={openTrendingLink}
+                    trendingObjs={algorithm.trendingData.links}
+                />
+
                 {trendingTootSection}
                 {scrapedServersSection}
-                {mostParticipatedHashtagsSection}
+
+                <TrendingSection
+                    title="Your Most Participated Hashtags"
+                    infoTxt={(tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`}
+                    linkLabel={tagNameMapper}
+                    linkUrl={linkMapper}
+                    onClick={openTrendingLink}
+                    trendingObjs={algorithm.userData.popularUserTags()}
+                />
             </Accordion>
         </TopLevelAccordion>
     );
@@ -185,5 +134,5 @@ const footerLink: CSSProperties = {
 
 const monospace: CSSProperties = {
     fontFamily: "monospace",
-    fontSize: LINK_FONT_SIZE - 3,
+    fontSize: config.theme.trendingObjFontSize - 3,
 };

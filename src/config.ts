@@ -49,6 +49,7 @@ type ThemeConfig = {
     followedUserColorFaded: CSSProperties['color'];
     participatedTagColor: CSSProperties['color'];
     participatedTagColorMin: CSSProperties['color'];
+    trendingObjFontSize: number;
     trendingTagColor: CSSProperties['color'];
     trendingTagColorFaded: CSSProperties['color'];
 };
@@ -76,7 +77,11 @@ type TootConfig = {
 };
 
 type TrendingConfig = {
-    numUserHashtagsToShow: number;
+    maxLengthForMulticolumn: number;
+    numHashtagsToShow: number;
+    numLinksToShow: number;
+    numServersToShow: number;
+    numTootsToShow: number;
 };
 
 type WeightsConfig = {
@@ -121,7 +126,7 @@ class Config implements ConfigType {
     }
 
     replies: ReplyConfig = {
-        defaultAcceptedAttachments: {
+        defaultAcceptedAttachments: {        // Default in case the user's server doesn't provide this info
             'audio/*': ['.mp3', '.wav'],
             'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
             'video/*': ['.mp4', '.webm'],
@@ -133,7 +138,7 @@ class Config implements ConfigType {
     }
 
     stats: StatsConfig = {
-        animationDuration: 500,              // Duration of stats animations in milliseconds
+        animationDuration: 500,               // Duration of stats animations in milliseconds
     }
 
     theme: ThemeConfig = {
@@ -144,39 +149,44 @@ class Config implements ConfigType {
         followedUserColorFaded: '#2092a1',  // Faded color for followed users
         participatedTagColor: '#92a14a',    // Color for participated tags
         participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
+        trendingObjFontSize: 16,              // Font size for trending objects
         trendingTagColor: 'firebrick',        // Color for trending tags
         trendingTagColorFaded: '#f08c8c',   // Faded color for trending tags
     }
 
     timeline: TimelineConfig = {
-        autoloadOnFocusAfterMinutes: 5,      // Autoload new toots if timeline is this old (and feature is enabled)
+        autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
         defaultLoadingMsg: "Loading (first time can take up to a minute or so)", // Message when first loading toots
         loadingErroMsg: `Currently loading, please wait a moment and try again.`, // Error message when busy
         noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
-        numTootsToLoadOnScroll: 10,          // Number of toots to load on scroll
-        defaultNumDisplayedToots: 20,        // Default number of toots displayed in the timeline
+        numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll
+        defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
     }
 
     tooltips: TooltipConfig = {
-        filterOptionDelay: 500,              // Delay for filter option tooltips in milliseconds
-        gradientAdjustPctiles: [0.95, 0.98], // Percentiles for gradient adjustment of participated tags
-        headerDelay: 500,                    // Delay for header tooltips in milliseconds
-        minTagsForGradientAdjust: 40,        // Minimum number of participated tags for gradient adjustment
+        filterOptionDelay: 500,               // Delay for filter option tooltips in milliseconds
+        gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
+        headerDelay: 500,                     // Delay for header tooltips in milliseconds
+        minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment
     }
 
     toots: TootConfig = {
-        imageHeight: 314,                    // Default height for images in toots
-        maxPreviewCardLength: 350,           // Maximum length of preview card description
-        scoreDigits: 3,                      // Number of digits to display in the score
+        imageHeight: 314,                     // Default height for images in toots
+        maxPreviewCardLength: 350,            // Maximum length of preview card description
+        scoreDigits: 3,                       // Number of digits to display in the score
     }
 
     trending: TrendingConfig = {
-        numUserHashtagsToShow: 40,           // Default number of user particiapted hashtags to show in trending section // TODO: not really a trending thing
+        maxLengthForMulticolumn: 50,          // Maximum length of a trending object label to use multicolumn layout
+        numHashtagsToShow: 40,                // Default number of hashtags to show in trending sections
+        numLinksToShow: 30,                   // Default number of trending links to show
+        numServersToShow: 30,                 // TODO: unused, default number of servers to show in trending section
+        numTootsToShow: 50,                   // Default number of toots to show in trending section //TODO: unused
     }
 
     weights: WeightsConfig = {
-        defaultStepSize: 0.02,               // Default step size for weight sliders
-        scalingMultiplier: 1.2,              // Multiplier for scaling weight sliders responsively
+        defaultStepSize: 0.02,                // Default step size for weight sliders
+        scalingMultiplier: 1.2,               // Multiplier for scaling weight sliders responsively
     }
 };
 

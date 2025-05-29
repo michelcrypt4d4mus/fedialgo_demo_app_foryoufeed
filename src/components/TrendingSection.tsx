@@ -3,24 +3,30 @@
  */
 import React, { CSSProperties, useMemo, useState } from "react";
 
-import { type TrendingObj } from "fedialgo";
+import { type TrendingData, type TrendingObj } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
 import { ComponentLogger } from "../helpers/log_helpers";
+import { config } from "../config";
+import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify } from "../helpers/react_helpers";
-import { roundedBox } from "../helpers/style_helpers";
+import { trendingTypeForString } from "../helpers/string_helpers";
 
-export const LINK_FONT_SIZE = 16;
+const NUM_SHOWN_FOR_TYPE: Record<keyof TrendingData, number | undefined> = {
+    links: config.trending.numLinksToShow,
+    tags: config.trending.numHashtagsToShow,
+    servers: config.trending.numServersToShow, // unused
+    toots: config.trending.numTootsToShow,
+};
+
 type TrendingListObj = TrendingObj | string;
 
 interface TrendingProps {
-    footer?: React.ReactNode;
     hasCustomStyle?: boolean;
     infoTxt?: (obj: TrendingListObj) => string;
     linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
     linkUrl: (obj: TrendingListObj) => string;
-    multicolumn?: boolean;
     onClick: (obj: TrendingListObj, e: React.MouseEvent) => void;
     title: string;
     trendingObjs: TrendingListObj[];
@@ -28,46 +34,81 @@ interface TrendingProps {
 
 
 export default function TrendingSection(props: TrendingProps) {
-    const { footer, multicolumn, hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
-
-    const [numObjsShown, setNumObjsShown] = useState(30); // TODO: config
+    const { hasCustomStyle, infoTxt, linkLabel, linkUrl, onClick, title, trendingObjs } = props;
     const logger = useMemo(() => new ComponentLogger("TrendingSection", title), [title]);
-    logger.trace(`Rendering ${trendingObjs.length} objects`);
+    const objType = trendingTypeForString(title);
 
-            // const toggleAllPopularHashtags = () => {
-            //     if (userHashtagsToShow === config.trending.numUserHashtagsToShow) {
-            //         setUserHashtagsToShow(algorithm.userData.popularUserTags().length);
-            //     } else {
-            //         setUserHashtagsToShow(config.trending.numUserHashtagsToShow);
-            //     }
-            // }
+    const initialNumShown = NUM_SHOWN_FOR_TYPE[objType] ?? trendingObjs.length;
+    const [currentNumShown, setCurrentNumShown] = useState(initialNumShown);
 
+    // Memoize because react profiler says trending panels are most expensive to render
+    const footer: React.ReactNode = useMemo(
+        () => {
+            if (trendingObjs.length <= initialNumShown) return null;
+            const objTypeLabel = objType == "tags" ? "hashtags" : objType;
 
+            const toggleShown = () => {
+                if (currentNumShown === initialNumShown) {
+                    setCurrentNumShown(trendingObjs.length);
+                } else {
+                    setCurrentNumShown(initialNumShown);
+                }
+            };
 
-    // The whole component is memoized so we don't bother memoizing here
-    const elements = trendingObjs.slice(0, numObjsShown).map((obj, i) => (
-        <li key={i} style={listItemStyle}>
-            <NewTabLink
-                href={linkUrl(obj)}
-                onClick={e => onClick(obj, e)}
-                style={hasCustomStyle ? tagLinkStyle : boldTagLinkStyle}
-            >
-                {linkLabel(obj)}
-            </NewTabLink>
+            return (
+                <div style={footerContainer}>
+                    <div style={{width: "40%"}}>{'('}
+                        <a onClick={toggleShown} style={footerLink}>
+                            {currentNumShown === initialNumShown
+                                ? `show all ${trendingObjs.length} ${objTypeLabel}`
+                                : `show fewer ${objTypeLabel}`}
+                        </a>{')'}
+                    </div>
+                </div>
+            );
+        },
+        [currentNumShown, title, trendingObjs.length]
+    );
 
-            {infoTxt && <span style={infoTxtStyle}>({infoTxt(obj)})</span>}
-        </li>
-    ));
+    // Memoize because react profiler says trending panels are most expensive to render
+    const trendingItemList = useMemo(
+        () => {
+            const labels = trendingObjs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
+            const maxLength = Math.max(...labels.map(label => label.length));
+            const longestLabel = labels.find(label => label.length === maxLength) || "";
+            const useMulticolumn = !hasCustomStyle && (maxLength <= config.trending.maxLengthForMulticolumn);
+            logger.trace(`Longest label="${longestLabel}" (length=${maxLength}, useMulticolumn=${useMulticolumn})`);
+
+            const elements = trendingObjs.slice(0, currentNumShown).map((obj, i) => (
+                <li key={i} style={listItemStyle}>
+                    <NewTabLink
+                        href={linkUrl(obj)}
+                        onClick={(e) => onClick(obj, e)}
+                        style={hasCustomStyle ? linkFont : boldTagLinkStyle}
+                    >
+                        {linkLabel(obj)}
+                    </NewTabLink>
+
+                    {infoTxt && <span style={infoTxtStyle}>({infoTxt(obj)})</span>}
+                </li>
+            ));
+
+            return (
+                <div style={useMulticolumn ? trendingListContainer : singleColumn }>
+                    <ol style={listStyle}>
+                        {useMulticolumn ? gridify(elements, 2, colStyle) : elements}
+                    </ol>
+
+                    {footer}
+                </div>
+            );
+        },
+        [currentNumShown, footer, hasCustomStyle, initialNumShown, trendingObjs, trendingObjs.length]
+    );
 
     return (
         <SubAccordion key={title} title={title}>
-            <div style={multicolumn ? multicolumnStyle : trendingListContainer}>
-                <ol style={listStyle}>
-                    {multicolumn ? gridify(elements, 2, colStyle) : elements}
-                </ol>
-
-                {footer}
-            </div>
+            {trendingItemList}
         </SubAccordion>
     );
 };
@@ -76,11 +117,29 @@ export default function TrendingSection(props: TrendingProps) {
 const colStyle: CSSProperties = {
     marginLeft: "5px",
     marginRight: "5px",
-}
+};
+
+const footerContainer: CSSProperties = {
+    display: "flex",
+    justifyContent: 'space-around',
+    width: "100%"
+};
+
+const footerLink: CSSProperties = {
+    ...linkesque,
+    color: "navy",
+    fontSize: "16px",
+    fontWeight: "bold",
+};
 
 const infoTxtStyle: CSSProperties = {
-    fontSize: LINK_FONT_SIZE - 4,
+    fontSize: config.theme.trendingObjFontSize - 4,
     marginLeft: "6px",
+};
+
+const linkFont: CSSProperties = {
+    ...globalFont,
+    fontSize: config.theme.trendingObjFontSize - 1,
 };
 
 const listItemStyle: CSSProperties = {
@@ -88,10 +147,16 @@ const listItemStyle: CSSProperties = {
 };
 
 const listStyle: CSSProperties = {
-    fontSize: LINK_FONT_SIZE,
+    fontSize: config.theme.trendingObjFontSize,
     listStyle: "numeric",
     paddingBottom: "10px",
     paddingLeft: "20px",
+};
+
+const boldTagLinkStyle: CSSProperties = {
+    ...globalFont,
+    fontSize: config.theme.trendingObjFontSize - 2,
+    fontWeight: "bold",
 };
 
 const trendingListContainer: CSSProperties = {
@@ -99,17 +164,7 @@ const trendingListContainer: CSSProperties = {
     paddingTop: "20px",
 };
 
-const multicolumnStyle: CSSProperties = {
+const singleColumn: CSSProperties = {
     ...trendingListContainer,
-    paddingLeft: "35px",
-};
-
-const tagLinkStyle: CSSProperties = {
-    color: "black",
-};
-
-const boldTagLinkStyle: CSSProperties = {
-    ...tagLinkStyle,
-    fontSize: LINK_FONT_SIZE - 1,
-    fontWeight: "bold",
+    paddingLeft: "22px",
 };
