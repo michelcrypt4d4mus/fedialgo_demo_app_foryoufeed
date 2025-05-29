@@ -1,10 +1,10 @@
 /*
  * Slider that sets a weight for the algorithm.
  */
-import React from 'react';
-
-import Slider, { DEFAULT_STEP_SIZE } from './Slider';
 import { type StringNumberDict, type WeightName } from "fedialgo";
+
+import Slider from './Slider';
+import { config } from '../../config';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCALE_MULTIPLIER = 1.2;
@@ -40,7 +40,9 @@ export default function WeightSlider(props: WeightSliderProps) {
                 newWeights[scoreName] = Number(e.target.value);
                 await updateWeights(newWeights);
             }}
-            stepSize={(info.minValue && info.minValue < DEFAULT_STEP_SIZE) ? minValue : DEFAULT_STEP_SIZE}
+            stepSize={(info.minValue && (info.minValue < config.weights.defaultStepSize))
+                         ? minValue
+                         : config.weights.defaultStepSize}
             value={userWeights[scoreName]}
         />
     );
