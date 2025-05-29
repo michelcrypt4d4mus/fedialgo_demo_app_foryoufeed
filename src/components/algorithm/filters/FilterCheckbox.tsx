@@ -7,17 +7,11 @@ import Form from 'react-bootstrap/esm/Form';
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 
-import { config } from "../../../config";
+import { config, CheckboxTooltip } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { linkesque } from "../../../helpers/style_helpers";
 import { tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-
-export type CheckboxTooltip = {
-    anchor?: string;
-    color?: CSSProperties["color"];
-    text: string;
-};
 
 export const HASHTAG_ANCHOR = "user-hashtag-anchor";
 export const HIGHLIGHT = "highlighted";

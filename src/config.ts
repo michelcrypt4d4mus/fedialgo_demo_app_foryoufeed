@@ -6,9 +6,15 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import { capitalCase } from "change-case";
 
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
 
 export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
+
+export type CheckboxTooltip = {
+    anchor?: string;
+    color?: CSSProperties["color"];
+    text: string;
+};
 
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
@@ -84,7 +90,8 @@ type TimelineConfig = {
 
 type TooltipConfig = {
     filterOptionDelay: number;
-    filterSwitchTooltips: Record<SwitchType, string>;
+    filterOptionsTooltips: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
+    filterHeaderSwitchTooltips: Record<SwitchType, string>;
     gradientAdjustPctiles?: number[];
     headerDelay: number;
     minTagsForGradientAdjust?: number;
@@ -115,6 +122,23 @@ type WeightsConfig = {
     defaultStepSize: number;
     scalingMultiplier: number;
 };
+
+
+// Constants for subconfig
+const THEME: ThemeConfig = {
+    accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
+    feedBackgroundColor: '#15202b',     // background color for the timeline
+    feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
+    followedTagColor: 'yellow',           // Color for followed tags
+    followedUserColor: 'cyan',            // Color for followed users
+    followedUserColorFaded: '#2092a1',  // Faded color for followed users
+    participatedTagColor: '#92a14a',    // Color for participated tags
+    participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
+    trendingObjFontSize: 16,              // Font size for trending objects
+    trendingTagColor: 'firebrick',        // Color for trending tags
+    trendingTagColorFaded: '#f08c8c',   // Faded color for trending tags
+};
+
 
 interface ConfigType {
     filters: FilterConfig;
@@ -182,19 +206,7 @@ class Config implements ConfigType {
         animationDuration: 500,               // Duration of stats animations in milliseconds
     }
 
-    theme: ThemeConfig = {
-        accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-        feedBackgroundColor: '#15202b',     // background color for the timeline
-        feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
-        followedTagColor: 'yellow',           // Color for followed tags
-        followedUserColor: 'cyan',            // Color for followed users
-        followedUserColorFaded: '#2092a1',  // Faded color for followed users
-        participatedTagColor: '#92a14a',    // Color for participated tags
-        participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
-        trendingObjFontSize: 16,              // Font size for trending objects
-        trendingTagColor: 'firebrick',        // Color for trending tags
-        trendingTagColorFaded: '#f08c8c',   // Faded color for trending tags
-    }
+    theme: ThemeConfig = THEME;
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
@@ -207,7 +219,29 @@ class Config implements ConfigType {
 
     tooltips: TooltipConfig = {
         filterOptionDelay: 500,               // Delay for filter option tooltips in milliseconds
-        filterSwitchTooltips: {
+        filterOptionsTooltips: {              // Text that appears on highlighted filter options
+            [BooleanFilterName.LANGUAGE]: {
+                color: THEME.followedUserColor,
+                text: `You post most in this language`,
+            },
+            [TypeFilterName.FOLLOWED_ACCOUNTS]: {
+                color: THEME.followedUserColor,
+                text: `You follow this account`,
+            },
+            [TypeFilterName.FOLLOWED_HASHTAGS]: {
+                color: THEME.followedTagColor,
+                text: `You follow this hashtag`,
+            },
+            [TypeFilterName.PARTICIPATED_HASHTAGS]: {
+                color: THEME.participatedTagColor,
+                text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
+            },
+            [TypeFilterName.TRENDING_HASHTAGS]: {
+                color: THEME.trendingTagColorFaded,
+                text: `This hashtag is trending`,
+            },
+        },
+        filterHeaderSwitchTooltips: {
             [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
             [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
             [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
