@@ -119,30 +119,18 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 return filterConfig.tooltips[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (name in trendingTagNames) {
                 const tag = trendingTagNames[name];
-
-                if (!tag) {
-                    logger.error(`findTooltip: trendingTagNames not found "${name}" in`, trendingTagNames);
-                    return undefined;  // Should never happen, but just in case
-                }
-
                 const baseTooltip = filterConfig.tooltips[TypeFilterName.TRENDING_TAGS];
                 const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
 
                 const trendingTooltip = {
                     highlight: {color: getGradientColorForTag(tag, trendingTagColors, defaultColor).toHexString()},
-                    text: baseTooltip.text + ` ${tag.numToots} trending numToots`
+                    text: baseTooltip.text + ` (${tag.numToots} recent toots)`,
                 };
 
                 logger.debug(`findTooltip: trendingTagNames built for tag`, tag, `this tooltip: `, trendingTooltip);
                 return trendingTooltip;
             } else if (name in algorithm.userData.participatedHashtags) {
                 const tag = algorithm.userData.participatedHashtags[name];
-
-                if (!tag) {
-                    logger.error(`findTooltip: participatedTagNames not found "${name}" in:`, algorithm.userData.participatedHashtags);
-                    return undefined;  // Should never happen, but just in case
-                }
-
                 const baseTooltip = filterConfig.tooltips[TypeFilterName.PARTICIPATED_TAGS];
                 const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
 
