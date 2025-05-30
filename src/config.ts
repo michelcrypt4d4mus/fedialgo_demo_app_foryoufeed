@@ -158,12 +158,13 @@ class Config implements ConfigType {
                             highlight: {
                                 gradient: {
                                     adjustPctiles: [0.95, 0.98],     // Percentiles for gradient adjustment of participated tags
-                                    dataSource: TypeFilterName.PARTICIPATED_TAGS, // Data source for the gradient
+                                    dataSource: TypeFilterName.PARTICIPATED_TAGS,
                                     endpoints: [                     // Start and end points for the color gradient
                                         tinycolor(THEME.participatedTagColorMin),
                                         tinycolor(THEME.participatedTagColor),
                                     ],
                                     minTagsForGradientAdjust: 40,    // Minimum number of participated tags for gradient adjustment
+                                    textSuffix: (n: number) => ` ${n} times recently`,
                                 },
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
@@ -176,9 +177,9 @@ class Config implements ConfigType {
                                         tinycolor(THEME.trendingTagColorFaded),
                                         tinycolor(THEME.trendingTagColor),
                                     ],
+                                    textSuffix: (n: number) => ` (${n} recent toots)`,
                                 },
                             },
-                            // {color: THEME.trendingTagColorFaded},
                             text: `This hashtag is trending`,
                         },
                     },

@@ -18,6 +18,17 @@ import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 type TagNames = ReturnType<TagList["tagNameDict"]>;
+
+type TagColorGradient = {
+    colors: tinycolor.Instance[];
+    tagNames: TagNames;
+};
+
+const GRADIENT_DATA_SOURCES: GradientDataSource[] = [
+    TypeFilterName.PARTICIPATED_TAGS,
+    TypeFilterName.TRENDING_TAGS,
+];
+
 const EMPTY_GRADIENT: tinycolor.Instance[] = [];
 
 interface FilterCheckboxGridProps {
@@ -38,26 +49,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    const hashtagDataSources: Record<GradientDataSource, TagNames> = useMemo(
-        () => ({
-            [TypeFilterName.PARTICIPATED_TAGS]: isTagFilter ? algorithm.userData.participatedHashtags : {},
-            [TypeFilterName.TRENDING_TAGS]: isTagFilter ? new TagList(algorithm.trendingData.tags).tagNameDict() : {},
-        }),
-        [algorithm.userData.participatedHashtags, algorithm.trendingData.tags]
-    );
+    const buildGradientColorArray = (dataSource: GradientDataSource, tagNames: TagNames): tinycolor.Instance[] => {
+        const gradientCfg = filterConfig?.tooltips?.[dataSource]?.highlight?.gradient;
 
-    const buildGradientColorArray = (dataSource: GradientDataSource): tinycolor.Instance[] => {
-        const highlightCfg = Object.values(filterConfig.tooltips);
-        const tooltip = highlightCfg.find(c => c.highlight?.gradient?.dataSource == dataSource);
-
-        if (!tooltip || !tooltip.highlight?.gradient) {
-            logger.error(`No gradient found for dataSource: ${dataSource} in filterConfig`, filterConfig);
+        if (!gradientCfg) {
+            isTagFilter && logger.warn(`No gradient found for dataSource: ${dataSource} in filterConfig`, filterConfig);
             return EMPTY_GRADIENT;
         }
 
-        const tags = Object.values(hashtagDataSources[dataSource]);
+        const tags = Object.values(tagNames);
         const maxNumToots = Math.max(...tags.map(t => t.numToots), 2);  // Ensure at least 2 for the gradient
-        const gradientCfg = tooltip.highlight.gradient;
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
         // Adjust the color gradient so there's more color variation in the low/middle range
@@ -79,53 +80,52 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         return colorArray;
     };
 
-    const participatedTagColors = useMemo(
-        () => isTagFilter ? buildGradientColorArray(TypeFilterName.PARTICIPATED_TAGS) : EMPTY_GRADIENT,
-        [algorithm.userData.participatedHashtags]
+    // TODO: make this empty if it's not the hashtag filter
+    const tagGradientInfo: Record<GradientDataSource, TagColorGradient> = useMemo(
+        () => GRADIENT_DATA_SOURCES.reduce(
+            (gradingInfos, dataSource) => {
+                const tagNames = (dataSource == TypeFilterName.PARTICIPATED_TAGS)
+                                              ? algorithm.userData.participatedHashtags
+                                              : new TagList(algorithm.trendingData.tags).tagNameDict();
+
+                gradingInfos[dataSource] = {
+                    colors: buildGradientColorArray(dataSource, tagNames),
+                    tagNames: tagNames,
+                }
+
+                return gradingInfos
+            },
+            {} as Record<GradientDataSource, TagColorGradient>
+        ),
+        [algorithm.trendingData.tags, algorithm.userData.participatedHashtags]
     );
 
-    const trendingTagColors = useMemo(
-        () => isTagFilter ? buildGradientColorArray(TypeFilterName.TRENDING_TAGS) : EMPTY_GRADIENT,
-        [algorithm.trendingData.tags]
-    );
+    const getGradientColorTooltip = (tag: TagWithUsageCounts, dataSource: GradientDataSource): CheckboxTooltip => {
+        const baseTooltip = filterConfig.tooltips[dataSource];
+        const colors = tagGradientInfo[dataSource].colors;
+        let color = colors[tag.numToots - 1];
 
-    const getGradientColorForTag = (
-        tag: TagWithUsageCounts,
-        colors: tinycolor.Instance[],
-        defaultColor: tinycolor.Instance
-    ): tinycolor.Instance => {
-        let colorInstance = colors[tag.numToots - 1];
-
-        if (!colorInstance) {
-            logger.warn(`No color found for "${tag.name}" w/ ${tag.numToots} toots`, colors);
-            colorInstance = defaultColor;;
+        if (!color) {
+            logger.warn(`No color found for "${tag.name}" w/ ${tag.numToots} toots, using default. colors:`, colors);
+            color = baseTooltip.highlight.gradient.endpoints[1];
         }
 
-        return colorInstance;
+        return {
+            highlight: {color: color.toHexString()},
+            text: `${baseTooltip.text} ${baseTooltip.highlight.gradient.textSuffix(tag.numToots)}`,
+        }
     };
 
     const findTooltip = (name: string): CheckboxTooltip | undefined => {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
                 return filterConfig.tooltips[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (name in hashtagDataSources[TypeFilterName.TRENDING_TAGS]) {
-                const tag = hashtagDataSources[TypeFilterName.TRENDING_TAGS][name];
-                const baseTooltip = filterConfig.tooltips[TypeFilterName.TRENDING_TAGS];
-                const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
-
-                return {
-                    highlight: {color: getGradientColorForTag(tag, trendingTagColors, defaultColor).toHexString()},
-                    text: baseTooltip.text + ` (${tag.numToots} recent toots)`,
-                };
-            } else if (name in hashtagDataSources[TypeFilterName.PARTICIPATED_TAGS]) {
-                const tag = hashtagDataSources[TypeFilterName.PARTICIPATED_TAGS][name];
-                const baseTooltip = filterConfig.tooltips[TypeFilterName.PARTICIPATED_TAGS];
-                const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
-
-                return {
-                    highlight: {color: getGradientColorForTag(tag, participatedTagColors, defaultColor).toHexString()},
-                    text: baseTooltip.text + ` ${tag.numToots} times recently`
-                };
+            } else if (name in tagGradientInfo[TypeFilterName.TRENDING_TAGS]) {
+                const tag = tagGradientInfo[TypeFilterName.TRENDING_TAGS][name];
+                return getGradientColorTooltip(tag, TypeFilterName.TRENDING_TAGS);
+            } else if (name in tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS]) {
+                const tag = tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS][name];
+                return getGradientColorTooltip(tag, TypeFilterName.PARTICIPATED_TAGS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return filterConfig.tooltips[BooleanFilterName.LANGUAGE];
