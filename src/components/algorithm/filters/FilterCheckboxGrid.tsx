@@ -6,7 +6,7 @@
 import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
-import { BooleanFilter, BooleanFilterName, TagList, TypeFilterName, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TagList, TypeFilterName } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
