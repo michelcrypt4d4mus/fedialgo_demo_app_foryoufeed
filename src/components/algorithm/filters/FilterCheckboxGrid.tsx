@@ -16,7 +16,7 @@ import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-const TOOLTIPS = config.tooltips.filterOptionsTooltips;
+const TOOLTIPS = config.filters.boolean.highlightedOptions;
 const GRADIENT_ENDPOINTS =  [config.theme.participatedTagColorMin, config.theme.participatedTagColor].map(t => tinycolor(t));
 const PARTICIPATED_GRADIENT = participatedGradient();
 const EMPTY_GRADIENT: tinycolor.Instance[] = [];
@@ -35,7 +35,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { algorithm } = useAlgorithm();
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
-    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
+    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsFormatting[filter.title];
     const isHashtagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
@@ -60,9 +60,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             logger.trace(`Rebuilding participatedColorArray with maxParticipations=${maxParticipations}, colorArray:`, colorArray);
 
             // Adjust the color gradient so there's more color variation in the low/middle range
-            if (participatedTags.length > config.tooltips.minTagsForGradientAdjust) {
+            if (participatedTags.length > config.filters.tooltips.minTagsForGradientAdjust) {
                 try {
-                    const highPctiles = config.tooltips.gradientAdjustPctiles.map(p => Math.floor(maxParticipations * p));
+                    const highPctiles = config.filters.tooltips.gradientAdjustPctiles.map(p => Math.floor(maxParticipations * p));
                     const middleColors = highPctiles.map(n => colorArray[n]).filter(Boolean);
                     colorArray = participatedGradient(middleColors).hsv(maxParticipations, false);
                 } catch (err) {

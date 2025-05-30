@@ -43,9 +43,10 @@ type AppConfig = {
 type FilterConfig = {
     boolean: {
         defaultMinTootsToAppear: number;
+        highlightedOptions: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
         maxOptionLength: number;          // Maximum length of a filter option label
         minOptionsToShowSlider: number;   // Minimum number of options to show the slider & hide low count options
-        optionsList: {[key in BooleanFilterName]?: FilterGridConfig};
+        optionsFormatting: {[key in BooleanFilterName]?: FilterGridConfig};
     };
     numeric: {
         description: string;
@@ -53,6 +54,7 @@ type FilterConfig = {
         maxValue: number;
         title: string;
     };
+    tooltips: FilterTooltipConfig,
 };
 
 export type FilterGridConfig = {
@@ -99,14 +101,13 @@ type TimelineConfig = {
     defaultNumDisplayedToots: number;
 };
 
-type TooltipConfig = {
-    filterOptionDelay: number;
-    filterOptionsTooltips: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
-    filterHeaderSwitchTooltips: Record<SwitchType, string>;
+type FilterTooltipConfig = {
+    hoverDelay: number;
+    headerSwitches: Record<SwitchType, string>;
     gradientAdjustPctiles?: number[];
-    headerDelay: number;
+    headerSwitchHoverDelay: number;
     minTagsForGradientAdjust?: number;
-    minTootsSliderDelay: number;
+    minTootsSliderHoverDelay: number;
 };
 
 type TootConfig = {
@@ -161,7 +162,6 @@ interface ConfigType {
     stats: StatsConfig;
     theme: ThemeConfig;
     timeline: TimelineConfig;
-    tooltips: TooltipConfig;
     toots: TootConfig;
     trending: TrendingConfig;
     weights: WeightsConfig;
@@ -184,9 +184,31 @@ class Config implements ConfigType {
     filters: FilterConfig = {
         boolean: {
             defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
+            highlightedOptions: {                // Text that appears on highlighted filter options
+                [BooleanFilterName.LANGUAGE]: {
+                    color: THEME.followedUserColor,
+                    text: `You post most in this language`,
+                },
+                [TypeFilterName.FOLLOWED_ACCOUNTS]: {
+                    color: THEME.followedUserColor,
+                    text: `You follow this account`,
+                },
+                [TypeFilterName.FOLLOWED_HASHTAGS]: {
+                    color: THEME.followedTagColor,
+                    text: `You follow this hashtag`,
+                },
+                [TypeFilterName.PARTICIPATED_HASHTAGS]: {
+                    color: THEME.participatedTagColor,
+                    text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
+                },
+                [TypeFilterName.TRENDING_HASHTAGS]: {
+                    color: THEME.trendingTagColorFaded,
+                    text: `This hashtag is trending`,
+                },
+            },
             maxOptionLength: 19,                 // Maximum length of a filter option label
             minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
-            optionsList: {                       // Configure how the filter options list should be displayed
+            optionsFormatting: {                       // Configure how the filter options list should be displayed
                 [BooleanFilterName.HASHTAG]: {
                     [SwitchType.HIGHLIGHTS_ONLY]: true,
                 },
@@ -207,6 +229,18 @@ class Config implements ConfigType {
             maxValue: 50,                          // Maximum value for numeric filters
             title: "Interactions",
         },
+        tooltips: {
+            hoverDelay: 500,               // Delay for filter option tooltips in milliseconds
+            headerSwitches: {
+                [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
+                [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
+                [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
+            },
+            gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
+            headerSwitchHoverDelay: 500,          // Delay for header tooltips in milliseconds
+            minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment
+            minTootsSliderHoverDelay: 50,              // Delay for the minimum toots slider tooltip in milliseconds
+        }
     }
 
     locale: LocaleConfig = {
@@ -238,41 +272,6 @@ class Config implements ConfigType {
         noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
         numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
-    }
-
-    tooltips: TooltipConfig = {
-        filterOptionDelay: 500,               // Delay for filter option tooltips in milliseconds
-        filterOptionsTooltips: {              // Text that appears on highlighted filter options
-            [BooleanFilterName.LANGUAGE]: {
-                color: THEME.followedUserColor,
-                text: `You post most in this language`,
-            },
-            [TypeFilterName.FOLLOWED_ACCOUNTS]: {
-                color: THEME.followedUserColor,
-                text: `You follow this account`,
-            },
-            [TypeFilterName.FOLLOWED_HASHTAGS]: {
-                color: THEME.followedTagColor,
-                text: `You follow this hashtag`,
-            },
-            [TypeFilterName.PARTICIPATED_HASHTAGS]: {
-                color: THEME.participatedTagColor,
-                text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
-            },
-            [TypeFilterName.TRENDING_HASHTAGS]: {
-                color: THEME.trendingTagColorFaded,
-                text: `This hashtag is trending`,
-            },
-        },
-        filterHeaderSwitchTooltips: {
-            [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
-            [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
-            [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
-        },
-        gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
-        headerDelay: 500,                     // Delay for header tooltips in milliseconds
-        minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment
-        minTootsSliderDelay: 50,              // Delay for the minimum toots slider tooltip in milliseconds
     }
 
     toots: TootConfig = {

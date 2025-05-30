@@ -24,7 +24,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     const showMinTootsSlider = Object.keys(filter.optionInfo).length > config.filters.boolean.minOptionsToShowSlider;
     const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}-min-toots`;
-    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
+    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsFormatting[filter.title];
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
     const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.boolean.defaultMinTootsToAppear : 0);
@@ -61,7 +61,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     if (showMinTootsSlider) {
         headerSwitches = headerSwitches.concat([
             <Tooltip
-                delayShow={config.tooltips.minTootsSliderDelay}
+                delayShow={config.filters.tooltips.minTootsSliderHoverDelay}
                 id={minTootsTooltipAnchor}
                 key={'minTootsTooltipAnchor-slider'}
                 place="bottom"
