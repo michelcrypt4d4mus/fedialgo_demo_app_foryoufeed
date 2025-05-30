@@ -96,8 +96,10 @@ export default function Feed() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isBottom, numDisplayedToots, prevScrollY, setNumDisplayedToots, setPrevScrollY, timeline]);
 
+    // TODO: probably easier to just not rely on the algorithm's m easurement of the last load time - we
+    // can easily track it ourselves.
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
-    if (algorithm?.lastLoadTimeInSeconds) footerMsg += ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds`;
+    footerMsg += (algorithm?.lastLoadTimeInSeconds) ? ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds` : '';
 
     const finishedLoadingMsg = (
         <p style={loadingMsgStyle}>
