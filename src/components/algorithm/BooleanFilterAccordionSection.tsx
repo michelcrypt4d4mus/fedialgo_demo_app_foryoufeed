@@ -27,7 +27,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsFormatting[filter.title];
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.boolean.defaultMinTootsToAppear : 0);
+    const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.boolean.defaultMinTootsSliderValue : 0);
     const [sortByCount, setSortByValue] = useState(false);
 
     let headerSwitches = [

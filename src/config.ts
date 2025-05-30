@@ -42,7 +42,7 @@ type AppConfig = {
 
 type FilterConfig = {
     boolean: {
-        defaultMinTootsToAppear: number;
+        defaultMinTootsSliderValue: number;
         highlightedOptions: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
         maxOptionLength: number;          // Maximum length of a filter option label
         minOptionsToShowSlider: number;   // Minimum number of options to show the slider & hide low count options
@@ -183,7 +183,7 @@ class Config implements ConfigType {
 
     filters: FilterConfig = {
         boolean: {
-            defaultMinTootsToAppear: 5,          // Minimum number of toots for an option to appear in the filter
+            defaultMinTootsSliderValue: 5,          // Minimum number of toots for an option to appear in the filter
             highlightedOptions: {                // Text that appears on highlighted filter options
                 [BooleanFilterName.LANGUAGE]: {
                     color: THEME.followedUserColor,
