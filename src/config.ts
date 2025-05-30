@@ -12,12 +12,13 @@ import { type TrendingPanel } from "./components/TrendingSection";
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 
+export type FilterOptionTypeTooltips = {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
 
 type FilterOptionsFormat = {
     // Color highlight config for filter options
-    tooltips?: {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
+    tooltips?: FilterOptionTypeTooltips;
     // Fxn to transform the option name to a displayed label
-    labelMapper?: (name: string) => string;
+    formatLabel?: (name: string) => string;
 };
 
 
@@ -191,10 +192,10 @@ class Config implements ConfigType {
                             text: `You post most in this language`,
                         },
                     },
-                    labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
+                    formatLabel: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
-                    labelMapper: (name: string) => capitalCase(name),
+                    formatLabel: (name: string) => capitalCase(name),
                 },
                 [BooleanFilterName.USER]: {
                     tooltips: {

@@ -11,8 +11,8 @@ import { BooleanFilter, BooleanFilterName, TagList, TagWithUsageCounts, TypeFilt
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
 import { buildGradient } from "../../../helpers/style_helpers";
-import { config } from "../../../config";
 import { CheckboxTooltip, GradientDataSource } from "./FilterCheckbox";
+import { config, type FilterOptionTypeTooltips } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
@@ -46,11 +46,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
     const filterConfig = config.filters.boolean.optionsFormatting[filter.title];
+    const filterTooltips: FilterOptionTypeTooltips = filterConfig?.tooltips || {};
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
     const buildGradientColorArray = (dataSource: GradientDataSource, tagNames: TagNames): tinycolor.Instance[] => {
-        const gradientCfg = filterConfig?.tooltips?.[dataSource]?.highlight?.gradient;
+        const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
 
         if (!gradientCfg) {
             isTagFilter && logger.warn(`No gradient found for dataSource: ${dataSource} in filterConfig`, filterConfig);
@@ -106,7 +107,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     const getGradientColorTooltip = (tagName: string, dataSource: GradientDataSource): CheckboxTooltip => {
-        const baseTooltip = filterConfig.tooltips[dataSource];
+        const baseTooltip = filterTooltips[dataSource];
         const colors = tagGradientInfo[dataSource].colors;
         const tag = tagGradientInfo[dataSource].tagNames[tagName];
 
@@ -131,16 +132,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const findTooltip = (name: string): CheckboxTooltip | undefined => {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
-                return filterConfig.tooltips[TypeFilterName.FOLLOWED_HASHTAGS];
+                return filterTooltips[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (name in tagGradientInfo[TypeFilterName.TRENDING_TAGS].tagNames) {
                 return getGradientColorTooltip(name, TypeFilterName.TRENDING_TAGS);
             } else if (name in tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS].tagNames) {
                 return getGradientColorTooltip(name, TypeFilterName.PARTICIPATED_TAGS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
-            return filterConfig.tooltips[BooleanFilterName.LANGUAGE];
+            return filterTooltips[BooleanFilterName.LANGUAGE];
         } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
-            return filterConfig.tooltips[TypeFilterName.FOLLOWED_ACCOUNTS];
+            return filterTooltips[TypeFilterName.FOLLOWED_ACCOUNTS];
         }
     };
 
@@ -150,7 +151,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             <FilterCheckbox
                 isChecked={filter.isThisSelectionEnabled(name)}
                 key={`${filter.title}_${name}_${i}`}
-                label={filterConfig?.labelMapper ? filterConfig?.labelMapper(name) : name}
+                label={filterConfig?.formatLabel ? filterConfig?.formatLabel(name) : name}
                 labelExtra={filter.optionInfo[name]}
                 onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
                 tooltip={findTooltip(name)}
