@@ -14,26 +14,28 @@ import { followUri } from "../../../helpers/react_helpers";
 import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-
-// Union type to force either 'color' or 'gradient' to be defined, but not both
-type CheckboxColor = { color: CSSProperties["color"]; gradient?: never; };
-type CheckboxColoredByGradient = { color?: never; gradient: CheckboxColorGradient; };
-type CheckboxHighlightColor = CheckboxColor | CheckboxColoredByGradient;
+export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
 
 export type CheckboxColorGradient = {
-    adjustPctiles?: number[];
+    // Sometimes we want to adjust the gradient instad of using the one between the endpoints to make any of the
+    // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
+    adjustment?: {
+        adjustPctiles: number[];
+        minTagsToAdjust: number;
+    },
     dataSource: GradientDataSource;
     endpoints: [tinycolor.Instance, tinycolor.Instance];
-    minTagsForGradientAdjust?: number;
+    textSuffix: (n: number) => string;
 };
-
-export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
 
 export type CheckboxTooltip = {
     anchor?: string;
-    highlight?: CheckboxHighlightColor;
+    highlight?: CheckboxColor | CheckboxColoredByGradient; // Union type forces exactly one of 'color' or 'gradient' props
     text: string;
 };
+
+type CheckboxColor = { color: CSSProperties["color"]; gradient?: never; };
+type CheckboxColoredByGradient = { color?: never; gradient: CheckboxColorGradient; };
 
 
 const HASHTAG_ANCHOR = "user-hashtag-anchor";
