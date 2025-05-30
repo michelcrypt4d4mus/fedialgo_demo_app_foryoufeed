@@ -4,7 +4,7 @@
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import { CSSProperties, useState, useEffect, useMemo, useRef } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
 import TheAlgorithm, { Toot } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
@@ -19,15 +19,14 @@ import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { buildStateCheckbox } from "../helpers/react_helpers";
-import { getLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
-import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
+import { getLogger } from "../helpers/log_helpers";
+import { linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
 
-// Messaging constants
-const AUTO_UPDATE_TOOLTIP_MSG = "If this box is checked the feed will be automatically updated when you focus this browser tab.";
+const TOOLTIP_ANCHOR = "tooltip-anchor";
 const logger = getLogger("Feed");
 
 
@@ -96,8 +95,9 @@ export default function Feed() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isBottom, numDisplayedToots, prevScrollY, setNumDisplayedToots, setPrevScrollY, timeline]);
 
+    // TODO: probably easier to not rely on fedialgo's measurement of the last load time; we can easily track it ourselves.
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
-    if (algorithm?.lastLoadTimeInSeconds) footerMsg += ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds`;
+    footerMsg += (algorithm?.lastLoadTimeInSeconds) ? ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds` : '';
 
     const finishedLoadingMsg = (
         <p style={loadingMsgStyle}>
@@ -131,7 +131,7 @@ export default function Feed() {
 
                             <a
                                 data-tooltip-id={TOOLTIP_ANCHOR}
-                                data-tooltip-content={AUTO_UPDATE_TOOLTIP_MSG}
+                                data-tooltip-content={config.timeline.checkboxTooltipText.autoupdate}
                                 key={"tooltipautoload"}
                                 style={{color: "white"}}
                             >

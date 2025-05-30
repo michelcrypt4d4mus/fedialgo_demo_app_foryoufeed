@@ -9,17 +9,16 @@ import { Tooltip } from 'react-tooltip';
 
 import { config, CheckboxTooltip } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
-import { linkesque } from "../../../helpers/style_helpers";
-import { tooltipZIndex } from "../../../helpers/style_helpers";
+import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-export const HASHTAG_ANCHOR = "user-hashtag-anchor";
-export const HIGHLIGHT = "highlighted";
+const HASHTAG_ANCHOR = "user-hashtag-anchor";
+const HIGHLIGHT = "highlighted";
 const HIGHLIGHTED_TOOLTIP_ANCHOR = `${HASHTAG_ANCHOR}-${HIGHLIGHT}`;
 
 export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
-)
+);
 
 interface FilterCheckboxProps {
     capitalize?: boolean,
@@ -35,7 +34,6 @@ interface FilterCheckboxProps {
 export default function FilterCheckbox(props: FilterCheckboxProps) {
     let { capitalize, isChecked, label, labelExtra, onChange, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
-
     const [isCheckedState, setIsCheckedState] = useState(isChecked);
 
     labelExtra = (typeof labelExtra == "number") ? labelExtra.toLocaleString() : labelExtra;
@@ -43,8 +41,8 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     let style: CSSProperties = {color: "black"};
     let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
 
-    if (tooltip?.color) {
-        style = {...highlightedCheckboxStyle, ...style, backgroundColor: tooltip.color};
+    if (tooltip?.highlight?.color) {
+        style = {...highlightedCheckboxStyle, ...style, backgroundColor: tooltip.highlight.color};
         tooltipAnchor = HIGHLIGHTED_TOOLTIP_ANCHOR;
     }
 
@@ -53,8 +51,8 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
         labelStyle.fontSize = "14px";
     }
 
-    if (label.length > config.filters.boolean.maxOptionLength) {
-        label = `${label.slice(0, config.filters.boolean.maxOptionLength)}...`;
+    if (label.length > config.filters.boolean.maxLabelLength) {
+        label = `${label.slice(0, config.filters.boolean.maxLabelLength)}...`;
     }
 
     let labelNode = <span style={labelStyle}>{label}</span>;
