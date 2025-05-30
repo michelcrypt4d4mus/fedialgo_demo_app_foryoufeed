@@ -4,7 +4,7 @@
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import { CSSProperties, useState, useEffect, useMemo, useRef } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
 import TheAlgorithm, { Toot } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
@@ -19,9 +19,9 @@ import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { buildStateCheckbox } from "../helpers/react_helpers";
-import { getLogger } from "../helpers/log_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
+import { getLogger } from "../helpers/log_helpers";
 import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
@@ -96,8 +96,7 @@ export default function Feed() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isBottom, numDisplayedToots, prevScrollY, setNumDisplayedToots, setPrevScrollY, timeline]);
 
-    // TODO: probably easier to just not rely on the algorithm's m easurement of the last load time - we
-    // can easily track it ourselves.
+    // TODO: probably easier to not rely on fedialgo's measurement of the last load time; we can easily track it ourselves.
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
     footerMsg += (algorithm?.lastLoadTimeInSeconds) ? ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds` : '';
 
