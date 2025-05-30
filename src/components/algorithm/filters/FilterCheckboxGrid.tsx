@@ -6,13 +6,13 @@
 import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
-import { BooleanFilter, BooleanFilterName, TagWithUsageCounts, TypeFilterName, buildTagNames, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TagList, TagWithUsageCounts, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
 import { buildGradient } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
-import { CheckboxTooltip, CheckboxColorGradient, GradientDataSource } from "./FilterCheckbox";
+import { CheckboxTooltip, GradientDataSource } from "./FilterCheckbox";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
@@ -37,8 +37,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isHashtagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    // Todo: memoize
-    const trendingTagNames = buildTagNames(algorithm.trendingData.tags);
+    const trendingTagNames = useMemo(
+        () => isHashtagFilter && new TagList(algorithm.trendingData.tags).tagNameDict(),
+        [algorithm.trendingData.tags]
+    );
 
     const getGradientDataSource = (dataSource: GradientDataSource): TagWithUsageCounts[] => {
         if (dataSource == TypeFilterName.TRENDING_TAGS) {
