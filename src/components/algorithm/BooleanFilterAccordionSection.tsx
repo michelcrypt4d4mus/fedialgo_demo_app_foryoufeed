@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 
-import { BooleanFilter } from "fedialgo";
+import { BooleanFilter, sortKeysByValue } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
@@ -14,6 +14,7 @@ import Slider from "./Slider";
 import { config } from "../../config";
 import { SwitchType } from "../../helpers/style_helpers";
 import { tooltipZIndex } from "../../helpers/style_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
@@ -22,14 +23,23 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
+    const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
+    const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.title];
+    const logger = getLogger("BooleanFilterAccordionSection", filter.title);
 
-    const filterConfig = config.filters.boolean.optionsFormatting[filter.title];
-    const showMinTootsSlider = Object.keys(filter.optionInfo).length > config.filters.boolean.minTootsSlider.minOptionsToShowSlider;
-    const minTootsSliderTooltipAnchor = `${filter.title}-min-toots-slider-tooltip`;
+    const numOptions = filter.numOptions();
+    const showMinTootsSlider = numOptions > minTootsSliderCfg.minOptionsToShowSlider;
+    let sliderDefault = minTootsSliderCfg.defaultValue;
+
+    if (numOptions > minTootsSliderCfg.maxOptionsToUseDefault) {
+        sliderDefault = filter.sortedByValue()[minTootsSliderCfg.idealNumOptions][1];
+        logger.debug(`Adjusted default for minToots slider to ${sliderDefault} bc there's ${numOptions} options`);
+    }
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.boolean.minTootsSlider.defaultValue : 0);
+    const [minToots, setMinToots] = useState(showMinTootsSlider ? sliderDefault : 0);
     const [sortByCount, setSortByValue] = useState(false);
+    const minTootsSliderTooltipAnchor = `${filter.title}-min-toots-slider-tooltip`;
 
     let headerSwitches = [
         <HeaderSwitch
@@ -47,7 +57,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     ];
 
     // Add a highlights-only switch if configured
-    if (filterConfig.tooltips) {
+    if (optionsFormatCfg.tooltips) {
         headerSwitches = headerSwitches.concat([
             <HeaderSwitch
                 isChecked={highlightedOnly}
@@ -62,7 +72,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     if (showMinTootsSlider) {
         headerSwitches = headerSwitches.concat([
             <Tooltip
-                delayShow={config.filters.boolean.minTootsSlider.tooltipHoverDelay}
+                delayShow={minTootsSliderCfg.tooltipHoverDelay}
                 id={minTootsSliderTooltipAnchor}
                 key={'minTootsTooltipAnchor-slider'}
                 place="bottom"
