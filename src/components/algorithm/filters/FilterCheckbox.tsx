@@ -4,13 +4,37 @@
 import React, { CSSProperties, useState } from "react";
 import Form from 'react-bootstrap/esm/Form';
 
+import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
+import { TypeFilterName } from "fedialgo";
 
-import { config, CheckboxTooltip } from "../../../config";
+import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
+
+
+// Union type to force either 'color' or 'gradient' to be defined, but not both
+type CheckboxColor = { color: CSSProperties["color"]; gradient?: never; };
+type CheckboxColoredByGradient = { color?: never; gradient: CheckboxColorGradient; };
+type CheckboxHighlightColor = CheckboxColor | CheckboxColoredByGradient;
+
+export type CheckboxColorGradient = {
+    adjustPctiles?: number[];
+    dataSource: GradientDataSource;
+    endpoints: [tinycolor.Instance, tinycolor.Instance];
+    minTagsForGradientAdjust?: number;
+};
+
+export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
+
+export type CheckboxTooltip = {
+    anchor?: string;
+    highlight?: CheckboxHighlightColor;
+    text: string;
+};
+
 
 const HASHTAG_ANCHOR = "user-hashtag-anchor";
 const HIGHLIGHT = "highlighted";

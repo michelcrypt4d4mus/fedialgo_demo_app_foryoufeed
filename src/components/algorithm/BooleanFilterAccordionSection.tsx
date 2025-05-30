@@ -11,7 +11,8 @@ import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
 import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
-import { config, SwitchType } from "../../config";
+import { config } from "../../config";
+import { SwitchType } from "../../helpers/style_helpers";
 import { tooltipZIndex } from "../../helpers/style_helpers";
 
 interface BooleanFilterAccordionProps {
@@ -46,7 +47,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     ];
 
     // Add a highlights-only switch if configured
-    if (filterConfig.highlights) {
+    if (filterConfig.tooltips) {
         headerSwitches = headerSwitches.concat([
             <HeaderSwitch
                 isChecked={highlightedOnly}

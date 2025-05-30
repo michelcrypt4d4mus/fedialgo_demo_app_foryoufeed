@@ -1,44 +1,25 @@
 /*
  * Configuration variables for the application.
  */
-import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
-
 import { capitalCase } from "change-case";
 import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
+
+import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
+import { type TrendingPanel } from "./components/TrendingSection";
 import { MB } from "./helpers/number_helpers";
-import { ThemeConfig, THEME } from "./helpers/style_helpers";
+import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 
-export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
-export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
-// Enums  // TODO: move to types.ts?
-export enum SwitchType {
-    HIGHLIGHTS_ONLY = "highlightsOnly",
-    INVERT_SELECTION = "invertSelection",
-    SORT_BY_COUNT = "sortByCount",
+type FilterOptionsFormat = {
+    // Color highlight config for filter options
+    tooltips?: {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
+    // Fxn to transform the option name to a displayed label
+    labelMapper?: (name: string) => string;
 };
 
-export type CheckboxColorGradient = {
-    adjustPctiles?: number[];
-    dataSource: GradientDataSource;
-    endpoints: [tinycolor.Instance, tinycolor.Instance];
-    minTagsForGradientAdjust?: number;
-};
-
-// Union type to force either 'color' or 'gradient' to be defined, but not both
-type CheckboxColor = {color: CSSProperties["color"], gradient?: never};
-type CheckboxColoredByGradient = {color?: never; gradient: CheckboxColorGradient};
-type CheckboxHighlightColor = CheckboxColor | CheckboxColoredByGradient;
-
-// TODO: move to types.ts?
-export type CheckboxTooltip = {
-    anchor?: string;
-    highlight?: CheckboxHighlightColor;
-    text: string;
-};
 
 // Subconfig types
 type AppConfig = {
@@ -60,7 +41,11 @@ type FilterConfig = {
             minOptionsToShowSlider: number,
             tooltipHoverDelay: number;
         },
-        optionsFormatting: Record<BooleanFilterName, FilterOptionsConfig>,
+        optionsFormatting: Record<BooleanFilterName, FilterOptionsFormat>,
+    };
+    headerSwitches: {
+        tooltipHoverDelay: number;
+        tooltipText: Record<SwitchType, string>;
     };
     numeric: {
         description: string;
@@ -68,17 +53,6 @@ type FilterConfig = {
         maxValue: number;
         title: string;
     };
-    tooltips: FilterTooltipConfig,
-};
-
-export type FilterOptionsConfig = {
-    highlights?: {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip}; // Color highlight config for filter options
-    labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
-};
-
-type FilterTooltipConfig = {
-    headerSwitches: Record<SwitchType, string>;
-    headerSwitchHoverDelay: number;
 };
 
 type LocaleConfig = {
@@ -175,7 +149,7 @@ class Config implements ConfigType {
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
                 [BooleanFilterName.HASHTAG]: {
-                    highlights: {
+                    tooltips: {
                         [TypeFilterName.FOLLOWED_HASHTAGS]: {
                             highlight: {color: THEME.followedTagColor},
                             text: `You follow this hashtag`,
@@ -201,7 +175,7 @@ class Config implements ConfigType {
                     },
                 },
                 [BooleanFilterName.LANGUAGE]: {
-                    highlights: {
+                    tooltips: {
                         [BooleanFilterName.LANGUAGE]: {
                             highlight: {color: THEME.followedUserColor},
                             text: `You post most in this language`,
@@ -213,7 +187,7 @@ class Config implements ConfigType {
                     labelMapper: (name: string) => capitalCase(name),
                 },
                 [BooleanFilterName.USER]: {
-                    highlights: {
+                    tooltips: {
                         [TypeFilterName.FOLLOWED_ACCOUNTS]: {
                             highlight: {color: THEME.followedUserColor},
                             text: `You follow this account`,
@@ -229,13 +203,13 @@ class Config implements ConfigType {
             maxValue: 50,                          // Maximum value for numeric filters
             title: "Interactions",
         },
-        tooltips: {
-            headerSwitches: {
+        headerSwitches: {
+            tooltipText: {
                 [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
                 [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
                 [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
             },
-            headerSwitchHoverDelay: 500,          // Delay for header tooltips in milliseconds
+            tooltipHoverDelay: 500,          // Delay for header tooltips in milliseconds
         }
     }
 

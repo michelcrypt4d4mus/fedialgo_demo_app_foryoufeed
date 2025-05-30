@@ -7,6 +7,13 @@ import { CSSProperties } from "react";
 import tinycolor from "tinycolor2";
 import tinygradient from "tinygradient";
 
+// Can't live in FilterCheckbox.tsx because of circular dependency
+export enum SwitchType {
+    HIGHLIGHTS_ONLY = "highlightsOnly",
+    INVERT_SELECTION = "invertSelection",
+    SORT_BY_COUNT = "sortByCount"
+};
+
 export type ThemeConfig = {
     accordionOpenBlue: CSSProperties['color'];
     feedBackgroundColor: CSSProperties['backgroundColor'];

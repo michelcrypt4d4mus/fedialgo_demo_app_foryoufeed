@@ -7,15 +7,15 @@ import { ChangeEvent } from "react";
 import { Tooltip } from 'react-tooltip';
 
 import FilterCheckbox from "./FilterCheckbox";
-import { config, SwitchType } from "../../../config";
-import { tooltipZIndex } from "../../../helpers/style_helpers";
+import { config } from "../../../config";
+import { SwitchType, tooltipZIndex } from "../../../helpers/style_helpers";
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
 
 // This must appear somewhere in the component tree for the header switch tooltips to work
 export const HEADER_SWITCH_TOOLTIP = (
     <Tooltip
-        delayShow={config.filters.tooltips.headerSwitchHoverDelay}
+        delayShow={config.filters.headerSwitches.tooltipHoverDelay}
         id={HEADER_SWITCH_TOOLTIP_ANCHOR}
         place="top"
         style={tooltipZIndex}
@@ -41,7 +41,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
             onChange={onChange}
             tooltip={{
                 anchor: HEADER_SWITCH_TOOLTIP_ANCHOR,
-                text: tooltipText || config.filters.tooltips.headerSwitches[label],
+                text: tooltipText || config.filters.headerSwitches.tooltipText[label],
             }}
         />
     );

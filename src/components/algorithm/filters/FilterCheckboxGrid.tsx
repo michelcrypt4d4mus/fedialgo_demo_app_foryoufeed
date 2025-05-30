@@ -11,13 +11,14 @@ import { BooleanFilter, BooleanFilterName, TagWithUsageCounts, TypeFilterName, s
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
 import { buildGradient } from "../../../helpers/style_helpers";
-import { config, CheckboxTooltip, CheckboxColorGradient, GradientDataSource } from "../../../config";
+import { config } from "../../../config";
+import { CheckboxTooltip, CheckboxColorGradient, GradientDataSource } from "./FilterCheckbox";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const HASHTAG_FILTER_CFG = config.filters.boolean.optionsFormatting[BooleanFilterName.HASHTAG];
-const PARTICIPATED_TAGS_CFG = HASHTAG_FILTER_CFG.highlights[TypeFilterName.PARTICIPATED_TAGS];
+const PARTICIPATED_TAGS_CFG = HASHTAG_FILTER_CFG.tooltips[TypeFilterName.PARTICIPATED_TAGS];
 const PARTICIPATED_GRADIENT_ENDPOINTS = PARTICIPATED_TAGS_CFG.highlight.gradient.endpoints;
 const PARTICIPATED_GRADIENT = buildGradient(PARTICIPATED_GRADIENT_ENDPOINTS);
 
@@ -53,7 +54,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     // );
 
     const buildGradientColorArray = (dataSource: GradientDataSource): tinycolor.Instance[] => {
-        const highlightCfg = Object.values(filterConfig.highlights);
+        const highlightCfg = Object.values(filterConfig.tooltips);
         const tooltip = highlightCfg.find(c => c.highlight?.gradient?.dataSource == dataSource);
 
         if (!tooltip || !tooltip.highlight?.gradient) {
@@ -105,12 +106,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const findTooltip = (name: string): CheckboxTooltip | undefined => {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
-                return filterConfig.highlights[TypeFilterName.FOLLOWED_HASHTAGS];
+                return filterConfig.tooltips[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (trendingTagNames.has(name)) {
-                return filterConfig.highlights[TypeFilterName.TRENDING_TAGS];
+                return filterConfig.tooltips[TypeFilterName.TRENDING_TAGS];
             } else if (participatedTagNames.has(name)) {
                 const numParticipations = algorithm.userData.participatedHashtags[name].numToots;
-                const baseTooltip = filterConfig.highlights[TypeFilterName.PARTICIPATED_TAGS];
+                const baseTooltip = filterConfig.tooltips[TypeFilterName.PARTICIPATED_TAGS];
                 let colorInstance = participatedColorArray[numParticipations - 1];
 
                 if (!colorInstance) {
@@ -124,9 +125,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 };
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
-            return filterConfig.highlights[BooleanFilterName.LANGUAGE];
+            return filterConfig.tooltips[BooleanFilterName.LANGUAGE];
         } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
-            return filterConfig.highlights[TypeFilterName.FOLLOWED_ACCOUNTS];
+            return filterConfig.tooltips[TypeFilterName.FOLLOWED_ACCOUNTS];
         }
     };
 
