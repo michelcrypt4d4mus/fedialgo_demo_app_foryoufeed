@@ -17,6 +17,7 @@ import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
+type TagNames = ReturnType<TagList["tagNameDict"]>;
 const EMPTY_GRADIENT: tinycolor.Instance[] = [];
 
 interface FilterCheckboxGridProps {
@@ -34,26 +35,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
     const filterConfig = config.filters.boolean.optionsFormatting[filter.title];
-    const isHashtagFilter = (filter.title == BooleanFilterName.HASHTAG);
+    const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    const trendingTagNames = useMemo(
-        () => isHashtagFilter && new TagList(algorithm.trendingData.tags).tagNameDict(),
-        [algorithm.trendingData.tags]
+    const hashtagDataSources: Record<GradientDataSource, TagNames> = useMemo(
+        () => ({
+            [TypeFilterName.PARTICIPATED_TAGS]: isTagFilter ? algorithm.userData.participatedHashtags : {},
+            [TypeFilterName.TRENDING_TAGS]: isTagFilter ? new TagList(algorithm.trendingData.tags).tagNameDict() : {},
+        }),
+        [algorithm.userData.participatedHashtags, algorithm.trendingData.tags]
     );
-
-    const getGradientDataSource = (dataSource: GradientDataSource): TagWithUsageCounts[] => {
-        if (dataSource == TypeFilterName.TRENDING_TAGS) {
-            return algorithm.trendingData.tags;
-        } else if (dataSource == TypeFilterName.PARTICIPATED_TAGS) {
-            return Object.values(algorithm.userData.participatedHashtags);
-        // } else if (gradientCfg.dataSource == TypeFilterName.FOLLOWED_HASHTAGS) {
-        //     refData = algorithm.userData.followedTags;
-        } else {
-            logger.error(`Unknown gradient data source: ${dataSource} (${JSON.stringify(gradientCfg)})`);
-            return [];
-        }
-    }
 
     const buildGradientColorArray = (dataSource: GradientDataSource): tinycolor.Instance[] => {
         const highlightCfg = Object.values(filterConfig.tooltips);
@@ -64,7 +55,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return EMPTY_GRADIENT;
         }
 
-        const tags = getGradientDataSource(dataSource);
+        const tags = Object.values(hashtagDataSources[dataSource]);
         const maxNumToots = Math.max(...tags.map(t => t.numToots), 2);  // Ensure at least 2 for the gradient
         const gradientCfg = tooltip.highlight.gradient;
         let colorGradient = buildGradient(gradientCfg.endpoints);
@@ -89,12 +80,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     };
 
     const participatedTagColors = useMemo(
-        () => isHashtagFilter ? buildGradientColorArray(TypeFilterName.PARTICIPATED_TAGS) : EMPTY_GRADIENT,
+        () => isTagFilter ? buildGradientColorArray(TypeFilterName.PARTICIPATED_TAGS) : EMPTY_GRADIENT,
         [algorithm.userData.participatedHashtags]
     );
 
     const trendingTagColors = useMemo(
-        () => isHashtagFilter ? buildGradientColorArray(TypeFilterName.TRENDING_TAGS) : EMPTY_GRADIENT,
+        () => isTagFilter ? buildGradientColorArray(TypeFilterName.TRENDING_TAGS) : EMPTY_GRADIENT,
         [algorithm.trendingData.tags]
     );
 
@@ -117,8 +108,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
                 return filterConfig.tooltips[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (name in trendingTagNames) {
-                const tag = trendingTagNames[name];
+            } else if (name in hashtagDataSources[TypeFilterName.TRENDING_TAGS]) {
+                const tag = hashtagDataSources[TypeFilterName.TRENDING_TAGS][name];
                 const baseTooltip = filterConfig.tooltips[TypeFilterName.TRENDING_TAGS];
                 const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
 
@@ -126,8 +117,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     highlight: {color: getGradientColorForTag(tag, trendingTagColors, defaultColor).toHexString()},
                     text: baseTooltip.text + ` (${tag.numToots} recent toots)`,
                 };
-            } else if (name in algorithm.userData.participatedHashtags) {
-                const tag = algorithm.userData.participatedHashtags[name];
+            } else if (name in hashtagDataSources[TypeFilterName.PARTICIPATED_TAGS]) {
+                const tag = hashtagDataSources[TypeFilterName.PARTICIPATED_TAGS][name];
                 const baseTooltip = filterConfig.tooltips[TypeFilterName.PARTICIPATED_TAGS];
                 const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
 
@@ -153,7 +144,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 labelExtra={filter.optionInfo[name]}
                 onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
                 tooltip={findTooltip(name)}
-                url={isHashtagFilter && algorithm.tagUrl(name)}
+                url={isTagFilter && algorithm.tagUrl(name)}
             />
         );
     };
@@ -185,8 +176,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         },
         [
             // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
-            (isHashtagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
-            (isHashtagFilter || isTypeFilter) ? algorithm.userData.participatedHashtags : undefined,
+            (isTagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
+            (isTagFilter || isTypeFilter) ? algorithm.userData.participatedHashtags : undefined,
             (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
             (filter.title == BooleanFilterName.USER) || isTypeFilter ? algorithm.userData.followedAccounts : undefined,
             filter.optionInfo,
