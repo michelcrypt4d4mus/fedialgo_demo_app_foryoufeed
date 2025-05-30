@@ -6,7 +6,7 @@
 import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
-import { BooleanFilter, BooleanFilterName, TagList, TagWithUsageCounts, TypeFilterName, sortKeysByValue } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TagList, TypeFilterName, sortKeysByValue } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
@@ -167,26 +167,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const optionGrid = useMemo(
         () => {
             logger.trace(`Rebuilding optionGrid for ${Object.keys(filter.optionInfo).length} options...`);
-            let optionInfo = {...filter.optionInfo};
+            let optionKeys = filter.optionsSortedByValue(minToots);
+            if (highlightedOnly) optionKeys = optionKeys.filter(name => findTooltip(name));
+            if (!sortByCount) optionKeys = alphabetize(optionKeys);
 
-            // For filters w/many options only show choices with a min # of toots + already selected options
-            if (minToots) {
-                optionInfo = Object.fromEntries(
-                    Object.entries(optionInfo).filter(
-                        ([optionName, numToots]) => {
-                            if (filter.isThisSelectionEnabled(optionName)) return true;  // Always show selected options
-
-                            if (numToots >= minToots) {
-                                return (highlightedOnly ? !!findTooltip(optionName) : true);
-                            } else {
-                                return false;
-                            }
-                        }
-                    )
-                );
-            }
-
-            const optionKeys = sortByCount ? sortKeysByValue(optionInfo) : alphabetize(Object.keys(optionInfo));
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [

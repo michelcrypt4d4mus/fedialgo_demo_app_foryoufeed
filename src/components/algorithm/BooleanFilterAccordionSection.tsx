@@ -2,9 +2,9 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import { BooleanFilter, sortKeysByValue } from "fedialgo";
+import { BooleanFilter } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import FilterAccordionSection from "./FilterAccordionSection";
@@ -23,21 +23,27 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
+
+    const logger = getLogger("BooleanFilterAccordionSection", filter.title);
     const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
     const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.title];
-    const logger = getLogger("BooleanFilterAccordionSection", filter.title);
 
-    const numOptions = filter.numOptions();
-    const showMinTootsSlider = numOptions > minTootsSliderCfg.minOptionsToShowSlider;
-    let sliderDefault = minTootsSliderCfg.defaultValue;
+    const minTootsSliderDefaultValue: number = useMemo(() => {
+        const numOptions = filter.numOptions();
 
-    if (numOptions > minTootsSliderCfg.maxOptionsToUseDefault) {
-        sliderDefault = filter.sortedByValue()[minTootsSliderCfg.idealNumOptions][1];
-        logger.debug(`Adjusted default for minToots slider to ${sliderDefault} bc there's ${numOptions} options`);
-    }
+        if (numOptions < minTootsSliderCfg.minOptionsToShowSlider) {
+            return 0;
+        } else if (numOptions < minTootsSliderCfg.maxOptionsToUseDefault) {
+            return minTootsSliderCfg.defaultValue;
+        } else {
+            const sliderDefault = filter.entriesSortedByValue()[minTootsSliderCfg.idealNumOptions][1];
+            logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${numOptions} options)`);
+            return sliderDefault;
+        }
+    }, [filter.optionInfo]);
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(showMinTootsSlider ? sliderDefault : 0);
+    const [minToots, setMinToots] = useState(minTootsSliderDefaultValue);
     const [sortByCount, setSortByValue] = useState(false);
     const minTootsSliderTooltipAnchor = `${filter.title}-min-toots-slider-tooltip`;
 
@@ -69,7 +75,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     }
 
     // Add a slider and tooltip for minimum # of toots if there's enough options in the panel to justify it
-    if (showMinTootsSlider) {
+    if (minTootsSliderDefaultValue > 0) {
         headerSwitches = headerSwitches.concat([
             <Tooltip
                 delayShow={minTootsSliderCfg.tooltipHoverDelay}
