@@ -34,7 +34,7 @@ type CheckboxColoredByGradient = {color?: never; gradient: CheckboxColorGradient
 type CheckboxHighlightColor = CheckboxColor | CheckboxColoredByGradient;
 
 // TODO: move to types.ts?
-export type CheckboxTooltip  {
+export type CheckboxTooltip = {
     anchor?: string;
     highlight?: CheckboxHighlightColor;
     text: string;
