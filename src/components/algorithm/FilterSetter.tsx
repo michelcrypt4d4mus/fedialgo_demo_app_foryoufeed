@@ -40,7 +40,7 @@ export default function FilterSetter() {
             key={SwitchType.INVERT_SELECTION + '--numericFilters'}
             label={SwitchType.INVERT_SELECTION}
             onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
-            tooltipText={config.filters.numeric.invertSelectionTooltip}
+            tooltipText={config.filters.numeric.invertSelectionTooltipTxt}
         />,
     ];
 

@@ -39,15 +39,17 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isHashtagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    const trendingTagNames = useMemo(
-        () => new Set(algorithm.trendingData.tags.map(tag => tag.name)),
-        [algorithm.trendingData.tags]
-    );
+    const trendingTagNames = new Set(algorithm.trendingData.tags.map(tag => tag.name));
+    // const trendingTagNames = useMemo(
+    //     () => new Set(algorithm.trendingData.tags.map(tag => tag.name)),
+    //     [algorithm.trendingData.tags]
+    // );
 
-    const participatedTagNames = useMemo(
-        () => new Set(Object.values(algorithm.userData.participatedHashtags).map(tag => tag.name)),
-        [algorithm.userData.participatedHashtags]
-    );
+    const participatedTagNames = new Set(Object.values(algorithm.userData.participatedHashtags).map(tag => tag.name));
+    // const participatedTagNames = useMemo(
+    //     () => new Set(Object.values(algorithm.userData.participatedHashtags).map(tag => tag.name)),
+    //     [algorithm.userData.participatedHashtags]
+    // );
 
     const participatedColorArray = useMemo(
         () => {

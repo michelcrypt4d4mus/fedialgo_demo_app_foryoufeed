@@ -50,7 +50,7 @@ type FilterConfig = {
     };
     numeric: {
         description: string;
-        invertSelectionTooltip: string;
+        invertSelectionTooltipTxt: string;
         maxValue: number;
         title: string;
     };
@@ -225,7 +225,7 @@ class Config implements ConfigType {
         },
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
-            invertSelectionTooltip: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
+            invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
             maxValue: 50,                          // Maximum value for numeric filters
             title: "Interactions",
         },
