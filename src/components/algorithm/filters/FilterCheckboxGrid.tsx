@@ -122,13 +122,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const baseTooltip = filterConfig.tooltips[TypeFilterName.TRENDING_TAGS];
                 const defaultColor = baseTooltip.highlight.gradient.endpoints[1];
 
-                const trendingTooltip = {
+                return {
                     highlight: {color: getGradientColorForTag(tag, trendingTagColors, defaultColor).toHexString()},
                     text: baseTooltip.text + ` (${tag.numToots} recent toots)`,
                 };
-
-                logger.debug(`findTooltip: trendingTagNames built for tag`, tag, `this tooltip: `, trendingTooltip);
-                return trendingTooltip;
             } else if (name in algorithm.userData.participatedHashtags) {
                 const tag = algorithm.userData.participatedHashtags[name];
                 const baseTooltip = filterConfig.tooltips[TypeFilterName.PARTICIPATED_TAGS];
