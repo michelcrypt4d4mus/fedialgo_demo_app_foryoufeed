@@ -63,9 +63,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
         // Adjust the color gradient so there's more color variation in the low/middle range
-        if (gradientCfg.minTagsForGradientAdjust && tags.length > gradientCfg.minTagsForGradientAdjust) {
+        if (gradientCfg.adjustment && tags.length > gradientCfg.adjustment.minTagsToAdjust) {
             try {
-                const highPctiles = gradientCfg.adjustPctiles.map(p => Math.floor(maxNumToots * p));
+                const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                 const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                 colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
             } catch (err) {

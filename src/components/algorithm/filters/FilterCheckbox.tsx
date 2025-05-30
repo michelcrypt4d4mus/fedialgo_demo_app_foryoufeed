@@ -17,10 +17,14 @@ import { useAlgorithm } from "../../../hooks/useAlgorithm";
 export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
 
 export type CheckboxColorGradient = {
-    adjustPctiles?: number[];
+    // Sometimes we want to adjust the gradient instad of using the one between the endpoints to make any of the
+    // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
+    adjustment?: {
+        adjustPctiles: number[];
+        minTagsToAdjust: number;
+    },
     dataSource: GradientDataSource;
     endpoints: [tinycolor.Instance, tinycolor.Instance];
-    minTagsForGradientAdjust?: number;
     textSuffix: (n: number) => string;
 };
 

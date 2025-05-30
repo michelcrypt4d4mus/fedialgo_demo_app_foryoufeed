@@ -158,13 +158,16 @@ class Config implements ConfigType {
                         [TypeFilterName.PARTICIPATED_TAGS]: {
                             highlight: {
                                 gradient: {
-                                    adjustPctiles: [0.95, 0.98],     // Percentiles for gradient adjustment of participated tags
+                                    adjustment: {
+                                        adjustPctiles: [0.95, 0.98], // Percentiles for gradient adjustment of participated tags
+                                        minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
+
+                                    },
                                     dataSource: TypeFilterName.PARTICIPATED_TAGS,
                                     endpoints: [                     // Start and end points for the color gradient
                                         tinycolor(THEME.participatedTagColorMin),
                                         tinycolor(THEME.participatedTagColor),
                                     ],
-                                    minTagsForGradientAdjust: 40,    // Minimum number of participated tags for gradient adjustment
                                     textSuffix: (n: number) => ` ${n} times recently`,
                                 },
                             },
