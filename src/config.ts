@@ -8,14 +8,12 @@ import { capitalCase } from "change-case";
 import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
 import { MB } from "./helpers/number_helpers";
 
-
 // Enums  // TODO: move to types.ts?
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
     INVERT_SELECTION = "invertSelection",
     SORT_BY_COUNT = "sortByCount",
 };
-
 
 // Exported types  // TODO: move to types.ts?
 export type CheckboxTooltip = {
