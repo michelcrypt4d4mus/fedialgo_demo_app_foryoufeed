@@ -15,7 +15,7 @@ const HEADER_SWITCH_TOOLTIP_ANCHOR = `${TOOLTIP_ANCHOR}-header-switch`;
 // This must appear somewhere in the component tree for the header switch tooltips to work
 export const HEADER_SWITCH_TOOLTIP = (
     <Tooltip
-        delayShow={config.tooltips.headerDelay}
+        delayShow={config.filters.tooltips.headerSwitchHoverDelay}
         id={HEADER_SWITCH_TOOLTIP_ANCHOR}
         place="top"
         style={tooltipZIndex}
@@ -41,7 +41,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
             onChange={onChange}
             tooltip={{
                 anchor: HEADER_SWITCH_TOOLTIP_ANCHOR,
-                text: tooltipText || config.tooltips.filterHeaderSwitchTooltips[label],
+                text: tooltipText || config.filters.tooltips.headerSwitches[label],
             }}
         />
     );

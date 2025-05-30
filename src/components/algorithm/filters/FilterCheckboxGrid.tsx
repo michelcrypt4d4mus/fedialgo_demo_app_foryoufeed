@@ -16,7 +16,7 @@ import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-const TOOLTIPS = config.tooltips.filterOptionsTooltips;
+const TOOLTIPS = config.filters.boolean.highlightedOptions;
 const GRADIENT_ENDPOINTS =  [config.theme.participatedTagColorMin, config.theme.participatedTagColor].map(t => tinycolor(t));
 const PARTICIPATED_GRADIENT = participatedGradient();
 const EMPTY_GRADIENT: tinycolor.Instance[] = [];
@@ -35,30 +35,36 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { algorithm } = useAlgorithm();
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
-    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
-    const isHashtagFilter = (filter.title != BooleanFilterName.HASHTAG);
+    const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsFormatting[filter.title];
+    const isHashtagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
-    let findTooltip: (name: string) => CheckboxTooltip;  // Just initializing here at the top, is defined later
 
-    const trendingTagNames = useMemo(
-        () => new Set(algorithm.trendingData.tags.map(tag => tag.name)),
-        [algorithm.trendingData.tags]
-    );
+    const trendingTagNames = new Set(algorithm.trendingData.tags.map(tag => tag.name));
+    // const trendingTagNames = useMemo(
+    //     () => new Set(algorithm.trendingData.tags.map(tag => tag.name)),
+    //     [algorithm.trendingData.tags]
+    // );
+
+    const participatedTagNames = new Set(Object.values(algorithm.userData.participatedHashtags).map(tag => tag.name));
+    // const participatedTagNames = useMemo(
+    //     () => new Set(Object.values(algorithm.userData.participatedHashtags).map(tag => tag.name)),
+    //     [algorithm.userData.participatedHashtags]
+    // );
 
     const participatedColorArray = useMemo(
         () => {
             // Only hashtags use the gradient. Return same EMPTY_GRADIENT object to avoid triggering re-rendering.
             if (!isHashtagFilter) return EMPTY_GRADIENT;
 
-            logger.trace(`Rebuilding participatedColorArray...`);
             const participatedTags = Object.values(algorithm.userData.participatedHashtags);
             const maxParticipations = Math.max(...participatedTags.map(t => t.numToots), 2);  // Ensure at least 2 for the gradient
             let colorArray = PARTICIPATED_GRADIENT.hsv(maxParticipations, false);
+            logger.trace(`Rebuilding participatedColorArray with maxParticipations=${maxParticipations}, colorArray:`, colorArray);
 
             // Adjust the color gradient so there's more color variation in the low/middle range
-            if (participatedTags.length > config.tooltips.minTagsForGradientAdjust) {
+            if (participatedTags.length > config.filters.tooltips.minTagsForGradientAdjust) {
                 try {
-                    const highPctiles = config.tooltips.gradientAdjustPctiles.map(p => Math.floor(maxParticipations * p));
+                    const highPctiles = config.filters.tooltips.gradientAdjustPctiles.map(p => Math.floor(maxParticipations * p));
                     const middleColors = highPctiles.map(n => colorArray[n]).filter(Boolean);
                     colorArray = participatedGradient(middleColors).hsv(maxParticipations, false);
                 } catch (err) {
@@ -71,17 +77,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
             return colorArray;
         },
-        [algorithm.userData.participatedHashtags]
+        [algorithm.userData.participatedHashtags, 55]
     );
 
-    // Different filters have different tooltip logic so we need to set up a real findTooltip function
-    if (isHashtagFilter) {
-        findTooltip = (name: string): CheckboxTooltip | undefined => {
+    const findTooltip = (name: string): CheckboxTooltip | undefined => {
+        if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
                 return TOOLTIPS[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (trendingTagNames.has(name)) {
                 return TOOLTIPS[TypeFilterName.TRENDING_HASHTAGS];
-            } else if (name in algorithm.userData.participatedHashtags) {
+            } else if (participatedTagNames.has(name)) {
                 const tooltip = {...TOOLTIPS[TypeFilterName.PARTICIPATED_HASHTAGS]} as CheckboxTooltip;
                 const numParticipations = algorithm.userData.participatedHashtags[name].numToots;
                 const colorInstance = participatedColorArray[numParticipations - 1];
@@ -89,24 +94,18 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 if (colorInstance) {
                     tooltip.color = colorInstance.toHexString();
                 } else {
-                    logger.error(`No color found for tag "${name}" w/ ${numParticipations} participations!`, participatedColorArray);
+                    logger.warn(`No color found for tag "${name}" w/ ${numParticipations} participations!`, participatedColorArray);
                 }
 
                 tooltip.text += ` ${numParticipations} times recently`;
                 return tooltip;
             }
+        } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
+            return TOOLTIPS[BooleanFilterName.LANGUAGE];
+        } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
+            return TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
         }
-    } else if (filter.title == BooleanFilterName.LANGUAGE) {
-        findTooltip = (name: string) => {
-            return (name == algorithm.userData.preferredLanguage) && TOOLTIPS[BooleanFilterName.LANGUAGE];
-        }
-    } else if (filter.title == BooleanFilterName.USER) {
-        findTooltip = (name: string) => {
-            return algorithm.userData.followedAccounts[name] && TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
-        }
-    } else {
-        findTooltip = (_name: string) => undefined;
-    }
+    };
 
     // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
     const propertyCheckbox = (name: string, i: number) => {
@@ -152,8 +151,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
             (isHashtagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
             (isHashtagFilter || isTypeFilter) ? algorithm.userData.participatedHashtags : undefined,
-            (isTypeFilter || (filter.title == BooleanFilterName.USER)) ? algorithm.userData.followedAccounts : undefined,
             (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
+            (filter.title == BooleanFilterName.USER) || isTypeFilter ? algorithm.userData.followedAccounts : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,
