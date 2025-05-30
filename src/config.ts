@@ -12,12 +12,13 @@ import { type TrendingPanel } from "./components/TrendingSection";
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 
+export type FilterOptionTypeTooltips = {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
 
 type FilterOptionsFormat = {
     // Color highlight config for filter options
-    tooltips?: {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
+    tooltips?: FilterOptionTypeTooltips;
     // Fxn to transform the option name to a displayed label
-    labelMapper?: (name: string) => string;
+    formatLabel?: (name: string) => string;
 };
 
 
@@ -37,8 +38,7 @@ type FilterConfig = {
     boolean: {
         maxLabelLength: number;
         minTootsSlider: {
-            defaultValue: number,
-            minOptionsToShowSlider: number,
+            idealNumOptions: number,
             tooltipHoverDelay: number;
         },
         optionsFormatting: Record<BooleanFilterName, FilterOptionsFormat>,
@@ -143,8 +143,7 @@ class Config implements ConfigType {
         boolean: {
             maxLabelLength: 19,                          // Maximum length of a filter option label
             minTootsSlider: {
-                defaultValue: 5,                         // Minimum number of toots for an option to appear in the filter
-                minOptionsToShowSlider: 30,              // Minimum number of options to show the slider & hide low count options
+                idealNumOptions: 50,                     // Ideal number of options to show in the minTootsSlider
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
@@ -157,19 +156,32 @@ class Config implements ConfigType {
                         [TypeFilterName.PARTICIPATED_TAGS]: {
                             highlight: {
                                 gradient: {
-                                    adjustPctiles: [0.95, 0.98],     // Percentiles for gradient adjustment of participated tags
-                                    dataSource: TypeFilterName.PARTICIPATED_TAGS, // Data source for the gradient
+                                    adjustment: {
+                                        adjustPctiles: [0.95, 0.98], // Percentiles for gradient adjustment of participated tags
+                                        minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
+
+                                    },
+                                    dataSource: TypeFilterName.PARTICIPATED_TAGS,
                                     endpoints: [                     // Start and end points for the color gradient
                                         tinycolor(THEME.participatedTagColorMin),
                                         tinycolor(THEME.participatedTagColor),
                                     ],
-                                    minTagsForGradientAdjust: 40,    // Minimum number of participated tags for gradient adjustment
+                                    textSuffix: (n: number) => ` ${n} times recently`,
                                 },
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
                         },
                         [TypeFilterName.TRENDING_TAGS]: {
-                            highlight: {color: THEME.trendingTagColorFaded},
+                            highlight: {
+                                gradient: {
+                                    dataSource: TypeFilterName.TRENDING_TAGS,
+                                    endpoints: [
+                                        tinycolor(THEME.trendingTagColorFaded),
+                                        tinycolor(THEME.trendingTagColor),
+                                    ],
+                                    textSuffix: (n: number) => ` (${n} recent toots)`,
+                                },
+                            },
                             text: `This hashtag is trending`,
                         },
                     },
@@ -181,10 +193,10 @@ class Config implements ConfigType {
                             text: `You post most in this language`,
                         },
                     },
-                    labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
+                    formatLabel: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
-                    labelMapper: (name: string) => capitalCase(name),
+                    formatLabel: (name: string) => capitalCase(name),
                 },
                 [BooleanFilterName.USER]: {
                     tooltips: {
