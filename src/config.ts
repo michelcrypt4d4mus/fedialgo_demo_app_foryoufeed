@@ -169,7 +169,16 @@ class Config implements ConfigType {
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
                         },
                         [TypeFilterName.TRENDING_TAGS]: {
-                            highlight: {color: THEME.trendingTagColorFaded},
+                            highlight: {
+                                gradient: {
+                                    dataSource: TypeFilterName.TRENDING_TAGS,
+                                    endpoints: [
+                                        tinycolor(THEME.trendingTagColorFaded),
+                                        tinycolor(THEME.trendingTagColor),
+                                    ],
+                                },
+                            },
+                            // {color: THEME.trendingTagColorFaded},
                             text: `This hashtag is trending`,
                         },
                     },
