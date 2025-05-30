@@ -96,43 +96,14 @@ export default function Feed() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isBottom, numDisplayedToots, prevScrollY, setNumDisplayedToots, setPrevScrollY, timeline]);
 
-    // Either a loading spinner or the number of toots scored + time it took
-    const controlPanelFooter = useMemo(
-        () => {
-            if (isLoading || !algorithm) {
-                return <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
-            } else {
-                const lastLoadSeconds = algorithm?.lastLoadTimeInSeconds?.toFixed(1);
+    let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
+    if (algorithm?.lastLoadTimeInSeconds) footerMsg += ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds`;
 
-                return (
-                    <p style={loadingMsgStyle}>
-                        Scored {(timeline?.length || 0).toLocaleString()} toots
-                        {lastLoadSeconds && ` in ${lastLoadSeconds} seconds`}
-                        {' '}({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
-                    </p>
-                );
-            }
-        },
-        [
-            algorithm,
-            algorithm?.loadingStatus,
-            algorithm?.lastLoadTimeInSeconds,
-            isLoading,
-            timeline?.length
-        ]
+    const finishedLoadingMsg = (
+        <p style={loadingMsgStyle}>
+            {footerMsg} ({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
+        </p>
     );
-
-    // const triggerFilterCheck = () => {
-    //     const typefilter = algorithm.filters.booleanFilters["type"];
-
-    //     try {
-    //         typefilter.isThisSelectionEnabled('woop') //filterFailure ? filter.validValues.includes(name) : filter.isThisSelectionEnabled(name);
-    //         logger.log(`Filter check successful, filter.isThisSelectionEnabled is a function`);
-    //     } catch (err) {
-    //         logger.error(`Error checking if option "${name}" is enabled, typeof filter.isThisSelectionEnabled="${typeof typefilter.isThisSelectionEnabled}"`, err, `\nfilter:`, typefilter);
-    //     }
-    // }
-
 
     return (
         <Container fluid style={{height: "auto"}}>
@@ -186,19 +157,15 @@ export default function Feed() {
                             </TopLevelAccordion>}
 
                         <div style={stickySwitchContainer}>
-                            {controlPanelFooter}
+                            {isLoading
+                                ? <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
+                                : finishedLoadingMsg}
 
                             <p style={scrollStatusMsg} className="d-none d-sm-block">
                                 {TheAlgorithm.isDebugMode
                                     ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
                                     : <BugReportLink />}
                             </p>
-
-                            {/* <p style={scrollStatusMsg} className="d-none d-sm-block">
-                                <a onClick={() => triggerFilterCheck()} style={linkesque}>
-                                    (check filters)
-                                </a>
-                            </p> */}
                         </div>
                     </div>
                 </Col>
