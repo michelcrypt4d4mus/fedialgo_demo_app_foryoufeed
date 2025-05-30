@@ -35,7 +35,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { algorithm } = useAlgorithm();
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
-    logger.log(`Rendering, PARTICIPATED_GRADIENT is:`, PARTICIPATED_GRADIENT);
     const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsList[filter.title];
     const isHashtagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
