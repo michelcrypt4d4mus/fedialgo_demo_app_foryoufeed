@@ -12,9 +12,8 @@ import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
 import HeaderSwitch from "./filters/HeaderSwitch";
 import Slider from "./Slider";
 import { config } from "../../config";
-import { SwitchType } from "../../helpers/style_helpers";
-import { tooltipZIndex } from "../../helpers/style_helpers";
 import { getLogger } from "../../helpers/log_helpers";
+import { SwitchType, tooltipZIndex } from "../../helpers/style_helpers";
 
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
@@ -23,18 +22,17 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
-
+    const booleanFiltersConfig = config.filters.boolean;
+    const minTootsSliderCfg = booleanFiltersConfig.minTootsSlider;
     const logger = getLogger("BooleanFilterAccordionSection", filter.title);
-    const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
-    const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.title];
 
     const minTootsSliderDefaultValue: number = useMemo(() => {
+        const idealNumOptions = minTootsSliderCfg.idealNumOptions;
         const numOptions = filter.numOptions();
 
-        if (numOptions < minTootsSliderCfg.minOptionsToShowSlider) {
+        // Don't show the slider if there are too few options
+        if (numOptions < idealNumOptions / 2) {
             return 0;
-        } else if (numOptions < minTootsSliderCfg.maxOptionsToUseDefault) {
-            return minTootsSliderCfg.defaultValue;
         } else {
             const sliderDefault = filter.entriesSortedByValue()[minTootsSliderCfg.idealNumOptions][1];
             logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${numOptions} options)`);
@@ -62,8 +60,8 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         />,
     ];
 
-    // Add a highlights-only switch if configured
-    if (optionsFormatCfg.tooltips) {
+    // Add a highlights-only switch if there are highlighted tooltips configured for this filter
+    if (booleanFiltersConfig.optionsFormatting[filter.title]?.tooltips) {
         headerSwitches = headerSwitches.concat([
             <HeaderSwitch
                 isChecked={highlightedOnly}

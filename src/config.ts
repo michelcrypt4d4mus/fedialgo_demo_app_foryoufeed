@@ -38,10 +38,7 @@ type FilterConfig = {
     boolean: {
         maxLabelLength: number;
         minTootsSlider: {
-            defaultValue: number,
             idealNumOptions: number,
-            maxOptionsToUseDefault: number,
-            minOptionsToShowSlider: number,
             tooltipHoverDelay: number;
         },
         optionsFormatting: Record<BooleanFilterName, FilterOptionsFormat>,
@@ -146,10 +143,7 @@ class Config implements ConfigType {
         boolean: {
             maxLabelLength: 19,                          // Maximum length of a filter option label
             minTootsSlider: {
-                defaultValue: 5,                         // Minimum number of toots for an option to appear in the filter
                 idealNumOptions: 50,                     // Ideal number of options to show in the minTootsSlider
-                maxOptionsToUseDefault: 80,              // Maximum number of options that minTootsSlider will start with the defaultValue
-                minOptionsToShowSlider: 30,              // Minimum number of options to show the slider & hide low count options
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
