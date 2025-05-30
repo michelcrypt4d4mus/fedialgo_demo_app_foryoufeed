@@ -44,6 +44,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [algorithm.trendingData.tags]
     );
 
+    const participatedTagNames = useMemo(
+        () => new Set(Object.values(algorithm.userData.participatedHashtags).map(tag => tag.name)),
+        [algorithm.userData.participatedHashtags]
+    );
+
     const participatedColorArray = useMemo(
         () => {
             // Only hashtags use the gradient. Return same EMPTY_GRADIENT object to avoid triggering re-rendering.
@@ -79,7 +84,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 return TOOLTIPS[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (trendingTagNames.has(name)) {
                 return TOOLTIPS[TypeFilterName.TRENDING_HASHTAGS];
-            } else if (name in algorithm.userData.participatedHashtags) {
+            } else if (participatedTagNames.has(name)) {
                 const tooltip = {...TOOLTIPS[TypeFilterName.PARTICIPATED_HASHTAGS]} as CheckboxTooltip;
                 const numParticipations = algorithm.userData.participatedHashtags[name].numToots;
                 const colorInstance = participatedColorArray[numParticipations - 1];
@@ -93,10 +98,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 tooltip.text += ` ${numParticipations} times recently`;
                 return tooltip;
             }
-        } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
-            return TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return TOOLTIPS[BooleanFilterName.LANGUAGE];
+        } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
+            return TOOLTIPS[TypeFilterName.FOLLOWED_ACCOUNTS];
         }
     };
 
@@ -144,8 +149,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
             (isHashtagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
             (isHashtagFilter || isTypeFilter) ? algorithm.userData.participatedHashtags : undefined,
-            (isTypeFilter || (filter.title == BooleanFilterName.USER)) ? algorithm.userData.followedAccounts : undefined,
             (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
+            (filter.title == BooleanFilterName.USER) || isTypeFilter ? algorithm.userData.followedAccounts : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,
