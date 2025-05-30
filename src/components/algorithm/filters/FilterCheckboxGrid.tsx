@@ -17,6 +17,7 @@ import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
+type GradientInfo = Record<GradientDataSource, TagColorGradient>;
 type TagNames = ReturnType<TagList["tagNameDict"]>;
 
 type TagColorGradient = {
@@ -68,6 +69,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                 const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                 colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
+                logger.trace(`Adjusted gradient colorArray for ${dataSource} with maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
             } catch (err) {
                 logger.error(
                     `Failed to adjust gradient colorArray (maxParticipations=${maxNumToots}):`, err,
@@ -81,9 +83,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         return colorArray;
     };
 
-    const tagGradientInfo: Record<GradientDataSource, TagColorGradient> = useMemo(
+    const tagGradientInfo: GradientInfo = useMemo(
         () => GRADIENT_DATA_SOURCES.reduce(
-            (gradingInfos, dataSource) => {
+            (gradientInfos, dataSource) => {
                 let tagNames: TagNames = {};
 
                 if (dataSource == TypeFilterName.PARTICIPATED_TAGS) {
@@ -94,25 +96,27 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
                 }
 
-                gradingInfos[dataSource] = {
+                gradientInfos[dataSource] = {
                     colors: buildGradientColorArray(dataSource, tagNames),
                     tagNames: tagNames,
                 }
 
-                return gradingInfos
+                return gradientInfos
             },
-            {} as Record<GradientDataSource, TagColorGradient>
+            {} as GradientInfo
         ),
         [algorithm.trendingData.tags, algorithm.userData.participatedHashtags]
     );
 
     const getGradientColorTooltip = (tagName: string, dataSource: GradientDataSource): CheckboxTooltip => {
         const baseTooltip = filterTooltips[dataSource];
+        const gradientCfg = baseTooltip.highlight.gradient;
         const colors = tagGradientInfo[dataSource].colors;
-        const tag = tagGradientInfo[dataSource].tagNames[tagName];
+        const tagNames = tagGradientInfo[dataSource].tagNames;
+        const tag = tagNames[tagName];
 
         if (!tag) {
-            logger.warn(`No tag found for "${tagName}" in ${dataSource}, using default tooltip. tagNames:`, tagGradientInfo[dataSource].tagNames);
+            logger.error(`No tag found for "${tagName}" in ${dataSource}, using default tooltip. tagNames:`, tagNames);
             return baseTooltip;
         }
 
@@ -120,12 +124,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
         if (!color) {
             logger.warn(`No color found for "${tag.name}" w/ ${tag.numToots} toots, using default. colors:`, colors);
-            color = baseTooltip.highlight.gradient.endpoints[1];
+            color = gradientCfg.endpoints[1];
         }
 
         return {
             highlight: {color: color.toHexString()},
-            text: `${baseTooltip.text} ${baseTooltip.highlight.gradient.textSuffix(tag.numToots)}`,
+            text: `${baseTooltip.text} ${gradientCfg.textSuffix(tag.numToots)}`,
         }
     };
 
