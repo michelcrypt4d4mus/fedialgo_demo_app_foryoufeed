@@ -80,13 +80,18 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         return colorArray;
     };
 
-    // TODO: make this empty if it's not the hashtag filter
     const tagGradientInfo: Record<GradientDataSource, TagColorGradient> = useMemo(
         () => GRADIENT_DATA_SOURCES.reduce(
             (gradingInfos, dataSource) => {
-                const tagNames = (dataSource == TypeFilterName.PARTICIPATED_TAGS)
-                                              ? algorithm.userData.participatedHashtags
-                                              : new TagList(algorithm.trendingData.tags).tagNameDict();
+                let tagNames: TagNames = {};
+
+                if (dataSource == TypeFilterName.PARTICIPATED_TAGS) {
+                    tagNames = algorithm.userData.participatedHashtags;
+                } else if (dataSource == TypeFilterName.TRENDING_TAGS) {
+                    tagNames = new TagList(algorithm.trendingData.tags).tagNameDict();
+                } else {
+                    throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
+                }
 
                 gradingInfos[dataSource] = {
                     colors: buildGradientColorArray(dataSource, tagNames),
@@ -100,9 +105,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [algorithm.trendingData.tags, algorithm.userData.participatedHashtags]
     );
 
-    const getGradientColorTooltip = (tag: TagWithUsageCounts, dataSource: GradientDataSource): CheckboxTooltip => {
+    const getGradientColorTooltip = (tagName: string, dataSource: GradientDataSource): CheckboxTooltip => {
         const baseTooltip = filterConfig.tooltips[dataSource];
         const colors = tagGradientInfo[dataSource].colors;
+        const tag = tagGradientInfo[dataSource].tagNames[tagName];
+
+        if (!tag) {
+            logger.warn(`No tag found for "${tagName}" in ${dataSource}, using default tooltip. tagNames:`, tagGradientInfo[dataSource].tagNames);
+            return baseTooltip;
+        }
+
         let color = colors[tag.numToots - 1];
 
         if (!color) {
@@ -120,12 +132,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
                 return filterConfig.tooltips[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (name in tagGradientInfo[TypeFilterName.TRENDING_TAGS]) {
-                const tag = tagGradientInfo[TypeFilterName.TRENDING_TAGS][name];
-                return getGradientColorTooltip(tag, TypeFilterName.TRENDING_TAGS);
-            } else if (name in tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS]) {
-                const tag = tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS][name];
-                return getGradientColorTooltip(tag, TypeFilterName.PARTICIPATED_TAGS);
+            } else if (name in tagGradientInfo[TypeFilterName.TRENDING_TAGS].tagNames) {
+                return getGradientColorTooltip(name, TypeFilterName.TRENDING_TAGS);
+            } else if (name in tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS].tagNames) {
+                return getGradientColorTooltip(name, TypeFilterName.PARTICIPATED_TAGS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return filterConfig.tooltips[BooleanFilterName.LANGUAGE];
