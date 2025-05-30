@@ -4,16 +4,17 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
-import { type TrendingObj } from "fedialgo";
+import { type TrendingData, type TrendingObj, ScoreName } from "fedialgo";
 
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
 import { getLogger } from "../helpers/log_helpers";
-import { config, TrendingPanel } from "../config";
+import { config } from "../config";
 import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
+export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
 type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;
