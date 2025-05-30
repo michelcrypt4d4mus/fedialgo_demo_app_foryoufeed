@@ -39,15 +39,16 @@ type AppConfig = {
     showcaseImageUrl: string;
 };
 
-
 type FilterConfig = {
     boolean: {
-        defaultMinTootsSliderValue: number;
         highlightedOptions: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
         maxOptionLength: number;          // Maximum length of a filter option label
-        minOptionsToShowSlider: number;   // Minimum number of options to show the slider & hide low count options
         optionsFormatting: {[key in BooleanFilterName]?: FilterGridConfig};
     };
+    minTootsSlider: {
+        defaultMinTootsSliderValue: number,
+        minOptionsToShowSlider: number,
+    },
     numeric: {
         description: string;
         invertSelectionTooltipTxt: string;
@@ -60,6 +61,15 @@ type FilterConfig = {
 export type FilterGridConfig = {
     labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
     [SwitchType.HIGHLIGHTS_ONLY]?: boolean; // Whether to only show highlighted options
+};
+
+
+type FilterTooltipConfig = {
+    headerSwitches: Record<SwitchType, string>;
+    gradientAdjustPctiles?: number[];
+    headerSwitchHoverDelay: number;
+    minTagsForGradientAdjust?: number;
+    minTootsSliderHoverDelay: number;
 };
 
 type LocaleConfig = {
@@ -99,15 +109,6 @@ type TimelineConfig = {
     noTootsMsg: string;
     numTootsToLoadOnScroll: number;
     defaultNumDisplayedToots: number;
-};
-
-type FilterTooltipConfig = {
-    hoverDelay: number;
-    headerSwitches: Record<SwitchType, string>;
-    gradientAdjustPctiles?: number[];
-    headerSwitchHoverDelay: number;
-    minTagsForGradientAdjust?: number;
-    minTootsSliderHoverDelay: number;
 };
 
 type TootConfig = {
@@ -183,7 +184,6 @@ class Config implements ConfigType {
 
     filters: FilterConfig = {
         boolean: {
-            defaultMinTootsSliderValue: 5,          // Minimum number of toots for an option to appear in the filter
             highlightedOptions: {                // Text that appears on highlighted filter options
                 [BooleanFilterName.LANGUAGE]: {
                     color: THEME.followedUserColor,
@@ -206,9 +206,8 @@ class Config implements ConfigType {
                     text: `This hashtag is trending`,
                 },
             },
-            maxOptionLength: 19,                 // Maximum length of a filter option label
-            minOptionsToShowSlider: 30,          // Minimum number of options to show the slider & hide low count options
-            optionsFormatting: {                       // Configure how the filter options list should be displayed
+            maxOptionLength: 19,                   // Maximum length of a filter option label
+            optionsFormatting: {                   // Configure how the filter options list should be displayed
                 [BooleanFilterName.HASHTAG]: {
                     [SwitchType.HIGHLIGHTS_ONLY]: true,
                 },
@@ -223,6 +222,10 @@ class Config implements ConfigType {
                 }
             },
         },
+        minTootsSlider: {
+            defaultMinTootsSliderValue: 5,         // Minimum number of toots for an option to appear in the filter
+            minOptionsToShowSlider: 30,            // Minimum number of options to show the slider & hide low count options
+        },
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
             invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
@@ -230,7 +233,6 @@ class Config implements ConfigType {
             title: "Interactions",
         },
         tooltips: {
-            hoverDelay: 500,               // Delay for filter option tooltips in milliseconds
             headerSwitches: {
                 [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
                 [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",

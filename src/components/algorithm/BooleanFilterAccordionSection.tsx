@@ -22,12 +22,12 @@ interface BooleanFilterAccordionProps {
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
 
-    const showMinTootsSlider = Object.keys(filter.optionInfo).length > config.filters.boolean.minOptionsToShowSlider;
-    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}-min-toots`;
     const filterConfig: FilterGridConfig | undefined = config.filters.boolean.optionsFormatting[filter.title];
+    const showMinTootsSlider = Object.keys(filter.optionInfo).length > config.filters.minTootsSlider.minOptionsToShowSlider;
+    const minTootsTooltipAnchor = `${TOOLTIP_ANCHOR}-${filter.title}-min-toots`;
 
     const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.boolean.defaultMinTootsSliderValue : 0);
+    const [minToots, setMinToots] = useState(showMinTootsSlider ? config.filters.minTootsSlider.defaultMinTootsSliderValue : 0);
     const [sortByCount, setSortByValue] = useState(false);
 
     let headerSwitches = [
