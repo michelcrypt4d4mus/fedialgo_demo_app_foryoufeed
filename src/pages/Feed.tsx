@@ -22,12 +22,11 @@ import { buildStateCheckbox } from "../helpers/react_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
-import { TOOLTIP_ANCHOR, linkesque, tooltipZIndex } from "../helpers/style_helpers";
+import { linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
 
-// Messaging constants
-const AUTO_UPDATE_TOOLTIP_MSG = "If this box is checked the feed will be automatically updated when you focus this browser tab.";
+const TOOLTIP_ANCHOR = "tooltip-anchor";
 const logger = getLogger("Feed");
 
 
@@ -132,7 +131,7 @@ export default function Feed() {
 
                             <a
                                 data-tooltip-id={TOOLTIP_ANCHOR}
-                                data-tooltip-content={AUTO_UPDATE_TOOLTIP_MSG}
+                                data-tooltip-content={config.timeline.checkboxTooltipText.autoupdate}
                                 key={"tooltipautoload"}
                                 style={{color: "white"}}
                             >

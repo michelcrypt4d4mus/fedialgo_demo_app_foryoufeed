@@ -4,9 +4,15 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
+import tinycolor from "tinycolor2";
+
 import { capitalCase } from "change-case";
 import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
 import { MB } from "./helpers/number_helpers";
+import { ThemeConfig, THEME } from "./helpers/style_helpers";
+
+export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
+export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
 
 // Enums  // TODO: move to types.ts?
 export enum SwitchType {
@@ -15,15 +21,24 @@ export enum SwitchType {
     SORT_BY_COUNT = "sortByCount",
 };
 
+export type CheckboxColorGradient = {
+    adjustPctiles?: number[];
+    dataSource: GradientDataSource;
+    endpoints: [tinycolor.Instance, tinycolor.Instance];
+    minTagsForGradientAdjust?: number;
+};
+
+// Union type to force either 'color' or 'gradient' to be defined, but not both
+type CheckboxColor = {color: CSSProperties["color"], gradient?: never};
+type CheckboxColoredByGradient = {color?: never; gradient: CheckboxColorGradient};
+type CheckboxHighlightColor = CheckboxColor | CheckboxColoredByGradient;
+
 // Exported types  // TODO: move to types.ts?
 export type CheckboxTooltip = {
     anchor?: string;
-    color?: CSSProperties["color"];
+    highlight: CheckboxHighlightColor;
     text: string;
 };
-
-export type TrendingPanel = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
-
 
 // Subconfig types
 type AppConfig = {
@@ -39,14 +54,14 @@ type AppConfig = {
 
 type FilterConfig = {
     boolean: {
-        highlightedOptions: {[key in (TypeFilterName | BooleanFilterName)]?: CheckboxTooltip};
-        maxOptionLength: number;          // Maximum length of a filter option label
-        optionsFormatting: {[key in BooleanFilterName]?: FilterGridConfig};
+        maxLabelLength: number;
+        minTootsSlider: {
+            defaultValue: number,
+            minOptionsToShowSlider: number,
+            tooltipHoverDelay: number;
+        },
+        optionsFormatting: Record<BooleanFilterName, FilterOptionsConfig>,
     };
-    minTootsSlider: {
-        defaultMinTootsSliderValue: number,
-        minOptionsToShowSlider: number,
-    },
     numeric: {
         description: string;
         invertSelectionTooltipTxt: string;
@@ -56,18 +71,14 @@ type FilterConfig = {
     tooltips: FilterTooltipConfig,
 };
 
-export type FilterGridConfig = {
+export type FilterOptionsConfig = {
+    highlights?: {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip}; // Color highlight config for filter options
     labelMapper?: (name: string) => string;  // Fxn to transform the option name to a displayed label
-    [SwitchType.HIGHLIGHTS_ONLY]?: boolean; // Whether to only show highlighted options
 };
-
 
 type FilterTooltipConfig = {
     headerSwitches: Record<SwitchType, string>;
-    gradientAdjustPctiles?: number[];
     headerSwitchHoverDelay: number;
-    minTagsForGradientAdjust?: number;
-    minTootsSliderHoverDelay: number;
 };
 
 type LocaleConfig = {
@@ -86,27 +97,16 @@ type StatsConfig = {
     animationDuration: number;
 };
 
-type ThemeConfig = {
-    accordionOpenBlue: CSSProperties['color'];
-    feedBackgroundColor: CSSProperties['backgroundColor'];
-    feedBackgroundColorLite: CSSProperties['backgroundColor'];
-    followedTagColor: CSSProperties['color'];
-    followedUserColor: CSSProperties['color'];
-    followedUserColorFaded: CSSProperties['color'];
-    participatedTagColor: CSSProperties['color'];
-    participatedTagColorMin: CSSProperties['color'];
-    trendingObjFontSize: number;
-    trendingTagColor: CSSProperties['color'];
-    trendingTagColorFaded: CSSProperties['color'];
-};
-
 type TimelineConfig = {
     autoloadOnFocusAfterMinutes: number;
     defaultLoadingMsg: string;
+    defaultNumDisplayedToots: number;
     loadingErroMsg: string;
     noTootsMsg: string;
     numTootsToLoadOnScroll: number;
-    defaultNumDisplayedToots: number;
+    checkboxTooltipText: {
+        autoupdate: string;
+    };
 };
 
 type TootConfig = {
@@ -139,21 +139,6 @@ type WeightsConfig = {
 // Constants for subconfig
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
 
-const THEME: ThemeConfig = {
-    accordionOpenBlue: "#7ac5cc",       // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-    feedBackgroundColor: '#15202b',     // background color for the timeline
-    feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
-    followedTagColor: 'yellow',           // Color for followed tags
-    followedUserColor: 'cyan',            // Color for followed users
-    followedUserColorFaded: '#2092a1',  // Faded color for followed users
-    participatedTagColor: '#92a14a',    // Color for participated tags
-    participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
-    trendingObjFontSize: 16,              // Font size for trending objects
-    trendingTagColor: 'firebrick',        // Color for trending tags
-    trendingTagColorFaded: '#f08c8c',   // Faded color for trending tags
-};
-
-
 interface ConfigType {
     filters: FilterConfig;
     locale: LocaleConfig;
@@ -182,47 +167,61 @@ class Config implements ConfigType {
 
     filters: FilterConfig = {
         boolean: {
-            highlightedOptions: {                // Text that appears on highlighted filter options
-                [BooleanFilterName.LANGUAGE]: {
-                    color: THEME.followedUserColor,
-                    text: `You post most in this language`,
-                },
-                [TypeFilterName.FOLLOWED_ACCOUNTS]: {
-                    color: THEME.followedUserColor,
-                    text: `You follow this account`,
-                },
-                [TypeFilterName.FOLLOWED_HASHTAGS]: {
-                    color: THEME.followedTagColor,
-                    text: `You follow this hashtag`,
-                },
-                [TypeFilterName.PARTICIPATED_HASHTAGS]: {
-                    color: THEME.participatedTagColor,
-                    text: `You've posted this hashtag`, // the string "N times" is appended in getTooltipInfo()
-                },
-                [TypeFilterName.TRENDING_HASHTAGS]: {
-                    color: THEME.trendingTagColorFaded,
-                    text: `This hashtag is trending`,
-                },
+            maxLabelLength: 19,                          // Maximum length of a filter option label
+            minTootsSlider: {
+                defaultValue: 5,                         // Minimum number of toots for an option to appear in the filter
+                minOptionsToShowSlider: 30,              // Minimum number of options to show the slider & hide low count options
+                tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
-            maxOptionLength: 19,                   // Maximum length of a filter option label
-            optionsFormatting: {                   // Configure how the filter options list should be displayed
+            optionsFormatting: {                         // How filter options should be displayed w/what header switches
                 [BooleanFilterName.HASHTAG]: {
-                    [SwitchType.HIGHLIGHTS_ONLY]: true,
+                    highlights: {
+                        [TypeFilterName.FOLLOWED_HASHTAGS]: {
+                            highlight: {color: THEME.followedTagColor},
+                            text: `You follow this hashtag`,
+                        },
+                        [TypeFilterName.PARTICIPATED_TAGS]: {
+                            highlight: {
+                                gradient: {
+                                    adjustPctiles: [0.95, 0.98],     // Percentiles for gradient adjustment of participated tags
+                                    dataSource: TypeFilterName.PARTICIPATED_TAGS, // Data source for the gradient
+                                    endpoints: [                     // Start and end points for the color gradient
+                                        tinycolor(THEME.participatedTagColorMin),
+                                        tinycolor(THEME.participatedTagColor),
+                                    ],
+                                    minTagsForGradientAdjust: 40,    // Minimum number of participated tags for gradient adjustment
+                                },
+                            },
+                            text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
+                        },
+                        [TypeFilterName.TRENDING_TAGS]: {
+                            highlight: {color: THEME.trendingTagColorFaded},
+                            text: `This hashtag is trending`,
+                        },
+                    },
                 },
                 [BooleanFilterName.LANGUAGE]: {
+                    highlights: {
+                        [BooleanFilterName.LANGUAGE]: {
+                            highlight: {color: THEME.followedUserColor},
+                            text: `You post most in this language`,
+                        },
+                    },
                     labelMapper: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
                     labelMapper: (name: string) => capitalCase(name),
                 },
                 [BooleanFilterName.USER]: {
-                    [SwitchType.HIGHLIGHTS_ONLY]: true,
-                }
+                    highlights: {
+                        [TypeFilterName.FOLLOWED_ACCOUNTS]: {
+                            highlight: {color: THEME.followedUserColor},
+                            text: `You follow this account`,
+                        },
+                    },
+                },
+                [BooleanFilterName.APP]: {},  // Currently disabled by fedialgo config isAppFilterVisible because it's not very useful
             },
-        },
-        minTootsSlider: {
-            defaultMinTootsSliderValue: 5,         // Minimum number of toots for an option to appear in the filter
-            minOptionsToShowSlider: 30,            // Minimum number of options to show the slider & hide low count options
         },
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
@@ -236,10 +235,7 @@ class Config implements ConfigType {
                 [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
                 [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
             },
-            gradientAdjustPctiles: [0.95, 0.98],  // Percentiles for gradient adjustment of participated tags
             headerSwitchHoverDelay: 500,          // Delay for header tooltips in milliseconds
-            minTagsForGradientAdjust: 40,         // Minimum number of participated tags for gradient adjustment
-            minTootsSliderHoverDelay: 50,              // Delay for the minimum toots slider tooltip in milliseconds
         }
     }
 
@@ -267,11 +263,14 @@ class Config implements ConfigType {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
-        defaultLoadingMsg: "Loading (first time can take up to a minute or so)", // Message when first loading toots
-        loadingErroMsg: `Currently loading, please wait a moment and try again.`, // Error message when busy
+        checkboxTooltipText: {
+            autoupdate: "If this box is checked the feed will be automatically updated when you focus this browser tab.",
+        },
+        defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
+        defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
+        loadingErroMsg: `Currently loading, please wait a moment and try again.`,  // Error message when busy
         noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
         numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll
-        defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
     }
 
     toots: TootConfig = {

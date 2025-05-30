@@ -4,7 +4,36 @@
  */
 import { CSSProperties } from "react";
 
-export const TOOLTIP_ANCHOR = "tooltip-anchor";
+import tinycolor from "tinycolor2";
+import tinygradient from "tinygradient";
+
+export type ThemeConfig = {
+    accordionOpenBlue: CSSProperties['color'];
+    feedBackgroundColor: CSSProperties['backgroundColor'];
+    feedBackgroundColorLite: CSSProperties['backgroundColor'];
+    followedTagColor: CSSProperties['color'];
+    followedUserColor: CSSProperties['color'];
+    followedUserColorFaded: CSSProperties['color'];
+    participatedTagColor: CSSProperties['color'];
+    participatedTagColorMin: CSSProperties['color'];
+    trendingObjFontSize: number;
+    trendingTagColor: CSSProperties['color'];
+    trendingTagColorFaded: CSSProperties['color'];
+};
+
+export const THEME: ThemeConfig = {
+    accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
+    feedBackgroundColor: '#15202b', // background color for the timeline
+    feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
+    followedTagColor: 'yellow', // Color for followed tags
+    followedUserColor: 'cyan', // Color for followed users
+    followedUserColorFaded: '#2092a1', // Faded color for followed users
+    participatedTagColor: '#92a14a', // Color for participated tags
+    participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
+    trendingObjFontSize: 16, // Font size for trending objects
+    trendingTagColor: 'firebrick', // Color for trending tags
+    trendingTagColorFaded: '#f08c8c', // Faded color for trending tags
+};
 
 export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "red",
@@ -30,6 +59,21 @@ export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "gold",
     "crimson",
 ];
+
+
+// Wrap middleColors in endpoints and generate a tinygradient (see docs for details)
+export function buildGradient(
+    endpoints: [tinycolor.Instance, tinycolor.Instance],
+    middleColors?: tinycolor.Instance[]
+): tinygradient.Instance {
+    const gradientPoints = [endpoints[0], ...(middleColors || []), endpoints[1]];
+    return tinygradient(...gradientPoints);
+};
+
+
+///////////////////////////////
+// CSS Properties Below Here //
+///////////////////////////////
 
 export const accordionBody: CSSProperties = {
     backgroundColor: '#b2bfd4',

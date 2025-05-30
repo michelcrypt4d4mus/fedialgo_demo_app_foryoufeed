@@ -8,9 +8,9 @@ import { Tooltip } from 'react-tooltip';
 
 import FilterCheckbox from "./FilterCheckbox";
 import { config, SwitchType } from "../../../config";
-import { TOOLTIP_ANCHOR, tooltipZIndex } from "../../../helpers/style_helpers";
+import { tooltipZIndex } from "../../../helpers/style_helpers";
 
-const HEADER_SWITCH_TOOLTIP_ANCHOR = `${TOOLTIP_ANCHOR}-header-switch`;
+const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
 
 // This must appear somewhere in the component tree for the header switch tooltips to work
 export const HEADER_SWITCH_TOOLTIP = (
