@@ -20,7 +20,7 @@ type ErrorLogProps = {
     args?: any;
     errorObj?: Error;
     logger?: ComponentLogger;
-    msg: ReactNode;
+    msg: string;
     note?: string;
 };
 
@@ -38,7 +38,7 @@ export const useError = () => useContext(ErrorContext);
 
 export default function ErrorHandler(props: PropsWithChildren) {
     // If there's a non empty string in errorMsg, the error modal will be shown
-    const [errorMsg, setErrorMsg] = useState<ReactNode>(null);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [errorNote, setErrorNote] = useState<string | null>(null);
     const [errorObj, setErrorObj] = useState<Error | null>(null);
 
@@ -122,7 +122,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
         // Handle writing to console log, which means putting errorObj first for ComponentLogger
         args = Array.isArray(args) ? args : [args];
         args = errorObj ? [errorObj, ...args] : args;
-        let logMsg = isString(msg) ? msg : (extractText(msg) as string[]).join(' '); // TODO: WTF with extractText() here?
+        let logMsg: string = isString(msg) ? msg : (extractText(msg) as string[]).join(' '); // TODO: WTF with extractText() here?
         logMsg += isEmptyStr(note) ? '' : `\n(note: ${note})`;
         (logger || errorLogger).error(logMsg, ...args);
     }
