@@ -8,19 +8,22 @@ import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { getLogger } from "../helpers/log_helpers";
+import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
 import { config } from "../config";
+import { getLogger } from "../helpers/log_helpers";
 import { Events, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
+import { type ErrorHandler } from "../types";
 
 const logger = getLogger("AlgorithmProvider");
 
 interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
-    serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     isLoading?: boolean,
+    lastLoadDurationSeconds?: number,
     mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
+    serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     setShouldAutoUpdate?: (should: boolean) => void,
     shouldAutoUpdate?: boolean,
     timeline: Toot[],
@@ -34,18 +37,56 @@ export const useAlgorithm = () => useContext(AlgorithmContext);
 
 export default function AlgorithmProvider(props: PropsWithChildren) {
     const { logout, user } = useAuthContext();
-    const { setError } = useError();
-
-    const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [mimeExtensions, setMimeExtensions] = useState<MimeExtensions>({});  // Map of server's allowed MIME types to file extensions
-    const [serverInfo, setServerInfo] = useState<mastodon.v1.Instance | mastodon.v2.Instance>(null);  // Instance info for the server
-    const [shouldAutoUpdate, setShouldAutoUpdate] = useState<boolean>(false);  // Load new toots on refocus
-    const [timeline, setTimeline] = useState<Toot[]>([]);  // contains timeline Toots
+    const { logAndSetFormattedError } = useError();
 
     // TODO: this doesn't make any API calls yet, right?
     const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
-    const trigger = (loadFxn: () => Promise<void>) => {triggerLoadFxn(loadFxn, setError, setIsLoading);};
+
+    const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true); // TODO: this shouldn't start as true...
+    const [lastLoadDurationSeconds, setLastLoadDurationSeconds] = useState<number | undefined>();
+    const [lastLoadStartedAt, setLastLoadStartedAt] = useState<Date>(null);
+    // Map of server's allowed MIME types to file extensions
+    const [mimeExtensions, setMimeExtensions] = useState<MimeExtensions>({});
+    // Instance info for the server
+    const [serverInfo, setServerInfo] = useState<mastodon.v1.Instance | mastodon.v2.Instance>(null);
+    // User checkbox to load new toots on refocus
+    const [shouldAutoUpdate, setShouldAutoUpdate] = useState<boolean>(false);
+    const [timeline, setTimeline] = useState<Toot[]>([]);
+
+    // TODO: somehow this consistently gets called to setIsLoading(false) but the react component's state
+    // has somehow already been updated to isLoading=false, so it logs a warning.
+    const setLoadState = (newIsLoading: boolean) => {
+        const msg = `setLoadState() called (isLoading: "${isLoading}", newIsLoading: "${newIsLoading}")`;
+        (isLoading === newIsLoading) ? logger.warn(msg) : logger.trace(msg);
+
+        if (newIsLoading) {
+            const startedAt = new Date();
+            logger.trace(`Marking load as started at ${startedAt.toISOString()}`);
+            setLastLoadStartedAt(startedAt);
+        } else  {
+            if (!lastLoadStartedAt) {
+                logger.error(`setLoadState() called with isLoading false but lastLoadStartedAt is null!`);
+            } else {
+                const lastLoadDuration = ageInSeconds(lastLoadStartedAt).toFixed(1);
+                logger.log(`Load finished in ${lastLoadDuration} seconds`);
+                setLastLoadDurationSeconds(Number(lastLoadDuration));
+            }
+        }
+
+        setIsLoading(newIsLoading);
+    };
+
+    const handleError: ErrorHandler = (msg: string, errorObj?: Error) => {
+        logAndSetFormattedError({
+            errorObj,
+            logger,
+            msg,
+            args: { api, lastLoadStartedAt, lastLoadDurationSeconds, serverInfo, user }
+        });
+    };
+
+    const trigger = (loadFxn: () => Promise<void>) => triggerLoadFxn(loadFxn, handleError, setLoadState);
     const triggerFeedUpdate = (moreOldToots?: boolean) => trigger(() => algorithm.triggerFeedUpdate(moreOldToots));
     const triggerPullAllUserData = () => trigger(() => algorithm.triggerPullAllUserData());
 
@@ -65,13 +106,13 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
                 currentUser = await api.v1.accounts.verifyCredentials();
             } catch (err) {
                 if (isAccessTokenRevokedError(err)) {
-                    logger.error(`Access token has been revoked, logging out...`);
+                    handleError(config.app.accessTokenRevokedMsg, err);
                 } else {
-                    logger.error(`Logging out, failed to verifyCredentials() with error:`, err);
+                    handleError(`Failed to verifyCredentials(), logging out...`, err);
                 }
 
                 // TODO: we don't always actually logout here? Sometimes it just keeps working despite getting the error in logs
-                logout();
+                logout(true);
                 return;
             }
 
@@ -83,12 +124,17 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             });
 
             setAlgorithm(algo);
-            triggerLoadFxn(() => algo.triggerFeedUpdate(), setError, setIsLoading);
+            triggerLoadFxn(() => algo.triggerFeedUpdate(), handleError, setLoadState);
 
-            algo.serverInfo().then(info => {
-                setServerInfo(info);
-                setMimeExtensions(buildMimeExtensions(info.configuration.mediaAttachments.supportedMimeTypes));
-            });
+            algo.serverInfo()
+                .then(info => {
+                    setServerInfo(info);
+                    setMimeExtensions(buildMimeExtensions(info.configuration.mediaAttachments.supportedMimeTypes));
+                })
+                .catch(err => {
+                    // Not serious enough error to alert the user as we can fallback to our configured defaults
+                    logger.warn(`Failed to get server info:`, err);
+                });
         };
 
         constructFeed();
@@ -131,6 +177,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         algorithm,
         api,
         isLoading,
+        lastLoadDurationSeconds,
         mimeExtensions,
         serverInfo,
         setShouldAutoUpdate,
@@ -151,26 +198,23 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 // Wrapper for calls to FediAlgo TheAlgorithm class that can throw a "busy" error
 const triggerLoadFxn = (
     loadFxn: () => Promise<void>,
-    setError: (error: string) => void,
-    setIsLoading: (isLoading: boolean) => void,
+    handleError: ErrorHandler,
+    setLoadState: (isLoading: boolean) => void,
 ) => {
-    setIsLoading(true);
+    setLoadState(true);
 
     loadFxn()
         .then(() => {
             logger.log(`triggerLoadFxn finished`);
-            setIsLoading(false);
+            setLoadState(false);
         })
         .catch((err) => {
             if (err.message.includes(GET_FEED_BUSY_MSG)) {
                 // Don't flip the isLoading state if the feed is busy
-                logger.error(`triggerLoadFxn ${config.timeline.loadingErroMsg}`);
-                setError(config.timeline.loadingErroMsg);
+                handleError(config.timeline.loadingErroMsg);
             } else {
-                const msg = `Failed to triggerLoadFxn with error:`;
-                logger.error(msg, err);
-                setError(`${msg} ${err}`);
-                setIsLoading(false);
+                handleError(`Failure while retrieving timeline data!`, err);
+                setLoadState(false);
             }
         });
 };

@@ -131,7 +131,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [numShown, footer, panelCfg, panelType, trendingObjs, trendingObjs.length]
+        [numShown, panelCfg, panelType, trendingObjs, trendingObjs.length]
     );
 
     return (

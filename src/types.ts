@@ -9,6 +9,9 @@ export interface App extends mastodon.v1.Client {
 };
 
 
+export type ErrorHandler = (msg: string, errorObj?: Error, note?: string) => void;
+
+
 // TODO: where does this come from?
 export type User = {
     access_token: string;

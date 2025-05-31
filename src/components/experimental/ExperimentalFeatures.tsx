@@ -19,30 +19,32 @@ import { useError } from "../helpers/ErrorHandler";
 import { versionString } from "../../helpers/string_helpers";
 
 const DELETE_ALL = "Delete All User Data";
+const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
-const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 
 const logger = getLogger("ExperimentalFeatures");
 
 const BUTTON_TEXT = {
     [DELETE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors." +
                   " You'll need to reauthenticate afterwards.",
-    [SCORE_STATS]: "Show some charts breaking down the way your timeline is being scored when looked at in deciles.",
-    [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state and configuration.`,
     [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed." +
                                   " Takes time & resources proportional to the number of times you've tooted.",
+    [SCORE_STATS]: "Show some charts breaking down the way your timeline is being scored when looked at in deciles.",
+    [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state and configuration.`,
 };
 
-export const OAUTH_ERROR_MSG = `You may have used ${FEDIALGO} before it requested` +
-        ` appropriate permissions. This can be fixed with the "${DELETE_ALL}" button in the Experimental Features` +
-        ` section or by manually clearing all your cookies for this site.`;
+export const OAUTH_ERROR_MSG = `If you were trying to bookmark, mute, or reply with an image you may have used` +
+        ` ${FEDIALGO} before it requested the appropriate permissions to perform those actions.` +
+        ` This can be fixed with the "${DELETE_ALL}" button in the Experimental Features` +
+        ` section or by manually clearing your browser's local storage (cookies and everything else) for this site.` +
+        ` and then logging back in.`;
 
 
 export default function ExperimentalFeatures() {
-    const { algorithm, api, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
-    const { logout, setApp, user } = useAuthContext();
-    const { setError } = useError();
+    const { algorithm, isLoading, lastLoadDurationSeconds, timeline, triggerPullAllUserData } = useAlgorithm();
+    const { logout, setApp } = useAuthContext();
+    const { logAndSetError } = useError();
 
     const [algoState, setAlgoState] = useState({});
     const [isLoadingState, setIsLoadingState] = useState(false);
@@ -54,17 +56,17 @@ export default function ExperimentalFeatures() {
         logger.log(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
         setIsLoadingState(true);
 
-        // Wait for the data to show up
         algorithm.getCurrentState()
             .then((currentState) => {
                 logger.log("FediAlgo state:", currentState);
                 currentState.version = versionString();
+                currentState.lastLoadDurationSeconds = lastLoadDurationSeconds;
                 setAlgoState(currentState);
                 setShowStateModal(true);
             })
-            .catch((error) => setError(`Failed to get algorithm state: ${error}`))
+            .catch((error) => logAndSetError(logger, `Failed to get algorithm state!`, error))
             .finally(() => setIsLoadingState(false));
-        ;
+
     }
 
     // Reset all state except for the user and server

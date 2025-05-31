@@ -13,6 +13,7 @@ import { getLogger } from '../helpers/log_helpers';
 import { config } from '../config';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
+import { error } from 'console';
 
 // Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
 const OAUTH_SCOPES = [
@@ -28,23 +29,34 @@ const OAUTH_SCOPES = [
 export const OAUTH_SCOPE_STR = OAUTH_SCOPES.join(" ");
 const DEFAULT_MASTODON_SERVER = "universeodon.com";
 const APP_NAME = `${FEDIALGO}Demo`;  // Name of the app that will be created in the user's Mastodon account
+
 const logger = getLogger("LoginPage");
 
 
 export default function LoginPage() {
-    const { setError } = useError();
+    const { logAndSetFormattedError } = useError();
 
     // TODO: why is this not using useAppStorage?
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
     const [server, setServer] = usePersistentState<string>(DEFAULT_MASTODON_SERVER, {storageKey: "server"});
+
+    const handleError = (errorObj: Error, msg?: string, note?: string, ...args: any[]) => {
+        logAndSetFormattedError({
+            args: (args || []).concat([{ server, _app }]),
+            errorObj,
+            logger,
+            msg: msg || "Error occurred while trying to login",
+            note,
+        });
+    }
 
     const oAuthLogin = async (): Promise<void> => {
         let sanitizedServer = server;
 
         try {
             sanitizedServer = sanitizeServerUrl(server);
-        } catch (e) {
-            setError(e.message);
+        } catch (err) {
+            handleError(err);
             return;
         }
 
@@ -69,9 +81,8 @@ export default function LoginPage() {
                     website: sanitizedServer,
                 });
             } catch (error) {
-                let msg = `Error creating app on Mastodon server:`;
-                logger.error(msg, error);
-                setError(`${msg} ${error}`);
+                const msg = `${FEDIALGO} failed to register itself as an app on your Mastodon server!`;
+                handleError(error, msg, "Check your server URL and try again.", { api, redirectUri, sanitizedServer });
                 return;
             }
 

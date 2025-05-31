@@ -31,10 +31,20 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         const numOptions = filter.numOptions();
 
         // Don't show the slider if there are too few options
-        if (numOptions < idealNumOptions / 2) {
+        if (numOptions < (idealNumOptions + 1)) {
             return 0;
         } else {
-            const sliderDefault = filter.entriesSortedByValue()[minTootsSliderCfg.idealNumOptions][1];
+            // It's "ideal" just in the sense that it has a value for numToots that works well
+            const idealOption = filter.entriesSortedByValue()[minTootsSliderCfg.idealNumOptions];
+            let sliderDefault = 0;
+
+            if (!idealOption) {
+                logger.warn(`No ideal option found to help set minToots slider default value`);
+                sliderDefault = (numOptions > (idealNumOptions / 2)) ? Math.floor(idealNumOptions / 10) : 0;
+            } else {
+                sliderDefault = idealOption[1];
+            }
+
             logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${numOptions} options)`);
             return sliderDefault;
         }

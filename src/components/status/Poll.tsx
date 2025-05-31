@@ -24,7 +24,7 @@ interface PollProps {
 export default function Poll(props: PollProps) {
     const { poll } = props;
     const { api } = useAlgorithm();
-    const { setError } = useError();
+    const { logAndSetFormattedError } = useError();
 
     const [hasVoted, setHasVoted] = useState(poll.ownVotes?.length > 0);
     const [revealed, setRevealed] = useState(false);
@@ -77,14 +77,25 @@ export default function Poll(props: PollProps) {
             logger.error('Error voting:', error);
 
             if (isAccessTokenRevokedError(error)) {
-                setError('Your access token has been revoked. Please logout and back in again.');
+                handleError('Your access token was revoked.', error);
             } else if (error.message.includes(ALREADY_VOTED_MSG)) {
-                setError('You have already voted in this poll.');
+                handleError('You have already voted in this poll.');
             } else {
-                setError(`Error voting!\n${error.message}`);
+                handleError(`Error voting in poll!`, error);
             }
         }
     }
+
+    const handleError = (msg: string, errorObj?: Error) => {
+        logAndSetFormattedError({
+            args: { poll, hasVoted, selected, choices: Object.keys(selected).filter((k) => selected[k]) },
+            errorObj,
+            logger,
+            msg,
+            note: errorObj && isAccessTokenRevokedError(errorObj) ? 'Please logout and back in again.' : null,
+        });
+    }
+
 
     return (
         <div className='poll'>

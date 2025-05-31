@@ -5,25 +5,25 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName } from "fedialgo";
 
-import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
-import { type TrendingPanel } from "./components/TrendingSection";
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
+import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
+import { type TrendingPanel } from "./components/TrendingSection";
 
-export type FilterOptionTypeTooltips = {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
-
-type FilterOptionsFormat = {
-    // Color highlight config for filter options
-    tooltips?: FilterOptionTypeTooltips;
-    // Fxn to transform the option name to a displayed label
-    formatLabel?: (name: string) => string;
+export type FilterOptionTypeTooltips = {
+    [key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip
 };
 
+type FilterOptionsFormat = {
+    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
+    formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+};
 
 // Subconfig types
 type AppConfig = {
+    accessTokenRevokedMsg: string;
     changelogUrl: string;
     developerMastodonUrl: string;
     headerIconUrl: string;
@@ -129,6 +129,7 @@ interface ConfigType {
 // App level config that is not user configurable
 class Config implements ConfigType {
     app: AppConfig = {
+        accessTokenRevokedMsg: `Your access token was revoked. Please log in again to continue using the app.`,
         changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md`,
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
