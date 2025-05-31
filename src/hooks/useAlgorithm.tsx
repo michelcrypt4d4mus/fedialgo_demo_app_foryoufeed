@@ -45,7 +45,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true); // TODO: this shouldn't start as true...
     const [lastLoadDurationSeconds, setLastLoadDurationSeconds] = useState<number | undefined>();
-    const [lastLoadStartedAt, setLastLoadStartedAt] = useState<Date>(null);
+    const [lastLoadStartedAt, setLastLoadStartedAt] = useState<Date>(new Date());  // TODO: this should start as null but for some reason it never gets set otherwise
     // Map of server's allowed MIME types to file extensions
     const [mimeExtensions, setMimeExtensions] = useState<MimeExtensions>({});
     // Instance info for the server
@@ -64,7 +64,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             const startedAt = new Date();
             logger.trace(`Marking load as started at ${startedAt.toISOString()}`);
             setLastLoadStartedAt(startedAt);
-        } else  {
+        } else {
             if (!lastLoadStartedAt) {
                 logger.error(`setLoadState() called with isLoading false but lastLoadStartedAt is null!`);
             } else {
@@ -94,6 +94,9 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     useEffect(() => {
         if (!user) {
             logger.warn(`constructFeed() useEffect called without user, skipping initial load`);
+            return;
+        } else if (algorithm) {
+            logger.debug(`constructFeed() useEffect called but algo already exists, skipping calling initial load again`);
             return;
         }
 
@@ -128,6 +131,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
             algo.serverInfo()
                 .then(info => {
+                    logger.debug(`User's server info retrieved for "${info.domain}":`, info);
                     setServerInfo(info);
                     setMimeExtensions(buildMimeExtensions(info.configuration.mediaAttachments.supportedMimeTypes));
                 })
@@ -138,7 +142,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         };
 
         constructFeed();
-    }, [setAlgorithm, user]);
+    }, [algorithm, handleError, isLoading, lastLoadDurationSeconds, lastLoadStartedAt, setIsLoading, setLastLoadStartedAt, setLastLoadDurationSeconds, setLoadState, user]);
 
     // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after configured amount of time
     useEffect(() => {
