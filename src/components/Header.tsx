@@ -58,7 +58,7 @@ export default function Header() {
 
                 <Col xs={XS_VALUE} className='text-end p-0'>
                     {user &&
-                        <Button className='p-2 text-center' variant="outline-primary" onClick={logout}>
+                        <Button className='p-2 text-center' variant="outline-primary" onClick={() => logout()}>
                             Logout
                         </Button>}
                 </Col>

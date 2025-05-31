@@ -157,7 +157,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     // Build an action button (reply, reblog, fave, etc) that appears at the bottom of a toot
     const buildActionButton = (action: ButtonAction, onClick?: (e: React.MouseEvent) => void) => {
-        return <ActionButton action={action} onClick={onClick} setThread={setThread} toot={toot} />;
+        return <ActionButton action={action} onClick={onClick} toot={toot} />;
     };
 
     return (

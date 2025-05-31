@@ -122,7 +122,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
         // Handle writing to console log, which means putting errorObj first for ComponentLogger
         args = Array.isArray(args) ? args : [args];
         args = errorObj ? [errorObj, ...args] : args;
-        let logMsg = isString(msg) ? msg : extractText(msg).join(' ');
+        let logMsg = isString(msg) ? msg : (extractText(msg) as string[]).join(' '); // TODO: WTF with extractText() here?
         logMsg += isEmptyStr(note) ? '' : `\n(note: ${note})`;
         (logger || errorLogger).error(logMsg, ...args);
     }
@@ -142,7 +142,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
                 <Modal.Body style={errorModalBody}>
                     {errorMsg && (
                         isString(errorMsg)
-                            ? <p style={errorHeadline}>{errorMsg.length ? errorMsg : "No message."}</p>
+                            ? <p style={errorHeadline}>{(errorMsg as string).length ? errorMsg : "No message."}</p>
                             : errorMsg)}
 
                     {errorNote &&
