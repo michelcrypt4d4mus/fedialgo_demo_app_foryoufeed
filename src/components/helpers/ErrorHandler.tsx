@@ -17,7 +17,7 @@ const ERROR_FONT_SIZE = 18;
 const errorLogger = getLogger("ErrorHandler");
 
 type ErrorLogProps = {
-    args?: unknown[];
+    args?: any;
     errorObj?: Error;
     logger?: ComponentLogger;
     msg: ReactNode;
@@ -107,6 +107,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
         args ||= [];
 
         // Handle writing to console log, which means putting errorObj first for ComponentLogger
+        args = Array.isArray(args) ? args : [args];
         args = errorObj ? [errorObj, ...args] : args;
         let logMsg = isString(msg) ? msg : extractText(msg).join(' ');
         logMsg += isEmptyStr(note) ? '' : `\n(note: ${note})`;

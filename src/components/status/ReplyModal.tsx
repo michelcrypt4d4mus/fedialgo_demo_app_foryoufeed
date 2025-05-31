@@ -19,6 +19,8 @@ import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
+import { isEmptyStr } from 'fedialgo/dist/helpers/string_helpers';
+import { error } from 'console';
 
 const logger = getLogger('ReplyModal');
 
@@ -30,7 +32,7 @@ interface ReplyModalProps extends ModalProps {
 export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
     const { api, mimeExtensions, serverInfo } = useAlgorithm();
-    const { logAndSetError, setError } = useError();
+    const { logAndSetFormattedError } = useError();
 
     const [isAttaching, setIsAttaching] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
@@ -47,10 +49,6 @@ export default function ReplyModal(props: ReplyModalProps) {
     const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxImageSize = attachmentsConfig?.imageSizeLimit || config.replies.defaultMaxImageSize;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
-
-    const logError = (msg: string, err?: Error) => {
-        logAndSetError(logger, msg, err);
-    }
 
     const removeMediaAttachment = (mediaID: string) => {
         logger.log(`Removing media attachment with ID: ${mediaID}`);
@@ -70,21 +68,19 @@ export default function ReplyModal(props: ReplyModalProps) {
     }, [api, show])
 
     const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
-        logger.log(`Accepted files:`, acceptedFiles);
+        logger.log(`Processing files:`, acceptedFiles);
 
         if (fileRejections.length > 0) {
-            logError(`Invalid file type! "${fileRejections[0].errors[0].message}"`);
+            handleError(`Invalid file type!`, fileRejections[0]?.errors[0]?.message);
             return;
         } else if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
-            logError(`No more than ${maxMediaAttachments} files can be attached!`);
+            handleError(`No more than ${maxMediaAttachments} files can be attached!`);
             return;
         } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
-            const msg = `Image file size exceeds ${maxImageSize / 1048576} MB limit!`;
-            logError(msg);
+            handleError(`Image file size exceeds ${maxImageSize / 1048576} MB limit!`);
             return;
         } else if (acceptedFiles.some(f => f.type.startsWith('video/') && f.size > maxVideoSize)) {
-            const msg = `Video file size exceeds ${maxVideoSize / 1048576} MB limit!`;
-            logError(msg);
+            handleError(`Video file size exceeds ${maxVideoSize / 1048576} MB limit!`);
             return;
         }
 
@@ -93,8 +89,8 @@ export default function ReplyModal(props: ReplyModalProps) {
         acceptedFiles.forEach((file) => {
             logger.log(`Processing ${fileInfo(file)}. File:`, file);
             const reader = new FileReader();
-            reader.onabort = () => logError('File reading was aborted');
-            reader.onerror = () => logError('File reading has failed');
+            reader.onabort = () => handleError('File reading aborted', '', new Error(`File read aborted on ${file.name}`));
+            reader.onerror = () => handleError('File reading failed!', '', new Error(`File read failed on ${file.name}`));
 
             reader.onload = () => {
                 logger.log(`Uploading file (${fileInfo(file)})`);
@@ -105,10 +101,12 @@ export default function ReplyModal(props: ReplyModalProps) {
                         setMediaAttachments(prev => [...prev, media]);
                     })
                     .catch(err => {
-                        let msg = `Failed to upload media "${file.name}" (${file.type}).`;
-                        // TODO: this is a janky way to avoid putting OAUTH_ERROR_MSG in every error message
-                        if (!err.message.includes("Error processing thumbnail")) msg += ` ${OAUTH_ERROR_MSG}`;
-                        logError(msg, err);
+                        handleError(
+                            `Failed to upload media "${file.name}" (${file.type}).`,
+                            // TODO: this is a janky way to avoid putting OAUTH_ERROR_MSG in every error message
+                            !err.message.includes("Error processing thumbnail") ? OAUTH_ERROR_MSG : null,
+                            err
+                        );
                     })
                     .finally(() => {
                         setIsAttaching(false); // TODO: this sets isAttaching to false after one upload which is not ideal
@@ -121,30 +119,41 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     const submitReply = async () => {
         if (!resolvedID) {
-            setError("Failed to resolve toot ID to reply to!");
+            handleError("Failed to resolve toot ID to reply to!");
             return;
         } else if ((replyText.length + mediaAttachments.length) == 0) {
-            setError("Reply cannot be empty!");
+            handleError("Reply cannot be empty!");
             return;
         } else if (replyText.length > maxChars) {
-            setError(`Reply text exceeds maximum length of ${maxChars} characters! Current length: ${replyText.length}`);
+            handleError(
+                `Reply text exceeds maximum length of ${maxChars} characters!`,
+                `Current length: ${replyText.length}`,
+            );
+
             return;
         }
 
         const txt = toot.replyMentions().join(' ') + '\n\n' + replyText.trim();
-        logger.log(`Submitting reply to toot ID: ${resolvedID}, text: ${txt}`);
         const mediaIDs = mediaAttachments.map(m => m.id);
+        logger.log(`Submitting reply to toot ID: ${resolvedID}, text: ${txt}`);
 
         api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: txt})
             .then(() => {
                 logger.log(`Reply submitted successfully!`);
                 setShow(false);
             }).catch(err => {
-                logError(`Failed to submit reply`, err);
+                handleError(`Failed to submit reply`, null, err);
             });
     };
 
     const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
+
+    const handleError = (msg: string, note?: string, errorObj?: Error) => {
+        let errorArgs: Record<string, string | any> = { resolvedID, statusConfig };
+        if (mediaAttachments.length) errorArgs.mediaAttachments = mediaAttachments;
+        if (!isEmptyStr(replyText)) errorArgs.replyText = replyText;
+        logAndSetFormattedError({errorObj, logger, msg, note, args: errorArgs});
+    };
 
     return (
         <Modal
