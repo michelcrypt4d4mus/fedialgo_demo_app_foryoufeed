@@ -17,9 +17,12 @@ export const browserLocale = () => navigator?.language || config.locale.defaultL
 export const browserLanguage = () => browserLocale().split('-')[0];
 export const browserCountry = () => browserLocale().split('-')[1];
 
-// for use with sort()
-export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
+// Helpers
 export const alphabetize = (arr: string[]) => arr.sort(compareStr);
+export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
+// Boolean helpers
+export const isEmpty = (s: string | null | undefined) => s === null || s === undefined || s.trim() === '';
+export const isString = (s: unknown) => typeof s === 'string';
 
 const DATE_FORMAT = Intl.DateTimeFormat(
     browserLocale(),

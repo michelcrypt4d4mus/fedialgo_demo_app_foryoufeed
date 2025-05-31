@@ -26,7 +26,7 @@ const logger = getLogger("FilterSetter");
 
 export default function FilterSetter() {
     const { algorithm } = useAlgorithm();
-    logger.trace("Rendering...");
+    // logger.trace("Rendering...");
 
     // Filter for 'visible' because the APP filters are currently hidden
     const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => f.visible);

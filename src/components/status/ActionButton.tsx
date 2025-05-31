@@ -22,7 +22,7 @@ import {
 import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
-import { scoreString } from "../../helpers/string_helpers";
+import { isEmpty, scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
@@ -42,7 +42,6 @@ export enum TootAction {
 export type ButtonAction = AccountAction | TootAction;
 const isAccountAction = (value: string | ButtonAction) => isValueInStringEnum(AccountAction)(value);
 const isTootAction = (value: string | ButtonAction) => isValueInStringEnum(TootAction)(value);
-const logger = getLogger("ActionButton");
 
 // Sizing icons: https://docs.fontawesome.com/web/style/size
 const ACCOUNT_ACTION_BUTTON_CLASS = "fa-xs";
@@ -89,18 +88,19 @@ const ACTION_INFO: Record<ButtonAction, ActionInfo> = {
     },
 };
 
+const logger = getLogger("ActionButton");
+
 interface ActionButtonProps {
     action: ButtonAction,
     onClick?: (e: React.MouseEvent) => void,
-    setThread?: (toots: Toot[]) => void,
     toot: Toot,
 };
 
 
 export default function ActionButton(props: ActionButtonProps) {
-    const { action, onClick, setThread, toot } = props;
+    const { action, onClick, toot } = props;
     const { algorithm, api } = useAlgorithm();
-    const { setError } = useError();
+    const { logAndSetError, logAndSetFormattedError } = useError();
 
     const actionInfo = ACTION_INFO[action];
     let label = actionInfo.label || capitalCase(action);
@@ -170,12 +170,16 @@ export default function ActionButton(props: ActionButtonProps) {
                     logger.log(`Successfully changed ${action} bool to ${newState}`);
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
-                    const msg = `Failed to ${action} toot! (${error.message})`;
-                    logger.error(`${msg} Resetting count to ${toot[actionInfo.countName]}`, error);
                     setCurrentState(startingState);
                     toot[actionInfo.booleanName] = startingState;
-                    if (actionInfo.countName) toot[actionInfo.countName] = startingCount;
-                    setError(msg);
+                    let errorMsg = "";
+
+                    if (actionInfo.countName) {
+                        toot[actionInfo.countName] = startingCount;
+                        errorMsg = `Resetting count to ${startingCount}`
+                    }
+
+                    logAndShowError(error, newState, errorMsg);
                 }
             })();
         };
@@ -212,12 +216,24 @@ export default function ActionButton(props: ActionButtonProps) {
                     // If there's an error, roll back the change to the original state
                     setCurrentState(startingState);
                     toot.account[actionInfo.booleanName] = startingState;
-                    const msg = `Failed to ${action} account! ${OAUTH_ERROR_MSG} (${error.message})`;
-                    logger.error(`${msg} Resetting state to ${startingState}`, error);
-                    setError(msg);
+                    logAndShowError(error, newState, `Resetting state to ${startingState}.`);
                 }
             })();
         };
+    };
+
+    // The user will see an entirely generated message. If you want to add something to the logs put it in 'args'.
+    const logAndShowError = (error?: Error, desiredState?: boolean, ...args: any[]) => {
+        const actionMsg = (desiredState === false ? "un" : "") + action.toString();
+        let msg = `Failed to ${actionMsg} `;
+
+        if (isAccountAction(action)) {
+            msg += toot.account.displayNameFullHTML();
+        } else {
+            msg = msg + "toot";
+        }
+
+        logAndSetFormattedError({args, logger, msg: msg + '!', errorObj: error, note: OAUTH_ERROR_MSG});
     };
 
     return (
@@ -241,17 +257,7 @@ export default function ActionButton(props: ActionButtonProps) {
                     </span>
                 </span>}
         </button>
-
-        // {action == TootAction.Reply &&
-        //     <a
-        //         onClick={(e) => {
-        //             toot.getConversation().then(toots => setThread(toots));
-        //         }}
-        //         style={{cursor: "pointer", fontSize: "11px"}}
-        //     >
-        //         {' '}View Replies
-        //     </a>}
-        );
+    );
 };
 
 

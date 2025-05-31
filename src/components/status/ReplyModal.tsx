@@ -30,7 +30,7 @@ interface ReplyModalProps extends ModalProps {
 export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
     const { api, mimeExtensions, serverInfo } = useAlgorithm();
-    const { setError } = useError();
+    const { logAndSetError, setError } = useError();
 
     const [isAttaching, setIsAttaching] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
@@ -48,9 +48,8 @@ export default function ReplyModal(props: ReplyModalProps) {
     const maxImageSize = attachmentsConfig?.imageSizeLimit || config.replies.defaultMaxImageSize;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
-    const logAndSetError = (msg: string, err?: Error) => {
-        logger.error(`${msg}`, err);
-        setError(msg + (err ? ` (${err.message})` : ``));
+    const logError = (msg: string, err?: Error) => {
+        logAndSetError(logger, msg, err);
     }
 
     const removeMediaAttachment = (mediaID: string) => {
@@ -74,18 +73,18 @@ export default function ReplyModal(props: ReplyModalProps) {
         logger.log(`Accepted files:`, acceptedFiles);
 
         if (fileRejections.length > 0) {
-            logAndSetError(`Invalid file type! ${fileRejections[0].errors[0].message}`);
+            logError(`Invalid file type! "${fileRejections[0].errors[0].message}"`);
             return;
         } else if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
-            logAndSetError(`No more than ${maxMediaAttachments} files can be attached!`);
+            logError(`No more than ${maxMediaAttachments} files can be attached!`);
             return;
         } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
             const msg = `Image file size exceeds ${maxImageSize / 1048576} MB limit!`;
-            logAndSetError(msg);
+            logError(msg);
             return;
         } else if (acceptedFiles.some(f => f.type.startsWith('video/') && f.size > maxVideoSize)) {
             const msg = `Video file size exceeds ${maxVideoSize / 1048576} MB limit!`;
-            logAndSetError(msg);
+            logError(msg);
             return;
         }
 
@@ -94,8 +93,8 @@ export default function ReplyModal(props: ReplyModalProps) {
         acceptedFiles.forEach((file) => {
             logger.log(`Processing ${fileInfo(file)}. File:`, file);
             const reader = new FileReader();
-            reader.onabort = () => logAndSetError('File reading was aborted');
-            reader.onerror = () => logAndSetError('File reading has failed');
+            reader.onabort = () => logError('File reading was aborted');
+            reader.onerror = () => logError('File reading has failed');
 
             reader.onload = () => {
                 logger.log(`Uploading file (${fileInfo(file)})`);
@@ -109,7 +108,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                         let msg = `Failed to upload media "${file.name}" (${file.type}).`;
                         // TODO: this is a janky way to avoid putting OAUTH_ERROR_MSG in every error message
                         if (!err.message.includes("Error processing thumbnail")) msg += ` ${OAUTH_ERROR_MSG}`;
-                        logAndSetError(msg, err);
+                        logError(msg, err);
                     })
                     .finally(() => {
                         setIsAttaching(false); // TODO: this sets isAttaching to false after one upload which is not ideal
@@ -141,7 +140,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                 logger.log(`Reply submitted successfully!`);
                 setShow(false);
             }).catch(err => {
-                logAndSetError(`Failed to submit reply`, err);
+                logError(`Failed to submit reply`, err);
             });
     };
 

@@ -5,13 +5,13 @@
  */
 import { CSSProperties, useState, useEffect } from "react";
 
-import { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
+import { type Weights, NonScoreWeightName, WeightName } from "fedialgo";
 
 import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import WeightSlider from './WeightSlider';
-import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
+import { getLogger } from "../../helpers/log_helpers";
 import { roundedBox, titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
@@ -21,7 +21,7 @@ const logger = getLogger("WeightSetter");
 
 export default function WeightSetter() {
     const { algorithm } = useAlgorithm();
-    const { setError } = useError();
+    const { logAndSetError } = useError();
 
     const [userWeights, setUserWeights] = useState<Weights>({} as Weights);
     const sortedScorers = algorithm.weightedScorers.sort((a, b) => a.name.localeCompare(b.name));
@@ -36,7 +36,7 @@ export default function WeightSetter() {
             setUserWeights(newWeights);  // Note lack of await here
             algorithm.updateUserWeights(newWeights);
         } catch (error) {
-            setError(`${error?.message || error}`);
+            logAndSetError(logger, error);
         }
     };
 
@@ -46,7 +46,7 @@ export default function WeightSetter() {
             await algorithm.updateUserWeightsToPreset(preset);
             setUserWeights(await algorithm.getUserWeights());
         } catch (error) {
-            setError(`${error?.message || error}`);
+            logAndSetError(logger, error);
         }
     };
 

@@ -34,15 +34,17 @@ const BUTTON_TEXT = {
                                   " Takes time & resources proportional to the number of times you've tooted.",
 };
 
-export const OAUTH_ERROR_MSG = `You may have used ${FEDIALGO} before it requested` +
-        ` appropriate permissions. This can be fixed with the "${DELETE_ALL}" button in the Experimental Features` +
-        ` section or by manually clearing all your cookies for this site.`;
+export const OAUTH_ERROR_MSG = `If you were trying to bookmark, mute, or reply with an image you may have used` +
+        ` ${FEDIALGO} before it requested the appropriate permissions to perform those actions.` +
+        ` This can be fixed with the "${DELETE_ALL}" button in the Experimental Features` +
+        ` section or by manually clearing your browser's local storage (cookies and everything else) for this site.` +
+        ` and then logging back in.`;
 
 
 export default function ExperimentalFeatures() {
-    const { algorithm, api, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
-    const { logout, setApp, user } = useAuthContext();
-    const { setError } = useError();
+    const { algorithm, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
+    const { logout, setApp } = useAuthContext();
+    const { logAndSetError, setError } = useError();
 
     const [algoState, setAlgoState] = useState({});
     const [isLoadingState, setIsLoadingState] = useState(false);
@@ -62,7 +64,7 @@ export default function ExperimentalFeatures() {
                 setAlgoState(currentState);
                 setShowStateModal(true);
             })
-            .catch((error) => setError(`Failed to get algorithm state: ${error}`))
+            .catch((error) => logAndSetError(logger, `Failed to get algorithm state!`, error))
             .finally(() => setIsLoadingState(false));
         ;
     }

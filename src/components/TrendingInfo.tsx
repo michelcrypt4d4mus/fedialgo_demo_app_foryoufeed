@@ -4,7 +4,15 @@
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { ScoreName, Toot, type TagWithUsageCounts, type TrendingLink, type TrendingWithHistory, TrendingType, extractDomain } from "fedialgo";
+import {
+    type TagWithUsageCounts,
+    type TrendingLink,
+    type TrendingWithHistory,
+    ScoreName,
+    Toot,
+    TrendingType,
+    extractDomain
+} from "fedialgo";
 
 import StatusComponent from "./status/Status";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";

@@ -5,22 +5,21 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingData, TrendingType, TypeFilterName } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName } from "fedialgo";
 
-import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
-import { type TrendingPanel } from "./components/TrendingSection";
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
+import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
+import { type TrendingPanel } from "./components/TrendingSection";
 
-export type FilterOptionTypeTooltips = {[key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip};
-
-type FilterOptionsFormat = {
-    // Color highlight config for filter options
-    tooltips?: FilterOptionTypeTooltips;
-    // Fxn to transform the option name to a displayed label
-    formatLabel?: (name: string) => string;
+export type FilterOptionTypeTooltips = {
+    [key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip
 };
 
+type FilterOptionsFormat = {
+    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
+    formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+};
 
 // Subconfig types
 type AppConfig = {

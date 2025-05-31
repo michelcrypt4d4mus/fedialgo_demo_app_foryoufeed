@@ -4,14 +4,16 @@
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { CSSProperties, MouseEvent, ReactElement, useState } from "react";
+import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode, useState } from "react";
 
-import { makeChunks, Toot, type TrendingWithHistory } from 'fedialgo';
+import { type TrendingWithHistory, Toot, makeChunks } from 'fedialgo';
 
-import { logMsg } from "./log_helpers";
+import { isEmpty } from './string_helpers';
+import { getLogger, logMsg } from "./log_helpers";
 
-
+// TODO: this shouldn't be here...
 export const isProduction = process.env.NODE_ENV === 'production';
+const logger = getLogger("react_helpers");
 
 
 ////////////////////////
@@ -62,6 +64,44 @@ export function buildStateCheckbox(
 };
 
 
+// Returns array of strings extracted from component hierarchy
+// Inspired by https://github.com/fernandopasik/react-children-utilities/blob/main/src/lib/onlyText.ts
+export function extractText(children: ReactNode | ReactNode[]): string[] {
+    if (!Array.isArray(children) && !isValidElement(children)) {
+        const str = nodeToString(children);
+        return isEmpty(str) ? [] : [str];
+    }
+
+    // TODO: something is really wrong with the type checker here - only with all this forcible casting
+    // would it accept that the "elements" accumulator in reduce() is a string array.
+    let nodeStrings = Children.toArray(children).reduce(
+        (elements, child) => {
+            elements = elements as string[];
+
+            if (hasChildren(child)) {
+                const extracted = extractText(child.props.children);
+                elements = [...elements, ...extracted];
+            } else if (isValidElement(child)) {
+                // newText = '';
+            } else {
+                const str = nodeToString(child);
+
+                if (!isEmpty(str)) {
+                    elements = [...elements, str];
+                }
+            }
+
+            return (elements as string[]).flat().flat();
+        },
+        [] as string[]
+    ) as string[];
+
+    nodeStrings = nodeStrings.filter((s) => !isEmpty(s));
+    logger.trace("extractText() called with children:", children, "\nresulting in:", nodeStrings);
+    return nodeStrings;
+};
+
+
 // Create a grid of numCols columns. If numCols is not provided either 2 or 3 columns
 // will be created based on the number of 'elements' provided.
 // Bootstrap Row/Col system margin and padding info: https://getbootstrap.com/docs/5.1/utilities/spacing/
@@ -92,3 +132,22 @@ export function horizontalSpacer(width: number, key?: string): ReactElement {
 export function verticalSpacer(height: number, key?: string): ReactElement {
     return <div key={key || ''} style={{height: `${height}px`, width: "100%"}} />
 };
+
+
+function nodeToString(child?: ReactNode): string | null {
+    if (typeof child === 'undefined' || child === null || typeof child === 'boolean') {
+        return null;
+    }
+
+    if (JSON.stringify(child) === '{}') {
+        return null;
+    }
+
+    return child.toString();
+};
+
+
+// From https://github.com/fernandopasik/react-children-utilities/blob/main/src/lib/hasChildren.ts
+const hasChildren = (elem: ReactNode,): elem is ReactElement<{ children: ReactNode | ReactNode[] }> => (
+    isValidElement<{ children?: ReactNode[] }>(elem) && Boolean(elem.props.children)
+);

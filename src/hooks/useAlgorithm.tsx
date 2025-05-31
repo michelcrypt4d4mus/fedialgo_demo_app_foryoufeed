@@ -8,8 +8,8 @@ import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
-import { getLogger } from "../helpers/log_helpers";
 import { config } from "../config";
+import { getLogger } from "../helpers/log_helpers";
 import { Events, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
 
@@ -18,9 +18,9 @@ const logger = getLogger("AlgorithmProvider");
 interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
-    serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     isLoading?: boolean,
     mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
+    serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     setShouldAutoUpdate?: (should: boolean) => void,
     shouldAutoUpdate?: boolean,
     timeline: Toot[],
