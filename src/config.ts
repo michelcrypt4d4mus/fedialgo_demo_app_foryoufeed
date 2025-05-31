@@ -23,6 +23,7 @@ type FilterOptionsFormat = {
 
 // Subconfig types
 type AppConfig = {
+    accessTokenRevokedMsg: string;
     changelogUrl: string;
     developerMastodonUrl: string;
     headerIconUrl: string;
@@ -128,6 +129,7 @@ interface ConfigType {
 // App level config that is not user configurable
 class Config implements ConfigType {
     app: AppConfig = {
+        accessTokenRevokedMsg: `Your access token was revoked. Please log in again to continue using the app.`,
         changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md`,
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",

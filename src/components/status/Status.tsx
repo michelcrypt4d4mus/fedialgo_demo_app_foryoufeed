@@ -305,6 +305,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                             <a
                                 onClick={() => {
                                     logger.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
+                                    // TODO; just use global isLoading?
                                     setIsLoadingThread(true);
 
                                     toot.getConversation()

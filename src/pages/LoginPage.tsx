@@ -29,6 +29,7 @@ const OAUTH_SCOPES = [
 export const OAUTH_SCOPE_STR = OAUTH_SCOPES.join(" ");
 const DEFAULT_MASTODON_SERVER = "universeodon.com";
 const APP_NAME = `${FEDIALGO}Demo`;  // Name of the app that will be created in the user's Mastodon account
+
 const logger = getLogger("LoginPage");
 
 
@@ -43,6 +44,7 @@ export default function LoginPage() {
         logAndSetFormattedError({
             args: (args || []).concat([{ server, _app }]),
             errorObj,
+            logger,
             msg: msg || "Error occurred while trying to login",
             note,
         });

@@ -19,19 +19,19 @@ import { useError } from "../helpers/ErrorHandler";
 import { versionString } from "../../helpers/string_helpers";
 
 const DELETE_ALL = "Delete All User Data";
+const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 const SCORE_STATS = "Show Score Stats";
 const SHOW_STATE = "Show State";
-const LOAD_COMPLETE_USER_HISTORY = "Load Complete User History";
 
 const logger = getLogger("ExperimentalFeatures");
 
 const BUTTON_TEXT = {
     [DELETE_ALL]: "Wipe all user data including the registered app. Necessary to handle OAuth permissions errors." +
                   " You'll need to reauthenticate afterwards.",
-    [SCORE_STATS]: "Show some charts breaking down the way your timeline is being scored when looked at in deciles.",
-    [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state and configuration.`,
     [LOAD_COMPLETE_USER_HISTORY]: "Load all your toots and favourites. May improve scoring of your feed." +
                                   " Takes time & resources proportional to the number of times you've tooted.",
+    [SCORE_STATS]: "Show some charts breaking down the way your timeline is being scored when looked at in deciles.",
+    [SHOW_STATE]: `Show a bunch of information about ${FEDIALGO}'s internal state and configuration.`,
 };
 
 export const OAUTH_ERROR_MSG = `If you were trying to bookmark, mute, or reply with an image you may have used` +
@@ -42,7 +42,7 @@ export const OAUTH_ERROR_MSG = `If you were trying to bookmark, mute, or reply w
 
 
 export default function ExperimentalFeatures() {
-    const { algorithm, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
+    const { algorithm, isLoading, lastLoadDurationSeconds, timeline, triggerPullAllUserData } = useAlgorithm();
     const { logout, setApp } = useAuthContext();
     const { logAndSetError } = useError();
 
@@ -60,6 +60,7 @@ export default function ExperimentalFeatures() {
             .then((currentState) => {
                 logger.log("FediAlgo state:", currentState);
                 currentState.version = versionString();
+                currentState.lastLoadDurationSeconds = lastLoadDurationSeconds;
                 setAlgoState(currentState);
                 setShowStateModal(true);
             })

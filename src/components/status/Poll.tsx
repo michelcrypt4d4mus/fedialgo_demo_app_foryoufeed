@@ -90,6 +90,7 @@ export default function Poll(props: PollProps) {
         logAndSetFormattedError({
             args: { poll, hasVoted, selected, choices: Object.keys(selected).filter((k) => selected[k]) },
             errorObj,
+            logger,
             msg,
             note: errorObj && isAccessTokenRevokedError(errorObj) ? 'Please logout and back in again.' : null,
         });

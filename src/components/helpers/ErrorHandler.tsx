@@ -29,7 +29,7 @@ interface ErrorContextProps {
     logAndSetError?: (msg: ComponentLogger | Error | string, ...args: unknown[]) => void,
     logAndSetFormattedError?: (props: ErrorLogProps) => void,
     resetErrors?: () => void,
-    setError?: (error: string) => void,
+    setErrorMsg?: (error: string) => void,
 };
 
 const ErrorContext = createContext<ErrorContextProps>({});
@@ -56,13 +56,25 @@ export default function ErrorHandler(props: PropsWithChildren) {
             <div style={{backgroundColor: "black", color: "white", fontSize: ERROR_FONT_SIZE, padding: "100px"}}>
                 <h1>Something went wrong!</h1>
 
-                <p style={rawErrorInPopup}>
+                <p style={{...rawErrorInPopup, margin: "50px"}}>
                     Error: {error.message}
                 </p>
 
-                <p style={errorParagraph}>
+                <p style={{...errorParagraph}}>
                     <BugReportLink />
                 </p>
+
+                <div style={{marginTop: "50px"}}>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                            resetErrorBoundary();
+                            resetErrors();
+                        }}
+                    >
+                        Try again
+                    </button>
+                </div>
             </div>
         );
     };
@@ -149,7 +161,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
                 logAndSetFormattedError,
                 logAndSetError,
                 resetErrors,
-                setError: setErrorMsg
+                setErrorMsg
             }}>
                 {props.children}
             </ErrorContext.Provider>
