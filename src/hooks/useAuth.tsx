@@ -13,9 +13,9 @@ import { User } from "../types";
 const logger = getLogger("AuthProvider");
 
 const AuthContext = createContext({
-    setLoggedInUser: async (_user: User) => {},
-    logout: () => {},
+    logout: (resetAppErrors?: boolean) => {},
     setApp: (_app: any) => undefined,
+    setLoggedInUser: async (_user: User) => {},
     setUser: (_user: User | null) => undefined,
     user: null,
 });
@@ -42,9 +42,11 @@ export default function AuthProvider(props: PropsWithChildren) {
         navigate("/");
     };
 
-    // call this function to sign out logged in user
-    const logout = async (): Promise<void> => {
-        logger.log("logout() called...")
+    // Call this function to sign out logged in user (revoke their OAuth token) and reset the app state.
+    // If preserveAppErrors is true, which happens during forced logouts because of API errors,
+    // don't reset the app's error state, so that the error modal can be shown after logout.
+    const logout = async (preserveAppErrors: boolean = false): Promise<void> => {
+        logger.log("logout() called... resetAppErrors:", preserveAppErrors);
         const body = new FormData();
         body.append("token", user.access_token);
         body.append("client_id", app.clientId)
@@ -60,7 +62,7 @@ export default function AuthProvider(props: PropsWithChildren) {
             logger.warn(`(Probably innocuous) error while trying to logout "${error}":`, error);
         }
 
-        resetErrors();
+        !preserveAppErrors && resetErrors();
         setUser(null);
         navigate("/login", {replace: true});
     };
