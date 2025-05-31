@@ -62,6 +62,11 @@ export default function TrendingInfo() {
         [algorithm.trendingData.servers]
     );
 
+    const sortedParticipatedTags = useMemo(
+        () => algorithm.userData.popularUserTags(),
+        [algorithm.userData.participatedHashtags]
+    );
+
     return (
         <TopLevelAccordion bodyStyle={noPadding} title="What's Trending">
             <div style={accordionSubheader}>
@@ -112,7 +117,7 @@ export default function TrendingInfo() {
                         infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`,
                         linkLabel: tagNameMapper,
                     }}
-                    trendingObjs={algorithm.userData.popularUserTags()}
+                    trendingObjs={sortedParticipatedTags}
                 />
             </Accordion>
         </TopLevelAccordion>
