@@ -22,7 +22,7 @@ import {
 import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
-import { isEmpty, scoreString } from "../../helpers/string_helpers";
+import { isEmptyStr, scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 

@@ -44,7 +44,7 @@ export const OAUTH_ERROR_MSG = `If you were trying to bookmark, mute, or reply w
 export default function ExperimentalFeatures() {
     const { algorithm, isLoading, timeline, triggerPullAllUserData } = useAlgorithm();
     const { logout, setApp } = useAuthContext();
-    const { logAndSetError, setError } = useError();
+    const { logAndSetError } = useError();
 
     const [algoState, setAlgoState] = useState({});
     const [isLoadingState, setIsLoadingState] = useState(false);
@@ -56,7 +56,6 @@ export default function ExperimentalFeatures() {
         logger.log(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
         setIsLoadingState(true);
 
-        // Wait for the data to show up
         algorithm.getCurrentState()
             .then((currentState) => {
                 logger.log("FediAlgo state:", currentState);
@@ -66,7 +65,7 @@ export default function ExperimentalFeatures() {
             })
             .catch((error) => logAndSetError(logger, `Failed to get algorithm state!`, error))
             .finally(() => setIsLoadingState(false));
-        ;
+
     }
 
     // Reset all state except for the user and server

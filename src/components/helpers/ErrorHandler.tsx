@@ -10,7 +10,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import BugReportLink from "./BugReportLink";
 import { getLogger } from "../../helpers/log_helpers";
-import { isEmpty, isString } from "../../helpers/string_helpers";
+import { isEmptyStr, isString } from "../../helpers/string_helpers";
 import { extractText } from "../../helpers/react_helpers";
 
 const ERROR_FONT_SIZE = 18;
@@ -85,15 +85,19 @@ export default function ErrorHandler(props: PropsWithChildren) {
             firstArg = args.shift();
         }
 
-        const msgWithError = logger.error(firstArg, ...args);
+        // Dig out the first Error argument from the args list (if any)
+        const errorArg = firstArg instanceof Error ? firstArg : args.find((arg) => arg instanceof Error);
+        const formattedErrorMsg = logger.error(firstArg, ...args);
 
-        if (isString(firstArg)) {
-            setErrorMsg(firstArg);
+        if (errorArg) {
+            setErrorObj(errorArg);
+            if (!(firstArg instanceof Error)) setErrorMsg(firstArg);
         } else {
-            setErrorMsg(msgWithError);
+            setErrorMsg(formattedErrorMsg);
         }
     }
 
+    // Accepts the 3 parts of an error popup as separate props (see ErrorLogProps above).
     // args props is not shown to the user but they are passed through to the logger.
     const logAndSetFormattedError = (errorProps: ErrorLogProps) => {
         let { args, errorObj, logger, msg, note } = errorProps;
@@ -105,7 +109,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
         // Handle writing to console log, which means putting errorObj first for ComponentLogger
         args = errorObj ? [errorObj, ...args] : args;
         let logMsg = isString(msg) ? msg : extractText(msg).join(' ');
-        logMsg += isEmpty(note) ? '' : `\n(note: ${note})`;
+        logMsg += isEmptyStr(note) ? '' : `\n(note: ${note})`;
         (logger || errorLogger).error(logMsg, ...args);
     }
 
@@ -176,8 +180,8 @@ const rawErrorContainer: CSSProperties = {
     backgroundColor: "black",
     borderRadius: "10px",
     fontFamily: "monospace",
-    marginTop: "25px",
-    minHeight: "150px",
+    marginTop: "15px",
+    minHeight: "120px",
     padding: "35px",
 };
 

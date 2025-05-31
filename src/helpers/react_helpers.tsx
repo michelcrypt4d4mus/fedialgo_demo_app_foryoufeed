@@ -8,7 +8,7 @@ import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, Reac
 
 import { type TrendingWithHistory, Toot, makeChunks } from 'fedialgo';
 
-import { isEmpty } from './string_helpers';
+import { isEmptyStr } from './string_helpers';
 import { getLogger, logMsg } from "./log_helpers";
 
 // TODO: this shouldn't be here...
@@ -69,7 +69,7 @@ export function buildStateCheckbox(
 export function extractText(children: ReactNode | ReactNode[]): string[] {
     if (!Array.isArray(children) && !isValidElement(children)) {
         const str = nodeToString(children);
-        return isEmpty(str) ? [] : [str];
+        return isEmptyStr(str) ? [] : [str];
     }
 
     // TODO: something is really wrong with the type checker here - only with all this forcible casting
@@ -86,7 +86,7 @@ export function extractText(children: ReactNode | ReactNode[]): string[] {
             } else {
                 const str = nodeToString(child);
 
-                if (!isEmpty(str)) {
+                if (!isEmptyStr(str)) {
                     elements = [...elements, str];
                 }
             }
@@ -96,7 +96,7 @@ export function extractText(children: ReactNode | ReactNode[]): string[] {
         [] as string[]
     ) as string[];
 
-    nodeStrings = nodeStrings.filter((s) => !isEmpty(s));
+    nodeStrings = nodeStrings.filter((s) => !isEmptyStr(s));
     logger.trace("extractText() called with children:", children, "\nresulting in:", nodeStrings);
     return nodeStrings;
 };
