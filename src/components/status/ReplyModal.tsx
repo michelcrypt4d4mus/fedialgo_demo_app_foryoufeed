@@ -34,13 +34,6 @@ export default function ReplyModal(props: ReplyModalProps) {
     const { api, mimeExtensions, serverInfo } = useAlgorithm();
     const { logAndSetFormattedError } = useError();
 
-    const [isAttaching, setIsAttaching] = useState(false);
-    const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
-    const [replyText, setReplyText] = React.useState<string>("");
-    const [resolvedID, setResolvedID] = React.useState<string | null>(null);
-    const cursor = isAttaching ? 'wait' : 'default'
-    const isDisabled = isAttaching || replyText.trim().length === 0 || resolvedID === null;
-
     // Server configuration stuff
     const acceptedAttachments = mimeExtensions || config.replies.defaultAcceptedAttachments;
     const statusConfig = serverInfo?.configuration?.statuses;
@@ -50,20 +43,30 @@ export default function ReplyModal(props: ReplyModalProps) {
     const maxImageSize = attachmentsConfig?.imageSizeLimit || config.replies.defaultMaxImageSize;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
+    // State
+    const replyMentionsStr = toot.replyMentions().join(' ');
+    const [isAttaching, setIsAttaching] = useState(false);
+    const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
+    const [replyText, setReplyText] = React.useState<string>(replyMentionsStr + '\n\n');
+    const [resolvedID, setResolvedID] = React.useState<string | null>(null);
+
+    const cursor = isAttaching ? 'wait' : 'default';
+    const currentReplyLen = () => replyText.replace(replyMentionsStr, '').trim().length;
+
     const removeMediaAttachment = (mediaID: string) => {
         logger.log(`Removing media attachment with ID: ${mediaID}`);
         setMediaAttachments(prev => prev.filter(m => m.id !== mediaID));
-    }
+    };
 
     useEffect(() => {
-        if (show) {
-            logger.log(`useEffect (show=${show}, resolvedID=${resolvedID})`, toot);
+        if (show && !resolvedID) {
+            logger.log(`Resolving toot ID for`, toot);
 
-            // TODO: this sets an invalid ID if resolution fails...
-            toot.resolveID().then(id => setResolvedID(id)).catch(err => {
-                logger.error(`Error resolving toot ID: ${err}`);
-                setResolvedID(toot.id);
-            });
+            toot.resolveID()
+                .then(id => setResolvedID(id))
+                .catch(err => {
+                    handleError(`Failed to resolve toot on ${serverInfo?.title}!`, `Can't reply right now.`, err);
+                });
         }
     }, [api, show])
 
@@ -89,8 +92,8 @@ export default function ReplyModal(props: ReplyModalProps) {
         acceptedFiles.forEach((file) => {
             logger.log(`Processing ${fileInfo(file)}. File:`, file);
             const reader = new FileReader();
-            reader.onabort = () => handleError('File reading aborted', '', new Error(`File read aborted on ${file.name}`));
-            reader.onerror = () => handleError('File reading failed!', '', new Error(`File read failed on ${file.name}`));
+            reader.onabort = () => handleError('File reading aborted', null, new Error(`File read aborted on ${file.name}`));
+            reader.onerror = () => handleError('File reading failed!', null, new Error(`File read failed on ${file.name}`));
 
             reader.onload = () => {
                 logger.log(`Uploading file (${fileInfo(file)})`);
@@ -204,7 +207,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                     <div style={buttonContainer}>
                         <Button
                             className="btn-lg"
-                            disabled={isDisabled}
+                            disabled={isAttaching || currentReplyLen() == 0 || resolvedID === null}
                             onClick={() => submitReply()} style={buttonStyle}
                         >
                             {isAttaching
