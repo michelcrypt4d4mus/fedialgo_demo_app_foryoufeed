@@ -28,6 +28,7 @@ type ErrorLogProps = {
 interface ErrorContextProps {
     logAndSetError?: (msg: ComponentLogger | Error | string, ...args: unknown[]) => void,
     logAndSetFormattedError?: (props: ErrorLogProps) => void,
+    resetErrors?: () => void,
     setError?: (error: string) => void,
 };
 
@@ -144,7 +145,12 @@ export default function ErrorHandler(props: PropsWithChildren) {
                 </Modal.Body>
             </Modal>
 
-            <ErrorContext.Provider value={{logAndSetFormattedError, logAndSetError, setError: setErrorMsg}}>
+            <ErrorContext.Provider value={{
+                logAndSetFormattedError,
+                logAndSetError,
+                resetErrors,
+                setError: setErrorMsg
+            }}>
                 {props.children}
             </ErrorContext.Provider>
         </ErrorBoundary>

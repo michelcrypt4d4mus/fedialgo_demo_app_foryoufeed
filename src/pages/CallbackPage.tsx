@@ -12,6 +12,7 @@ import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
 import { User } from '../types';
+import { FEDIALGO } from 'fedialgo';
 
 const logger = getLogger("CallbackPage");
 // const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
@@ -20,7 +21,7 @@ const logger = getLogger("CallbackPage");
 
 
 export default function CallbackPage() {
-    const { setError } = useError();
+    const { logAndSetFormattedError } = useError();
     const [searchParams] = useSearchParams();
     logger.trace(`searchParams:`, searchParams);
 
@@ -47,6 +48,15 @@ export default function CallbackPage() {
     // Get an OAuth token for our app using the code we received from the server
     const oAuthUserAndRegisterApp = async (code: string) => {
         const body = new FormData();
+
+        const handleAuthError = (msg: string, note: string, errorObj: Error) => {
+            logAndSetFormattedError({
+                args: { app, code, searchParams, user },
+                errorObj,
+                msg,
+                note,
+            })
+        }
 
         body.append('grant_type', 'authorization_code');
         body.append('client_id', app.clientId)
@@ -77,18 +87,24 @@ export default function CallbackPage() {
                 };
 
                 setLoggedInUser(userData).then(() => logger.log(`Logged in '${userData.username}'! User object:`, userData));
-            }).catch((error) => {
-                logger.error(`api.v1.accounts.verifyCredentials() error:`, error);
-                setError(`Account verifyCredentials error:\n${error.toString()}`);
+            }).catch((errorObj) => {
+                handleAuthError(
+                    `Failed to login to Mastodon server!`,
+                    `api.v1.accounts.verifyCredentials() failed. Try logging out and in again?`,
+                    errorObj,
+                )
             });
 
         // Verify or register the app
         api.v1.apps.verifyCredentials()
             .then((verifyResponse) => {
                 logger.trace(`oAuth() api.v1.apps.verifyCredentials() succeeded:`, verifyResponse);
-            }).catch((error) => {
-                logger.error(`oAuth() api.v1.apps.verifyCredentials() failure:`, error);
-                setError(`Fedialgo App verifyCredentials error:\n${error.toString()}`);
+            }).catch((errorObj) => {
+                handleAuthError(
+                    `${FEDIALGO} failed to register itself with the server!`,
+                    `oAuth() api.v1.apps.verifyCredentials() failed. Try logging out and in again?`,
+                    errorObj,
+                )
             });
     };
 

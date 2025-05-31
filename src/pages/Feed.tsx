@@ -32,7 +32,7 @@ const logger = getLogger("Feed");
 
 export default function Feed() {
     const { algorithm, isLoading, setShouldAutoUpdate, shouldAutoUpdate, timeline, triggerFeedUpdate } = useAlgorithm();
-    const { setError } = useError();
+    const { resetErrors } = useError();
 
     // State variables
     const hideLinkPreviewsState = useState(false);
@@ -52,7 +52,7 @@ export default function Feed() {
     // Reset all state except for the user and server
     const reset = async () => {
         if (!(await confirm(`Are you sure you want to clear all historical data?`))) return;
-        setError("");
+        resetErrors();
         setNumDisplayedToots(config.timeline.defaultNumDisplayedToots);
         if (!algorithm) return;
         await algorithm.reset();

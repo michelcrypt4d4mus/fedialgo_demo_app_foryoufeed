@@ -22,7 +22,7 @@ const AuthContext = createContext({
 
 
 export default function AuthProvider(props: PropsWithChildren) {
-    const { setError } = useError();
+    const { resetErrors } = useError();
     const navigate = useNavigate();
 
     const [app, setApp] = useAppStorage({ keyName: "app", defaultValue: null });
@@ -57,10 +57,10 @@ export default function AuthProvider(props: PropsWithChildren) {
             // Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://universeodon.com/oauth/revoke. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.""
             const _logoutResponse = await axios.post(oauthRevokeURL, body);
         } catch (error) {
-            logger.warn(`(Possibly innocuous) error while trying to logout "${error}":`, error);
+            logger.warn(`(Probably innocuous) error while trying to logout "${error}":`, error);
         }
 
-        setError("");
+        resetErrors();
         setUser(null);
         navigate("/login", {replace: true});
     };
