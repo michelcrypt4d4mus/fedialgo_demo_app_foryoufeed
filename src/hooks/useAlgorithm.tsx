@@ -96,7 +96,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             logger.warn(`constructFeed() useEffect called without user, skipping initial load`);
             return;
         } else if (algorithm) {
-            logger.debug(`constructFeed() useEffect called but algo already exists, skipping calling initial load again`);
+            logger.trace(`constructFeed() useEffect called but algo already exists, skipping repeating initial load`);
             return;
         }
 
@@ -142,7 +142,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         };
 
         constructFeed();
-    }, [algorithm, handleError, isLoading, lastLoadDurationSeconds, lastLoadStartedAt, setIsLoading, setLastLoadStartedAt, setLastLoadDurationSeconds, setLoadState, user]);
+    }, [algorithm, setLastLoadDurationSeconds, setLoadState, user]);
 
     // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after configured amount of time
     useEffect(() => {
