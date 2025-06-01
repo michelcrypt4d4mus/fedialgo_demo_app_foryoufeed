@@ -6,7 +6,7 @@
 import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
-import { BooleanFilter, BooleanFilterName, TagList, TypeFilterName } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, ScoreName, TagList, TypeFilterName } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
@@ -25,7 +25,9 @@ type TagColorGradient = {
     tagNames: TagNames;
 };
 
+// TODO: use TagTootsCacheKey type instead of GradientDataSource
 const GRADIENT_DATA_SOURCES: GradientDataSource[] = [
+    ScoreName.FAVOURITED_TAGS,
     TypeFilterName.PARTICIPATED_TAGS,
     TypeFilterName.TRENDING_TAGS,
 ];
@@ -88,10 +90,13 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (gradientInfos, dataSource) => {
                 let tagNames: TagNames = {};
 
+                // TODO: userData.participatedHashtags and trendingData.tags should be TagList instances, not arrays
                 if (dataSource == TypeFilterName.PARTICIPATED_TAGS) {
                     tagNames = algorithm.userData.participatedHashtags;
                 } else if (dataSource == TypeFilterName.TRENDING_TAGS) {
                     tagNames = new TagList(algorithm.trendingData.tags).tagNameDict();
+                } else if (dataSource == ScoreName.FAVOURITED_TAGS) {
+                    tagNames = algorithm.userData.favouritedTags.tagNameDict();
                 } else {
                     throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
                 }
@@ -105,7 +110,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             },
             {} as GradientInfo
         ),
-        [algorithm.trendingData.tags, algorithm.userData.participatedHashtags]
+        [algorithm.trendingData.tags, algorithm.userData.favouritedTags, algorithm.userData.participatedHashtags]
     );
 
     const getGradientColorTooltip = (tagName: string, dataSource: GradientDataSource): CheckboxTooltip => {
@@ -141,6 +146,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 return getGradientColorTooltip(name, TypeFilterName.TRENDING_TAGS);
             } else if (name in tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS].tagNames) {
                 return getGradientColorTooltip(name, TypeFilterName.PARTICIPATED_TAGS);
+            } else if (name in tagGradientInfo[ScoreName.FAVOURITED_TAGS].tagNames) {
+                return getGradientColorTooltip(name, ScoreName.FAVOURITED_TAGS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return filterTooltips[BooleanFilterName.LANGUAGE];

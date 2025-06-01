@@ -14,14 +14,17 @@ export enum SwitchType {
     SORT_BY_COUNT = "sortByCount"
 };
 
+export type GradientEndpoints = [tinycolor.Instance, tinycolor.Instance];
+
 export type ThemeConfig = {
     accordionOpenBlue: CSSProperties['color'];
-    feedBackgroundColor: CSSProperties['backgroundColor'];
+    favouritedTagGradient: GradientEndpoints;
+    feedBackgroundColor: CSSProperties['backgroundColor'];  // TODO: change to GradientEndpoints
     feedBackgroundColorLite: CSSProperties['backgroundColor'];
     followedTagColor: CSSProperties['color'];
     followedUserColor: CSSProperties['color'];
     followedUserColorFaded: CSSProperties['color'];
-    participatedTagColor: CSSProperties['color'];
+    participatedTagColor: CSSProperties['color'];  // TODO: change to GradientEndpoints
     participatedTagColorMin: CSSProperties['color'];
     trendingObjFontSize: number;
     trendingTagColor: CSSProperties['color'];
@@ -30,6 +33,7 @@ export type ThemeConfig = {
 
 export const THEME: ThemeConfig = {
     accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
+    favouritedTagGradient: [tinycolor("#cfe3e3"), tinycolor("cyan")], // Gradient for favourited tags
     feedBackgroundColor: '#15202b', // background color for the timeline
     feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
     followedTagColor: 'yellow', // Color for followed tags

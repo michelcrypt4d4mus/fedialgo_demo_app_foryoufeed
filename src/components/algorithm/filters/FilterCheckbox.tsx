@@ -7,14 +7,16 @@ import Form from 'react-bootstrap/esm/Form';
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
-import { TypeFilterName } from "fedialgo";
+import { ScoreName, TypeFilterName } from "fedialgo";
 
 import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
-import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
+import { type GradientEndpoints, linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 
-export type GradientDataSource = TypeFilterName.PARTICIPATED_TAGS | TypeFilterName.TRENDING_TAGS;
+export type GradientDataSource = ScoreName.FAVOURITED_TAGS
+                               | TypeFilterName.PARTICIPATED_TAGS
+                               | TypeFilterName.TRENDING_TAGS;
 
 export type CheckboxColorGradient = {
     // Sometimes we want to adjust the gradient instad of using the one between the endpoints to make any of the
@@ -24,7 +26,7 @@ export type CheckboxColorGradient = {
         minTagsToAdjust: number;
     },
     dataSource: GradientDataSource;
-    endpoints: [tinycolor.Instance, tinycolor.Instance];
+    endpoints: GradientEndpoints;
     textSuffix: (n: number) => string;
 };
 
