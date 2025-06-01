@@ -5,7 +5,7 @@
 import { CSSProperties, PropsWithChildren, ReactNode, createContext, useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
 
-import { ComponentLogger } from "fedialgo";
+import { Logger } from "fedialgo";
 import { ErrorBoundary } from "react-error-boundary";
 
 import BugReportLink from "./BugReportLink";
@@ -19,14 +19,14 @@ const errorLogger = getLogger("ErrorHandler");
 type ErrorLogProps = {
     args?: any;
     errorObj?: Error;
-    logger?: ComponentLogger;
+    logger?: Logger;
     msg: string;
     note?: string;
 };
 
 
 interface ErrorContextProps {
-    logAndSetError?: (msg: ComponentLogger | Error | string, ...args: unknown[]) => void,
+    logAndSetError?: (msg: Logger | Error | string, ...args: unknown[]) => void,
     logAndSetFormattedError?: (props: ErrorLogProps) => void,
     resetErrors?: () => void,
     setErrorMsg?: (error: string) => void,
@@ -79,19 +79,19 @@ export default function ErrorHandler(props: PropsWithChildren) {
         );
     };
 
-    // First argument can be the ComponentLogger you wish to use to write the error
-    // If first non ComponentLogger arg is a string, that will be put in setError()
+    // First argument can be the Logger you wish to use to write the error
+    // If first non Logger arg is a string, that will be put in setError()
     // for the user to see and the actual rest of the args (including any Errors) will be logged.
-    const logAndSetError = (error: ComponentLogger | Error | ReactNode, ...args: any[]) => {
+    const logAndSetError = (error: Logger | Error | ReactNode, ...args: any[]) => {
         let firstArg: any = error;
         let logger = errorLogger;
 
-        // If the first argument is a ComponentLogger use it to log the error
-        if (error instanceof ComponentLogger) {
+        // If the first argument is a Logger use it to log the error
+        if (error instanceof Logger) {
             logger = error;
 
             if (!args.length) {
-                logger.error("logAndSetError called with a ComponentLogger but no message!");
+                logger.error("logAndSetError called with a Logger but no message!");
                 return;
             }
 
@@ -119,7 +119,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
         setErrorMsg(msg);
         args ||= [];
 
-        // Handle writing to console log, which means putting errorObj first for ComponentLogger
+        // Handle writing to console log, which means putting errorObj first for Logger
         args = Array.isArray(args) ? args : [args];
         args = errorObj ? [errorObj, ...args] : args;
         let logMsg: string = isString(msg) ? msg : (extractText(msg) as string[]).join(' '); // TODO: WTF with extractText() here?

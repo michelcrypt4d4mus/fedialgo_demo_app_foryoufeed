@@ -1,7 +1,7 @@
 /*
  * Logging helpers.
  */
-import TheAlgorithm, { ComponentLogger } from "fedialgo";
+import TheAlgorithm, { Logger } from "fedialgo";
 
 import { browserCountry, browserLanguage, browserLocale } from "./string_helpers";
 
@@ -16,9 +16,9 @@ export const infoMsg = (msg: string, ...args: any[]) => console.info(`${LOG_PREF
 export const debugMsg = (msg: string, ...args: any[]) => console.debug(`${LOG_PREFIX} ${msg}`, ...args);
 
 
-// Make a ComponentLogger instance with a LOG_PREFIX
-export const getLogger = (componentName: string, subtitle?: string): ComponentLogger => {
-    return new ComponentLogger(LOG_PREFIX, componentName, subtitle);
+// Make a Logger instance with a LOG_PREFIX
+export const getLogger = (componentName: string, subtitle?: string): Logger => {
+    return new Logger(LOG_PREFIX, componentName, subtitle);
 };
 
 

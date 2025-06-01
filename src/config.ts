@@ -10,7 +10,7 @@ import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterN
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
-import { type TrendingPanel } from "./components/TrendingSection";
+import { type TrendingPanelName } from "./components/TrendingSection";
 
 export type FilterOptionTypeTooltips = {
     [key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip
@@ -39,6 +39,7 @@ type FilterConfig = {
         maxLabelLength: number;
         minTootsSlider: {
             idealNumOptions: number,
+            minItems: number;
             tooltipHoverDelay: number;
         },
         optionsFormatting: Record<BooleanFilterName, FilterOptionsFormat>,
@@ -100,7 +101,7 @@ type TrendingPanelCfg = {
 
 type TrendingConfig = {
     maxLengthForMulticolumn: number;
-    panels: Record<TrendingPanel, TrendingPanelCfg>;
+    panels: Record<TrendingPanelName, TrendingPanelCfg>;
 };
 
 type WeightsConfig = {
@@ -144,7 +145,8 @@ class Config implements ConfigType {
         boolean: {
             maxLabelLength: 19,                          // Maximum length of a filter option label
             minTootsSlider: {
-                idealNumOptions: 50,                     // Ideal number of options to show in the minTootsSlider
+                idealNumOptions: 75,                     // Ideal number of options to show in the minTootsSlider
+                minItems: 10,                            // Minimum number of items to show (used for max value calculation)
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
@@ -267,7 +269,7 @@ class Config implements ConfigType {
     }
 
     trending: TrendingConfig = {
-        maxLengthForMulticolumn: 50,          // Maximum length of a trending object label to use multicolumn layout
+        maxLengthForMulticolumn: 55,          // Maximum length of a trending object label to use multicolumn layout
         panels:  {
             [TrendingType.LINKS]: {
                 hasCustomStyle: true,        // TODO: this sucks

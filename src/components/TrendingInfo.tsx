@@ -114,7 +114,7 @@ export default function TrendingInfo() {
                     panelType={ScoreName.PARTICIPATED_TAGS}
                     linkRenderer={{
                         ...baseLinkRenderer,
-                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} of your recent toots`,
+                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
                         linkLabel: tagNameMapper,
                     }}
                     trendingObjs={sortedParticipatedTags}
