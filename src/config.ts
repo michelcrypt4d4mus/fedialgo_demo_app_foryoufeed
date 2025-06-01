@@ -131,7 +131,7 @@ interface ConfigType {
 class Config implements ConfigType {
     app: AppConfig = {
         accessTokenRevokedMsg: `Your access token was revoked. Please log in again to continue using the app.`,
-        changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md`,
+        changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases`,
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
         homepage: HOMEPAGE,
