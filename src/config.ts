@@ -12,8 +12,9 @@ import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
 import { type TrendingPanelName } from "./components/TrendingSection";
 
+// TODO: key should be of type TagTootsCacheKey
 export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName | TypeFilterName)]?: CheckboxTooltip
+    [key in (BooleanFilterName | ScoreName | TypeFilterName)]?: CheckboxTooltip
 };
 
 type FilterOptionsFormat = {
@@ -152,6 +153,16 @@ class Config implements ConfigType {
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
                 [BooleanFilterName.HASHTAG]: {
                     tooltips: {
+                        [ScoreName.FAVOURITED_TAGS]: {
+                            highlight: {
+                                gradient: {
+                                    dataSource: ScoreName.FAVOURITED_TAGS,
+                                    endpoints: THEME.favouritedTagGradient,
+                                    textSuffix: (n: number) => ` ${n} times recently`,
+                                },
+                            },
+                            text: `You've favourited this hashtag`
+                        },
                         [TypeFilterName.FOLLOWED_HASHTAGS]: {
                             highlight: {color: THEME.followedTagColor},
                             text: `You follow this hashtag`,
