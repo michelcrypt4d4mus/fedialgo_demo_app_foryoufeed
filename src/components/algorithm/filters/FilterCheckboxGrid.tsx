@@ -48,12 +48,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const buildTagListColorGradient = (dataSource: GradientDataSource, tagList: TagList): TagListColorGradient => {
         const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
-
-        if (!gradientCfg) {
-            isTagFilter && logger.warn(`No gradient found for dataSource: ${dataSource} in filterConfig`, filterConfig);
-            return EMPTY_GRADIENT;
-        }
-
         if (!tagList) logger.error(`No tagList found for dataSource: ${dataSource} in filterConfig`);
         const maxNumToots = Math.max(tagList.maxNumToots(), 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
@@ -95,7 +89,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
                 }
 
-                gradientInfos[dataSource] = buildTagListColorGradient(dataSource as GradientDataSource, tagList);
+                if (filterTooltips[dataSource]?.highlight?.gradient) {
+                    gradientInfos[dataSource] = buildTagListColorGradient(dataSource as GradientDataSource, tagList);
+                }
+
                 return gradientInfos
             },
             {} as GradientInfo
