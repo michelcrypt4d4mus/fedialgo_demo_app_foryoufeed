@@ -6,7 +6,14 @@
 import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
-import { BooleanFilter, BooleanFilterName, ScoreName, TagList, TagTootsCacheKey, TypeFilterName } from "fedialgo";
+import {
+    BooleanFilter,
+    BooleanFilterName,
+    ObjList,
+    ScoreName,
+    TagTootsCacheKey,
+    TypeFilterName,
+} from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
@@ -16,16 +23,15 @@ import { config, type FilterOptionTypeTooltips, type GradientDataSource } from "
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-import UserData from "fedialgo/dist/api/user_data";
 
 type GradientInfo = Record<TagTootsCacheKey, TagListColorGradient>;
 
 type TagListColorGradient = {
     colors: tinycolor.Instance[];
-    tagList: TagList;
+    objList: ObjList;
 };
 
-const EMPTY_GRADIENT: TagListColorGradient = {colors: [], tagList: new TagList([])};
+// const EMPTY_GRADIENT: TagListColorGradient = {colors: [], objList: new TagList([])};
 
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
@@ -46,51 +52,52 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    const buildTagListColorGradient = (dataSource: GradientDataSource, tagList: TagList): TagListColorGradient => {
+    // TODO: ObjList now has a 'label' property that presumably is the same as dataSource
+    const buildObjListColorGradient = (dataSource: GradientDataSource, objList: ObjList): TagListColorGradient => {
         const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
-        if (!tagList) logger.error(`No tagList found for dataSource: ${dataSource} in filterConfig`);
-        const maxNumToots = Math.max(tagList.maxNumToots(), 2);  // Ensure at least 2 for the gradient
+        if (!objList) throw new Error(`No objList found for dataSource: ${dataSource} in filterConfig`);
+        const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
         // Adjust the color gradient so there's more color variation in the low/middle range
-        if (gradientCfg.adjustment && tagList.length > gradientCfg.adjustment.minTagsToAdjust) {
+        if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
             try {
                 const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                 const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                 colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
                 logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
             } catch (err) {
-                logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\tagList=`, tagList);
+                logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\objList=`, objList);
             }
         }
 
         const colors = colorGradient.hsv(maxNumToots, false);
-        logger.trace(`Rebuilt ${gradientCfg.dataSource} with tagList.maxNumToots=${tagList.maxNumToots()}, colorArray:`, colorGradient);
-        return { colors, tagList };
+        logger.trace(`Rebuilt ${gradientCfg.dataSource}. objList.maxNumToots=${objList.maxNumToots()}, colorArray:`, colors);
+        return { colors, objList };
     };
 
-    const tagGradientInfo: GradientInfo = useMemo(
+    const tooltipGradientInfo: GradientInfo = useMemo(
         () => [ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey)].reduce(
             (gradientInfos, dataSource) => {
-                let tagList: TagList;
+                let objList: ObjList;
 
                 if (dataSource == TagTootsCacheKey.PARTICIPATED_TAG_TOOTS) {
-                    tagList = algorithm.userData.participatedTags;
+                    objList = algorithm.userData.participatedTags;
                 } else if (dataSource == TagTootsCacheKey.TRENDING_TAG_TOOTS) {
-                    tagList = algorithm.trendingData.tags;
+                    objList = algorithm.trendingData.tags;
                 } else if (dataSource == TagTootsCacheKey.FAVOURITED_TAG_TOOTS) {
-                    tagList = algorithm.userData.favouritedTags;
+                    objList = algorithm.userData.favouritedTags;
                 } else if (dataSource == ScoreName.FAVOURITED_ACCOUNTS) {
-                    tagList = algorithm.userData.favouriteAccounts;
+                    objList = algorithm.userData.favouriteAccounts;
                 }
 
-                if (!tagList) {
-                    logger.error(`No tagList found for dataSource: "${dataSource}" in FilterCheckboxGrid, userData:`, algorithm.userData);
+                if (!objList) {
+                    logger.error(`No objList found for dataSource: "${dataSource}" in FilterCheckboxGrid, userData:`, algorithm.userData);
                     throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
                 }
 
                 if (filterTooltips[dataSource]?.highlight?.gradient) {
-                    gradientInfos[dataSource] = buildTagListColorGradient(dataSource as GradientDataSource, tagList);
+                    gradientInfos[dataSource] = buildObjListColorGradient(dataSource as GradientDataSource, objList);
                 }
 
                 return gradientInfos
@@ -105,24 +112,31 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         ]
     );
 
-    const getGradientColorTooltip = (tagName: string, dataSource: GradientDataSource, allowMisses: boolean = false): CheckboxTooltip => {
-        const { colors, tagList } = tagGradientInfo[dataSource];
-        const tag = tagList.getTag(tagName);
+    const getGradientColorTooltip = (
+        objName: string,
+        dataSource: GradientDataSource,
+        allowMisses: boolean = false
+    ): CheckboxTooltip => {
+        const { colors, objList } = tooltipGradientInfo[dataSource];
+        const tag = objList.getObj(objName);
         const baseTooltip = filterTooltips[dataSource];
 
         if (!baseTooltip) logger.error(`No tooltip found for "${dataSource}" in filterTooltips`, filterTooltips);
         const gradientCfg = baseTooltip.highlight.gradient;
 
         if (!tag) {
-            const msg = `No tag found for "${tagName}" in ${dataSource}, using default tooltip:`;
-            allowMisses ? logger.trace(msg, tagList, baseTooltip) : logger.warn(msg, tagList, baseTooltip);
+            const msg = `No tag found for "${objName}" in ${dataSource}, using default tooltip:`;
+            allowMisses ? logger.trace(msg, objList, baseTooltip) : logger.warn(msg, objList, baseTooltip);
             return baseTooltip;
         }
 
         let color = colors[tag.numToots - 1];
 
         if (!color) {
-            logger.info(`No color found for "${tag.name}" w/ ${tag.numToots} toots, using default. colors:`, colors);
+            if (tag.numToots > 0) {
+                logger.warn(`No color found for "${tag.name}" w/ ${tag.numToots} toots, using default. colors:`, colors);
+            }
+
             color = tag.numToots ? gradientCfg.endpoints[1] : gradientCfg.endpoints[0];  // Use 1st color for 0 toots
         }
 
@@ -136,16 +150,17 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
                 return filterTooltips[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (tagGradientInfo[TagTootsCacheKey.TRENDING_TAG_TOOTS].tagList.getTag(name)) {
+            } else if (tooltipGradientInfo[TagTootsCacheKey.TRENDING_TAG_TOOTS].objList.getObj(name)) {
                 return getGradientColorTooltip(name, TagTootsCacheKey.TRENDING_TAG_TOOTS);
-            } else if (tagGradientInfo[TagTootsCacheKey.PARTICIPATED_TAG_TOOTS].tagList.getTag(name)) {
+            } else if (tooltipGradientInfo[TagTootsCacheKey.PARTICIPATED_TAG_TOOTS].objList.getObj(name)) {
                 return getGradientColorTooltip(name, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
-            } else if (tagGradientInfo[TagTootsCacheKey.FAVOURITED_TAG_TOOTS].tagList.getTag(name)) {
+            } else if (tooltipGradientInfo[TagTootsCacheKey.FAVOURITED_TAG_TOOTS].objList.getObj(name)) {
                 return getGradientColorTooltip(name, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return filterTooltips[BooleanFilterName.LANGUAGE];
         } else if (filter.title == BooleanFilterName.USER && name in algorithm.userData.followedAccounts) {
+            // TODO: this only highlights followed accounts, not other accounts user has favourited/retooted
             return getGradientColorTooltip(name, ScoreName.FAVOURITED_ACCOUNTS, true);
         }
     };

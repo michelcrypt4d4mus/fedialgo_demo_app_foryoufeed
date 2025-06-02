@@ -69,7 +69,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                         key={`${filter.title}-minTootsSlider`}
                         minTootsState={minTootsState}
                         panelTitle={filter.title}
-                        tagList={filter.optionsAsTagList()}
+                        objList={filter.optionsAsTagList()}
                     />
                 );
             }

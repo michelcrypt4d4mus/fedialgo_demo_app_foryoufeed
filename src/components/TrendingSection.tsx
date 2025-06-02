@@ -67,7 +67,7 @@ export default function TrendingSection(props: TrendingProps) {
     const title = panelCfg.title || capitalCase(objTypeLabel);
 
     const trendObjs = useMemo(
-        () => trendingObjs ?? tagList.topTags(),
+        () => trendingObjs ?? tagList.topObjs(),
         [trendingObjs, tagList]
     )
 
@@ -188,7 +188,7 @@ export default function TrendingSection(props: TrendingProps) {
                     panelTitle={title}
                     pluralizedPanelTitle={title}
                     showLongTitle={false}  // TODO: This fucks up the layout if set to true
-                    tagList={tagList}
+                    objList={tagList}
                 />
             );
         },

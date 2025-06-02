@@ -17,12 +17,12 @@ interface MinTootsSliderProps {
     panelTitle: string;
     pluralizedPanelTitle?: string;
     showLongTitle?: boolean;
-    tagList: TagList;
+    objList: TagList;
 };
 
 
 export default function MinTootsSlider(props: MinTootsSliderProps) {
-    let { minTootsState, panelTitle, pluralizedPanelTitle, showLongTitle, tagList } = props;
+    let { minTootsState, panelTitle, objList, pluralizedPanelTitle, showLongTitle } = props;
     pluralizedPanelTitle = (pluralizedPanelTitle || `${panelTitle}s`).toLowerCase();
 
     const logger = getMinTootsLogger(panelTitle);
@@ -32,14 +32,14 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
 
     const maxValue = useMemo(
         () => {
-            if (tagList.tags.length === 0) {
-                logger.info(`No tags found in tagList, using default maxValue of 5`);
+            if (objList.length === 0) {
+                logger.info(`No tags found in objList, using default maxValue of 5`);
                 return 5;
             }
 
-            const topTags = tagList.topTags();
-            const maxValueInTags = Math.max(...tagList.tags.map(t => t.numToots));
-            const maxValueOptionIdx = Math.min(minTootsSliderCfg.minItems, tagList.tags.length - 1);
+            const topTags = objList.topObjs();
+            const maxValueInTags = objList.maxNumToots();
+            const maxValueOptionIdx = Math.min(minTootsSliderCfg.minItems, objList.length - 1);
             let maxValue = topTags.slice(maxValueOptionIdx)[0]?.numToots;
 
             if (!maxValue) {
@@ -50,7 +50,7 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
             logger.trace(`Computed maxValue ${maxValue} (maxValueInTags: ${maxValueInTags}, maxValueOptionIdx: ${maxValueOptionIdx})`);
             return maxValue;
         },
-        [tagList.tags]
+        [objList.objs]
     );
 
     return (<>
@@ -89,24 +89,24 @@ export const computeDefaultValue = (tagList: TagList, title: string, idealNumOpt
     const logger = getMinTootsLogger(title);
     const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
     idealNumOptions ||= minTootsSliderCfg.idealNumOptions;
-    logger.debug(`Computing default value for minToots slider with ${tagList.tags.length} options`);
+    logger.debug(`Computing default value for minToots slider with ${tagList.length} options`);
 
     // Don't show the slider if there are too few options
-    if (tagList.tags.length < (idealNumOptions + 1)) {
+    if (tagList.objs.length < (idealNumOptions + 1)) {
         return 0;
     } else {
         // It's "ideal" just in the sense that it has a value for numToots that works well
-        const idealOption = tagList.topTags()[idealNumOptions];
+        const idealOption = tagList.topObjs()[idealNumOptions];
         let sliderDefault = 0;
 
         if (!idealOption) {
             logger.warn(`No ideal option found to help set minToots slider default value`);
-            sliderDefault = (tagList.tags.length > (idealNumOptions / 2)) ? Math.floor(idealNumOptions / 10) : 0;
+            sliderDefault = (tagList.objs.length > (idealNumOptions / 2)) ? Math.floor(idealNumOptions / 10) : 0;
         } else {
             sliderDefault = idealOption.numToots;
         }
 
-        logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${tagList.tags.length} tags)`);
+        logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${tagList.length} tags)`);
         return sliderDefault;
     }
 };
