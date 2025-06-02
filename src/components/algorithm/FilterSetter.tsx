@@ -5,17 +5,11 @@
  */
 import Accordion from 'react-bootstrap/esm/Accordion';
 
-import { capitalCase } from "change-case";
-
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
-import FilterAccordionSection from "./FilterAccordionSection";
-import HeaderSwitch from "./filters/HeaderSwitch";
 import NumericFilters from "./filters/NumericFilters";
-import Slider from "./Slider";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { getLogger } from '../../helpers/log_helpers';
 import { config } from "../../config";
-import { SwitchType } from "../../helpers/style_helpers";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
 import { noPadding } from "../../helpers/style_helpers";
@@ -34,15 +28,21 @@ export default function FilterSetter() {
     const hasActiveNumericFilter = numericFilters.some(f => f.value > 0);
     const hasAnyActiveFilter = hasActiveNumericFilter || hasActiveBooleanFilter;
 
-    // TODO: something in the numeric filter header switchbar is causing "unique key required" errors
+    const filterPositions = booleanFilters.reduce(
+        (filters, f) => {
+            filters[config.filters.boolean.optionsFormatting[f.title].position] = <BooleanFilterAccordionSection filter={f} key={f.title} />;
+            return filters;
+        },
+        {[config.filters.numeric.position]: <NumericFilters isActive={hasActiveNumericFilter} />}
+    );
+
     return (
         <TopLevelAccordion bodyStyle={noPadding} isActive={hasAnyActiveFilter} title="Feed Filters">
             {HEADER_SWITCH_TOOLTIP}
             {HIGHLIGHTED_TOOLTIP}
 
             <Accordion alwaysOpen>
-                <NumericFilters isActive={hasActiveNumericFilter} />
-                {booleanFilters.map((f) => <BooleanFilterAccordionSection filter={f} key={f.title} />)}
+                {Object.keys(filterPositions).sort().map((position) => filterPositions[position])}
             </Accordion>
         </TopLevelAccordion>
     );

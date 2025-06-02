@@ -205,6 +205,7 @@ class Config implements ConfigType {
                     },
                 },
                 [BooleanFilterName.LANGUAGE]: {
+                    position: 5,
                     tooltips: {
                         [BooleanFilterName.LANGUAGE]: {
                             highlight: {color: THEME.followedUserColor},
@@ -214,9 +215,11 @@ class Config implements ConfigType {
                     formatLabel: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
+                    position: 1,
                     formatLabel: (name: string) => capitalCase(name),
                 },
                 [BooleanFilterName.USER]: {
+                    position: 4,
                     tooltips: {
                         [TypeFilterName.FOLLOWED_ACCOUNTS]: {
                             highlight: {color: THEME.followedUserColor},
@@ -224,12 +227,15 @@ class Config implements ConfigType {
                         },
                     },
                 },
-                [BooleanFilterName.APP]: {},  // Currently disabled by fedialgo config isAppFilterVisible because it's not very useful
+                [BooleanFilterName.APP]: {
+                    position: 99,
+                },  // Currently disabled by fedialgo config isAppFilterVisible because it's not very useful
             },
         },
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc",
             invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more",
+            position: 3,
             maxValue: 50,                          // Maximum value for numeric filters
             title: INTERACTIONS,                   // Title for numeric filters section
         },
