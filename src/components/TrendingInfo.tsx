@@ -145,12 +145,6 @@ const baseLinkRenderer = {
     onClick: openTrendingLink
 };
 
-const trendingObjLinkRenderer = {
-    ...baseLinkRenderer,
-    infoTxt: trendingObjInfoTxt,
-};
-
-
 const bold: CSSProperties = {
     fontWeight: "bold",
 };
@@ -158,4 +152,9 @@ const bold: CSSProperties = {
 const monospace: CSSProperties = {
     fontFamily: "monospace",
     fontSize: config.theme.trendingObjFontSize - 3,
+};
+
+const trendingObjLinkRenderer = {
+    ...baseLinkRenderer,
+    infoTxt: trendingObjInfoTxt,
 };

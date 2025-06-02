@@ -136,11 +136,10 @@ export default function ReplyModal(props: ReplyModalProps) {
             return;
         }
 
-        const txt = toot.replyMentions().join(' ') + '\n\n' + replyText.trim();
         const mediaIDs = mediaAttachments.map(m => m.id);
-        logger.log(`Submitting reply to toot ID: ${resolvedID}, text: ${txt}`);
+        logger.log(`Submitting reply to toot ID: ${resolvedID}, text: ${replyText.trim()}, mediaIDs:`, mediaIDs);
 
-        api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: txt})
+        api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: replyText.trim()})
             .then(() => {
                 logger.log(`Reply submitted successfully!`);
                 setShow(false);
