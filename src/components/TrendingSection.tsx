@@ -192,7 +192,7 @@ export default function TrendingSection(props: TrendingProps) {
                 />
             );
         },
-        [minTootsState[0], panelType, tagList?.tags]
+        [minTootsState[0], tagList]
     )
 
     if (tagList) {
