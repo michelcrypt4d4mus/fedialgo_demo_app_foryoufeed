@@ -21,7 +21,7 @@ export default function TopLevelAccordion(props: TopLevelAccordionProps) {
     const { bodyStyle, isActive, onExited, startOpen, title } = props;
 
     // Invert color scheme of title if active
-    const className = isActive ? "filterHeader--rounded" : "blahblahblahblahblahblah";
+    const className = isActive ? "filterHeader--rounded" : "";
     const style = {...titleStyle, color: isActive ? "white" : "black"};
 
     return (
