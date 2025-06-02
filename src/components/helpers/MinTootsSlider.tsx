@@ -47,7 +47,7 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
                 maxValue = maxValueInTags;
             }
 
-            logger.debug(`Computed maxValue ${maxValue} (maxValueInTags: ${maxValueInTags}, maxValueOptionIdx: ${maxValueOptionIdx})`);
+            logger.trace(`Computed maxValue ${maxValue} (maxValueInTags: ${maxValueInTags}, maxValueOptionIdx: ${maxValueOptionIdx})`);
             return maxValue;
         },
         [tagList.tags]

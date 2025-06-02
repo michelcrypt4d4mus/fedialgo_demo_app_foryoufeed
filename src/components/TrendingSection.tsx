@@ -24,7 +24,7 @@ import { gridify, verticalSpacer } from "../helpers/react_helpers";
 export type TrendingListObj = TrendingObj | string;
 export type TrendingPanelName = TagTootsCacheKey | keyof TrendingData;
 
-type LinkRenderer = {
+export type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;
     linkLabel: (obj: TrendingListObj) => React.ReactElement | string;
     linkUrl: (obj: TrendingListObj) => string;
@@ -192,7 +192,7 @@ export default function TrendingSection(props: TrendingProps) {
                 />
             );
         },
-        [minTootsState[0], panelType, tagList?.tags, title]
+        [minTootsState[0], panelType, tagList?.tags]
     )
 
     if (tagList) {

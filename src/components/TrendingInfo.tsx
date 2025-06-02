@@ -8,7 +8,6 @@ import {
     type TagWithUsageCounts,
     type TrendingLink,
     type TrendingWithHistory,
-    ScoreName,
     TagTootsCacheKey,
     Toot,
     TrendingType,
@@ -17,7 +16,7 @@ import {
 
 import StatusComponent from "./status/Status";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
-import TrendingSection from "./TrendingSection";
+import TrendingSection, { type LinkRenderer } from "./TrendingSection";
 import { accordionSubheader, noPadding } from "../helpers/style_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
@@ -107,21 +106,13 @@ export default function TrendingInfo() {
                 {scrapedServersSection}
 
                 <TrendingSection
-                    linkRenderer={{
-                        ...baseLinkRenderer,
-                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
-                        linkLabel: tagNameMapper,
-                    }}
+                    linkRenderer={simpleTagRenderer}
                     panelType={TagTootsCacheKey.PARTICIPATED_TAG_TOOTS}
                     tagList={algorithm.userData.participatedTags}
                 />
 
                 <TrendingSection
-                    linkRenderer={{
-                        ...baseLinkRenderer,
-                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
-                        linkLabel: tagNameMapper,
-                    }}
+                    linkRenderer={simpleTagRenderer}
                     panelType={TagTootsCacheKey.FAVOURITED_TAG_TOOTS}
                     tagList={algorithm.userData.favouritedTags}
                 />
@@ -149,6 +140,12 @@ const prefixedHtml = (text: string, prefix?: string): React.ReactElement => {
 const baseLinkRenderer = {
     linkUrl: linkMapper,
     onClick: openTrendingLink
+};
+
+const simpleTagRenderer: LinkRenderer = {
+    ...baseLinkRenderer,
+    infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
+    linkLabel: tagNameMapper,
 };
 
 const bold: CSSProperties = {
