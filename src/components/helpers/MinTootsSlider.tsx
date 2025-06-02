@@ -24,15 +24,15 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
     let { minTootsState, panelTitle, pluralizedPanelTitle, tagList } = props;
     pluralizedPanelTitle = (pluralizedPanelTitle || `${panelTitle}s`).toLowerCase();
 
+    const logger = getLogger(panelTitle, "MinTootsSlider");
     const booleanFiltersConfig = config.filters.boolean;
     const minTootsSliderCfg = booleanFiltersConfig.minTootsSlider;
-    const logger = getLogger(panelTitle, "MinTootsSlider");
     const tooltipAnchor = `${panelTitle}-min-toots-slider-tooltip`;
 
     const maxValue = useMemo(
         () => {
             if (tagList.tags.length === 0) {
-                logger.warn(`No tags found in tagList, using default maxValue of 5`);
+                logger.info(`No tags found in tagList, using default maxValue of 5`);
                 return 5;
             }
 
