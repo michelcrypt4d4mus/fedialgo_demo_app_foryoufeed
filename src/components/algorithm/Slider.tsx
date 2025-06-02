@@ -82,6 +82,7 @@ const labelContainer: CSSProperties = {
     flexDirection: 'row',
     fontSize: '14px',
     justifyContent: 'space-between',
+    textWrap: 'nowrap',
 };
 
 const monoFont: CSSProperties = {

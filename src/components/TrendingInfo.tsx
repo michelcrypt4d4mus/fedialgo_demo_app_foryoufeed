@@ -63,8 +63,13 @@ export default function TrendingInfo() {
     );
 
     const sortedParticipatedTags = useMemo(
-        () => algorithm.userData.popularUserTags(),
-        [algorithm.userData.participatedHashtags]
+        () => algorithm.userData.participatedTags.topTags(),
+        [algorithm.userData.participatedTags]
+    );
+
+    const sortedTrendingTags = useMemo(
+        () => algorithm.trendingData.tags.topTags(),
+        [algorithm.trendingData.tags]
     );
 
     return (
@@ -83,7 +88,7 @@ export default function TrendingInfo() {
                         ...trendingObjLinkRenderer,
                         linkLabel: tagNameMapper,
                     }}
-                    trendingObjs={algorithm.trendingData.tags}
+                    trendingObjs={sortedTrendingTags}
                 />
 
                 <TrendingSection

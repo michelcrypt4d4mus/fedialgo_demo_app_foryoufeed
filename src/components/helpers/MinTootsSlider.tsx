@@ -16,12 +16,13 @@ interface MinTootsSliderProps {
     minTootsState: ReturnType<typeof useState<number>>;
     panelTitle: string;
     pluralizedPanelTitle?: string;
+    showLongTitle?: boolean;
     tagList: TagList;
 };
 
 
 export default function MinTootsSlider(props: MinTootsSliderProps) {
-    let { minTootsState, panelTitle, pluralizedPanelTitle, tagList } = props;
+    let { minTootsState, panelTitle, pluralizedPanelTitle, showLongTitle, tagList } = props;
     pluralizedPanelTitle = (pluralizedPanelTitle || `${panelTitle}s`).toLowerCase();
 
     const logger = getLogger(panelTitle, "MinTootsSlider");
@@ -68,7 +69,7 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
             >
                 <Slider
                     hideValueBox={true}
-                    label={"Minimum"}
+                    label={showLongTitle ? "Minimum Number of Toots" : "Minimum"}
                     minValue={1}
                     maxValue={maxValue}
                     onChange={async (e) => minTootsState[1](parseInt(e.target.value))}
