@@ -30,10 +30,11 @@ export default function FilterSetter() {
 
     const filterPositions = booleanFilters.reduce(
         (filters, f) => {
-            filters[config.filters.boolean.optionsFormatting[f.title].position] = <BooleanFilterAccordionSection filter={f} key={f.title} />;
+            const position = config.filters.boolean.optionsFormatting[f.title].position;
+            filters[position] = <BooleanFilterAccordionSection filter={f} key={f.title} />;
             return filters;
         },
-        {[config.filters.numeric.position]: <NumericFilters isActive={hasActiveNumericFilter} />}
+        {[config.filters.numeric.position]: <NumericFilters isActive={hasActiveNumericFilter} key={"numeric"} />}
     );
 
     return (

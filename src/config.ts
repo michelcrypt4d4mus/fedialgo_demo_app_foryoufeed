@@ -5,7 +5,7 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, TrendingType, TypeFilterName, TagTootsCacheKey } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
@@ -14,9 +14,10 @@ import { type TrendingPanelName } from "./components/TrendingSection";
 
 export const INTERACTIONS = "Interactions";  // Numeric filter label
 export type FilterTitle = BooleanFilterName | typeof INTERACTIONS;
+export type GradientDataSource = TagTootsCacheKey | ScoreName.FAVOURITED_ACCOUNTS;
 
 export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName.LANGUAGE | TagTootsCacheKey | TypeFilterName)]?: CheckboxTooltip
+    [key in (BooleanFilterName.LANGUAGE | GradientDataSource | TypeFilterName)]?: CheckboxTooltip
 };
 
 type FilterOptionsFormat = {
@@ -221,8 +222,18 @@ class Config implements ConfigType {
                 [BooleanFilterName.USER]: {
                     position: 4,
                     tooltips: {
-                        [TypeFilterName.FOLLOWED_ACCOUNTS]: {
-                            highlight: {color: THEME.followedUserColor},
+                        [ScoreName.FAVOURITED_ACCOUNTS]: {
+                            highlight: {
+                                gradient: {
+                                    adjustment: {
+                                        adjustPctiles: [0.80, 0.98], // Percentiles for gradient adjustment of participated tags
+                                        minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
+                                    },
+                                    dataSource: ScoreName.FAVOURITED_ACCOUNTS,
+                                    endpoints: [tinycolor("#BCD8D8"), tinycolor(THEME.followedUserColor)],
+                                    textSuffix: (n: number) => n ? ` (and favourited or retooted them ${n} times recently)` : '',
+                                },
+                            },
                             text: `You follow this account`,
                         },
                     },

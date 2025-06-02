@@ -6,7 +6,6 @@ import React, { CSSProperties, useMemo, useState } from "react";
 import { capitalCase } from "change-case";
 import {
     type TagWithUsageCounts,
-    type TrendingData,
     type TrendingObj,
     TagTootsCacheKey,
     TagList,
