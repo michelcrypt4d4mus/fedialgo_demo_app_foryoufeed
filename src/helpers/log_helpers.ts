@@ -17,8 +17,8 @@ export const debugMsg = (msg: string, ...args: any[]) => console.debug(`${LOG_PR
 
 
 // Make a Logger instance with a LOG_PREFIX
-export const getLogger = (componentName: string, subtitle?: string): Logger => {
-    return new Logger(LOG_PREFIX, componentName, subtitle);
+export const getLogger = (componentName: string, ...args: string[]): Logger => {
+    return new Logger(LOG_PREFIX, componentName, ...args);
 };
 
 

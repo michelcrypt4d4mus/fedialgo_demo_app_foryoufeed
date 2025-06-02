@@ -4,7 +4,6 @@
  * are trending in the Fedivers.
  */
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { useCallback } from 'react';
 
 import { capitalCase } from "change-case";
 
@@ -18,7 +17,7 @@ import { config } from "../../config";
 import { SwitchType } from "../../helpers/style_helpers";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
-import { noPadding, tooltipZIndex } from "../../helpers/style_helpers";
+import { noPadding } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 const logger = getLogger("FilterSetter");
@@ -26,7 +25,6 @@ const logger = getLogger("FilterSetter");
 
 export default function FilterSetter() {
     const { algorithm } = useAlgorithm();
-    // logger.trace("Rendering...");
 
     // Filter for 'visible' because the APP filters are currently hidden
     const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => f.visible);
@@ -34,16 +32,6 @@ export default function FilterSetter() {
     const hasActiveBooleanFilter = booleanFilters.some(f => f.validValues.length);
     const hasActiveNumericFilter = numericFilters.some(f => f.value > 0);
     const hasAnyActiveFilter = hasActiveNumericFilter || hasActiveBooleanFilter;
-
-    const numericFilterSwitchbar = [
-        <HeaderSwitch
-            isChecked={numericFilters.every((filter) => filter.invertSelection)}
-            key={SwitchType.INVERT_SELECTION + '--numericFilters'}
-            label={SwitchType.INVERT_SELECTION}
-            onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
-            tooltipText={config.filters.numeric.invertSelectionTooltipTxt}
-        />,
-    ];
 
     // TODO: something in the numeric filter header switchbar is causing "unique key required" errors
     return (
@@ -55,7 +43,15 @@ export default function FilterSetter() {
                 <FilterAccordionSection
                     description={config.filters.numeric.description}
                     isActive={hasActiveNumericFilter}
-                    switchbar={numericFilterSwitchbar}
+                    switchbar={[
+                        <HeaderSwitch
+                            isChecked={numericFilters.every((filter) => filter.invertSelection)}
+                            key={SwitchType.INVERT_SELECTION + '--numericFilters'}
+                            label={SwitchType.INVERT_SELECTION}
+                            onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
+                            tooltipText={config.filters.numeric.invertSelectionTooltipTxt}
+                        />,
+                    ]}
                     title={config.filters.numeric.title}
                 >
                     {Object.entries(algorithm.filters.numericFilters).map(([name, numericFilter], i) => (

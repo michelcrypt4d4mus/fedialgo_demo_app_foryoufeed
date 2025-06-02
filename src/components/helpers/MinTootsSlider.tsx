@@ -31,6 +31,11 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
 
     const maxValue = useMemo(
         () => {
+            if (tagList.tags.length === 0) {
+                logger.warn(`No tags found in tagList, using default maxValue of 5`);
+                return 5;
+            }
+
             const topTags = tagList.topTags();
             const maxValueInTags = Math.max(...tagList.tags.map(t => t.numToots));
             const maxValueOptionIdx = Math.min(minTootsSliderCfg.minItems, tagList.tags.length - 1);
