@@ -25,7 +25,7 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
     let { minTootsState, panelTitle, pluralizedPanelTitle, showLongTitle, tagList } = props;
     pluralizedPanelTitle = (pluralizedPanelTitle || `${panelTitle}s`).toLowerCase();
 
-    const logger = getLogger(panelTitle, "MinTootsSlider");
+    const logger = getMinTootsLogger(panelTitle);
     const booleanFiltersConfig = config.filters.boolean;
     const minTootsSliderCfg = booleanFiltersConfig.minTootsSlider;
     const tooltipAnchor = `${panelTitle}-min-toots-slider-tooltip`;
@@ -83,8 +83,10 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
 };
 
 
+// Compute a starting value for the minToots slider based on the tagList. Outside of the main function
+// because there's a few display options that depend on the initial value before the slider is rendered.
 export const computeDefaultValue = (tagList: TagList, title: string, idealNumOptions?: number): number => {
-    const logger = getLogger("MinTootsSlider", title);
+    const logger = getMinTootsLogger(title);
     const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
     idealNumOptions ||= minTootsSliderCfg.idealNumOptions;
     logger.debug(`Computing default value for minToots slider with ${tagList.tags.length} options`);
@@ -101,7 +103,6 @@ export const computeDefaultValue = (tagList: TagList, title: string, idealNumOpt
             logger.warn(`No ideal option found to help set minToots slider default value`);
             sliderDefault = (tagList.tags.length > (idealNumOptions / 2)) ? Math.floor(idealNumOptions / 10) : 0;
         } else {
-            logger.debug(`Found ideal option for minToots slider default: (${idealOption[1]} tags)`, idealOption);
             sliderDefault = idealOption.numToots;
         }
 
@@ -109,3 +110,6 @@ export const computeDefaultValue = (tagList: TagList, title: string, idealNumOpt
         return sliderDefault;
     }
 };
+
+
+const getMinTootsLogger = (title: string) => getLogger(title, "MinTootsSlider");

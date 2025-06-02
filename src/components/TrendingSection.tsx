@@ -177,20 +177,29 @@ export default function TrendingSection(props: TrendingProps) {
         [minTootsState[0], numShown, panelCfg, panelType, trendObjs, trendObjs.length]
     );
 
+    const slider = useMemo(
+        () => {
+            if (!tagList) return null;
+
+            return (
+                <MinTootsSlider
+                    key={`${panelType}-minTootsSlider`}
+                    minTootsState={minTootsState}
+                    panelTitle={title}
+                    pluralizedPanelTitle={title}
+                    showLongTitle={false}  // TODO: This fucks up the layout if set to true
+                    tagList={tagList}
+                />
+            );
+        },
+        [minTootsState[0], panelType, tagList?.tags, title]
+    )
+
     if (tagList) {
         return (
             <FilterAccordionSection
                 isActive={false}
-                switchbar={[
-                    <MinTootsSlider
-                        key={`${panelType}-minTootsSlider`}
-                        minTootsState={minTootsState}
-                        panelTitle={title}
-                        pluralizedPanelTitle={title}
-                        showLongTitle={false}  // TODO: This fucks up the layout if set to true
-                        tagList={tagList}
-                    />
-                ]}
+                switchbar={[slider]}
                 title={title}
             >
                 {trendingItemList}

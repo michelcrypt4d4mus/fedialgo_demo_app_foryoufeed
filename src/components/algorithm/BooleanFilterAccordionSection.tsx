@@ -33,44 +33,59 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const [highlightedOnly, setHighlightedOnly] = useState(false);
     const [sortByCount, setSortByValue] = useState(false);
 
-    let headerSwitches = [
-        <HeaderSwitch
-            isChecked={filter.invertSelection}
-            key={SwitchType.INVERT_SELECTION}
-            label={SwitchType.INVERT_SELECTION}
-            onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
-        />,
-        <HeaderSwitch
-            isChecked={sortByCount}
-            key={SwitchType.SORT_BY_COUNT}
-            label={SwitchType.SORT_BY_COUNT}
-            onChange={(e) => setSortByValue(e.target.checked)}         // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
-        />,
-    ];
+    const headerSwitches = useMemo(
+        () => {
+            let _headerSwitches = [
+                <HeaderSwitch
+                    isChecked={filter.invertSelection}
+                    key={SwitchType.INVERT_SELECTION}
+                    label={SwitchType.INVERT_SELECTION}
+                    onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
+                />,
+                <HeaderSwitch
+                    isChecked={sortByCount}
+                    key={SwitchType.SORT_BY_COUNT}
+                    label={SwitchType.SORT_BY_COUNT}
+                    onChange={(e) => setSortByValue(e.target.checked)}         // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
+                />,
+            ];
 
-    // Add a highlights-only switch if there are highlighted tooltips configured for this filter
-    if (booleanFiltersConfig.optionsFormatting[filter.title]?.tooltips) {
-        headerSwitches = headerSwitches.concat([
-            <HeaderSwitch
-                isChecked={highlightedOnly}
-                key={SwitchType.HIGHLIGHTS_ONLY}
-                label={SwitchType.HIGHLIGHTS_ONLY}
-                onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily trigger TheAlgorithm.filterFeed(). not a huge problem but not ideal.
-            />,
-        ]);
-    }
+            // Add a highlights-only switch if there are highlighted tooltips configured for this filter
+            if (booleanFiltersConfig.optionsFormatting[filter.title]?.tooltips) {
+                _headerSwitches = _headerSwitches.concat([
+                    <HeaderSwitch
+                        isChecked={highlightedOnly}
+                        key={SwitchType.HIGHLIGHTS_ONLY}
+                        label={SwitchType.HIGHLIGHTS_ONLY}
+                        onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily trigger TheAlgorithm.filterFeed(). not a huge problem but not ideal.
+                    />,
+                ]);
+            }
 
-    // Add a slider and tooltip for minimum # of toots if there's enough options in the panel to justify it
-    if (minTootsSliderDefaultValue > 0) {
-        headerSwitches = headerSwitches.concat(
-            <MinTootsSlider
-                key={`${filter.title}-minTootsSlider`}
-                minTootsState={minTootsState}
-                panelTitle={filter.title}
-                tagList={filter.optionsAsTagList()}
-            />
-        );
-    }
+            // Add a slider and tooltip for minimum # of toots if there's enough options in the panel to justify it
+            if (minTootsSliderDefaultValue > 0) {
+                _headerSwitches = _headerSwitches.concat(
+                    <MinTootsSlider
+                        key={`${filter.title}-minTootsSlider`}
+                        minTootsState={minTootsState}
+                        panelTitle={filter.title}
+                        tagList={filter.optionsAsTagList()}
+                    />
+                );
+            }
+
+            return _headerSwitches;
+        },
+        [
+            filter,
+            filter.invertSelection,
+            filter.optionInfo,
+            highlightedOnly,
+            minTootsSliderDefaultValue,
+            minTootsState[0],
+            sortByCount
+        ]
+    );
 
     return (
         <FilterAccordionSection
