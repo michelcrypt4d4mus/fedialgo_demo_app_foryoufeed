@@ -14,14 +14,16 @@ import { type TrendingPanelName } from "./components/TrendingSection";
 
 export const INTERACTIONS = "Interactions";  // Numeric filter label
 export type FilterTitle = BooleanFilterName | typeof INTERACTIONS;
+export type GradientDataSource = TagTootsCacheKey | ScoreName.FAVOURITED_ACCOUNTS;
 
 export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName.LANGUAGE | TagTootsCacheKey | TypeFilterName)]?: CheckboxTooltip
+    [key in (BooleanFilterName.LANGUAGE | GradientDataSource | TypeFilterName)]?: CheckboxTooltip
 };
 
 type FilterOptionsFormat = {
-    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
     formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    position: number;                        // Position of this filter in the filters section, used for ordering
+    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
 };
 
 // Subconfig types
@@ -55,6 +57,7 @@ type FilterConfig = {
         description: string;
         invertSelectionTooltipTxt: string;
         maxValue: number;
+        position: number;
         title: FilterTitle;
     };
 };
@@ -154,6 +157,7 @@ class Config implements ConfigType {
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
                 [BooleanFilterName.HASHTAG]: {
+                    position: 2,
                     tooltips: {
                         [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
                             highlight: {
@@ -202,6 +206,7 @@ class Config implements ConfigType {
                     },
                 },
                 [BooleanFilterName.LANGUAGE]: {
+                    position: 5,
                     tooltips: {
                         [BooleanFilterName.LANGUAGE]: {
                             highlight: {color: THEME.followedUserColor},
@@ -211,22 +216,37 @@ class Config implements ConfigType {
                     formatLabel: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
+                    position: 1,
                     formatLabel: (name: string) => capitalCase(name),
                 },
                 [BooleanFilterName.USER]: {
+                    position: 4,
                     tooltips: {
-                        [TypeFilterName.FOLLOWED_ACCOUNTS]: {
-                            highlight: {color: THEME.followedUserColor},
+                        [ScoreName.FAVOURITED_ACCOUNTS]: {
+                            highlight: {
+                                gradient: {
+                                    adjustment: {
+                                        adjustPctiles: [0.80, 0.98], // Percentiles for gradient adjustment of participated tags
+                                        minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
+                                    },
+                                    dataSource: ScoreName.FAVOURITED_ACCOUNTS,
+                                    endpoints: [tinycolor("#BCD8D8"), tinycolor(THEME.followedUserColor)],
+                                    textSuffix: (n: number) => n ? ` (and favourited or retooted them ${n} times recently)` : '',
+                                },
+                            },
                             text: `You follow this account`,
                         },
                     },
                 },
-                [BooleanFilterName.APP]: {},  // Currently disabled by fedialgo config isAppFilterVisible because it's not very useful
+                [BooleanFilterName.APP]: {
+                    position: 99,
+                },  // Currently disabled by fedialgo config isAppFilterVisible because it's not very useful
             },
         },
         numeric: {
             description: "Filter based on minimum/maximum number of replies, retoots, etc",
             invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more",
+            position: 3,
             maxValue: 50,                          // Maximum value for numeric filters
             title: INTERACTIONS,                   // Title for numeric filters section
         },
@@ -291,7 +311,7 @@ class Config implements ConfigType {
             [TrendingType.LINKS]: {
                 hasCustomStyle: true,        // TODO: this sucks
                 initialNumShown: 30,
-                objTypeLabel: `trending ${TrendingType.LINKS}`
+                objTypeLabel: `trending ${TrendingType.LINKS}`,
             },
             [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
                 initialNumShown: 40,
@@ -303,7 +323,7 @@ class Config implements ConfigType {
                 initialNumShown: 40,        // TODO: unused
                 title: "Servers Telling Us What's Trending In The Fediverse",
             },
-            [TrendingType.TAGS]: {
+            [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
                 initialNumShown: 30,
                 objTypeLabel: "trending hashtags",
             },

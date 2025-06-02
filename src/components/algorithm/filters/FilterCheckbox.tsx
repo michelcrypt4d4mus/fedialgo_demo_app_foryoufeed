@@ -7,12 +7,11 @@ import Form from 'react-bootstrap/esm/Form';
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
-import { TagTootsCacheKey } from "fedialgo";
 
-import { config } from "../../../config";
+import { config, type GradientDataSource } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-import { type GradientEndpoints, linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
+import { linkesque, tooltipZIndex, type GradientEndpoints } from "../../../helpers/style_helpers";
 
 export type CheckboxColorGradient = {
     // Sometimes we want to adjust the gradient instad of using the one between the endpoints to make any of the
@@ -21,7 +20,7 @@ export type CheckboxColorGradient = {
         adjustPctiles: number[];
         minTagsToAdjust: number;
     },
-    dataSource: TagTootsCacheKey;
+    dataSource: GradientDataSource;
     endpoints: GradientEndpoints;
     textSuffix: (n: number) => string;
 };

@@ -6,10 +6,10 @@ import React, { CSSProperties, useMemo, useState } from "react";
 import { capitalCase } from "change-case";
 import {
     type TagWithUsageCounts,
-    type TrendingData,
     type TrendingObj,
     TagTootsCacheKey,
     TagList,
+    TrendingType,
 } from "fedialgo";
 
 import FilterAccordionSection from "./algorithm/FilterAccordionSection";
@@ -22,7 +22,7 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
-export type TrendingPanelName = TagTootsCacheKey | keyof TrendingData;
+export type TrendingPanelName = TagTootsCacheKey | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
 
 export type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;
@@ -67,7 +67,7 @@ export default function TrendingSection(props: TrendingProps) {
     const title = panelCfg.title || capitalCase(objTypeLabel);
 
     const trendObjs = useMemo(
-        () => trendingObjs ?? tagList.topTags(),
+        () => trendingObjs ?? tagList.topObjs(),
         [trendingObjs, tagList]
     )
 
@@ -188,7 +188,7 @@ export default function TrendingSection(props: TrendingProps) {
                     panelTitle={title}
                     pluralizedPanelTitle={title}
                     showLongTitle={false}  // TODO: This fucks up the layout if set to true
-                    tagList={tagList}
+                    objList={tagList}
                 />
             );
         },
