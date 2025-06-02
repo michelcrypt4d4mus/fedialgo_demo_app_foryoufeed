@@ -303,7 +303,7 @@ class Config implements ConfigType {
                 initialNumShown: 40,        // TODO: unused
                 title: "Servers Telling Us What's Trending In The Fediverse",
             },
-            [TrendingType.TAGS]: {
+            [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
                 initialNumShown: 30,
                 objTypeLabel: "trending hashtags",
             },

@@ -10,6 +10,7 @@ import {
     type TrendingObj,
     TagTootsCacheKey,
     TagList,
+    TrendingType,
 } from "fedialgo";
 
 import FilterAccordionSection from "./algorithm/FilterAccordionSection";
@@ -22,7 +23,7 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
-export type TrendingPanelName = TagTootsCacheKey | keyof TrendingData;
+export type TrendingPanelName = TagTootsCacheKey | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
 
 export type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;

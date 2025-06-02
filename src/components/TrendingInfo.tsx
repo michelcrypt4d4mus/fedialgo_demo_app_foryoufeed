@@ -77,7 +77,7 @@ export default function TrendingInfo() {
                         ...trendingObjLinkRenderer,
                         linkLabel: tagNameMapper,
                     }}
-                    panelType={TrendingType.TAGS}
+                    panelType={TagTootsCacheKey.TRENDING_TAG_TOOTS}
                     tagList={algorithm.trendingData.tags}
                 />
 
