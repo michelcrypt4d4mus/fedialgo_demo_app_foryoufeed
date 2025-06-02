@@ -4,11 +4,11 @@
 import React, { CSSProperties, useState } from "react";
 import Form from 'react-bootstrap/esm/Form';
 
-import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
+import { type UserDataSource } from "fedialgo";
 
-import { config, type GradientDataSource } from "../../../config";
+import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { linkesque, tooltipZIndex, type GradientEndpoints } from "../../../helpers/style_helpers";
@@ -20,7 +20,7 @@ export type CheckboxColorGradient = {
         adjustPctiles: number[];
         minTagsToAdjust: number;
     },
-    dataSource: GradientDataSource;
+    dataSource: UserDataSource;
     endpoints: GradientEndpoints;
     textSuffix: (n: number) => string;
 };
