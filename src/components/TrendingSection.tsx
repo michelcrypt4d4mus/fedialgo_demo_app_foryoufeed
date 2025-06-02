@@ -8,7 +8,7 @@ import {
     type TagWithUsageCounts,
     type TrendingData,
     type TrendingObj,
-    ScoreName,
+    TagTootsCacheKey,
     TagList,
 } from "fedialgo";
 
@@ -22,7 +22,7 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
-export type TrendingPanelName = ScoreName.PARTICIPATED_TAGS | keyof TrendingData;
+export type TrendingPanelName = TagTootsCacheKey | keyof TrendingData;
 
 type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;

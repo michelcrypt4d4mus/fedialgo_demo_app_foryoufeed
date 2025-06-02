@@ -283,12 +283,17 @@ class Config implements ConfigType {
     trending: TrendingConfig = {
         maxLengthForMulticolumn: 55,          // Maximum length of a trending object label to use multicolumn layout
         panels:  {
+            [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
+                initialNumShown: 40,
+                objTypeLabel: "of your favourite hashtags",
+                title: "Hashtags You Often Favourite",
+            },
             [TrendingType.LINKS]: {
                 hasCustomStyle: true,        // TODO: this sucks
                 initialNumShown: 30,
                 objTypeLabel: `trending ${TrendingType.LINKS}`
             },
-            [ScoreName.PARTICIPATED_TAGS]: {
+            [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
                 initialNumShown: 40,
                 objTypeLabel: "of your hashtags",
                 title: "Hashtags You Often Post About",

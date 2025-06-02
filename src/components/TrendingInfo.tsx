@@ -9,6 +9,7 @@ import {
     type TrendingLink,
     type TrendingWithHistory,
     ScoreName,
+    TagTootsCacheKey,
     Toot,
     TrendingType,
     extractDomain
@@ -111,8 +112,18 @@ export default function TrendingInfo() {
                         infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
                         linkLabel: tagNameMapper,
                     }}
-                    panelType={ScoreName.PARTICIPATED_TAGS}
+                    panelType={TagTootsCacheKey.PARTICIPATED_TAG_TOOTS}
                     tagList={algorithm.userData.participatedTags}
+                />
+
+                <TrendingSection
+                    linkRenderer={{
+                        ...baseLinkRenderer,
+                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
+                        linkLabel: tagNameMapper,
+                    }}
+                    panelType={TagTootsCacheKey.FAVOURITED_TAG_TOOTS}
+                    tagList={algorithm.userData.favouritedTags}
                 />
             </Accordion>
         </TopLevelAccordion>
