@@ -8,7 +8,7 @@ import {
     type TagWithUsageCounts,
     type TrendingLink,
     type TrendingWithHistory,
-    ScoreName,
+    TagTootsCacheKey,
     Toot,
     TrendingType,
     extractDomain
@@ -16,7 +16,7 @@ import {
 
 import StatusComponent from "./status/Status";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
-import TrendingSection from "./TrendingSection";
+import TrendingSection, { type LinkRenderer } from "./TrendingSection";
 import { accordionSubheader, noPadding } from "../helpers/style_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
@@ -62,16 +62,6 @@ export default function TrendingInfo() {
         [algorithm.trendingData.servers]
     );
 
-    const sortedParticipatedTags = useMemo(
-        () => algorithm.userData.participatedTags.topTags(),
-        [algorithm.userData.participatedTags]
-    );
-
-    const sortedTrendingTags = useMemo(
-        () => algorithm.trendingData.tags.topTags(),
-        [algorithm.trendingData.tags]
-    );
-
     return (
         <TopLevelAccordion bodyStyle={noPadding} title="What's Trending">
             <div style={accordionSubheader}>
@@ -83,25 +73,24 @@ export default function TrendingInfo() {
 
             <Accordion>
                 <TrendingSection
-                    panelType={TrendingType.TAGS}
                     linkRenderer={{
                         ...trendingObjLinkRenderer,
                         linkLabel: tagNameMapper,
                     }}
-                    trendingObjs={sortedTrendingTags}
+                    panelType={TrendingType.TAGS}
+                    tagList={algorithm.trendingData.tags}
                 />
 
                 <TrendingSection
-                    panelType={TrendingType.LINKS}
                     linkRenderer={{
                         ...trendingObjLinkRenderer,
                         linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
                     }}
+                    panelType={TrendingType.LINKS}
                     trendingObjs={algorithm.trendingData.links}
                 />
 
                 <TrendingSection
-                    panelType={"toots"}
                     objRenderer={(toot: Toot) => (
                         <StatusComponent
                             fontColor="black"
@@ -110,19 +99,22 @@ export default function TrendingInfo() {
                             status={toot}
                         />
                     )}
+                    panelType={"toots"}
                     trendingObjs={algorithm.trendingData.toots}
                 />
 
                 {scrapedServersSection}
 
                 <TrendingSection
-                    panelType={ScoreName.PARTICIPATED_TAGS}
-                    linkRenderer={{
-                        ...baseLinkRenderer,
-                        infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
-                        linkLabel: tagNameMapper,
-                    }}
-                    trendingObjs={sortedParticipatedTags}
+                    linkRenderer={simpleTagRenderer}
+                    panelType={TagTootsCacheKey.PARTICIPATED_TAG_TOOTS}
+                    tagList={algorithm.userData.participatedTags}
+                />
+
+                <TrendingSection
+                    linkRenderer={simpleTagRenderer}
+                    panelType={TagTootsCacheKey.FAVOURITED_TAG_TOOTS}
+                    tagList={algorithm.userData.favouritedTags}
                 />
             </Accordion>
         </TopLevelAccordion>
@@ -148,6 +140,12 @@ const prefixedHtml = (text: string, prefix?: string): React.ReactElement => {
 const baseLinkRenderer = {
     linkUrl: linkMapper,
     onClick: openTrendingLink
+};
+
+const simpleTagRenderer: LinkRenderer = {
+    ...baseLinkRenderer,
+    infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
+    linkLabel: tagNameMapper,
 };
 
 const bold: CSSProperties = {

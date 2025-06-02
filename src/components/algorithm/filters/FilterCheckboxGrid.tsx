@@ -17,14 +17,14 @@ import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-type GradientInfo = Record<TagTootsCacheKey, TagColorGradient>;
+type GradientInfo = Record<TagTootsCacheKey, TagListColorGradient>;
 
-type TagColorGradient = {
+type TagListColorGradient = {
     colors: tinycolor.Instance[];
     tagList: TagList;
 };
 
-const EMPTY_GRADIENT: tinycolor.Instance[] = [];
+const EMPTY_GRADIENT: TagListColorGradient = {colors: [], tagList: new TagList([])};
 
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
@@ -45,7 +45,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    const buildGradientColorArray = (dataSource: TagTootsCacheKey, tagList: TagList): tinycolor.Instance[] => {
+    const buildTagListColorGradient = (dataSource: TagTootsCacheKey, tagList: TagList): TagListColorGradient => {
         const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
 
         if (!gradientCfg) {
@@ -53,7 +53,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return EMPTY_GRADIENT;
         }
 
-        const maxNumToots = tagList.maxNumToots() || 2;  // Ensure at least 2 for the gradient
+        const maxNumToots = Math.max(tagList.maxNumToots(), 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
         // Adjust the color gradient so there's more color variation in the low/middle range
@@ -62,18 +62,15 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                 const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                 colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
-                logger.trace(`Adjusted gradient colorArray for ${dataSource} with maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
+                logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
             } catch (err) {
-                logger.error(
-                    `Failed to adjust gradient colorArray (maxParticipations=${maxNumToots}):`, err,
-                    `\tagList=`, tagList, `, `
-                );
+                logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\tagList=`, tagList);
             }
         }
 
-        const colorArray = colorGradient.hsv(maxNumToots, false);
-        logger.trace(`Rebuilt ${gradientCfg.dataSource} with maxNumToots=${maxNumToots}, colorArray:`, colorGradient);
-        return colorArray;
+        const colors = colorGradient.hsv(maxNumToots, false);
+        logger.trace(`Rebuilt ${gradientCfg.dataSource} with tagList.maxNumToots=${tagList.maxNumToots()}, colorArray:`, colorGradient);
+        return { colors, tagList };
     };
 
     const tagGradientInfo: GradientInfo = useMemo(
@@ -91,11 +88,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
                 }
 
-                gradientInfos[dataSource] = {
-                    colors: buildGradientColorArray(dataSource, tagList),
-                    tagList
-                }
-
+                gradientInfos[dataSource] = buildTagListColorGradient(dataSource, tagList);
                 return gradientInfos
             },
             {} as GradientInfo
@@ -118,7 +111,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
         if (!color) {
             logger.warn(`No color found for "${tag.name}" w/ ${tag.numToots} toots, using default. colors:`, colors);
-            color = gradientCfg.endpoints[0];
+            color = tag.numToots ? gradientCfg.endpoints[1] : gradientCfg.endpoints[0];  // Use 1st color for 0 toots
         }
 
         return {
