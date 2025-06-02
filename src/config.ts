@@ -5,16 +5,18 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
 import { type TrendingPanelName } from "./components/TrendingSection";
 
-// TODO: key should be of type TagTootsCacheKey
+export const INTERACTIONS = "Interactions";  // Numeric filter label
+export type FilterTitle = BooleanFilterName | typeof INTERACTIONS;
+
 export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName | ScoreName | TypeFilterName)]?: CheckboxTooltip
+    [key in (BooleanFilterName.LANGUAGE | TagTootsCacheKey | TypeFilterName)]?: CheckboxTooltip
 };
 
 type FilterOptionsFormat = {
@@ -53,7 +55,7 @@ type FilterConfig = {
         description: string;
         invertSelectionTooltipTxt: string;
         maxValue: number;
-        title: string;
+        title: FilterTitle;
     };
 };
 
@@ -153,10 +155,10 @@ class Config implements ConfigType {
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
                 [BooleanFilterName.HASHTAG]: {
                     tooltips: {
-                        [ScoreName.FAVOURITED_TAGS]: {
+                        [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
                             highlight: {
                                 gradient: {
-                                    dataSource: ScoreName.FAVOURITED_TAGS,
+                                    dataSource: TagTootsCacheKey.FAVOURITED_TAG_TOOTS,
                                     endpoints: THEME.favouritedTagGradient,
                                     textSuffix: (n: number) => ` ${n} times recently`,
                                 },
@@ -167,15 +169,14 @@ class Config implements ConfigType {
                             highlight: {color: THEME.followedTagColor},
                             text: `You follow this hashtag`,
                         },
-                        [TypeFilterName.PARTICIPATED_TAGS]: {
+                        [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
                             highlight: {
                                 gradient: {
                                     adjustment: {
                                         adjustPctiles: [0.95, 0.98], // Percentiles for gradient adjustment of participated tags
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
-
                                     },
-                                    dataSource: TypeFilterName.PARTICIPATED_TAGS,
+                                    dataSource: TagTootsCacheKey.PARTICIPATED_TAG_TOOTS,
                                     endpoints: [                     // Start and end points for the color gradient
                                         tinycolor(THEME.participatedTagColorMin),
                                         tinycolor(THEME.participatedTagColor),
@@ -185,10 +186,10 @@ class Config implements ConfigType {
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
                         },
-                        [TypeFilterName.TRENDING_TAGS]: {
+                        [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
                             highlight: {
                                 gradient: {
-                                    dataSource: TypeFilterName.TRENDING_TAGS,
+                                    dataSource: TagTootsCacheKey.TRENDING_TAG_TOOTS,
                                     endpoints: [
                                         tinycolor(THEME.trendingTagColorFaded),
                                         tinycolor(THEME.trendingTagColor),
@@ -224,10 +225,10 @@ class Config implements ConfigType {
             },
         },
         numeric: {
-            description: "Filter based on minimum/maximum number of replies, retoots, etc", // Title for numeric filters section
-            invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more", // Tooltip for invert selection switch
+            description: "Filter based on minimum/maximum number of replies, retoots, etc",
+            invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more",
             maxValue: 50,                          // Maximum value for numeric filters
-            title: "Interactions",
+            title: INTERACTIONS,                   // Title for numeric filters section
         },
         headerSwitches: {
             tooltipText: {
@@ -235,7 +236,7 @@ class Config implements ConfigType {
                 [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
                 [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",
             },
-            tooltipHoverDelay: 500,          // Delay for header tooltips in milliseconds
+            tooltipHoverDelay: 500,               // Delay for header tooltips in milliseconds
         }
     }
 

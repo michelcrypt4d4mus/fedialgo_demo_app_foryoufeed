@@ -6,31 +6,24 @@
 import { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
-import { BooleanFilter, BooleanFilterName, ScoreName, TagList, TypeFilterName } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, ScoreName, TagList, TagTootsCacheKey, TypeFilterName } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
 import { alphabetize } from "../../../helpers/string_helpers";
 import { buildGradient } from "../../../helpers/style_helpers";
-import { CheckboxTooltip, GradientDataSource } from "./FilterCheckbox";
+import { CheckboxTooltip } from "./FilterCheckbox";
 import { config, type FilterOptionTypeTooltips } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-type GradientInfo = Record<GradientDataSource, TagColorGradient>;
+type GradientInfo = Record<TagTootsCacheKey, TagColorGradient>;
 type TagNames = ReturnType<TagList["tagNameDict"]>;
 
 type TagColorGradient = {
     colors: tinycolor.Instance[];
     tagNames: TagNames;
 };
-
-// TODO: use TagTootsCacheKey type instead of GradientDataSource
-const GRADIENT_DATA_SOURCES: GradientDataSource[] = [
-    ScoreName.FAVOURITED_TAGS,
-    TypeFilterName.PARTICIPATED_TAGS,
-    TypeFilterName.TRENDING_TAGS,
-];
 
 const EMPTY_GRADIENT: tinycolor.Instance[] = [];
 
@@ -53,7 +46,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
 
-    const buildGradientColorArray = (dataSource: GradientDataSource, tagNames: TagNames): tinycolor.Instance[] => {
+    const buildGradientColorArray = (dataSource: TagTootsCacheKey, tagNames: TagNames): tinycolor.Instance[] => {
         const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
 
         if (!gradientCfg) {
@@ -86,16 +79,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     };
 
     const tagGradientInfo: GradientInfo = useMemo(
-        () => GRADIENT_DATA_SOURCES.reduce(
+        () => Object.values(TagTootsCacheKey).reduce(
             (gradientInfos, dataSource) => {
                 let tagNames: TagNames = {};
 
                 // TODO: userData.participatedHashtags and trendingData.tags should be TagList instances, not arrays
-                if (dataSource == TypeFilterName.PARTICIPATED_TAGS) {
+                if (dataSource == TagTootsCacheKey.PARTICIPATED_TAG_TOOTS) {
                     tagNames = algorithm.userData.participatedHashtags;
-                } else if (dataSource == TypeFilterName.TRENDING_TAGS) {
+                } else if (dataSource == TagTootsCacheKey.TRENDING_TAG_TOOTS) {
                     tagNames = new TagList(algorithm.trendingData.tags).tagNameDict();
-                } else if (dataSource == ScoreName.FAVOURITED_TAGS) {
+                } else if (dataSource == TagTootsCacheKey.FAVOURITED_TAG_TOOTS) {
                     tagNames = algorithm.userData.favouritedTags.tagNameDict();
                 } else {
                     throw new Error(`No data for dataSource: "${dataSource}" in FilterCheckboxGrid`);
@@ -113,7 +106,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [algorithm.trendingData.tags, algorithm.userData.favouritedTags, algorithm.userData.participatedHashtags]
     );
 
-    const getGradientColorTooltip = (tagName: string, dataSource: GradientDataSource): CheckboxTooltip => {
+    const getGradientColorTooltip = (tagName: string, dataSource: TagTootsCacheKey): CheckboxTooltip => {
         const baseTooltip = filterTooltips[dataSource];
         const gradientCfg = baseTooltip.highlight.gradient;
         const colors = tagGradientInfo[dataSource].colors;
@@ -142,12 +135,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (filter.title == BooleanFilterName.HASHTAG) {
             if (name in algorithm.userData.followedTags) {
                 return filterTooltips[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (name in tagGradientInfo[TypeFilterName.TRENDING_TAGS].tagNames) {
-                return getGradientColorTooltip(name, TypeFilterName.TRENDING_TAGS);
-            } else if (name in tagGradientInfo[TypeFilterName.PARTICIPATED_TAGS].tagNames) {
-                return getGradientColorTooltip(name, TypeFilterName.PARTICIPATED_TAGS);
-            } else if (name in tagGradientInfo[ScoreName.FAVOURITED_TAGS].tagNames) {
-                return getGradientColorTooltip(name, ScoreName.FAVOURITED_TAGS);
+            } else if (name in tagGradientInfo[TagTootsCacheKey.TRENDING_TAG_TOOTS].tagNames) {
+                return getGradientColorTooltip(name, TagTootsCacheKey.TRENDING_TAG_TOOTS);
+            } else if (name in tagGradientInfo[TagTootsCacheKey.PARTICIPATED_TAG_TOOTS].tagNames) {
+                return getGradientColorTooltip(name, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
+            } else if (name in tagGradientInfo[TagTootsCacheKey.FAVOURITED_TAG_TOOTS].tagNames) {
+                return getGradientColorTooltip(name, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return filterTooltips[BooleanFilterName.LANGUAGE];
