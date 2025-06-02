@@ -186,6 +186,7 @@ export default function TrendingSection(props: TrendingProps) {
                         minTootsState={minTootsState}
                         panelTitle={title}
                         pluralizedPanelTitle={title}
+                        showLongTitle={false}  // TODO: This fucks up the layout if set to true
                         tagList={new TagList(trendingObjs as TagWithUsageCounts[])}
                     />
                 ]}
