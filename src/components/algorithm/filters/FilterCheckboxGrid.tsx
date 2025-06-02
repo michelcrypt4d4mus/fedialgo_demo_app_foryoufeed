@@ -53,7 +53,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return EMPTY_GRADIENT;
         }
 
-        const maxNumToots = tagList.maxNumToots() || 2;  // Ensure at least 2 for the gradient
+        const maxNumToots = Math.max(tagList.maxNumToots(), 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
         // Adjust the color gradient so there's more color variation in the low/middle range
@@ -62,14 +62,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                 const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                 colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
-                logger.trace(`Adjusted gradient for ${dataSource} with maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
+                logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
             } catch (err) {
-                logger.error(`Failed to adjust gradient (maxNumToots=${maxNumToots}):`, err, `\tagList=`, tagList);
+                logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\tagList=`, tagList);
             }
         }
 
         const colors = colorGradient.hsv(maxNumToots, false);
-        logger.trace(`Rebuilt ${gradientCfg.dataSource} with maxNumToots=${maxNumToots}, colorArray:`, colorGradient);
+        logger.trace(`Rebuilt ${gradientCfg.dataSource} with tagList.maxNumToots=${tagList.maxNumToots()}, colorArray:`, colorGradient);
         return { colors, tagList };
     };
 

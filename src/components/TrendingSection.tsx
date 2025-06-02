@@ -31,22 +31,30 @@ type LinkRenderer = {
     onClick: (obj: TrendingListObj, e: React.MouseEvent) => void;
 };
 
-const PANEL_TYPES_WITH_SLIDER: TrendingPanelName[] = [
-    ScoreName.PARTICIPATED_TAGS,
-    "tags",
-]
-
 // Either objectRenderer() OR linkRender must be provided in TrendingProps.
-interface TrendingProps {
+interface TrendingPropsBase {
     linkRenderer?: LinkRenderer;
     objRenderer?: (obj: TrendingListObj) => React.ReactElement;
     panelType: TrendingPanelName;
+};
+
+interface TrendingTagListProps extends TrendingPropsBase {
+    tagList: TagList;
+    trendingObjs?: never;
+};
+
+interface TrendingObjsProps extends TrendingPropsBase {
+    tagList?: never;
     trendingObjs: TrendingListObj[];
 };
 
+// One of tagList or trendingObjs must be provided in TrendingProps.
+type TrendingProps = TrendingTagListProps | TrendingObjsProps;
+
+
 
 export default function TrendingSection(props: TrendingProps) {
-    let { linkRenderer, objRenderer, panelType, trendingObjs } = props;
+    let { linkRenderer, objRenderer, panelType, tagList, trendingObjs } = props;
     const logger = useMemo(() => getLogger("TrendingSection", panelType), [panelType]);
 
     if (!objRenderer && !linkRenderer) {
@@ -54,34 +62,28 @@ export default function TrendingSection(props: TrendingProps) {
         throw new Error("TrendingSection needs either objRenderer() or linkRenderer! props:");
     }
 
-    // Configuration from TRENDING_PANEL_CFG based on panelType prop
     const panelCfg = config.trending.panels[panelType];
     const objTypeLabel = panelCfg.objTypeLabel || panelType;
     const title = panelCfg.title || capitalCase(objTypeLabel);
-    const useSwitchbar = PANEL_TYPES_WITH_SLIDER.includes(panelType);
+
+    const trendObjs = useMemo(
+        () => trendingObjs ?? tagList.topTags(),
+        [trendingObjs, tagList]
+    )
 
     const minTootsSliderDefaultValue: number = useMemo(
-        () => {
-            if (useSwitchbar) {
-                return computeDefaultValue(
-                    new TagList(trendingObjs as TagWithUsageCounts[]),
-                    panelType,
-                    panelCfg.initialNumShown
-                );
-            } else {
-                return 0;
-            }
-        },
-        [trendingObjs]
+        () => tagList ? computeDefaultValue(tagList, panelType, panelCfg.initialNumShown) : 0,
+        [tagList]
     );
 
     const minTootsState = useState<number>(minTootsSliderDefaultValue);
-    const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendingObjs.length));
+    const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendObjs.length));
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
         () => {
-            if (useSwitchbar || trendingObjs.length <= panelCfg.initialNumShown) return null;
+            // TagList uses the MinTootsSlider; other displays have a link to show all vs. show initialNumShown
+            if (tagList || trendingObjs.length <= panelCfg.initialNumShown) return null;
 
             const toggleShown = () => {
                 if (numShown === panelCfg.initialNumShown) {
@@ -103,22 +105,21 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [minTootsState[0], numShown, panelType, trendingObjs.length]
+        [minTootsState[0], numShown, panelType, trendObjs.length]
     );
 
     // Memoize because react profiler says trending panels are most expensive to render
     const trendingItemList = useMemo(
         () => {
-            let objs: TrendingListObj[] = trendingObjs;
+            let objs: TrendingListObj[] = trendObjs;
 
-            if (useSwitchbar) {
+            // TagList uses the MinTootsSlider; other displays have a link to show all vs. show initialNumShown
+            if (tagList) {
                 if (minTootsState[0] > 0) {
-                    objs = trendingObjs.filter((obj: TagWithUsageCounts) => obj.numToots >= minTootsState[0]);
-                } else {
-                    objs = trendingObjs;
+                    objs = trendObjs.filter((obj: TagWithUsageCounts) => obj.numToots >= minTootsState[0]);
                 }
             } else {
-                objs = trendingObjs.slice(0, numShown);
+                objs = objs.slice(0, numShown);
             }
 
             // Short circuit the rendering for custom object renderers (so far that's means just Toots)
@@ -130,9 +131,9 @@ export default function TrendingSection(props: TrendingProps) {
                 </>;
             }
 
-            logger.trace(`Sliced trendingObjs to ${objs.length} items (minTootsState=${minTootsState[0]}, numShown=${numShown})`);
+            logger.trace(`Sliced trendObjs to ${objs.length} items (minTootsState=${minTootsState[0]}, numShown=${numShown})`);
             const { infoTxt, linkLabel, linkUrl, onClick } = linkRenderer!;
-            const labels = trendingObjs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
+            const labels = objs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
             const isSingleCol = panelCfg.hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);
@@ -173,10 +174,10 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [minTootsState[0], numShown, panelCfg, panelType, trendingObjs, trendingObjs.length]
+        [minTootsState[0], numShown, panelCfg, panelType, trendObjs, trendObjs.length]
     );
 
-    if (useSwitchbar) {
+    if (tagList) {
         return (
             <FilterAccordionSection
                 isActive={false}
@@ -187,7 +188,7 @@ export default function TrendingSection(props: TrendingProps) {
                         panelTitle={title}
                         pluralizedPanelTitle={title}
                         showLongTitle={false}  // TODO: This fucks up the layout if set to true
-                        tagList={new TagList(trendingObjs as TagWithUsageCounts[])}
+                        tagList={tagList}
                     />
                 ]}
                 title={title}
@@ -195,12 +196,13 @@ export default function TrendingSection(props: TrendingProps) {
                 {trendingItemList}
             </FilterAccordionSection>
         )
+    } else {
+        return (
+            <SubAccordion key={panelType} title={title}>
+                {trendingItemList}
+            </SubAccordion>
+        );
     }
-    return (
-        <SubAccordion key={panelType} title={title}>
-            {trendingItemList}
-        </SubAccordion>
-    );
 };
 
 

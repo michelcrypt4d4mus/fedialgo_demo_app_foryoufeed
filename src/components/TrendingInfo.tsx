@@ -62,16 +62,6 @@ export default function TrendingInfo() {
         [algorithm.trendingData.servers]
     );
 
-    const sortedParticipatedTags = useMemo(
-        () => algorithm.userData.participatedTags.topTags(),
-        [algorithm.userData.participatedTags]
-    );
-
-    const sortedTrendingTags = useMemo(
-        () => algorithm.trendingData.tags.topTags(),
-        [algorithm.trendingData.tags]
-    );
-
     return (
         <TopLevelAccordion bodyStyle={noPadding} title="What's Trending">
             <div style={accordionSubheader}>
@@ -83,25 +73,24 @@ export default function TrendingInfo() {
 
             <Accordion>
                 <TrendingSection
-                    panelType={TrendingType.TAGS}
                     linkRenderer={{
                         ...trendingObjLinkRenderer,
                         linkLabel: tagNameMapper,
                     }}
-                    trendingObjs={sortedTrendingTags}
+                    panelType={TrendingType.TAGS}
+                    tagList={algorithm.trendingData.tags}
                 />
 
                 <TrendingSection
-                    panelType={TrendingType.LINKS}
                     linkRenderer={{
                         ...trendingObjLinkRenderer,
                         linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
                     }}
+                    panelType={TrendingType.LINKS}
                     trendingObjs={algorithm.trendingData.links}
                 />
 
                 <TrendingSection
-                    panelType={"toots"}
                     objRenderer={(toot: Toot) => (
                         <StatusComponent
                             fontColor="black"
@@ -110,19 +99,20 @@ export default function TrendingInfo() {
                             status={toot}
                         />
                     )}
+                    panelType={"toots"}
                     trendingObjs={algorithm.trendingData.toots}
                 />
 
                 {scrapedServersSection}
 
                 <TrendingSection
-                    panelType={ScoreName.PARTICIPATED_TAGS}
                     linkRenderer={{
                         ...baseLinkRenderer,
                         infoTxt: (tag: TagWithUsageCounts) => `${tag.numToots?.toLocaleString()} toots`,
                         linkLabel: tagNameMapper,
                     }}
-                    trendingObjs={sortedParticipatedTags}
+                    panelType={ScoreName.PARTICIPATED_TAGS}
+                    tagList={algorithm.userData.participatedTags}
                 />
             </Accordion>
         </TopLevelAccordion>
