@@ -20,8 +20,9 @@ export type FilterOptionTypeTooltips = {
 };
 
 type FilterOptionsFormat = {
-    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
     formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    position: number;                        // Position of this filter in the filters section, used for ordering
+    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
 };
 
 // Subconfig types
@@ -55,6 +56,7 @@ type FilterConfig = {
         description: string;
         invertSelectionTooltipTxt: string;
         maxValue: number;
+        position: number;
         title: FilterTitle;
     };
 };
@@ -154,6 +156,7 @@ class Config implements ConfigType {
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
                 [BooleanFilterName.HASHTAG]: {
+                    position: 2,
                     tooltips: {
                         [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
                             highlight: {
@@ -291,7 +294,7 @@ class Config implements ConfigType {
             [TrendingType.LINKS]: {
                 hasCustomStyle: true,        // TODO: this sucks
                 initialNumShown: 30,
-                objTypeLabel: `trending ${TrendingType.LINKS}`
+                objTypeLabel: `trending ${TrendingType.LINKS}`,
             },
             [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
                 initialNumShown: 40,
