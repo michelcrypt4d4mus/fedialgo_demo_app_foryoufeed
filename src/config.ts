@@ -5,7 +5,7 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, TrendingType, TypeFilterName, TagTootsCacheKey } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
