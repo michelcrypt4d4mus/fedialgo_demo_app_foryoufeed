@@ -177,8 +177,3 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     return optionGrid;
 };
-
-
-function alphabetizeOptions(options: BooleanFilterOption[]): BooleanFilterOption[] {
-    return options.sort((a, b) => a.name.localeCompare(b.name));
-};

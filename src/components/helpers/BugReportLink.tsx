@@ -8,11 +8,11 @@ import { config } from "../../config";
 
 
 export default function BugReportLink() {
-    return <>
+    return (<>
         Report bugs: <a href={config.app.developerMastodonUrl} style={bugsLink} target="_blank">
             {config.app.developerMastodonUrl.split('/').pop()}
         </a>
-    </>;
+    </>);
 };
 
 
