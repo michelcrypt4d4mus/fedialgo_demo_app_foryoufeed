@@ -217,7 +217,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                                 ? `Attaching...`
                                 : (resolvedID === undefined)
                                     ? 'Resolving toot ID...'
-                                    : `Submit Reply`}
+                                    : `Submit` + (toot ? ` Reply` : '')}
                         </Button>
                     </div>
                 </Form.Group>

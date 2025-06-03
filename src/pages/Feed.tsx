@@ -171,9 +171,7 @@ export default function Feed() {
                         <div style={newTootButton}>
                             <Button
                                 className='p-2 text-center'
-                                disabled={isLoading || isLoadingThread}
                                 onClick={() => setShowNewTootModal(true)}
-                                size="lg"
                                 variant="outline-primary"
                             >
                                 {isLoading ? `Loading...` : `Create New Toot`}
@@ -278,5 +276,5 @@ const stickySwitchContainer: CSSProperties = {
 const newTootButton: CSSProperties = {
     ...stickySwitchContainer,
     justifyContent: "space-around",
-    margin: "20px",
+    margin: "25px",
 };
