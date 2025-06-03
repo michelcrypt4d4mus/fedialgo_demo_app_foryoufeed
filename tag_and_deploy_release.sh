@@ -1,4 +1,5 @@
 #!/usr/bin/env bash -l
+# SKIP_DEPLOY can be set in env to skip the actual deploy.
 set -e
 
 
@@ -50,5 +51,11 @@ tag_repo "$VERSION_NUMBER"
 echo -e "\nFinished tagging fedialgo $VERSION_NUMBER."
 
 # Deploy the demo app
+if [[ -z "$SKIP_DEPLOY" ]]; then
+    echo "Skipping deploy..."
+else
+    ./deploy.sh
+fi
+
 ./deploy.sh
 ./link_local_fedialgo.sh

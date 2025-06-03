@@ -13,11 +13,11 @@ import {
     ScoreName,
     TagTootsCacheKey,
     TypeFilterName,
+    type BooleanFilterOption,
     type UserDataSource,
 } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
-import { alphabetize } from "../../../helpers/string_helpers";
 import { buildGradient } from "../../../helpers/style_helpers";
 import { CheckboxTooltip } from "./FilterCheckbox";
 import { config, type FilterOptionTypeTooltips } from "../../../config";
@@ -25,12 +25,7 @@ import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
-type GradientInfo = Record<TagTootsCacheKey, TagListColorGradient>;
-
-type TagListColorGradient = {
-    colors: tinycolor.Instance[];
-    objList: ObjList;
-};
+type GradientInfo = Record<TagTootsCacheKey, tinycolor.Instance[]>;
 
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
@@ -52,7 +47,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     const isUserFilter = (filter.title == BooleanFilterName.USER);
 
-    const buildObjListColorGradient = (objList: ObjList): TagListColorGradient => {
+    const buildObjListColorGradient = (objList: ObjList): tinycolor.Instance[] => {
         const dataSource = objList.source as UserDataSource;
         const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
         if (!gradientCfg) throw new Error(`No gradientCfg found for dataSource: ${dataSource} in filterConfig`);
@@ -74,10 +69,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
         const colors = colorGradient.hsv(maxNumToots, false);
         logger.trace(`Rebuilt ${gradientCfg.dataSource}. objList.maxNumToots=${objList.maxNumToots()}, colorArray:`, colors);
-        return { colors, objList };
+        return colors;
     };
 
-    // Build a dict from UserDataSource to TagListColorGradient, which contains the colors and the ObjList
+    // Build a dict from UserDataSource to colors, which contains the colors and the ObjList
     // that can give us a historical numToots for any objects we are trying to colorize.
     const tooltipGradientInfo: GradientInfo = useMemo(
         () => [ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey)].reduce(
@@ -114,77 +109,68 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     // Get the actual color for the checkbox tooltip, based on the numToots
-    const getGradientColorTooltip = (objName: string, dataSource: UserDataSource): CheckboxTooltip => {
-        const { colors, objList } = tooltipGradientInfo[dataSource];
-        const obj = objList.getObj(objName);
+    const getGradientColorTooltip = (option: BooleanFilterOption, dataSource: UserDataSource): CheckboxTooltip => {
         const baseTooltip = filterTooltips[dataSource];
+        const colors = tooltipGradientInfo[dataSource];
         if (!baseTooltip) throw new Error(`No tooltip found for "${dataSource}" in filterTooltips!`);
-
-        if (dataSource == ScoreName.FAVOURITED_ACCOUNTS && !algorithm.userData.followedAccounts[objName]) {
-            logger.debug(`Colouring non-followed account: "${objName}"`);
-        }
-
-        if (!obj) {
-            logger.warn(`No gradient found for "${objName}" in ${dataSource}, using default tooltip:`, baseTooltip);
-            return baseTooltip;
-        }
-
         const gradientCfg = baseTooltip.highlight.gradient;
-        let color = obj.numToots > 0 ? colors[obj.numToots - 1] : gradientCfg.endpoints[0];
+        const optionValue = option[dataSource];  // Num participation, num favourites, etc.
+        let color = optionValue > 0 ? colors[optionValue - 1] : gradientCfg.endpoints[0];
 
         if (!color) {
-            logger.warn(`No color found for "${obj.name}" w/ ${obj.numToots} toots, using default. colors:`, colors);
+            logger.warn(`No color found for "${option.name}" w/ ${option.numToots} toots, using default. colors:`, colors);
             color = gradientCfg.endpoints[1];  // Assume it's a big number and deserves the top color
         }
 
         return {
             highlight: {color: color.toHexString()},
-            text: `${baseTooltip.text} ${gradientCfg.textSuffix(obj.numToots)}`,
+            text: `${baseTooltip.text} ${gradientCfg.textSuffix(optionValue)}`,
         }
     };
 
-    const findTooltip = (name: string): CheckboxTooltip | undefined => {
+    const findTooltip = (option: BooleanFilterOption): CheckboxTooltip | undefined => {
         if (isTagFilter) {
-            if (name in algorithm.userData.followedTags) {
+            if (option.name in algorithm.userData.followedTags) {
                 return filterTooltips[TypeFilterName.FOLLOWED_HASHTAGS];
-            } else if (tooltipGradientInfo[TagTootsCacheKey.TRENDING_TAG_TOOTS].objList.getObj(name)) {
-                return getGradientColorTooltip(name, TagTootsCacheKey.TRENDING_TAG_TOOTS);
-            } else if (tooltipGradientInfo[TagTootsCacheKey.PARTICIPATED_TAG_TOOTS].objList.getObj(name)) {
-                return getGradientColorTooltip(name, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
-            } else if (tooltipGradientInfo[TagTootsCacheKey.FAVOURITED_TAG_TOOTS].objList.getObj(name)) {
-                return getGradientColorTooltip(name, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
+            } else if (option[TagTootsCacheKey.TRENDING_TAG_TOOTS]) {
+                return getGradientColorTooltip(option, TagTootsCacheKey.TRENDING_TAG_TOOTS);
+            } else if (option[TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]) {
+                return getGradientColorTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
+            } else if (option[TagTootsCacheKey.FAVOURITED_TAG_TOOTS]) {
+                return getGradientColorTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             }
-        } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
+        } else if (filter.title == BooleanFilterName.LANGUAGE && option.name == algorithm.userData.preferredLanguage) {
             return filterTooltips[BooleanFilterName.LANGUAGE];
         } else if (isUserFilter) {
-            if (algorithm.userData.favouriteAccounts.getObj(name)) {
-                return getGradientColorTooltip(name, ScoreName.FAVOURITED_ACCOUNTS);
+            if (algorithm.userData.favouriteAccounts.getObj(option.name)) {
+                return getGradientColorTooltip(option, ScoreName.FAVOURITED_ACCOUNTS);
             }
         }
     };
 
     // Build a checkbox for a property filter. The 'name' is also the element of the filter array.
-    const propertyCheckbox = (name: string, i: number) => {
+    const makeOptionCheckbox = (option: BooleanFilterOption, i: number) => {
         return (
             <FilterCheckbox
-                isChecked={filter.isThisSelectionEnabled(name)}
-                key={`${filter.title}_${name}_${i}`}
-                label={filterConfig?.formatLabel ? filterConfig?.formatLabel(name) : name}
-                labelExtra={filter.optionInfo[name]}
-                onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
-                tooltip={findTooltip(name)}
-                url={isTagFilter && algorithm.tagUrl(name)}
+                isChecked={filter.isThisSelectionEnabled(option.name)}
+                key={`${filter.title}_${option.name}_${i}`}
+                label={filterConfig?.formatLabel ? filterConfig?.formatLabel(option.name) : option.name}
+                option={option}
+                onChange={(e) => filter.updateValidOptions(option.name, e.target.checked)}
+                tooltip={findTooltip(option)}
+                url={isTagFilter && algorithm.tagUrl(option.name)}
             />
         );
     };
 
     const optionGrid = useMemo(
         () => {
-            logger.trace(`Rebuilding optionGrid for ${Object.keys(filter.optionInfo).length} options...`);
-            let optionKeys = filter.optionsSortedByValue(minToots);
-            if (highlightedOnly) optionKeys = optionKeys.filter(name => findTooltip(name));
-            if (!sortByCount) optionKeys = alphabetize(optionKeys);
-            return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
+            logger.trace(`Rebuilding optionGrid for ${filter.optionInfo.length} options...`);
+            let options = filter.optionsSortedByValue(minToots);
+            if (!sortByCount) options = filter.optionsSortedByName(minToots);
+            if (highlightedOnly) options = options.filter(option => !!findTooltip(option));
+            logger.trace(`Found ${options.length} options for filter "${filter.title}" with minToots=${minToots}:`, options);
+            return gridify(options.objs.map((option, i) => makeOptionCheckbox(option, i)));
         },
         [
             // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
@@ -203,4 +189,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     return optionGrid;
+};
+
+
+function alphabetizeOptions(options: BooleanFilterOption[]): BooleanFilterOption[] {
+    return options.sort((a, b) => a.name.localeCompare(b.name));
 };

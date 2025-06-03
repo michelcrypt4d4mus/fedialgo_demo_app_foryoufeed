@@ -4,7 +4,7 @@
  */
 import { useMemo, useState } from "react";
 
-import { TagList } from "fedialgo";
+import { ObjList, TagList } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import Slider from "../algorithm/Slider";
@@ -17,7 +17,7 @@ interface MinTootsSliderProps {
     panelTitle: string;
     pluralizedPanelTitle?: string;
     showLongTitle?: boolean;
-    objList: TagList;
+    objList: ObjList;
 };
 
 
@@ -85,28 +85,28 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
 
 // Compute a starting value for the minToots slider based on the tagList. Outside of the main function
 // because there's a few display options that depend on the initial value before the slider is rendered.
-export const computeDefaultValue = (tagList: TagList, title: string, idealNumOptions?: number): number => {
+export const computeDefaultValue = (objList: ObjList, title: string, idealNumOptions?: number): number => {
     const logger = getMinTootsLogger(title);
     const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
     idealNumOptions ||= minTootsSliderCfg.idealNumOptions;
-    logger.debug(`Computing default value for minToots slider with ${tagList.length} options`);
+    logger.debug(`Computing default value for minToots slider with ${objList.length} options`);
 
     // Don't show the slider if there are too few options
-    if (tagList.objs.length < (idealNumOptions + 1)) {
+    if (objList.objs.length < (idealNumOptions + 1)) {
         return 0;
     } else {
         // It's "ideal" just in the sense that it has a value for numToots that works well
-        const idealOption = tagList.topObjs()[idealNumOptions];
+        const idealOption = objList.topObjs()[idealNumOptions];
         let sliderDefault = 0;
 
         if (!idealOption) {
             logger.warn(`No ideal option found to help set minToots slider default value`);
-            sliderDefault = (tagList.objs.length > (idealNumOptions / 2)) ? Math.floor(idealNumOptions / 10) : 0;
+            sliderDefault = (objList.objs.length > (idealNumOptions / 2)) ? Math.floor(idealNumOptions / 10) : 0;
         } else {
             sliderDefault = idealOption.numToots;
         }
 
-        logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${tagList.length} tags)`);
+        logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${objList.length} tags)`);
         return sliderDefault;
     }
 };

@@ -6,15 +6,16 @@ import Form from 'react-bootstrap/esm/Form';
 
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
-import { type UserDataSource } from "fedialgo";
+import { type BooleanFilterOption, type UserDataSource } from "fedialgo";
 
 import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
-import { useAlgorithm } from "../../../hooks/useAlgorithm";
+import { getLogger } from "../../../helpers/log_helpers";
 import { linkesque, tooltipZIndex, type GradientEndpoints } from "../../../helpers/style_helpers";
+import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 export type CheckboxColorGradient = {
-    // Sometimes we want to adjust the gradient instad of using the one between the endpoints to make any of the
+    // Sometimes we want to adjust the gradient instead of using the one between the endpoints to make any of the
     // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
     adjustment?: {
         adjustPctiles: number[];
@@ -34,10 +35,11 @@ export type CheckboxTooltip = {
 type CheckboxColor = { color: CSSProperties["color"]; gradient?: never; };
 type CheckboxColoredByGradient = { color?: never; gradient: CheckboxColorGradient; };
 
-
 const HASHTAG_ANCHOR = "user-hashtag-anchor";
 const HIGHLIGHT = "highlighted";
 const HIGHLIGHTED_TOOLTIP_ANCHOR = `${HASHTAG_ANCHOR}-${HIGHLIGHT}`;
+
+const logger = getLogger("FilterCheckbox");
 
 export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
@@ -48,18 +50,19 @@ interface FilterCheckboxProps {
     isChecked: boolean,
     label: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    labelExtra?: number | string,
+    option?: BooleanFilterOption,
     tooltip?: CheckboxTooltip,
     url?: string,
 };
 
 
 export default function FilterCheckbox(props: FilterCheckboxProps) {
-    let { capitalize, isChecked, label, labelExtra, onChange, tooltip, url } = props;
+    let { capitalize, isChecked, label, option, onChange, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
     const [isCheckedState, setIsCheckedState] = useState(isChecked);
 
-    labelExtra = (typeof labelExtra == "number") ? labelExtra.toLocaleString() : labelExtra;
+    let labelExtra = (typeof option?.numToots == "number") ? option.numToots.toLocaleString() : '';
+    logger.trace(`label: "${label}, labelExtra:`, labelExtra, `, option:`, option);
     const labelStyle: CSSProperties = {...defaultLabelStyle};
     let style: CSSProperties = {color: "black"};
     let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
