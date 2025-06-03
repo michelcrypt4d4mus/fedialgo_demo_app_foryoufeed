@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/esm/Form';
 
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
-import { type UserDataSource, type BooleanFilterOption } from "fedialgo";
+import { type BooleanFilterOption, type UserDataSource } from "fedialgo";
 
 import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
@@ -15,7 +15,7 @@ import { linkesque, tooltipZIndex, type GradientEndpoints } from "../../../helpe
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 export type CheckboxColorGradient = {
-    // Sometimes we want to adjust the gradient instad of using the one between the endpoints to make any of the
+    // Sometimes we want to adjust the gradient instead of using the one between the endpoints to make any of the
     // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
     adjustment?: {
         adjustPctiles: number[];
