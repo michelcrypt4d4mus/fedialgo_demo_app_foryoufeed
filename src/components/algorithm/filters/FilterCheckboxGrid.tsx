@@ -9,9 +9,7 @@ import {
     FILTER_OPTION_DATA_SOURCES,
     BooleanFilter,
     BooleanFilterName,
-    ObjList,
     ScoreName,
-    TagList,
     TagTootsCacheKey,
     TypeFilterName,
     type BooleanFilterOption,
@@ -20,17 +18,11 @@ import {
 
 import FilterCheckbox from "./FilterCheckbox";
 import { buildGradient } from "../../../helpers/style_helpers";
-import { CheckboxTooltipConfig } from "../../../config";
-import { config, type CheckboxGradientTooltipConfig } from "../../../config";
+import { config, type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { isNumber } from "../../../helpers/number_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-
-const DATA_SOURCES_WITH_GRADIENT_TOOLTIPS = [
-    ...Object.values(TagTootsCacheKey),
-    ScoreName.FAVOURITED_ACCOUNTS,
-] as const;
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
@@ -56,7 +48,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Build a dict from FilterOptionDataSource to tooltip objs with the color (or gradient) + base text
     const tooltipGradients: DataSourceGradients = useMemo(
-        () => DATA_SOURCES_WITH_GRADIENT_TOOLTIPS.reduce(
+        () => FILTER_OPTION_DATA_SOURCES.reduce(
             (gradients, dataSource) => {
                 const baseTooltipCfg = tooltipConfig[dataSource];
                 const gradientCfg = baseTooltipCfg?.highlight?.gradient;

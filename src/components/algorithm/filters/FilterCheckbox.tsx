@@ -18,11 +18,11 @@ const HASHTAG_ANCHOR = "user-hashtag-anchor";
 const HIGHLIGHT = "highlighted";
 const HIGHLIGHTED_TOOLTIP_ANCHOR = `${HASHTAG_ANCHOR}-${HIGHLIGHT}`;
 
-const logger = getLogger("FilterCheckbox");
-
 export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
 );
+
+const logger = getLogger("FilterCheckbox");
 
 interface FilterCheckboxProps {
     capitalize?: boolean,

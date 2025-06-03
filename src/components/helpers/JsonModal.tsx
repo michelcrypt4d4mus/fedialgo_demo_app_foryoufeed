@@ -65,10 +65,6 @@ export default function JsonModal(props: JsonModalProps) {
 };
 
 
-const textStyle: CSSProperties = {
-    color: "black",
-};
-
 const headerFont: CSSProperties = {
     ...globalFont,
     ...textStyle,
@@ -80,4 +76,8 @@ const headerFont: CSSProperties = {
 const jsonViewStyle: CSSProperties = {
     borderRadius: "15px",
     padding: "20px",
+};
+
+const textStyle: CSSProperties = {
+    color: "black",
 };
