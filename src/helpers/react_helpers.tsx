@@ -9,7 +9,7 @@ import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, Reac
 import { type TrendingWithHistory, Toot, makeChunks } from 'fedialgo';
 
 import { isEmptyStr } from './string_helpers';
-import { appLogger, getLogger, logMsg } from "./log_helpers";
+import { appLogger, getLogger } from "./log_helpers";
 
 // TODO: this shouldn't be here...
 export const isProduction = process.env.NODE_ENV === 'production';
