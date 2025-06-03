@@ -12,20 +12,18 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { getLogger } from '../../helpers/log_helpers';
 import { config } from '../../config';
-import { fileInfo } from '../../helpers/string_helpers';
+import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
+import { getLogger } from '../../helpers/log_helpers';
 import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
-import { isEmptyStr } from 'fedialgo/dist/helpers/string_helpers';
-import { error } from 'console';
 
 const logger = getLogger('ReplyModal');
 
 interface ReplyModalProps extends ModalProps {
-    toot: Toot;
+    toot?: Toot;
 };
 
 
@@ -44,11 +42,12 @@ export default function ReplyModal(props: ReplyModalProps) {
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
     // State
-    const replyMentionsStr = toot.replyMentions().join(' ');
+    const replyMentionsStr = toot ? (toot.replyMentions().join(' ') + '\n\n') : '';
     const [isAttaching, setIsAttaching] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
-    const [replyText, setReplyText] = React.useState<string>(replyMentionsStr + '\n\n');
-    const [resolvedID, setResolvedID] = React.useState<string | null>(null);
+    const [replyText, setReplyText] = React.useState<string>(replyMentionsStr);
+    // null means we don't need a resolved ID, undefined means we are waiting for it to resolve
+    const [resolvedID, setResolvedID] = React.useState<string | null | undefined>(toot ? undefined : null);
 
     const cursor = isAttaching ? 'wait' : 'default';
     const currentReplyLen = () => replyText.replace(replyMentionsStr, '').trim().length;
@@ -59,6 +58,8 @@ export default function ReplyModal(props: ReplyModalProps) {
     };
 
     useEffect(() => {
+        if (!toot) return;
+
         if (show && !resolvedID) {
             logger.log(`Resolving toot ID for`, toot);
 
@@ -120,8 +121,10 @@ export default function ReplyModal(props: ReplyModalProps) {
         });
     }, []);
 
-    const submitReply = async () => {
-        if (!resolvedID) {
+    const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
+
+    const createToot = async () => {
+        if (toot && !resolvedID) {
             handleError("Failed to resolve toot ID to reply to!");
             return;
         } else if ((replyText.length + mediaAttachments.length) == 0) {
@@ -137,7 +140,7 @@ export default function ReplyModal(props: ReplyModalProps) {
         }
 
         const mediaIDs = mediaAttachments.map(m => m.id);
-        logger.log(`Submitting reply to toot ID: ${resolvedID}, text: ${replyText.trim()}, mediaIDs:`, mediaIDs);
+        logger.log(`Submitting toot (replying to "${resolvedID}", text: "${replyText.trim()}", mediaIDs:`, mediaIDs);
 
         api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: replyText.trim()})
             .then(() => {
@@ -147,8 +150,6 @@ export default function ReplyModal(props: ReplyModalProps) {
                 handleError(`Failed to submit reply`, null, err);
             });
     };
-
-    const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
 
     const handleError = (msg: string, note?: string, errorObj?: Error) => {
         let errorArgs: Record<string, string | any> = { resolvedID, statusConfig };
@@ -165,13 +166,16 @@ export default function ReplyModal(props: ReplyModalProps) {
             style={{cursor: cursor}}
         >
             <Modal.Header closeButton style={headerStyle}>
-                <p>Reply to {toot.account.describe()}</p>
+                <p>
+                    {toot ? `Reply to {toot.account.describe()` : `Create a new toot`}
+                </p>
             </Modal.Header>
 
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
-                <div style={{backgroundColor: config.theme.feedBackgroundColor, borderRadius: "3px"}}>
-                    <StatusComponent hideLinkPreviews={true} status={toot}/>
-                </div>
+                {toot &&
+                    <div style={{backgroundColor: config.theme.feedBackgroundColor, borderRadius: "3px"}}>
+                        <StatusComponent hideLinkPreviews={true} status={toot}/>
+                    </div>}
 
                 <Form.Group className="mb-3" style={{cursor: cursor}}>
                     <Form.Control
@@ -206,12 +210,12 @@ export default function ReplyModal(props: ReplyModalProps) {
                     <div style={buttonContainer}>
                         <Button
                             className="btn-lg"
-                            disabled={isAttaching || currentReplyLen() == 0 || resolvedID === null}
-                            onClick={() => submitReply()} style={buttonStyle}
+                            disabled={isAttaching || currentReplyLen() == 0 || resolvedID === undefined}
+                            onClick={() => createToot()} style={buttonStyle}
                         >
                             {isAttaching
                                 ? `Attaching...`
-                                : !resolvedID
+                                : (resolvedID === undefined)
                                     ? 'Resolving toot ID...'
                                     : `Submit Reply`}
                         </Button>

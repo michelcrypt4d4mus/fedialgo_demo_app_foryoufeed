@@ -4,8 +4,9 @@
 import { Modal } from 'react-bootstrap';
 import { useEffect } from 'react';
 
-import { getLogger } from '../../helpers/log_helpers';
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
+
+import { getLogger } from '../../helpers/log_helpers';
 
 const logger = getLogger("AttachmentsModal");
 

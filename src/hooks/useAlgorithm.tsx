@@ -111,6 +111,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
                 if (isAccessTokenRevokedError(err)) {
                     handleError(config.app.accessTokenRevokedMsg, err);
                 } else {
+                    // TODO: we often get TypeError: NetworkError when attempting to fetch resource which is probably
+                    // survivable without deleting the access token.
                     handleError(`Failed to verifyCredentials(), logging out...`, err);
                 }
 

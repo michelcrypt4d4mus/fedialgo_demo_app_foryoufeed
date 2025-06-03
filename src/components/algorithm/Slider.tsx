@@ -44,7 +44,7 @@ export default function Slider(props: SliderProps) {
                 </div>}
 
             <span>
-                <span style={{fontWeight: 'bold', marginRight: '3px'}}>
+                <span style={sliderFont}>
                     {`${label}` + (hideValueBox ? '' : ':')}
                 </span>
 
@@ -95,6 +95,11 @@ const sliderContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'end',
+};
+
+const sliderFont: CSSProperties = {
+    fontWeight: 'bold',
+    marginRight: '3px',
 };
 
 const sliderValue: CSSProperties = {

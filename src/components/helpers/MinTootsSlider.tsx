@@ -4,7 +4,7 @@
  */
 import { useMemo, useState } from "react";
 
-import { ObjList, TagList } from "fedialgo";
+import { ObjList } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import Slider from "../algorithm/Slider";
@@ -14,10 +14,10 @@ import { tooltipZIndex } from "../../helpers/style_helpers";
 
 interface MinTootsSliderProps {
     minTootsState: ReturnType<typeof useState<number>>;
+    objList: ObjList;
     panelTitle: string;
     pluralizedPanelTitle?: string;
     showLongTitle?: boolean;
-    objList: ObjList;
 };
 
 
@@ -112,4 +112,4 @@ export const computeDefaultValue = (objList: ObjList, title: string, idealNumOpt
 };
 
 
-const getMinTootsLogger = (title: string) => getLogger(title, "MinTootsSlider");
+const getMinTootsLogger = (title: string) => getLogger("MinTootsSlider", title);
