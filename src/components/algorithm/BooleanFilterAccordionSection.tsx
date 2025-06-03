@@ -25,7 +25,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const logger = getLogger("BooleanFilterAccordionSection", filter.title);
 
     const minTootsSliderDefaultValue: number = useMemo(
-        () => computeDefaultValue(filter.optionsAsObjList(), filter.title),
+        () => computeDefaultValue(filter.optionInfo, filter.title),
         [filter.optionInfo]
     );
 
@@ -69,7 +69,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                         key={`${filter.title}-minTootsSlider`}
                         minTootsState={minTootsState}
                         panelTitle={filter.title}
-                        objList={filter.optionsAsObjList()}
+                        objList={filter.optionInfo}
                     />
                 );
             }
