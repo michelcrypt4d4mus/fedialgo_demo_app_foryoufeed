@@ -30,7 +30,7 @@ const DATA_SOURCES_WITH_GRADIENT_TOOLTIPS = [
     ScoreName.FAVOURITED_ACCOUNTS,
 ] as const;
 
-type DataSource = typeof DATA_SOURCES_WITH_GRADIENT_TOOLTIPS[number];
+type FilterOptionDataSource = typeof DATA_SOURCES_WITH_GRADIENT_TOOLTIPS[number];
 type DataSourceGradients = Record<UserDataSource, CheckboxGradientTooltipConfig>;
 
 interface FilterCheckboxGridProps {
@@ -53,7 +53,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     const isUserFilter = (filter.title == BooleanFilterName.USER);
 
-    const dataFinder: Record<DataSource, ObjList> = {
+    const dataFinder: Record<FilterOptionDataSource, ObjList> = {
         [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: algorithm.userData.participatedTags,
         [TagTootsCacheKey.TRENDING_TAG_TOOTS]: algorithm.trendingData.tags,
         [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: algorithm.userData.favouritedTags,
