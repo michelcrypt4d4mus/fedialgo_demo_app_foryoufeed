@@ -24,7 +24,7 @@ export default function FilterSetter() {
     // Filter for 'visible' because the APP filters are currently hidden
     const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => f.visible);
     const numericFilters = Object.values(algorithm.filters.numericFilters);
-    const hasActiveBooleanFilter = booleanFilters.some(f => f.validValues.length);
+    const hasActiveBooleanFilter = booleanFilters.some(f => f.selectedOptions.length);
     const hasActiveNumericFilter = numericFilters.some(f => f.value > 0);
     const hasAnyActiveFilter = hasActiveNumericFilter || hasActiveBooleanFilter;
 
