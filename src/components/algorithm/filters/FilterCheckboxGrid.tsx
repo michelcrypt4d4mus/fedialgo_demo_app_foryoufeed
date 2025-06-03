@@ -42,14 +42,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
     const filterConfig = config.filters.boolean.optionsFormatting[filter.title];
-    const filterTooltips: FilterOptionTypeTooltips = filterConfig?.tooltips || {};
+    const tooltipConfig: FilterOptionTypeTooltips = filterConfig?.tooltips || {};
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     const isUserFilter = (filter.title == BooleanFilterName.USER);
 
     const buildObjListColorGradient = (objList: ObjList): tinycolor.Instance[] => {
         const dataSource = objList.source as UserDataSource;
-        const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
+        const gradientCfg = tooltipConfig[dataSource]?.highlight?.gradient;
         if (!gradientCfg) throw new Error(`No gradientCfg found for dataSource: ${dataSource} in filterConfig`);
         if (!objList?.source) logger.logAndThrowError(`No source found for objList: ${objList} in filterConfig`, objList);
         const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
@@ -75,10 +75,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     // Build a dict from UserDataSource to colors, which contains the colors and the ObjList
     // that can give us a historical numToots for any objects we are trying to colorize.
     const tooltipGradientInfo: GradientInfo = useMemo(
+        // TODO: ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey) should probably be a real enum
         () => [ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey)].reduce(
             (gradientInfos, dataSource) => {
                 // Skip gradients that aren't configured for this filter type
-                if (!filterTooltips[dataSource]?.highlight?.gradient) return gradientInfos;
+                if (!tooltipConfig[dataSource]?.highlight?.gradient) return gradientInfos;
                 let objList: ObjList;
 
                 if (dataSource == TagTootsCacheKey.PARTICIPATED_TAG_TOOTS) {
@@ -110,12 +111,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Get the actual color for the checkbox tooltip, based on the numToots
     const getGradientColorTooltip = (option: BooleanFilterOption, dataSource: UserDataSource): CheckboxTooltip => {
-        const baseTooltip = filterTooltips[dataSource];
-        const colors = tooltipGradientInfo[dataSource];
+        const baseTooltip = tooltipConfig[dataSource];
         if (!baseTooltip) throw new Error(`No tooltip found for "${dataSource}" in filterTooltips!`);
         const gradientCfg = baseTooltip.highlight.gradient;
-        const optionValue = option[dataSource];  // Num participation, num favourites, etc.
-        let color = optionValue > 0 ? colors[optionValue - 1] : gradientCfg.endpoints[0];
+        const colors = tooltipGradientInfo[dataSource];
+
+        // gradientIdx is num participation, num favourites, etc. from the user history for this option
+        const gradientIdx = option[dataSource] || 0;
+        let color = gradientIdx ? colors[gradientIdx - 1] : gradientCfg.endpoints[0];
 
         if (!color) {
             logger.warn(`No color found for "${option.name}" w/ ${option.numToots} toots, using default. colors:`, colors);
@@ -124,14 +127,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
         return {
             highlight: {color: color.toHexString()},
-            text: `${baseTooltip.text} ${gradientCfg.textSuffix(optionValue)}`,
+            text: `${baseTooltip.text} ${gradientCfg.textSuffix(gradientIdx)}`,
         }
     };
 
     const findTooltip = (option: BooleanFilterOption): CheckboxTooltip | undefined => {
         if (isTagFilter) {
             if (option.name in algorithm.userData.followedTags) {
-                return filterTooltips[TypeFilterName.FOLLOWED_HASHTAGS];
+                return tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (option[TagTootsCacheKey.TRENDING_TAG_TOOTS]) {
                 return getGradientColorTooltip(option, TagTootsCacheKey.TRENDING_TAG_TOOTS);
             } else if (option[TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]) {
@@ -140,7 +143,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 return getGradientColorTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && option.name == algorithm.userData.preferredLanguage) {
-            return filterTooltips[BooleanFilterName.LANGUAGE];
+            return tooltipConfig[BooleanFilterName.LANGUAGE];
         } else if (isUserFilter) {
             if (algorithm.userData.favouriteAccounts.getObj(option.name)) {
                 return getGradientColorTooltip(option, ScoreName.FAVOURITED_ACCOUNTS);
