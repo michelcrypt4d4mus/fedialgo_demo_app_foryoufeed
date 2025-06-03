@@ -40,10 +40,7 @@ export default function Header() {
                         style={avatarStyle}
                     />
 
-                    <span
-                        className='text-center align-middle p-2'
-                        style={{fontSize: 16, whiteSpace: "nowrap"}}
-                    >
+                    <span className='text-center align-middle p-2' style={fedialgoContainer}>
                         <a href={config.app.repoUrl} style={{color: "white"}} target="_blank">
                             Fedialgo Demo
                         </a>
@@ -58,7 +55,7 @@ export default function Header() {
 
                 <Col xs={XS_VALUE} className='text-end p-0'>
                     {user &&
-                        <Button className='p-2 text-center' variant="outline-primary" onClick={() => logout()}>
+                        <Button className='p-2 text-center' onClick={() => logout()} size="sm" variant="outline-danger">
                             Logout
                         </Button>}
                 </Col>
@@ -72,4 +69,9 @@ const avatarStyle: CSSProperties = {
     borderRadius: 5,
     height: 30,
     width: 30,
+};
+
+const fedialgoContainer: CSSProperties = {
+    fontSize: 16,
+    whiteSpace: "nowrap",
 };

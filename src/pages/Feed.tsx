@@ -1,9 +1,7 @@
 /*
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
 import TheAlgorithm, { Toot } from "fedialgo";
@@ -13,6 +11,7 @@ import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
 import FilterSetter from "../components/algorithm/FilterSetter";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
+import ReplyModal from '../components/status/ReplyModal';
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
 import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
@@ -40,6 +39,7 @@ export default function Feed() {
     const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(config.timeline.defaultNumDisplayedToots);
     const [prevScrollY, setPrevScrollY] = useState(0);
+    const [showNewTootModal, setShowNewTootModal] = useState(false);
     const [scrollPercentage, setScrollPercentage] = useState(0);
     const [thread, setThread] = useState<Toot[]>([]);
 
@@ -99,14 +99,10 @@ export default function Feed() {
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
     footerMsg += (algorithm?.lastLoadTimeInSeconds) ? ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds` : '';
 
-    const finishedLoadingMsg = (
-        <p style={loadingMsgStyle}>
-            {footerMsg} ({<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>})
-        </p>
-    );
-
     return (
         <Container fluid style={{height: "auto"}}>
+            <ReplyModal setShow={setShowNewTootModal} show={showNewTootModal}/>
+
             <Row style={{cursor: isLoadingThread ? 'wait' : 'default'}}>
                 {/* Tooltip options: https://react-tooltip.com/docs/options */}
                 <Tooltip id={TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
@@ -159,13 +155,29 @@ export default function Feed() {
                         <div style={stickySwitchContainer}>
                             {isLoading
                                 ? <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
-                                : finishedLoadingMsg}
+                                : <p style={loadingMsgStyle}>
+                                      {footerMsg} (
+                                          {<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>}
+                                      )
+                                  </p>}
 
                             <p style={scrollStatusMsg} className="d-none d-sm-block">
                                 {TheAlgorithm.isDebugMode
                                     ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
                                     : <BugReportLink />}
                             </p>
+                        </div>
+
+                        <div style={newTootButton}>
+                            <Button
+                                className='p-2 text-center'
+                                disabled={isLoading || isLoadingThread}
+                                onClick={() => setShowNewTootModal(true)}
+                                size="lg"
+                                variant="outline-primary"
+                            >
+                                {isLoading ? `Loading...` : `Create New Toot`}
+                            </Button>
                         </div>
                     </div>
                 </Col>
@@ -213,15 +225,15 @@ export default function Feed() {
 };
 
 
+const accountTooltipStyle: CSSProperties = {
+    ...tooltipZIndex,
+    width: "500px",
+};
+
 const controlPanelFooter: CSSProperties = {
     height: "auto",
     paddingLeft: "2px",
     paddingRight: "2px",
-};
-
-const leftCol: CSSProperties = {
-    maxHeight: "100vh",
-    overflowY: "auto",
 };
 
 // TODO: move to LoadingSpinner?
@@ -263,7 +275,8 @@ const stickySwitchContainer: CSSProperties = {
     justifyContent: "space-between",
 };
 
-const accountTooltipStyle: CSSProperties = {
-    ...tooltipZIndex,
-    width: "500px",
+const newTootButton: CSSProperties = {
+    ...stickySwitchContainer,
+    justifyContent: "space-around",
+    margin: "20px",
 };

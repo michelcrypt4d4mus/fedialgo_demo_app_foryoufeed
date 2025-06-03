@@ -112,4 +112,4 @@ export const computeDefaultValue = (objList: ObjList, title: string, idealNumOpt
 };
 
 
-const getMinTootsLogger = (title: string) => getLogger(title, "MinTootsSlider");
+const getMinTootsLogger = (title: string) => getLogger("MinTootsSlider", title);
