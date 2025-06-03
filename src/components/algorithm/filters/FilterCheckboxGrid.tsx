@@ -139,7 +139,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
             const optionCheckboxes = options.objs.map((option, i) => (
                 <FilterCheckbox
-                    isChecked={filter.isThisSelectionEnabled(option.name)}
+                    isChecked={filter.isOptionEnabled(option.name)}
                     key={`${filter.title}_${option.name}_${i}`}
                     label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(option.name) : option.name}
                     onChange={(e) => filter.updateValidOptions(option.name, e.target.checked)}
