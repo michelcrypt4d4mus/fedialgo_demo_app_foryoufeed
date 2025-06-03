@@ -24,18 +24,20 @@ import { getLogger } from "../helpers/log_helpers";
 import { linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const TOOLTIP_ANCHOR = "tooltip-anchor";
 const logger = getLogger("Feed");
 
 
 export default function Feed() {
-    const { algorithm, isLoading, setShouldAutoUpdate, shouldAutoUpdate, timeline, triggerFeedUpdate } = useAlgorithm();
+    const { algorithm, isLoading, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
     const { resetErrors } = useError();
 
-    // State variables
-    const hideLinkPreviewsState = useState(false);
-    const isControlPanelStickyState = useState(true);  // Left panel stickiness
+    // Persistent state variables
+    const hideLinkPreviewsState = useLocalStorage({keyName: "hideLinkPreviews", defaultValue: false});
+    const isControlPanelStickyState = useLocalStorage({keyName: "isControlPanelSticky", defaultValue: true});
+    // Ephemeral state variables
     const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(config.timeline.defaultNumDisplayedToots);
     const [prevScrollY, setPrevScrollY] = useState(0);
@@ -131,7 +133,7 @@ export default function Feed() {
                                 key={"tooltipautoload"}
                                 style={{color: "white"}}
                             >
-                                {buildStateCheckbox(`Auto Load New Toots`, [shouldAutoUpdate, setShouldAutoUpdate])}
+                                {buildStateCheckbox(`Auto Load New Toots`, shouldAutoUpdateState)}
                             </a>
                         </div>
 

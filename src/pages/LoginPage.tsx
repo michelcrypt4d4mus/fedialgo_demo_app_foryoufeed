@@ -18,7 +18,6 @@ const logger = getLogger("LoginPage");
 
 export default function LoginPage() {
     const { logAndSetFormattedError } = useError();
-
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
     const [server, setServer] = useLocalStorage({keyName: "server", defaultValue: config.app.defaultServer});
 
