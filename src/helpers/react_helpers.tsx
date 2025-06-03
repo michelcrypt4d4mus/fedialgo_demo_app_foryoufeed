@@ -4,11 +4,12 @@
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode, useState } from "react";
+import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode } from "react";
 
-import { type TrendingWithHistory, Toot, makeChunks } from 'fedialgo';
+import { Toot, makeChunks, type TrendingWithHistory } from 'fedialgo';
 
 import { appLogger } from "./log_helpers";
+import { BooleanState } from '../types';
 import { isEmptyStr } from './string_helpers';
 
 // TODO: this shouldn't be here...
@@ -47,7 +48,7 @@ export function openTrendingLink(obj: TrendingWithHistory, e: MouseEvent): boole
 // Build a checkbox for a boolean useState() variable
 export function buildStateCheckbox(
     label: string,
-    state: ReturnType<typeof useState<boolean>>,
+    state: BooleanState,
     className?: string,
 ) {
     return (

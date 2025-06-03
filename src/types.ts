@@ -1,15 +1,17 @@
 import { ModalProps as BootstrapModalProps } from 'react-bootstrap';
+import { useState } from 'react';
 
 import type { mastodon } from 'masto';
+
+export type BooleanState = ReturnType<typeof useState<boolean>>;
+export type ErrorHandler = (msg: string, errorObj?: Error, note?: string) => void;
+export type MimeExtensions = Record<string, string[]>;
 
 
 export interface App extends mastodon.v1.Client {
     redirectUri?: string;
     [key: string]: unknown;
 };
-
-
-export type ErrorHandler = (msg: string, errorObj?: Error, note?: string) => void;
 
 
 // TODO: where does this come from?
@@ -29,6 +31,3 @@ export interface ModalProps extends BootstrapModalProps {
     subtitle?: string | React.ReactNode,
     title?: string,
 };
-
-
-export type MimeExtensions = Record<string, string[]>;
