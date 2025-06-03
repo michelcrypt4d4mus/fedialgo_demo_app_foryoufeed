@@ -278,6 +278,7 @@ class Config implements ConfigType {
         },
         headerSwitches: {
             tooltipText: {
+                [SwitchType.HIGHLIGHTS]: "Show the colored highlights in this panel",
                 [SwitchType.HIGHLIGHTS_ONLY]: "Only show the color highlighted options in this panel",
                 [SwitchType.INVERT_SELECTION]: "Exclude toots matching your selected options instead of including them",
                 [SwitchType.SORT_BY_COUNT]: "Sort the options in this panel by number of toots instead of alphabetically",

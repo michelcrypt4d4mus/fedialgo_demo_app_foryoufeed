@@ -38,13 +38,14 @@ interface FilterCheckboxGridProps {
     filter: BooleanFilter,
     highlightedOnly?: boolean,
     minToots?: number,
+    showHighlights?: boolean,
     sortByCount?: boolean,
 };
 
 
 // TODO: maybe rename this BooleanFilterCheckboxGrid?
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
-    const { filter, highlightedOnly, minToots, sortByCount } = props;
+    const { filter, highlightedOnly, minToots, showHighlights, sortByCount } = props;
     const { algorithm } = useAlgorithm();
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
 
@@ -122,6 +123,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Return a finalized CheckboxTooltipConfig with full text and color for the option
     const findTooltip = (option: BooleanFilterOption): CheckboxTooltipConfig | undefined => {
+        if (!showHighlights) return undefined;  // Don't show tooltips if highlights are disabled
+
         if (isTagFilter) {
             if (option.name in algorithm.userData.followedTags) {
                 return tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS];
@@ -171,6 +174,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             filter.validValues,
             highlightedOnly,
             minToots,
+            showHighlights,
             sortByCount,
         ]
     );

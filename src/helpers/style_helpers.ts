@@ -9,6 +9,7 @@ import tinygradient from "tinygradient";
 
 // Can't live in FilterCheckbox.tsx because of circular dependency
 export enum SwitchType {
+    HIGHLIGHTS = 'highlights',
     HIGHLIGHTS_ONLY = "highlightsOnly",
     INVERT_SELECTION = "invertSelection",
     SORT_BY_COUNT = "sortByCount"

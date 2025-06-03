@@ -31,6 +31,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     const minTootsState = useState<number>(minTootsSliderDefaultValue);
     const [highlightedOnly, setHighlightedOnly] = useState(false);
+    const [showHighlights, setShowHighlights] = useState(true);
     const [sortByCount, setSortByValue] = useState(false);
 
     const headerSwitches = useMemo(
@@ -58,6 +59,13 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                         key={SwitchType.HIGHLIGHTS_ONLY}
                         label={SwitchType.HIGHLIGHTS_ONLY}
                         onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily trigger TheAlgorithm.filterFeed(). not a huge problem but not ideal.
+                    />,
+
+                    <HeaderSwitch
+                        isChecked={showHighlights}
+                        key={SwitchType.HIGHLIGHTS}
+                        label={SwitchType.HIGHLIGHTS}
+                        onChange={(e) => setShowHighlights(e.target.checked)} // TODO: this will unnecessarily trigger TheAlgorithm.filterFeed(). not a huge problem but not ideal.
                     />,
                 ]);
             }
@@ -98,6 +106,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                 filter={filter}
                 highlightedOnly={highlightedOnly}
                 minToots={minTootsState[0]}
+                showHighlights={showHighlights}
                 sortByCount={sortByCount}
             />
         </FilterAccordionSection>
