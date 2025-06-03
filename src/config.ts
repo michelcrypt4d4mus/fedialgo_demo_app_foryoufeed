@@ -162,7 +162,7 @@ interface ConfigType {
 // App level config that is not user configurable
 class Config implements ConfigType {
     app: AppConfig = {
-        accessTokenRevokedMsg: `Your access token was revoked. Please log in again to continue using the app.`,
+        accessTokenRevokedMsg: `Your access token expired. Please log in again to continue using the app.`,
         changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases`,
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
@@ -201,10 +201,7 @@ class Config implements ConfigType {
                                         adjustPctiles: [0.95, 0.98], // Percentiles for gradient adjustment of participated tags
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
-                                    endpoints: [                     // Start and end points for the color gradient
-                                        tinycolor(THEME.participatedTagColorMin),
-                                        tinycolor(THEME.participatedTagColor),
-                                    ],
+                                    endpoints: THEME.participatedTagGradient,
                                     textSuffix: (n: number) => ` ${n} times recently`,
                                 },
                             },
@@ -213,10 +210,7 @@ class Config implements ConfigType {
                         [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
                             highlight: {
                                 gradient: {
-                                    endpoints: [
-                                        tinycolor(THEME.trendingTagColorFaded),
-                                        tinycolor(THEME.trendingTagColor),
-                                    ],
+                                    endpoints: THEME.trendingTagGradient,
                                     textSuffix: (n: number) => ` (${n} recent toots)`,
                                 },
                             },
@@ -235,7 +229,7 @@ class Config implements ConfigType {
                     tooltips: {
                         [BooleanFilterName.LANGUAGE]: {
                             highlight: {
-                                color: THEME.followedUserColor
+                                color: THEME.followedUserColor,
                             },
                             text: `You post most in this language`,
                         },
@@ -256,7 +250,7 @@ class Config implements ConfigType {
                                         adjustPctiles: [0.80, 0.98], // Percentiles for gradient adjustment of participated tags
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
-                                    endpoints: [tinycolor("#BCD8D8"), tinycolor(THEME.followedUserColor)],
+                                    endpoints: THEME.followedUserGradient,
                                     textSuffix: (n: number) => n ? ` (and favourited or retooted them ${n} times recently)` : '',
                                 },
                             },
