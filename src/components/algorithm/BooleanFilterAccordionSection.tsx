@@ -33,6 +33,11 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const [highlightedOnly, setHighlightedOnly] = useState(false);
     const [sortByCount, setSortByValue] = useState(false);
 
+    if (minTootsState[0] == 0 && minTootsSliderDefaultValue > 0) {
+        logger.trace(`Updating minToots from default of 0 to ${minTootsSliderDefaultValue}`);
+        minTootsState[1](minTootsSliderDefaultValue);
+    }
+
     const headerSwitches = useMemo(
         () => {
             let _headerSwitches = [
