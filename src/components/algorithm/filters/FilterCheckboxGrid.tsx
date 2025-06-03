@@ -133,7 +133,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionGrid = useMemo(
         () => {
-            logger.trace(`Rebuilding optionGrid for ${filter.optionInfo.length} options...`);
+            logger.trace(`Rebuilding optionGrid for ${filter.options.length} options...`);
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
             if (highlightedOnly) options = options.filter(option => !!findTooltip(option));
 
@@ -158,7 +158,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
             (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
             isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
-            filter.optionInfo,
+            filter.options,
             filter.title,
             filter.validValues,
             highlightedOnly,

@@ -55,7 +55,7 @@ type TrendingProps = TrendingTagListProps | TrendingObjsProps;
 
 export default function TrendingSection(props: TrendingProps) {
     let { linkRenderer, objRenderer, panelType, tagList, trendingObjs } = props;
-    const logger = useMemo(() => getLogger("TrendingSection", panelType), [panelType]);
+    const logger = useMemo(() => getLogger("TrendingSection", panelType), []);
 
     if (!objRenderer && !linkRenderer) {
         logger.error("TrendingSection must have either objRenderer() or linkRenderer! props:", props);
