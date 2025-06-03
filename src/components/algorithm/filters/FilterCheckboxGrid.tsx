@@ -91,17 +91,16 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         option: BooleanFilterOption,
         dataSource: FilterOptionDataSource
     ): CheckboxTooltipConfig | undefined => {
-        const optionGradientValue = option[dataSource];  // These props are populated in fedialgo
+        const optionGradientValue = option[dataSource];  // The value driving the gradient, e.g. num favourites
         if (!isNumber(optionGradientValue)) return undefined;
         const gradientCfg = tooltipGradients[dataSource];
         if (!gradientCfg) logger.logAndThrowError(`No gradientCfg found for "${dataSource}"!`);
 
-        // Avoid negative indices with Math.max
-        let color = gradientCfg.colors[Math.max(optionGradientValue, 1) - 1];
+        let color = gradientCfg.colors[Math.max(optionGradientValue, 1) - 1];  // Math.max() to avoid negative indices
 
         if (!color) {
-            logger.warn(`No color found for "${option.name}" w/ ${option.numToots} toots, using default. gradientCfg:`, gradientCfg);
-            color = gradientCfg.highlight.gradient.endpoints[0];  // Assume it's a big number and deserves the top color
+            logger.warn(`No color found for option:`, option);
+            color = gradientCfg.highlight.gradient.endpoints[1];  // Use the top color
         }
 
         return {
@@ -159,7 +158,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
             isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
             filter.options,
-            filter.title,
             filter.validValues,
             highlightedOnly,
             minToots,
