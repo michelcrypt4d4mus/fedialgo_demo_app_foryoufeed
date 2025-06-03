@@ -62,46 +62,34 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [ScoreName.FAVOURITED_ACCOUNTS]: algorithm.userData.favouriteAccounts,
     };
 
-    // Build an array of gradient colors that's as big as the maximum numToots in objList
-    const buildColorGradientTooltipCfg = (objList: ObjList): CheckboxGradientTooltipConfig | null => {
-        const dataSource = objList.source as FilterOptionDataSource;
-        const baseTooltipCfg = tooltipConfig[dataSource];
-        const gradientCfg = baseTooltipCfg?.highlight?.gradient;
-        if (!gradientCfg) return null;
-
-        const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
-        let colorGradient = buildGradient(gradientCfg.endpoints);
-        logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots()}`);
-
-        // Adjust the color gradient so there's more color variation in the low/middle range
-        if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
-            try {
-                const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
-                const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
-                colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
-                logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
-            } catch (err) {
-                logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\objList=`, objList);
-            }
-        }
-
-        // Add the colors array to the baseTooltipCfg
-        return {...baseTooltipCfg, colors: colorGradient.hsv(maxNumToots, false)};
-    };
-
     // Build a dict from UserDataSource to colors, which contains the colors and the ObjList
     // that can give us a historical numToots for any objects we are trying to colorize.
     const tooltipGradients: DataSourceGradients = useMemo(
         () => DATA_SOURCES_WITH_GRADIENT_TOOLTIPS.reduce(
             (gradients, dataSource) => {
-                const gradientCfg = buildColorGradientTooltipCfg(dataFinder[dataSource]);
+                const baseTooltipCfg = tooltipConfig[dataSource];
+                const gradientCfg = baseTooltipCfg?.highlight?.gradient;
+                if (!gradientCfg) return gradients; // Skip if there's no configured gradient
 
-                if (gradientCfg) {
-                    gradients[dataSource] = gradientCfg;
-                } else {
-                    logger.trace(`No gradient config found for "${dataSource}", probably not configured for this filter...`);
+                const objList = dataFinder[dataSource];
+                const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
+                let colorGradient = buildGradient(gradientCfg.endpoints);
+                logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots()}`);
+
+                // Adjust the color gradient so there's more color variation in the low/middle range
+                if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
+                    try {
+                        const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
+                        const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
+                        colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
+                        logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
+                    } catch (err) {
+                        logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\objList=`, objList);
+                    }
                 }
 
+                // Add the colors array to the baseTooltipCfg
+                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxNumToots, false)};
                 return gradients;
             },
             {} as DataSourceGradients
@@ -116,7 +104,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Get the color & text for the tooltip based on the number stored in the option prop w/name same as dataSource param
     // Returns null if the option doesn't have a number for that dataSource.
-    const getGradientColorTooltip = (option: BooleanFilterOption, dataSource: UserDataSource): CheckboxTooltipConfig | undefined => {
+    const getGradientColorTooltip = (option: BooleanFilterOption, dataSource: FilterOptionDataSource): CheckboxTooltipConfig | undefined => {
         const optionGradientValue = option[dataSource];  // Pre-populated in fedialgo
         if (!isNumber(optionGradientValue)) return undefined;
         const gradientCfg = tooltipGradients[dataSource];
