@@ -170,7 +170,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 isChecked={filter.isThisSelectionEnabled(name)}
                 key={`${filter.title}_${name}_${i}`}
                 label={filterConfig?.formatLabel ? filterConfig?.formatLabel(name) : name}
-                labelExtra={filter.optionInfo[name]}
+                option={filter.optionInfo.getObj(name)}
                 onChange={(e) => filter.updateValidOptions(name, e.target.checked)}
                 tooltip={findTooltip(name)}
                 url={isTagFilter && algorithm.tagUrl(name)}
@@ -180,8 +180,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionGrid = useMemo(
         () => {
-            logger.trace(`Rebuilding optionGrid for ${Object.keys(filter.optionInfo).length} options...`);
+            logger.trace(`Rebuilding optionGrid for ${filter.optionInfo.length} options...`);
             let optionKeys = filter.optionsSortedByValue(minToots);
+            logger.trace(`Found ${optionKeys.length} options for filter "${filter.title}" with minToots=${minToots}:`, optionKeys);
             if (highlightedOnly) optionKeys = optionKeys.filter(name => findTooltip(name));
             if (!sortByCount) optionKeys = alphabetize(optionKeys);
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
