@@ -158,7 +158,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
             isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
             filter.options,
-            filter.validValues,
+            filter.selectedOptions,
             highlightedOnly,
             minToots,
             sortByCount,

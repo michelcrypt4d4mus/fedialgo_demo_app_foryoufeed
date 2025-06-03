@@ -174,7 +174,7 @@ export default function Feed() {
                                 onClick={() => setShowNewTootModal(true)}
                                 variant="outline-primary"
                             >
-                                {isLoading ? `Loading...` : `Create New Toot`}
+                                {`Create New Toot`}
                             </Button>
                         </div>
                     </div>

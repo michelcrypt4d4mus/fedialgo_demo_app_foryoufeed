@@ -90,7 +90,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     return (
         <FilterAccordionSection
             description={filter.description}
-            isActive={filter.validValues.length > 0}
+            isActive={filter.selectedOptions.length > 0}
             switchbar={headerSwitches}
             title={filter.title}
         >
