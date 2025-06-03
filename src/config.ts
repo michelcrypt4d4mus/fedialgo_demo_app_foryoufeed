@@ -5,7 +5,7 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey, type UserDataSource } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey, type FilterOptionDataSource } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig, type GradientEndpoints } from "./helpers/style_helpers";
@@ -43,7 +43,7 @@ export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
 
 // TODO: this is kind of a monstrosity
 export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName.LANGUAGE | TypeFilterName | UserDataSource)]?: CheckboxTooltipConfig
+    [key in (BooleanFilterName.LANGUAGE | TypeFilterName | FilterOptionDataSource)]?: CheckboxTooltipConfig
 };
 
 type FilterOptionFormatCfg = {

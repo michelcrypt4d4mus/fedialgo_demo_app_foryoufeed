@@ -6,14 +6,16 @@
 import { useMemo, useState } from "react";
 
 import {
+    FILTER_OPTION_DATA_SOURCES,
     BooleanFilter,
     BooleanFilterName,
     ObjList,
     ScoreName,
+    TagList,
     TagTootsCacheKey,
     TypeFilterName,
     type BooleanFilterOption,
-    type UserDataSource,
+    type FilterOptionDataSource,
 } from "fedialgo";
 
 import FilterCheckbox from "./FilterCheckbox";
@@ -30,8 +32,7 @@ const DATA_SOURCES_WITH_GRADIENT_TOOLTIPS = [
     ScoreName.FAVOURITED_ACCOUNTS,
 ] as const;
 
-type FilterOptionDataSource = typeof DATA_SOURCES_WITH_GRADIENT_TOOLTIPS[number];
-type DataSourceGradients = Record<UserDataSource, CheckboxGradientTooltipConfig>;
+type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
@@ -53,6 +54,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     const isUserFilter = (filter.title == BooleanFilterName.USER);
 
+    // TODO: could use TagList.allTagTootsLists() for this but it's async
     const dataFinder: Record<FilterOptionDataSource, ObjList> = {
         [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: algorithm.userData.participatedTags,
         [TagTootsCacheKey.TRENDING_TAG_TOOTS]: algorithm.trendingData.tags,
@@ -62,13 +64,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Build an array of gradient colors that's as big as the maximum numToots in objList
     const buildColorGradientTooltipCfg = (objList: ObjList): CheckboxGradientTooltipConfig | null => {
-        const dataSource = objList.source as UserDataSource;
+        const dataSource = objList.source as FilterOptionDataSource;
         const baseTooltipCfg = tooltipConfig[dataSource];
         const gradientCfg = baseTooltipCfg?.highlight?.gradient;
         if (!gradientCfg) return null;
 
         const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
+        logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots()}`);
 
         // Adjust the color gradient so there's more color variation in the low/middle range
         if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
@@ -82,12 +85,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             }
         }
 
-        logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots()}`);
-
-        return {
-            ...baseTooltipCfg,
-            colors: colorGradient.hsv(maxNumToots, false),  // Add the colors array to the baseTooltip
-        };
+        // Add the colors array to the baseTooltipCfg
+        return {...baseTooltipCfg, colors: colorGradient.hsv(maxNumToots, false)};
     };
 
     // Build a dict from UserDataSource to colors, which contains the colors and the ObjList
