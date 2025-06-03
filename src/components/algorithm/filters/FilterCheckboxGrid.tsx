@@ -32,8 +32,6 @@ type TagListColorGradient = {
     objList: ObjList;
 };
 
-// const EMPTY_GRADIENT: TagListColorGradient = {colors: [], objList: new TagList([])};
-
 interface FilterCheckboxGridProps {
     filter: BooleanFilter,
     highlightedOnly?: boolean,
@@ -52,14 +50,13 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const filterTooltips: FilterOptionTypeTooltips = filterConfig?.tooltips || {};
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
+    const isUserFilter = (filter.title == BooleanFilterName.USER);
 
-    // TODO: ObjList now has a 'source' property that presumably is the same as dataSource
     const buildObjListColorGradient = (objList: ObjList): TagListColorGradient => {
         const dataSource = objList.source as UserDataSource;
         const gradientCfg = filterTooltips[dataSource]?.highlight?.gradient;
-        if (!objList) throw new Error(`No objList found for dataSource: ${dataSource} in filterConfig`);
-        if (!objList.source) logger.logAndThrowError(`No source found for objList: ${objList} in filterConfig`, objList);
         if (!gradientCfg) throw new Error(`No gradientCfg found for dataSource: ${dataSource} in filterConfig`);
+        if (!objList?.source) logger.logAndThrowError(`No source found for objList: ${objList} in filterConfig`, objList);
         const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
@@ -81,15 +78,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     };
 
     // Build a dict from UserDataSource to TagListColorGradient, which contains the colors and the ObjList
+    // that can give us a historical numToots for any objects we are trying to colorize.
     const tooltipGradientInfo: GradientInfo = useMemo(
         () => [ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey)].reduce(
             (gradientInfos, dataSource) => {
                 // Skip gradients that aren't configured for this filter type
-                if (!filterTooltips[dataSource]?.highlight?.gradient) {
-                    logger.info(`Skipping gradient for "${dataSource}" in filterTooltips, not configured.`);
-                    return gradientInfos;
-                }
-
+                if (!filterTooltips[dataSource]?.highlight?.gradient) return gradientInfos;
                 let objList: ObjList;
 
                 if (dataSource == TagTootsCacheKey.PARTICIPATED_TAG_TOOTS) {
@@ -120,11 +114,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     // Get the actual color for the checkbox tooltip, based on the numToots
-    const getGradientColorTooltip = (
-        objName: string,
-        dataSource: UserDataSource,
-        allowMisses: boolean = false
-    ): CheckboxTooltip => {
+    const getGradientColorTooltip = (objName: string, dataSource: UserDataSource): CheckboxTooltip => {
         const { colors, objList } = tooltipGradientInfo[dataSource];
         const obj = objList.getObj(objName);
         const baseTooltip = filterTooltips[dataSource];
@@ -135,8 +125,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         }
 
         if (!obj) {
-            const msg = `No gradient found for "${objName}" in ${dataSource}, using default tooltip:`;
-            allowMisses ? logger.trace(msg, objList, baseTooltip) : logger.warn(msg, objList, baseTooltip);
+            logger.warn(`No gradient found for "${objName}" in ${dataSource}, using default tooltip:`, baseTooltip);
             return baseTooltip;
         }
 
@@ -155,7 +144,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     };
 
     const findTooltip = (name: string): CheckboxTooltip | undefined => {
-        if (filter.title == BooleanFilterName.HASHTAG) {
+        if (isTagFilter) {
             if (name in algorithm.userData.followedTags) {
                 return filterTooltips[TypeFilterName.FOLLOWED_HASHTAGS];
             } else if (tooltipGradientInfo[TagTootsCacheKey.TRENDING_TAG_TOOTS].objList.getObj(name)) {
@@ -167,12 +156,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE && name == algorithm.userData.preferredLanguage) {
             return filterTooltips[BooleanFilterName.LANGUAGE];
-        } else if (filter.title == BooleanFilterName.USER) {
+        } else if (isUserFilter) {
             if (algorithm.userData.favouriteAccounts.getObj(name)) {
-                logger.debug(`Getting tooltip for account: "${name}"`);
-                return getGradientColorTooltip(name, ScoreName.FAVOURITED_ACCOUNTS, true);
-            } else {
-                logger.debug(`No tooltip for account: "${name}", not in ${Object.keys(algorithm.userData.favouriteAccounts.objs).length} favouriteAccounts:`, algorithm.userData.favouriteAccounts);
+                return getGradientColorTooltip(name, ScoreName.FAVOURITED_ACCOUNTS);
             }
         }
     };
@@ -198,7 +184,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             let optionKeys = filter.optionsSortedByValue(minToots);
             if (highlightedOnly) optionKeys = optionKeys.filter(name => findTooltip(name));
             if (!sortByCount) optionKeys = alphabetize(optionKeys);
-
             return gridify(optionKeys.map((option, i) => propertyCheckbox(option, i)));
         },
         [
@@ -206,8 +191,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (isTagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
             (isTagFilter || isTypeFilter) ? algorithm.userData.participatedTags : undefined,
             (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
-            (filter.title == BooleanFilterName.USER) || isTypeFilter ? algorithm.userData.followedAccounts : undefined,
-            (filter.title == BooleanFilterName.USER) ? algorithm.userData.favouriteAccounts : undefined,
+            (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
+            isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
             filter.optionInfo,
             filter.title,
             filter.validValues,

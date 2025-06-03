@@ -150,7 +150,7 @@ class Config implements ConfigType {
         boolean: {
             maxLabelLength: 19,                          // Maximum length of a filter option label
             minTootsSlider: {
-                idealNumOptions: 75,                     // Ideal number of options to show in the minTootsSlider
+                idealNumOptions: 60,                     // Ideal number of options to show in the minTootsSlider
                 minItems: 10,                            // Minimum number of items to show (used for max value calculation)
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
