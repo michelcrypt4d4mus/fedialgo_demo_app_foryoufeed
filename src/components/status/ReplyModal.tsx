@@ -166,9 +166,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             style={{cursor: cursor}}
         >
             <Modal.Header closeButton style={headerStyle}>
-                <p>
-                    {toot ? `Reply to {toot.account.describe()` : `Create a new toot`}
-                </p>
+                <p>{toot ? `Reply to ${toot.account.describe()}` : `Create New Toot`}</p>
             </Modal.Header>
 
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
