@@ -16,34 +16,43 @@ export enum SwitchType {
 
 export type GradientEndpoints = [tinycolor.Instance, tinycolor.Instance];
 
-export type ThemeConfig = {
+interface ThemeConfigBase {
     accordionOpenBlue: CSSProperties['color'];
     favouritedTagGradient: GradientEndpoints;
     feedBackgroundColor: CSSProperties['backgroundColor'];  // TODO: change to GradientEndpoints
     feedBackgroundColorLite: CSSProperties['backgroundColor'];
     followedTagColor: CSSProperties['color'];
-    followedUserColor: CSSProperties['color'];
-    followedUserColorFaded: CSSProperties['color'];
-    participatedTagColor: CSSProperties['color'];  // TODO: change to GradientEndpoints
-    participatedTagColorMin: CSSProperties['color'];
+    followedUserGradient: GradientEndpoints,
+    participatedTagGradient: GradientEndpoints;
     trendingObjFontSize: number;
-    trendingTagColor: CSSProperties['color'];
-    trendingTagColorFaded: CSSProperties['color'];
+    trendingTagGradient: GradientEndpoints;
 };
 
-export const THEME: ThemeConfig = {
+export interface ThemeConfig extends ThemeConfigBase {
+    favouritedTagColor: CSSProperties["color"];
+    trendingTagColor: CSSProperties["color"];
+    participatedTagColor: CSSProperties["color"];
+    followedUserColor: CSSProperties["color"];
+}
+
+const THEME_BASE: ThemeConfigBase = {
     accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
     favouritedTagGradient: [tinycolor("#cfe3e3"), tinycolor("cyan")], // Gradient for favourited tags
     feedBackgroundColor: '#15202b', // background color for the timeline
     feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
     followedTagColor: 'yellow', // Color for followed tags
-    followedUserColor: 'cyan', // Color for followed users
-    followedUserColorFaded: '#2092a1', // Faded color for followed users
-    participatedTagColor: '#92a14a', // Color for participated tags
-    participatedTagColorMin: '#d8deb9', // Minimum color for participated tags
+    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')], // Color for followed users
+    participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Color for participated tags
     trendingObjFontSize: 16, // Font size for trending objects
-    trendingTagColor: 'firebrick', // Color for trending tags
-    trendingTagColorFaded: '#f08c8c', // Faded color for trending tags
+    trendingTagGradient: [tinycolor('#f08c8c'), tinycolor('firebrick')], // Gradient for trending tags
+};
+
+export const THEME: ThemeConfig = {
+    ...THEME_BASE,
+    favouritedTagColor: THEME_BASE.favouritedTagGradient.slice(-1)[0].toHexString(),
+    followedUserColor: THEME_BASE.followedUserGradient.slice(-1)[0].toHexString(),
+    participatedTagColor: THEME_BASE.participatedTagGradient.slice(-1)[0].toHexString(),
+    trendingTagColor: THEME_BASE.trendingTagGradient.slice(-1)[0].toHexString(),
 };
 
 export const RECHARTS_COLORS: CSSProperties["color"][] = [
