@@ -4,15 +4,15 @@
 import React, { useEffect } from 'react';
 
 import { createRestAPIClient } from "masto"
+import { FEDIALGO } from 'fedialgo';
 import { useSearchParams } from 'react-router-dom';
 
+import { config } from "../config";
 import { getLogger } from '../helpers/log_helpers';
-import { OAUTH_SCOPE_STR } from './LoginPage';
 import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
 import { User } from '../types';
-import { FEDIALGO } from 'fedialgo';
 
 const logger = getLogger("CallbackPage");
 // const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
@@ -63,7 +63,7 @@ export default function CallbackPage() {
         body.append('client_secret', app.clientSecret)
         body.append('redirect_uri', app.redirectUri)
         body.append('code', code);
-        body.append('scope', OAUTH_SCOPE_STR);
+        body.append('scope', config.app.createAppParams.scopes);
 
         // TODO: access_token is retrieved manually via fetch() instead of using the masto.js library
         const oauthTokenURI = `${app.website}/oauth/token`;

@@ -3,45 +3,57 @@
  */
 import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
-import tinycolor from "tinycolor2";
+import { mastodon } from 'masto';
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey, type FilterOptionDataSource } from "fedialgo";
+import {
+    FEDIALGO,
+    LANGUAGE_CODES,
+    BooleanFilterName,
+    ScoreName,
+    TrendingType,
+    TypeFilterName,
+    TagTootsCacheKey,
+    type FilterOptionDataSource
+} from "fedialgo";
 
+import { CheckboxTooltipConfig } from './helpers/tooltip_helpers';
 import { MB } from "./helpers/number_helpers";
-import { THEME, SwitchType, ThemeConfig, type GradientEndpoints } from "./helpers/style_helpers";
+import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 import { type TrendingPanelName } from "./components/TrendingSection";
-import { CSSProperties } from 'react';
 
-export const INTERACTIONS = "Interactions";  // Numeric filter label
-export type FilterTitle = BooleanFilterName | typeof INTERACTIONS;
 
-export interface CheckboxGradientCfg {
-    // Sometimes we want to adjust the gradient instead of using the one between the endpoints to make any of the
-    // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
-    adjustment?: {
-        adjustPctiles: number[];
-        minTagsToAdjust: number;
-    };
-    endpoints: GradientEndpoints;
-    textSuffix: (n: number) => string;
+// Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
+const OAUTH_SCOPES = [
+    "read",
+    "write:bookmarks",
+    "write:favourites",
+    "write:follows",
+    "write:media",
+    "write:mutes",
+    "write:statuses",  // Required for retooting and voting in polls
+];
+
+const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed";
+
+
+// Config types
+type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
+
+// Subconfig types
+type AppConfig = {
+    accessTokenRevokedMsg: string;
+    changelogUrl: string;
+    createAppParams: Omit<CreateAppParams, "redirectUris">;
+    defaultServer: string;
+    developerMastodonUrl: string;
+    headerIconUrl: string;
+    loadingSpinnerType: SpinnerProps['animation'];
+    repoName: string | null;
+    repoUrl: string;
+    showcaseImageUrl: string;
 };
 
-// Two types unioned to create on XOR argument situation
-type CheckboxColor = { color: CSSProperties["color"], gradient?: never; };
-type CheckboxGradientColor = { color?: never; gradient: CheckboxGradientCfg };
-
-export type CheckboxTooltipConfig = {
-    anchor?: string;
-    highlight?: CheckboxColor | CheckboxGradientColor;  // Union type forces exactly one of 'color' or 'gradient' props
-    text: string;
-};
-
-// Same as CheckboxGradientCfg but with the actual array or colors set
-export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
-    colors: tinycolor.Instance[];  // Array of colors for the gradient
-};
-
-type OptionTooltipKey = (
+type FilterTooltipConfigKey = (
       FilterOptionDataSource
     | BooleanFilterName.LANGUAGE
     | TypeFilterName.FOLLOWED_HASHTAGS
@@ -52,21 +64,8 @@ type FilterOptionFormatCfg = {
     hidden?: boolean;                        // If true hide this option from the UI
     position: number;                        // Position of this filter in the filters section, used for ordering
     tooltips?: {                             // Color highlight config for filter options
-        [key in OptionTooltipKey]?: CheckboxTooltipConfig
+        [key in FilterTooltipConfigKey]?: CheckboxTooltipConfig
     };
-};
-
-// Subconfig types
-type AppConfig = {
-    accessTokenRevokedMsg: string;
-    changelogUrl: string;
-    developerMastodonUrl: string;
-    headerIconUrl: string;
-    homepage: string;
-    loadingSpinnerType: SpinnerProps['animation'];
-    repoName: string | null;
-    repoUrl: string;
-    showcaseImageUrl: string;
 };
 
 type FilterConfig = {
@@ -88,7 +87,7 @@ type FilterConfig = {
         invertSelectionTooltipTxt: string;
         maxValue: number;
         position: number;
-        title: FilterTitle;
+        title: string;
     };
 };
 
@@ -126,6 +125,11 @@ type TootConfig = {
     scoreDigits: number;
 };
 
+type TrendingConfig = {
+    maxLengthForMulticolumn: number;
+    panels: Record<TrendingPanelName, TrendingPanelCfg>;
+};
+
 type TrendingPanelCfg = {
     description?: string;
     hasCustomStyle?: boolean;
@@ -135,20 +139,11 @@ type TrendingPanelCfg = {
     title?: string;
 };
 
-type TrendingConfig = {
-    maxLengthForMulticolumn: number;
-    panels: Record<TrendingPanelName, TrendingPanelCfg>;
-};
-
 type WeightsConfig = {
     defaultStepSize: number;
     presetMenuLabel: string;
     scalingMultiplier: number;
 };
-
-
-// Constants for subconfig
-const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed";
 
 interface ConfigType {
     filters: FilterConfig;
@@ -168,9 +163,14 @@ class Config implements ConfigType {
     app: AppConfig = {
         accessTokenRevokedMsg: `Your access token expired. Please log in again to continue using the app.`,
         changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases`,
+        createAppParams: {
+            clientName: `${FEDIALGO}Demo`,
+            scopes: OAUTH_SCOPES.join(" "),
+            website: HOMEPAGE,
+        },
+        defaultServer: "universeodon.com",
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
-        homepage: HOMEPAGE,
         loadingSpinnerType: 'grow',         // Type of loading spinner to use
         repoName: HOMEPAGE ? HOMEPAGE.split('/').pop() : null,
         repoUrl: HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE,
@@ -273,7 +273,7 @@ class Config implements ConfigType {
             invertSelectionTooltipTxt: "Show toots with less than the selected number of interactions instead of more",
             position: 3,
             maxValue: 50,                          // Maximum value for numeric filters
-            title: INTERACTIONS,                   // Title for numeric filters section
+            title: "Interactions",                 // Title for numeric filters section
         },
         headerSwitches: {
             tooltipText: {

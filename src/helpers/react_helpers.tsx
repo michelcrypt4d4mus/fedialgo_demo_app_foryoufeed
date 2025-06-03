@@ -9,7 +9,7 @@ import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, Reac
 import { type TrendingWithHistory, Toot, makeChunks } from 'fedialgo';
 
 import { isEmptyStr } from './string_helpers';
-import { getLogger, logMsg } from "./log_helpers";
+import { appLogger, getLogger, logMsg } from "./log_helpers";
 
 // TODO: this shouldn't be here...
 export const isProduction = process.env.NODE_ENV === 'production';
@@ -30,7 +30,7 @@ export function followUri(uri: string, e: React.MouseEvent): boolean {
 // Open the Toot in a new tab, resolved to its URL on the user's home server
 export async function openToot(toot: Toot, e: React.MouseEvent): Promise<boolean> {
     e.preventDefault();
-    logMsg("openToot() called with:", toot);
+    appLogger.log("openToot() called with:", toot);
     const resolvedURL = await toot.homeserverURL();
     return followUri(resolvedURL, e);
 };

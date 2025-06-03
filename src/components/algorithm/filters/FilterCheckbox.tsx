@@ -8,7 +8,8 @@ import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 import { type BooleanFilterOption } from "fedialgo";
 
-import { CheckboxTooltipConfig, config } from "../../../config";
+import { config } from "../../../config";
+import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { followUri } from "../../../helpers/react_helpers";
 import { getLogger } from "../../../helpers/log_helpers";
 import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";

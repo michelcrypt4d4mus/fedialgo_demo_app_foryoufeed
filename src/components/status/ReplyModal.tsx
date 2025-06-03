@@ -57,10 +57,11 @@ export default function ReplyModal(props: ReplyModalProps) {
         setMediaAttachments(prev => prev.filter(m => m.id !== mediaID));
     };
 
+    // Resolve the toot ID if we are replying to an existing toot
     useEffect(() => {
-        if (!toot) return;
+        if (!(show && toot)) return;
 
-        if (show && !resolvedID) {
+        if (!resolvedID) {
             logger.log(`Resolving toot ID for`, toot);
 
             toot.resolveID()
@@ -69,8 +70,9 @@ export default function ReplyModal(props: ReplyModalProps) {
                     handleError(`Failed to resolve toot on ${serverInfo?.title}!`, `Can't reply right now.`, err);
                 });
         }
-    }, [api, show])
+    }, [api, show, toot])
 
+    // Drop zone stuff from the react-dropzone template
     const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
         logger.log(`Processing files:`, acceptedFiles);
 
@@ -123,6 +125,7 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
 
+    // Actually submit the new Status object to the server
     const createToot = async () => {
         if (toot && !resolvedID) {
             handleError("Failed to resolve toot ID to reply to!");
@@ -139,12 +142,17 @@ export default function ReplyModal(props: ReplyModalProps) {
             return;
         }
 
-        const mediaIDs = mediaAttachments.map(m => m.id);
-        logger.log(`Submitting toot (replying to "${resolvedID}", text: "${replyText.trim()}", mediaIDs:`, mediaIDs);
+        const createStatusParams = {
+            inReplyToId: resolvedID,
+            mediaIds: mediaAttachments.map(m => m.id),
+            status: replyText.trim()
+        }
 
-        api.v1.statuses.create({inReplyToId: resolvedID, mediaIds: mediaIDs, status: replyText.trim()})
-            .then(() => {
-                logger.log(`Reply submitted successfully!`);
+        logger.log(`Creating toot with params:`, createStatusParams);
+
+        api.v1.statuses.create(createStatusParams)
+            .then((response) => {
+                logger.log(`Reply submitted successfully! Response:`, response);
                 setShow(false);
             }).catch(err => {
                 handleError(`Failed to submit reply`, null, err);
@@ -152,7 +160,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     };
 
     const handleError = (msg: string, note?: string, errorObj?: Error) => {
-        let errorArgs: Record<string, string | any> = { resolvedID, statusConfig };
+        const errorArgs: Record<string, string | any> = { resolvedID, statusConfig };
         if (mediaAttachments.length) errorArgs.mediaAttachments = mediaAttachments;
         if (!isEmptyStr(replyText)) errorArgs.replyText = replyText;
         logAndSetFormattedError({errorObj, logger, msg, note, args: errorArgs});

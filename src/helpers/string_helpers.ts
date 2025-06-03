@@ -3,8 +3,8 @@
  */
 import { MediaCategory, type TrendingData, TrendingType } from "fedialgo";
 
+import { appLogger } from "./log_helpers";
 import { config } from "../config";
-import { debugMsg, errorMsg, warnMsg } from "./log_helpers";
 import { MimeExtensions } from "../types";
 
 // Window events: https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event
@@ -60,13 +60,13 @@ export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
                 acc[MIME_GROUPS[MediaCategory.VIDEO]].push(mimeTypeExtension(mimeType));
             }
         } else {
-            warnMsg(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
+            appLogger.warn(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
         }
 
         return acc;
     }, {} as MimeExtensions);
 
-    debugMsg(`Server accepted MIME types:`, mimeExtensions);
+    appLogger.trace(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
 };
 
@@ -165,7 +165,7 @@ export const versionString = () => {
     try {
         return process.env.FEDIALGO_VERSION;
     } catch (e) {
-        errorMsg(`Error getting version string: ${e}`);
+        appLogger.error(`Error getting version string: ${e}`);
         return `?.?.?`;
     }
 };

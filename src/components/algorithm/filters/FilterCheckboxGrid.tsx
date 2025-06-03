@@ -18,7 +18,8 @@ import {
 
 import FilterCheckbox from "./FilterCheckbox";
 import { buildGradient } from "../../../helpers/style_helpers";
-import { config, type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from "../../../config";
+import { config } from "../../../config";
+import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { isNumber } from "../../../helpers/number_helpers";
