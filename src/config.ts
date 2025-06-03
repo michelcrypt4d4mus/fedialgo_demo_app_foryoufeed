@@ -5,7 +5,7 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey, type UserDataSource } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
@@ -14,10 +14,9 @@ import { type TrendingPanelName } from "./components/TrendingSection";
 
 export const INTERACTIONS = "Interactions";  // Numeric filter label
 export type FilterTitle = BooleanFilterName | typeof INTERACTIONS;
-export type GradientDataSource = TagTootsCacheKey | ScoreName.FAVOURITED_ACCOUNTS;
 
 export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName.LANGUAGE | GradientDataSource | TypeFilterName)]?: CheckboxTooltip
+    [key in (BooleanFilterName.LANGUAGE | TypeFilterName | UserDataSource)]?: CheckboxTooltip
 };
 
 type FilterOptionsFormat = {
@@ -151,7 +150,7 @@ class Config implements ConfigType {
         boolean: {
             maxLabelLength: 19,                          // Maximum length of a filter option label
             minTootsSlider: {
-                idealNumOptions: 75,                     // Ideal number of options to show in the minTootsSlider
+                idealNumOptions: 60,                     // Ideal number of options to show in the minTootsSlider
                 minItems: 10,                            // Minimum number of items to show (used for max value calculation)
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
