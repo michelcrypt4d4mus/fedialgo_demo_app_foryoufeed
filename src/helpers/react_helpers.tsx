@@ -48,7 +48,7 @@ export function openTrendingLink(obj: TrendingWithHistory, e: MouseEvent): boole
 export function buildStateCheckbox(
     label: string,
     state: ReturnType<typeof useState<boolean>>,
-    className?: string
+    className?: string,
 ) {
     return (
         <Form.Check

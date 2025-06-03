@@ -23,7 +23,6 @@
         "react-dropzone": "^14.3.8",
         "react-error-boundary": "^6.0.0",
         "react-lazy-load-image-component": "^1.6.2",
-        "react-persistent-state": "^1.1.8",
         "react-router-dom": "^7.5.2",
         "react-tooltip": "^5.28.1",
         "recharts": "^2.15.3",
