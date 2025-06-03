@@ -47,11 +47,17 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     const isUserFilter = (filter.title == BooleanFilterName.USER);
 
+    const dataFinder: Record<UserDataSource, ObjList> = {
+        [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: algorithm.userData.participatedTags,
+        [TagTootsCacheKey.TRENDING_TAG_TOOTS]: algorithm.trendingData.tags,
+        [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: algorithm.userData.favouritedTags,
+        [ScoreName.FAVOURITED_ACCOUNTS]: algorithm.userData.favouriteAccounts,
+    };
+
+    // Build an array of gradient colors that's as big as the maximum numToots in objList
     const buildObjListColorGradient = (objList: ObjList): tinycolor.Instance[] => {
         const dataSource = objList.source as UserDataSource;
         const gradientCfg = tooltipConfig[dataSource]?.highlight?.gradient;
-        if (!gradientCfg) throw new Error(`No gradientCfg found for dataSource: ${dataSource} in filterConfig`);
-        if (!objList?.source) logger.logAndThrowError(`No source found for objList: ${objList} in filterConfig`, objList);
         const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
         let colorGradient = buildGradient(gradientCfg.endpoints);
 
@@ -74,30 +80,20 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Build a dict from UserDataSource to colors, which contains the colors and the ObjList
     // that can give us a historical numToots for any objects we are trying to colorize.
-    const tooltipGradientInfo: GradientInfo = useMemo(
+    const tooltipGradients: GradientInfo = useMemo(
         // TODO: ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey) should probably be a real enum
         () => [ScoreName.FAVOURITED_ACCOUNTS, ...Object.values(TagTootsCacheKey)].reduce(
-            (gradientInfos, dataSource) => {
+            (gradients, dataSource) => {
                 // Skip gradients that aren't configured for this filter type
-                if (!tooltipConfig[dataSource]?.highlight?.gradient) return gradientInfos;
-                let objList: ObjList;
-
-                if (dataSource == TagTootsCacheKey.PARTICIPATED_TAG_TOOTS) {
-                    objList = algorithm.userData.participatedTags;
-                } else if (dataSource == TagTootsCacheKey.TRENDING_TAG_TOOTS) {
-                    objList = algorithm.trendingData.tags;
-                } else if (dataSource == TagTootsCacheKey.FAVOURITED_TAG_TOOTS) {
-                    objList = algorithm.userData.favouritedTags;
-                } else if (dataSource == ScoreName.FAVOURITED_ACCOUNTS) {
-                    objList = algorithm.userData.favouriteAccounts;
-                }
+                if (!tooltipConfig[dataSource]?.highlight?.gradient) return gradients;
+                const objList = dataFinder[dataSource];
 
                 if (!objList) {
                     logger.logAndThrowError(`No objList found "${dataSource}", userData:`, algorithm.userData);
                 }
 
-                gradientInfos[dataSource] = buildObjListColorGradient(objList);
-                return gradientInfos;
+                gradients[dataSource] = buildObjListColorGradient(objList);
+                return gradients;
             },
             {} as GradientInfo
         ),
@@ -112,9 +108,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     // Get the actual color for the checkbox tooltip, based on the numToots
     const getGradientColorTooltip = (option: BooleanFilterOption, dataSource: UserDataSource): CheckboxTooltip => {
         const baseTooltip = tooltipConfig[dataSource];
-        if (!baseTooltip) throw new Error(`No tooltip found for "${dataSource}" in filterTooltips!`);
+        if (!baseTooltip) throw new Error(`No tooltip found for "${dataSource}" in tooltipConfig!`);
         const gradientCfg = baseTooltip.highlight.gradient;
-        const colors = tooltipGradientInfo[dataSource];
+        const colors = tooltipGradients[dataSource];
 
         // gradientIdx is num participation, num favourites, etc. from the user history for this option
         const gradientIdx = option[dataSource] || 0;
@@ -158,8 +154,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 isChecked={filter.isThisSelectionEnabled(option.name)}
                 key={`${filter.title}_${option.name}_${i}`}
                 label={filterConfig?.formatLabel ? filterConfig?.formatLabel(option.name) : option.name}
-                option={option}
                 onChange={(e) => filter.updateValidOptions(option.name, e.target.checked)}
+                option={option}
                 tooltip={findTooltip(option)}
                 url={isTagFilter && algorithm.tagUrl(option.name)}
             />
@@ -169,10 +165,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const optionGrid = useMemo(
         () => {
             logger.trace(`Rebuilding optionGrid for ${filter.optionInfo.length} options...`);
-            let options = filter.optionsSortedByValue(minToots);
-            if (!sortByCount) options = filter.optionsSortedByName(minToots);
+            let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
             if (highlightedOnly) options = options.filter(option => !!findTooltip(option));
-            logger.trace(`Found ${options.length} options for filter "${filter.title}" with minToots=${minToots}:`, options);
             return gridify(options.objs.map((option, i) => makeOptionCheckbox(option, i)));
         },
         [
