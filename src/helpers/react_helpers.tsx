@@ -8,12 +8,11 @@ import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, Reac
 
 import { type TrendingWithHistory, Toot, makeChunks } from 'fedialgo';
 
+import { appLogger } from "./log_helpers";
 import { isEmptyStr } from './string_helpers';
-import { appLogger, getLogger, logMsg } from "./log_helpers";
 
 // TODO: this shouldn't be here...
 export const isProduction = process.env.NODE_ENV === 'production';
-const logger = getLogger("react_helpers");
 
 
 ////////////////////////
@@ -97,7 +96,7 @@ export function extractText(children: ReactNode | ReactNode[]): string[] {
     ) as string[];
 
     nodeStrings = nodeStrings.filter((s) => !isEmptyStr(s));
-    logger.trace("extractText() called with children:", children, "\nresulting in:", nodeStrings);
+    appLogger.trace("extractText() called with children:", children, "\nresulting in:", nodeStrings);
     return nodeStrings;
 };
 
