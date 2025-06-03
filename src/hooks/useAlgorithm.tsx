@@ -26,8 +26,6 @@ interface AlgoContext {
     mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
     serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
     shouldAutoUpdateState?: [boolean, (shouldAutoUpdate: boolean) => void],
-    setShouldAutoUpdate?: (should: boolean) => void,
-    shouldAutoUpdate?: boolean,
     timeline: Toot[],
     triggerFeedUpdate?: (moreOldToots?: boolean) => void,
     triggerPullAllUserData?: () => void,
@@ -41,9 +39,6 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const { logout, user } = useAuthContext();
     const { logAndSetFormattedError } = useError();
 
-    // TODO: this doesn't make any API calls yet, right?
-    const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
-
     // State variables
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true); // TODO: this shouldn't start as true...
@@ -56,6 +51,9 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const [timeline, setTimeline] = useState<Toot[]>([]);
     // User checkbox to load new toots on refocus
     const shouldAutoUpdateState = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
+
+    // TODO: this doesn't make any API calls yet, right?
+    const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
 
     // TODO: somehow this consistently gets called to setIsLoading(false) but the react component's state
     // has somehow already been updated to isLoading=false, so it logs a warning.
