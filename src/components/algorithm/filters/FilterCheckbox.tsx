@@ -6,34 +6,13 @@ import Form from 'react-bootstrap/esm/Form';
 
 import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
-import { type BooleanFilterOption, type UserDataSource } from "fedialgo";
+import { type BooleanFilterOption } from "fedialgo";
 
-import { config } from "../../../config";
+import { CheckboxTooltipConfig, config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { getLogger } from "../../../helpers/log_helpers";
-import { linkesque, tooltipZIndex, type GradientEndpoints } from "../../../helpers/style_helpers";
+import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-
-export type CheckboxColorGradient = {
-    // Sometimes we want to adjust the gradient instead of using the one between the endpoints to make any of the
-    // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
-    adjustment?: {
-        adjustPctiles: number[];
-        minTagsToAdjust: number;
-    },
-    dataSource: UserDataSource;
-    endpoints: GradientEndpoints;
-    textSuffix: (n: number) => string;
-};
-
-export type CheckboxTooltip = {
-    anchor?: string;
-    highlight?: CheckboxColor | CheckboxColoredByGradient; // Union type forces exactly one of 'color' or 'gradient' props
-    text: string;
-};
-
-type CheckboxColor = { color: CSSProperties["color"]; gradient?: never; };
-type CheckboxColoredByGradient = { color?: never; gradient: CheckboxColorGradient; };
 
 const HASHTAG_ANCHOR = "user-hashtag-anchor";
 const HIGHLIGHT = "highlighted";
@@ -51,7 +30,7 @@ interface FilterCheckboxProps {
     label: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     option?: BooleanFilterOption,
-    tooltip?: CheckboxTooltip,
+    tooltip?: CheckboxTooltipConfig,
     url?: string,
 };
 
@@ -59,11 +38,10 @@ interface FilterCheckboxProps {
 export default function FilterCheckbox(props: FilterCheckboxProps) {
     let { capitalize, isChecked, label, option, onChange, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
-    const [isCheckedState, setIsCheckedState] = useState(isChecked);
 
-    let labelExtra = (typeof option?.numToots == "number") ? option.numToots.toLocaleString() : '';
-    logger.trace(`label: "${label}, labelExtra:`, labelExtra, `, option:`, option);
+    const labelExtra = option?.numToots?.toLocaleString();
     const labelStyle: CSSProperties = {...defaultLabelStyle};
+    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     let style: CSSProperties = {color: "black"};
     let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
 

@@ -52,10 +52,9 @@ echo -e "\nFinished tagging fedialgo $VERSION_NUMBER."
 
 # Deploy the demo app
 if [[ -z "$SKIP_DEPLOY" ]]; then
-    echo "Skipping deploy..."
-else
     ./deploy.sh
+else
+    echo "Skipping deploy..."
 fi
 
-./deploy.sh
 ./link_local_fedialgo.sh

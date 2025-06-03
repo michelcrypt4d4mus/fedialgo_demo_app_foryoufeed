@@ -5,21 +5,48 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import tinycolor from "tinycolor2";
 import { capitalCase } from "change-case";
-import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey, type UserDataSource } from "fedialgo";
+import { LANGUAGE_CODES, BooleanFilterName, ScoreName, TrendingType, TypeFilterName, TagTootsCacheKey, type FilterOptionDataSource } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
-import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
-import { type CheckboxTooltip } from "./components/algorithm/filters/FilterCheckbox";
+import { THEME, SwitchType, ThemeConfig, type GradientEndpoints } from "./helpers/style_helpers";
 import { type TrendingPanelName } from "./components/TrendingSection";
+import { CSSProperties } from 'react';
 
 export const INTERACTIONS = "Interactions";  // Numeric filter label
 export type FilterTitle = BooleanFilterName | typeof INTERACTIONS;
 
-export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName.LANGUAGE | TypeFilterName | UserDataSource)]?: CheckboxTooltip
+export interface CheckboxGradientCfg {
+    // Sometimes we want to adjust the gradient instead of using the one between the endpoints to make any of the
+    // colors visible (e.g. when the user has one tag they participate in A LOT the rest will be undifferentiated)
+    adjustment?: {
+        adjustPctiles: number[];
+        minTagsToAdjust: number;
+    };
+    endpoints: GradientEndpoints;
+    textSuffix: (n: number) => string;
 };
 
-type FilterOptionsFormat = {
+// Two types unioned to create on XOR argument situation
+type CheckboxColor = { color: CSSProperties["color"], gradient?: never; };
+type CheckboxGradientColor = { color?: never; gradient: CheckboxGradientCfg };
+
+export type CheckboxTooltipConfig = {
+    anchor?: string;
+    highlight?: CheckboxColor | CheckboxGradientColor;  // Union type forces exactly one of 'color' or 'gradient' props
+    text: string;
+};
+
+// Same as CheckboxGradientCfg but with the actual array or colors set
+export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
+    colors: tinycolor.Instance[];  // Array of colors for the gradient
+};
+
+// TODO: this is kind of a monstrosity
+export type FilterOptionTypeTooltips = {
+    [key in (BooleanFilterName.LANGUAGE | TypeFilterName | FilterOptionDataSource)]?: CheckboxTooltipConfig
+};
+
+type FilterOptionFormatCfg = {
     formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
     position: number;                        // Position of this filter in the filters section, used for ordering
     tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
@@ -46,7 +73,7 @@ type FilterConfig = {
             minItems: number;
             tooltipHoverDelay: number;
         },
-        optionsFormatting: Record<BooleanFilterName, FilterOptionsFormat>,
+        optionsFormatting: Record<BooleanFilterName, FilterOptionFormatCfg>,
     };
     headerSwitches: {
         tooltipHoverDelay: number;
@@ -161,16 +188,11 @@ class Config implements ConfigType {
                         [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
                             highlight: {
                                 gradient: {
-                                    dataSource: TagTootsCacheKey.FAVOURITED_TAG_TOOTS,
                                     endpoints: THEME.favouritedTagGradient,
                                     textSuffix: (n: number) => ` ${n} times recently`,
                                 },
                             },
                             text: `You've favourited this hashtag`
-                        },
-                        [TypeFilterName.FOLLOWED_HASHTAGS]: {
-                            highlight: {color: THEME.followedTagColor},
-                            text: `You follow this hashtag`,
                         },
                         [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
                             highlight: {
@@ -179,7 +201,6 @@ class Config implements ConfigType {
                                         adjustPctiles: [0.95, 0.98], // Percentiles for gradient adjustment of participated tags
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
-                                    dataSource: TagTootsCacheKey.PARTICIPATED_TAG_TOOTS,
                                     endpoints: [                     // Start and end points for the color gradient
                                         tinycolor(THEME.participatedTagColorMin),
                                         tinycolor(THEME.participatedTagColor),
@@ -192,7 +213,6 @@ class Config implements ConfigType {
                         [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
                             highlight: {
                                 gradient: {
-                                    dataSource: TagTootsCacheKey.TRENDING_TAG_TOOTS,
                                     endpoints: [
                                         tinycolor(THEME.trendingTagColorFaded),
                                         tinycolor(THEME.trendingTagColor),
@@ -202,13 +222,21 @@ class Config implements ConfigType {
                             },
                             text: `This hashtag is trending`,
                         },
+                        [TypeFilterName.FOLLOWED_HASHTAGS]: {
+                            highlight: {
+                                color: THEME.followedTagColor
+                            },
+                            text: `You follow this hashtag`,
+                        },
                     },
                 },
                 [BooleanFilterName.LANGUAGE]: {
                     position: 5,
                     tooltips: {
                         [BooleanFilterName.LANGUAGE]: {
-                            highlight: {color: THEME.followedUserColor},
+                            highlight: {
+                                color: THEME.followedUserColor
+                            },
                             text: `You post most in this language`,
                         },
                     },
@@ -228,7 +256,6 @@ class Config implements ConfigType {
                                         adjustPctiles: [0.80, 0.98], // Percentiles for gradient adjustment of participated tags
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
-                                    dataSource: ScoreName.FAVOURITED_ACCOUNTS,
                                     endpoints: [tinycolor("#BCD8D8"), tinycolor(THEME.followedUserColor)],
                                     textSuffix: (n: number) => n ? ` (and favourited or retooted them ${n} times recently)` : '',
                                 },
