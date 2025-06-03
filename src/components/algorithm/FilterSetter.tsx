@@ -21,8 +21,9 @@ const logger = getLogger("FilterSetter");
 export default function FilterSetter() {
     const { algorithm } = useAlgorithm();
 
+    const booleanFiltersCfg = config.filters.boolean.optionsFormatting;
     // Filter for 'visible' because the APP filters are currently hidden
-    const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => f.visible);
+    const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => !booleanFiltersCfg[f.title].hidden);
     const numericFilters = Object.values(algorithm.filters.numericFilters);
     const hasActiveBooleanFilter = booleanFilters.some(f => f.selectedOptions.length);
     const hasActiveNumericFilter = numericFilters.some(f => f.value > 0);
@@ -30,7 +31,7 @@ export default function FilterSetter() {
 
     const filterPositions = booleanFilters.reduce(
         (filters, f) => {
-            const position = config.filters.boolean.optionsFormatting[f.title].position;
+            const position = booleanFiltersCfg[f.title].position;
             filters[position] = <BooleanFilterAccordionSection filter={f} key={f.title} />;
             return filters;
         },

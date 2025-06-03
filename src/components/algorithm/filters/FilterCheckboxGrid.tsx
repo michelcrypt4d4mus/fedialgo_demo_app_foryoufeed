@@ -141,7 +141,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     isChecked={filter.isOptionEnabled(option.name)}
                     key={`${filter.title}_${option.name}_${i}`}
                     label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(option.name) : option.name}
-                    onChange={(e) => filter.updateValidOptions(option.name, e.target.checked)}
+                    onChange={(e) => filter.updateOption(option.name, e.target.checked)}
                     option={option}
                     tooltip={findTooltip(option)}
                     url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too

@@ -41,15 +41,19 @@ export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
     colors: tinycolor.Instance[];  // Array of colors for the gradient
 };
 
-// TODO: this is kind of a monstrosity
-export type FilterOptionTypeTooltips = {
-    [key in (BooleanFilterName.LANGUAGE | TypeFilterName | FilterOptionDataSource)]?: CheckboxTooltipConfig
-};
+type OptionTooltipKey = (
+      FilterOptionDataSource
+    | BooleanFilterName.LANGUAGE
+    | TypeFilterName.FOLLOWED_HASHTAGS
+);
 
 type FilterOptionFormatCfg = {
     formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    hidden?: boolean;                        // If true hide this option from the UI
     position: number;                        // Position of this filter in the filters section, used for ordering
-    tooltips?: FilterOptionTypeTooltips;     // Color highlight config for filter options
+    tooltips?: {                             // Color highlight config for filter options
+        [key in OptionTooltipKey]?: CheckboxTooltipConfig
+    };
 };
 
 // Subconfig types
@@ -182,6 +186,10 @@ class Config implements ConfigType {
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
+                [BooleanFilterName.APP]: {  // App filter is kinda useless (98% of toots don't have the application property)
+                    hidden: true,
+                    position: 99,
+                },
                 [BooleanFilterName.HASHTAG]: {
                     position: 2,
                     tooltips: {
@@ -258,9 +266,6 @@ class Config implements ConfigType {
                         },
                     },
                 },
-                [BooleanFilterName.APP]: {
-                    position: 99,
-                },  // Currently disabled by fedialgo config isAppFilterVisible because it's not very useful
             },
         },
         numeric: {
