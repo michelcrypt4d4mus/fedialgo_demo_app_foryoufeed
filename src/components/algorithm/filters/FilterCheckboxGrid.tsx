@@ -65,9 +65,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                         const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                         const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                         colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
-                        logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}, highPctiles:`, highPctiles);
+                        logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}`);
                     } catch (err) {
-                        logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err, `\objList=`, objList);
+                        logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err);
                     }
                 }
 
