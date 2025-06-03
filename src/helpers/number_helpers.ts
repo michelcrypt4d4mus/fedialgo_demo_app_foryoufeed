@@ -2,7 +2,7 @@
  * Help with numbers.
  */
 import { config } from "../config";
-import { warnMsg } from "./log_helpers";
+import { appLogger } from "./log_helpers";
 
 export const KB = 1024;
 export const MB = KB * KB;
@@ -29,7 +29,7 @@ export function formatScores(scores: object | number): object | number {
 // Round a number to a given number of digits
 export function formatScore(score: number): number {
     if (typeof score != "number") {
-        warnMsg(`formatScore() called with non-number:`, score);
+        appLogger.warn(`formatScore() called with non-number:`, score);
         return score;
     }
 

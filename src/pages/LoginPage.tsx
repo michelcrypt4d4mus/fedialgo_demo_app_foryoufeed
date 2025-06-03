@@ -9,26 +9,10 @@ import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
-import { getLogger } from '../helpers/log_helpers';
 import { config } from '../config';
+import { getLogger } from '../helpers/log_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
-import { error } from 'console';
-
-// Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
-const OAUTH_SCOPES = [
-    "read",
-    "write:bookmarks",
-    "write:favourites",
-    "write:follows",
-    "write:media",
-    "write:mutes",
-    "write:statuses",  // Required for retooting and voting in polls
-];
-
-export const OAUTH_SCOPE_STR = OAUTH_SCOPES.join(" ");
-const DEFAULT_MASTODON_SERVER = "universeodon.com";
-const APP_NAME = `${FEDIALGO}Demo`;  // Name of the app that will be created in the user's Mastodon account
 
 const logger = getLogger("LoginPage");
 
@@ -38,7 +22,7 @@ export default function LoginPage() {
 
     // TODO: why is this not using useAppStorage?
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
-    const [server, setServer] = usePersistentState<string>(DEFAULT_MASTODON_SERVER, {storageKey: "server"});
+    const [server, setServer] = usePersistentState<string>(config.app.defaultServer, {storageKey: "server"});
 
     const handleError = (errorObj: Error, msg?: string, note?: string, ...args: any[]) => {
         logAndSetFormattedError({
@@ -75,10 +59,9 @@ export default function LoginPage() {
             try {
                 // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
                 registeredApp = await api.v1.apps.create({
-                    clientName: APP_NAME,
+                    ...config.app.createAppParams,
                     redirectUris: redirectUri,
-                    scopes: OAUTH_SCOPE_STR,
-                    website: sanitizedServer,
+                    website: sanitizedServer,  // TODO: why is this not our website URL?
                 });
             } catch (error) {
                 const msg = `${FEDIALGO} failed to register itself as an app on your Mastodon server!`;
@@ -93,7 +76,7 @@ export default function LoginPage() {
             client_id: registeredApp.clientId,
             redirect_uri: redirectUri,
             response_type: 'code',
-            scope: OAUTH_SCOPE_STR,
+            scope: config.app.createAppParams.scopes,
         });
 
         setApp({...registeredApp, redirectUri });
@@ -116,7 +99,7 @@ export default function LoginPage() {
                     </span>
                     <br /><br />
 
-                    To get started enter your Mastodon server in the form: <code>{DEFAULT_MASTODON_SERVER}</code>
+                    To get started enter your Mastodon server in the form: <code>{config.app.defaultServer}</code>
                 </p>
             </div>
 
@@ -125,7 +108,7 @@ export default function LoginPage() {
                     <Form.Control
                         id="mastodon_server"
                         onChange={(e) => setServer(e.target.value)}
-                        placeholder={DEFAULT_MASTODON_SERVER}
+                        placeholder={config.app.defaultServer}
                         type="url"
                         value={server}
                     />

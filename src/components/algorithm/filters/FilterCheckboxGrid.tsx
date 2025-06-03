@@ -18,7 +18,8 @@ import {
 
 import FilterCheckbox from "./FilterCheckbox";
 import { buildGradient } from "../../../helpers/style_helpers";
-import { config, type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from "../../../config";
+import { config } from "../../../config";
+import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { isNumber } from "../../../helpers/number_helpers";
@@ -141,7 +142,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                     isChecked={filter.isOptionEnabled(option.name)}
                     key={`${filter.title}_${option.name}_${i}`}
                     label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(option.name) : option.name}
-                    onChange={(e) => filter.updateValidOptions(option.name, e.target.checked)}
+                    onChange={(e) => filter.updateOption(option.name, e.target.checked)}
                     option={option}
                     tooltip={findTooltip(option)}
                     url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too

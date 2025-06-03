@@ -46,7 +46,7 @@ export default function AuthProvider(props: PropsWithChildren) {
     // If preserveAppErrors is true, which happens during forced logouts because of API errors,
     // don't reset the app's error state, so that the error modal can be shown after logout.
     const logout = async (preserveAppErrors: boolean = false): Promise<void> => {
-        logger.log("logout() called... resetAppErrors:", preserveAppErrors);
+        logger.log("logout() called... preserveAppErrors:", preserveAppErrors);
         const body = new FormData();
         body.append("token", user.access_token);
         body.append("client_id", app.clientId)
@@ -64,7 +64,7 @@ export default function AuthProvider(props: PropsWithChildren) {
 
         !preserveAppErrors && resetErrors();
         setUser(null);
-        navigate("/login", {replace: true});
+        navigate("/#/login", {replace: true});
     };
 
     const value = useMemo(
