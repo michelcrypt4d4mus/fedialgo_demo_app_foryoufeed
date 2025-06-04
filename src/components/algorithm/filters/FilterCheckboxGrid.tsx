@@ -128,12 +128,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         } else if (isUserFilter && option[ScoreName.FAVOURITED_ACCOUNTS]) {
             return getGradientTooltip(option, ScoreName.FAVOURITED_ACCOUNTS);
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
+            const languageOption = algorithm.userData.languagesPostedIn.getObj(option.name);
+
             if (option.name == algorithm.userData.preferredLanguage) {
                 return tooltipConfig[BooleanFilterName.LANGUAGE];
-            } else if (algorithm.userData.languagesPostedIn[option.name]) {
+            } else if (languageOption) {
                 // TODO: use a gradient?
                 const tooltip = {...tooltipConfig[BooleanFilterName.LANGUAGE]};
-                tooltip.text = `You used this language ${algorithm.userData.languagesPostedIn[option.name]} times recently`;
+                tooltip.text = `You used this language ${languageOption.numToots} times recently`;
                 return tooltip;
             }
         }
