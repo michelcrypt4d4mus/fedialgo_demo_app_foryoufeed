@@ -7,10 +7,13 @@ import { ChangeEvent } from "react";
 import { Tooltip } from 'react-tooltip';
 
 import FilterCheckbox from "./FilterCheckbox";
+import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { config } from "../../../config";
+import { getLogger } from "../../../helpers/log_helpers";
 import { SwitchType, tooltipZIndex } from "../../../helpers/style_helpers";
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
+const logger = getLogger("HeaderSwitch");
 
 // This must appear somewhere in the component tree for the header switch tooltips to work
 export const HEADER_SWITCH_TOOLTIP = (
@@ -24,14 +27,24 @@ export const HEADER_SWITCH_TOOLTIP = (
 
 interface HeaderSwitchProps {
     isChecked: boolean;
-    label: SwitchType;
+    label: SwitchType | string;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     tooltipText?: string;
+    tooltip?: CheckboxTooltipConfig;
 };
 
 
 export default function HeaderSwitch(props: HeaderSwitchProps) {
-    const { isChecked, label, onChange, tooltipText } = props;
+    let { isChecked, label, onChange, tooltip, tooltipText } = props;
+
+    if (tooltipText && tooltip) {
+        logger.warn(`HeaderSwitch received both tooltipText and tooltip props, ignoring tooltipText: ${tooltipText}`);
+    }
+
+    tooltip ||= {
+        anchor: HEADER_SWITCH_TOOLTIP_ANCHOR,
+        text: tooltipText || config.filters.headerSwitches.tooltipText[label],
+    };
 
     return (
         <FilterCheckbox
@@ -39,10 +52,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
             isChecked={isChecked}
             label={label}
             onChange={onChange}
-            tooltip={{
-                anchor: HEADER_SWITCH_TOOLTIP_ANCHOR,
-                text: tooltipText || config.filters.headerSwitches.tooltipText[label],
-            }}
+            tooltip={tooltip}
         />
     );
 };

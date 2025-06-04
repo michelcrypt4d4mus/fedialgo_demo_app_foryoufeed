@@ -7,6 +7,7 @@ import { ReactElement } from "react";
 
 import { Tooltip } from 'react-tooltip';
 
+import HeaderSwitch from '../algorithm/filters/HeaderSwitch';
 import { BooleanState } from '../../types';
 import { CheckboxTooltipConfig } from '../../helpers/tooltip_helpers';
 import { tooltipZIndex } from '../../helpers/style_helpers';
@@ -23,16 +24,39 @@ interface PersistentCheckboxProps {
     label: string,
     state?: BooleanState,  // Optional if you want to manage state outside this component
     tooltipConfig?: CheckboxTooltipConfig,
+    useSwitch?: boolean,  // Optional, if true will use HeaderSwitch instead of a checkbox
 };
 
 
 // Note this returns an array!
 export default function persistentCheckbox(props: PersistentCheckboxProps): StateWithComponent {
-    const { className, isChecked, label, state, tooltipConfig } = props;
+    const { className, isChecked, label, state, tooltipConfig, useSwitch } = props;
     const tooltipAnchor = tooltipConfig?.anchor || CHECKBOX_TOOLTIP_ANCHOR;
     const [value, setValue] = state || useLocalStorage({keyName: label, defaultValue: isChecked || false});
+    let checkbox: ReactElement;
 
-    let checkbox = (
+    const tooltip = <Tooltip
+        delayShow={800}
+        id={tooltipAnchor}
+        place="bottom"
+        style={tooltipZIndex}
+    />;
+
+    if (useSwitch) {
+        checkbox = (
+            <HeaderSwitch
+                isChecked={value}
+                key={`${label}-switch`}
+                label={label}
+                onChange={(e) => setValue(e.target.checked)}
+                tooltip={tooltipConfig}
+            />
+        );
+
+        return [value, checkbox, tooltip];
+    }
+
+    checkbox = (
         <Form.Check
             checked={value}
             className={className || ''}
@@ -63,13 +87,6 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
             </a>
         );
     }
-
-    const tooltip = <Tooltip
-        delayShow={800}
-        id={tooltipAnchor}
-        place="bottom"
-        style={tooltipZIndex}
-    />;
 
     return [value, checkbox, tooltip];
 };

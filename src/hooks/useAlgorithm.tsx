@@ -1,13 +1,14 @@
 /*
  * Context to hold the TheAlgorithm variable
  */
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import { PropsWithChildren, ReactElement, createContext, useContext, useEffect, useState } from "react";
 
 import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
+import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
 import { BooleanState } from "../types";
 import { config } from "../config";
@@ -23,6 +24,8 @@ interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
     isLoading?: boolean,
+    hideFilterHighlights?: boolean,
+    hideFilterHighlightsCheckbox?: ReactElement,
     lastLoadDurationSeconds?: number,
     mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
     serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
@@ -52,6 +55,11 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const [timeline, setTimeline] = useState<Toot[]>([]);
     // User checkbox to load new toots on refocus
     const shouldAutoUpdateState = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
+
+    const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
+        label: `Hide Filter Highlights`,
+        tooltipConfig: {text: `Don't color the notable filter options`},
+    });
 
     // TODO: this doesn't make any API calls yet, right?
     const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
@@ -181,6 +189,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const algoContext: AlgoContext = {
         algorithm,
         api,
+        hideFilterHighlights,
+        hideFilterHighlightsCheckbox,
         isLoading,
         lastLoadDurationSeconds,
         mimeExtensions,

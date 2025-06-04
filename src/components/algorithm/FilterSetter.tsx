@@ -4,9 +4,11 @@
  * are trending in the Fedivers.
  */
 import Accordion from 'react-bootstrap/esm/Accordion';
+import { CSSProperties } from 'react';
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
 import NumericFilters from "./filters/NumericFilters";
+import persistentCheckbox from "../helpers/persistent_checkbox";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { getLogger } from '../../helpers/log_helpers';
 import { config } from "../../config";
@@ -32,7 +34,7 @@ export default function FilterSetter() {
     const filterPositions = booleanFilters.reduce(
         (filters, f) => {
             const position = booleanFiltersCfg[f.title].position;
-            filters[position] = <BooleanFilterAccordionSection filter={f} key={f.title} />;
+            filters[position] = <BooleanFilterAccordionSection filter={f} key={f.title}/>
             return filters;
         },
         {[config.filters.numeric.position]: <NumericFilters isActive={hasActiveNumericFilter} key={"numeric"} />}

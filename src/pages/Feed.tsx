@@ -29,7 +29,7 @@ const logger = getLogger("Feed");
 
 
 export default function Feed() {
-    const { algorithm, isLoading, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
+    const { algorithm, hideFilterHighlightsCheckbox, isLoading, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
     const { resetErrors } = useError();
 
     // State variables
@@ -140,6 +140,7 @@ export default function Feed() {
                         <div style={stickySwitchContainer}>
                             {isControlPanelStickyCheckbox}
                             {hideLinkPreviewsCheckbox}
+                            {hideFilterHighlightsCheckbox}
                             {autoUpdateCheckbox}
                         </div>
 
