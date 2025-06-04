@@ -151,13 +151,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return tooltip;
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
             const languageOption = algorithm.userData.languagesPostedIn.getObj(option.name);
+            const userTooltipCfg = tooltipConfig[ScoreName.FAVOURITED_ACCOUNTS];  // TODO: stop using this for language tooltips
 
             if (option.name == algorithm.userData.preferredLanguage) {
                 return tooltipConfig[BooleanFilterName.LANGUAGE];
             } else if (languageOption) {
-                // TODO: use a gradient?
                 const tooltip = {...tooltipConfig[BooleanFilterName.LANGUAGE]};
                 tooltip.text = `You used this language ${languageOption.numToots} times recently`;
+                tooltip.highlight.color = userTooltipCfg.highlight.gradient.endpoints[0].toHexString();
                 return tooltip;
             }
         }
