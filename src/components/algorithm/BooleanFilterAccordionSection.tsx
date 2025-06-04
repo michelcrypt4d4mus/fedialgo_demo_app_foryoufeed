@@ -15,13 +15,12 @@ import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
 import { useLocalStorage2 } from "../../hooks/useLocalStorage";
 
-// TODO: INVERT_SELECTION is tracked in the filter itself, which isn't great
-type HeaderSwitchState = {
-    [SwitchType.HIGHLIGHTS_ONLY]: boolean;
-    [SwitchType.SORT_BY_COUNT]: boolean;
+export type HeaderSwitchState = {
+    readonly [SwitchType.HIGHLIGHTS_ONLY]?: boolean;
+    readonly [SwitchType.SORT_BY_COUNT]?: boolean;
 };
 
-const DEFAULT_SWITCH_STATE: Readonly<HeaderSwitchState> = {
+const DEFAULT_SWITCH_STATE: HeaderSwitchState = {
     [SwitchType.HIGHLIGHTS_ONLY]: false,
     [SwitchType.SORT_BY_COUNT]: false,
 };
@@ -54,7 +53,6 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             isChecked={switchState[switchType]}
             key={switchType}
             label={switchType}
-            // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
             onChange={(e) => setSwitchState({...switchState, [switchType]: e.target.checked})}
         />
     );
@@ -63,10 +61,10 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         () => {
             let _headerSwitches = [
                 <HeaderSwitch
-                    isChecked={filter.invertSelection}
+                    isChecked={filter.invertSelection} // TODO: this is modifying the filter directly which isn't great
                     key={SwitchType.INVERT_SELECTION}
                     label={SwitchType.INVERT_SELECTION}
-                    onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
+                    onChange={(e) => filter.invertSelection = e.target.checked}
                 />,
                 makeHeaderSwitch(SwitchType.SORT_BY_COUNT)
             ];
@@ -110,7 +108,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         >
             <FilterCheckboxGrid
                 filter={filter}
-                highlightedOnly={switchState[SwitchType.HIGHLIGHTS_ONLY]}
+                highlightsOnly={switchState[SwitchType.HIGHLIGHTS_ONLY]}
                 minToots={minTootsState[0]}
                 sortByCount={switchState[SwitchType.SORT_BY_COUNT]}
             />

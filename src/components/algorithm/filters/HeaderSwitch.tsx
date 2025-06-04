@@ -11,8 +11,16 @@ import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { SwitchType, tooltipZIndex } from "../../../helpers/style_helpers";
+import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
+
+// Only invert selection requires a call to fedialgo's updateFilters() method
+const SKIP_UPDATE_FILTERS_SWITCHES = [
+    SwitchType.HIGHLIGHTS_ONLY,
+    SwitchType.SORT_BY_COUNT,
+];
+
 const logger = getLogger("HeaderSwitch");
 
 // This must appear somewhere in the component tree for the header switch tooltips to work
@@ -27,7 +35,7 @@ export const HEADER_SWITCH_TOOLTIP = (
 
 interface HeaderSwitchProps {
     isChecked: boolean;
-    label: SwitchType | string;
+    label: SwitchType;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     tooltipText?: string;
     tooltip?: CheckboxTooltipConfig;
@@ -36,6 +44,7 @@ interface HeaderSwitchProps {
 
 export default function HeaderSwitch(props: HeaderSwitchProps) {
     let { isChecked, label, onChange, tooltip, tooltipText } = props;
+    const { hideFilterHighlights } = useAlgorithm();
 
     if (tooltipText && tooltip) {
         logger.warn(`HeaderSwitch received both tooltipText and tooltip props, ignoring tooltipText: ${tooltipText}`);
@@ -49,9 +58,11 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
     return (
         <FilterCheckbox
             capitalize={true}
+            disabled={(label == SwitchType.HIGHLIGHTS_ONLY) && hideFilterHighlights}
             isChecked={isChecked}
             label={label}
             onChange={onChange}
+            skipUpdateFilters={SKIP_UPDATE_FILTERS_SWITCHES.includes(label)}
             tooltip={tooltip}
         />
     );
