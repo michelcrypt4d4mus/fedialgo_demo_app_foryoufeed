@@ -11,22 +11,20 @@ import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
 import FilterSetter from "../components/algorithm/FilterSetter";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
+import persistentCheckbox, { CHECKBOX_TOOLTIP_ANCHOR } from '../components/helpers/persistent_checkbox';
 import ReplyModal from '../components/status/ReplyModal';
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
 import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
-import { buildStateCheckbox } from "../helpers/react_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
 import { linkesque, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
-import { useLocalStorage } from '../hooks/useLocalStorage';
 
-const TOOLTIP_ANCHOR = "tooltip-anchor";
 const logger = getLogger("Feed");
 
 
@@ -34,10 +32,7 @@ export default function Feed() {
     const { algorithm, isLoading, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
     const { resetErrors } = useError();
 
-    // Persistent state variables
-    const hideLinkPreviewsState = useLocalStorage({keyName: "hideLinkPreviews", defaultValue: false});
-    const isControlPanelStickyState = useLocalStorage({keyName: "isControlPanelSticky", defaultValue: true});
-    // Ephemeral state variables
+    // State variables
     const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(config.timeline.defaultNumDisplayedToots);
     const [prevScrollY, setPrevScrollY] = useState(0);
@@ -45,10 +40,29 @@ export default function Feed() {
     const [scrollPercentage, setScrollPercentage] = useState(0);
     const [thread, setThread] = useState<Toot[]>([]);
 
+    // Checkboxes for persistent user settings state variables
+    const [hideLinkPreviews, hideLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
+        label: `Hide Link Previews`,
+        tooltipConfig: {text: config.timeline.checkboxTooltipText.hideLinkPreviews}
+    });
+
+    const [isControlPanelSticky, isControlPanelStickyCheckbox] = persistentCheckbox({
+        className: 'd-none d-sm-block',
+        isChecked: true,
+        label: `Stick Control Panel To Top`,
+        tooltipConfig: {text: config.timeline.checkboxTooltipText.stickToTop}
+    });
+
+    const [_autoUpdateState, autoUpdateCheckbox] = persistentCheckbox({
+        label: `Auto Load New Toots`,
+        state: shouldAutoUpdateState,
+        tooltipConfig: {text: config.timeline.checkboxTooltipText.autoupdate},
+    });
+
     // Computed variables etc.
     const bottomRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
-    const leftColStyle: CSSProperties = isControlPanelStickyState[0] ? {} : {position: "relative"};
+    const leftColStyle: CSSProperties = isControlPanelSticky ? {} : {position: "relative"};
     const numShownToots = Math.max(config.timeline.defaultNumDisplayedToots, numDisplayedToots);
 
     // Reset all state except for the user and server
@@ -107,8 +121,6 @@ export default function Feed() {
 
             <Row style={{cursor: isLoadingThread ? 'wait' : 'default'}}>
                 {/* Tooltip options: https://react-tooltip.com/docs/options */}
-                <Tooltip id={TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
-
                 <Tooltip
                     border={"solid"}
                     clickable={true}
@@ -120,21 +132,15 @@ export default function Feed() {
                     variant="light"
                 />
 
+                {checkboxTooltip}
+
                 <Col md={6} xs={12} >
                     {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
                     <div className="sticky-top left-col-scroll" style={leftColStyle}>
                         <div style={stickySwitchContainer}>
-                            {buildStateCheckbox(`Stick Control Panel To Top`, isControlPanelStickyState, 'd-none d-sm-block')}
-                            {buildStateCheckbox(`Hide Link Previews`, hideLinkPreviewsState)}
-
-                            <a
-                                data-tooltip-id={TOOLTIP_ANCHOR}
-                                data-tooltip-content={config.timeline.checkboxTooltipText.autoupdate}
-                                key={"tooltipautoload"}
-                                style={{color: "white"}}
-                            >
-                                {buildStateCheckbox(`Auto Load New Toots`, shouldAutoUpdateState)}
-                            </a>
+                            {isControlPanelStickyCheckbox}
+                            {hideLinkPreviewsCheckbox}
+                            {autoUpdateCheckbox}
                         </div>
 
                         {algorithm && <WeightSetter />}
@@ -147,7 +153,7 @@ export default function Feed() {
                                 {thread.map((toot, index) => (
                                     <StatusComponent
                                         fontColor="black"
-                                        hideLinkPreviews={hideLinkPreviewsState[0]}
+                                        hideLinkPreviews={hideLinkPreviews}
                                         key={toot.uri}
                                         status={toot}
                                     />
@@ -200,7 +206,7 @@ export default function Feed() {
                     <div style={statusesColStyle}>
                         {timeline.slice(0, numShownToots).map((toot) => (
                             <StatusComponent
-                                hideLinkPreviews={hideLinkPreviewsState[0]}
+                                hideLinkPreviews={hideLinkPreviews}
                                 isLoadingThread={isLoadingThread}
                                 key={toot.uri}
                                 setThread={setThread}

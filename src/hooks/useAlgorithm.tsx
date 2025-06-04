@@ -22,7 +22,6 @@ const logger = getLogger("AlgorithmProvider");
 interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
-    // hideFilterHighlights?: BooleanState,
     isLoading?: boolean,
     lastLoadDurationSeconds?: number,
     mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
@@ -53,8 +52,6 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const [timeline, setTimeline] = useState<Toot[]>([]);
     // User checkbox to load new toots on refocus
     const shouldAutoUpdateState = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
-    // // Hide the coloring of the switches in the filter panels
-    // const hideFilterHighlights = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
 
     // TODO: this doesn't make any API calls yet, right?
     const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});

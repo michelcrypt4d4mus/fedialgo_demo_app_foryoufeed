@@ -17,22 +17,22 @@ export enum SwitchType {
 export type GradientEndpoints = [tinycolor.Instance, tinycolor.Instance];
 
 interface ThemeConfigBase {
-    accordionOpenBlue: CSSProperties['color'];
-    favouritedTagGradient: GradientEndpoints;
-    feedBackgroundColor: CSSProperties['backgroundColor'];  // TODO: change to GradientEndpoints
-    feedBackgroundColorLite: CSSProperties['backgroundColor'];
-    followedTagColor: CSSProperties['color'];
-    followedUserGradient: GradientEndpoints,
-    participatedTagGradient: GradientEndpoints;
-    trendingObjFontSize: number;
-    trendingTagGradient: GradientEndpoints;
+    readonly accordionOpenBlue: CSSProperties['color'];
+    readonly favouritedTagGradient: GradientEndpoints;
+    readonly feedBackgroundColor: CSSProperties['backgroundColor'];  // TODO: change to GradientEndpoints
+    readonly feedBackgroundColorLite: CSSProperties['backgroundColor'];
+    readonly followedTagColor: CSSProperties['color'];
+    readonly followedUserGradient: GradientEndpoints,
+    readonly participatedTagGradient: GradientEndpoints;
+    readonly trendingObjFontSize: number;
+    readonly trendingTagGradient: GradientEndpoints;
 };
 
 export interface ThemeConfig extends ThemeConfigBase {
-    favouritedTagColor: CSSProperties["color"];
-    trendingTagColor: CSSProperties["color"];
-    participatedTagColor: CSSProperties["color"];
-    followedUserColor: CSSProperties["color"];
+    readonly favouritedTagColor: CSSProperties["color"];
+    readonly trendingTagColor: CSSProperties["color"];
+    readonly participatedTagColor: CSSProperties["color"];
+    readonly followedUserColor: CSSProperties["color"];
 }
 
 const THEME_BASE: ThemeConfigBase = {

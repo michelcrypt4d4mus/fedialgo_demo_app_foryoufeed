@@ -45,25 +45,6 @@ export function openTrendingLink(obj: TrendingWithHistory, e: MouseEvent): boole
 // Component Helpers //
 ///////////////////////
 
-// Build a checkbox for a boolean useState() variable
-export function buildStateCheckbox(
-    label: string,
-    state: BooleanState,
-    className?: string,
-) {
-    return (
-        <Form.Check
-            checked={state[0]}
-            className={className || ''}
-            key={label}
-            label={label}
-            onChange={(e) => state[1](e.target.checked)}
-            type="checkbox"
-        />
-    );
-};
-
-
 // Returns array of strings extracted from component hierarchy
 // Inspired by https://github.com/fernandopasik/react-children-utilities/blob/main/src/lib/onlyText.ts
 export function extractText(children: ReactNode | ReactNode[]): string[] {

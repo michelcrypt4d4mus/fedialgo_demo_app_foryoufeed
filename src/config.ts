@@ -116,6 +116,8 @@ type TimelineConfig = {
     numTootsToLoadOnScroll: number;
     checkboxTooltipText: {
         autoupdate: string;
+        hideLinkPreviews: string;
+        stickToTop: string;
     };
 };
 
@@ -310,7 +312,9 @@ class Config implements ConfigType {
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
         checkboxTooltipText: {
-            autoupdate: "If this box is checked the feed will be automatically updated when you focus this browser tab.",
+            autoupdate: "Automatically update the timeline when you focus this browser tab",
+            hideLinkPreviews: "Show only the headline and description for embedded links",
+            stickToTop: `Keep control panel on screen while scrolling`,
         },
         defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline

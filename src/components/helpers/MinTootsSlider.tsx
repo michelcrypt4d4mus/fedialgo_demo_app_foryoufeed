@@ -89,7 +89,7 @@ export const computeDefaultValue = (objList: ObjList, title: string, idealNumOpt
     const logger = getMinTootsLogger(title);
     const minTootsSliderCfg = config.filters.boolean.minTootsSlider;
     idealNumOptions ||= minTootsSliderCfg.idealNumOptions;
-    logger.debug(`Computing default value for minToots slider with ${objList.length} options`);
+    logger.deep(`Computing default value for minToots slider with ${objList.length} options`);
 
     // Don't show the slider if there are too few options
     if (objList.objs.length < (idealNumOptions + 1)) {
