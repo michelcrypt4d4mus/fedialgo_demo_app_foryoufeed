@@ -1,18 +1,21 @@
 /*
  * Context to hold the TheAlgorithm variable
  */
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import { PropsWithChildren, ReactElement, createContext, useContext, useEffect, useState } from "react";
 
 import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";
 import { MimeExtensions } from "../types";
 import { useError } from "../components/helpers/ErrorHandler";
 
+import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
+import { BooleanState } from "../types";
 import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
 import { Events, buildMimeExtensions } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
+import { useLocalStorage } from "./useLocalStorage";
 import { type ErrorHandler } from "../types";
 
 const logger = getLogger("AlgorithmProvider");
@@ -21,11 +24,12 @@ interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
     isLoading?: boolean,
+    hideFilterHighlights?: boolean,
+    hideFilterHighlightsCheckbox?: ReactElement,
     lastLoadDurationSeconds?: number,
     mimeExtensions?: MimeExtensions,  // Map of server's allowed MIME types to file extensions
     serverInfo?: mastodon.v1.Instance | mastodon.v2.Instance,
-    setShouldAutoUpdate?: (should: boolean) => void,
-    shouldAutoUpdate?: boolean,
+    shouldAutoUpdateState?: BooleanState,
     timeline: Toot[],
     triggerFeedUpdate?: (moreOldToots?: boolean) => void,
     triggerPullAllUserData?: () => void,
@@ -39,9 +43,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const { logout, user } = useAuthContext();
     const { logAndSetFormattedError } = useError();
 
-    // TODO: this doesn't make any API calls yet, right?
-    const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
-
+    // State variables
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true); // TODO: this shouldn't start as true...
     const [lastLoadDurationSeconds, setLastLoadDurationSeconds] = useState<number | undefined>();
@@ -50,9 +52,17 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const [mimeExtensions, setMimeExtensions] = useState<MimeExtensions>({});
     // Instance info for the server
     const [serverInfo, setServerInfo] = useState<mastodon.v1.Instance | mastodon.v2.Instance>(null);
-    // User checkbox to load new toots on refocus
-    const [shouldAutoUpdate, setShouldAutoUpdate] = useState<boolean>(false);
     const [timeline, setTimeline] = useState<Toot[]>([]);
+    // User checkbox to load new toots on refocus
+    const shouldAutoUpdateState = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
+
+    const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
+        label: `Hide Filter Highlights`,
+        tooltipConfig: {text: `Don't color the notable filter options`},
+    });
+
+    // TODO: this doesn't make any API calls yet, right?
+    const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
 
     // TODO: somehow this consistently gets called to setIsLoading(false) but the react component's state
     // has somehow already been updated to isLoading=false, so it logs a warning.
@@ -77,13 +87,10 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         setIsLoading(newIsLoading);
     };
 
+    // Log a bunch of info about the current state along with the msg
     const handleError: ErrorHandler = (msg: string, errorObj?: Error) => {
-        logAndSetFormattedError({
-            errorObj,
-            logger,
-            msg,
-            args: { api, lastLoadStartedAt, lastLoadDurationSeconds, serverInfo, user }
-        });
+        const args = { api, lastLoadStartedAt, lastLoadDurationSeconds, serverInfo, user };
+        logAndSetFormattedError({ args, errorObj, logger, msg });
     };
 
     const trigger = (loadFxn: () => Promise<void>) => triggerLoadFxn(loadFxn, handleError, setLoadState);
@@ -151,7 +158,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         if (!user || !algorithm) return;
 
         const shouldReloadFeed = (): boolean => {
-            if (!shouldAutoUpdate) return false;
+            if (!shouldAutoUpdateState[0]) return false;
             let should = false;
             let msg: string;
 
@@ -177,17 +184,18 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         const handleFocus = () => document.hasFocus() && shouldReloadFeed() && triggerFeedUpdate();
         window.addEventListener(Events.FOCUS, handleFocus);
         return () => window.removeEventListener(Events.FOCUS, handleFocus);
-    }, [algorithm, isLoading, timeline, triggerFeedUpdate, user]);
+    }, [algorithm, isLoading, shouldAutoUpdateState[0], timeline, triggerFeedUpdate, user]);
 
     const algoContext: AlgoContext = {
         algorithm,
         api,
+        hideFilterHighlights,
+        hideFilterHighlightsCheckbox,
         isLoading,
         lastLoadDurationSeconds,
         mimeExtensions,
         serverInfo,
-        setShouldAutoUpdate,
-        shouldAutoUpdate,
+        shouldAutoUpdateState,
         timeline,
         triggerFeedUpdate,
         triggerPullAllUserData

@@ -5,7 +5,6 @@ import Form from 'react-bootstrap/esm/Form';
 import { createRestAPIClient } from 'masto';
 import { FEDIALGO } from "fedialgo";
 import { stringifyQuery } from 'ufo';
-import { usePersistentState } from "react-persistent-state";
 
 import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
@@ -19,10 +18,8 @@ const logger = getLogger("LoginPage");
 
 export default function LoginPage() {
     const { logAndSetFormattedError } = useError();
-
-    // TODO: why is this not using useAppStorage?
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
-    const [server, setServer] = usePersistentState<string>(config.app.defaultServer, {storageKey: "server"});
+    const [server, setServer] = useLocalStorage({keyName: "server", defaultValue: config.app.defaultServer});
 
     const handleError = (errorObj: Error, msg?: string, note?: string, ...args: any[]) => {
         logAndSetFormattedError({

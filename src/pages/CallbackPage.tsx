@@ -22,8 +22,10 @@ const logger = getLogger("CallbackPage");
 
 export default function CallbackPage() {
     const { logAndSetFormattedError } = useError();
+    const { setLoggedInUser, user } = useAuthContext();
     const [searchParams] = useSearchParams();
     logger.trace(`searchParams:`, searchParams);
+    const paramsCode = searchParams.get('code');
 
     // Example of 'app' object
     // {
@@ -35,9 +37,7 @@ export default function CallbackPage() {
     //     vapidKey: "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah",
     //     website: "https://mastodon.social",
     // }
-    const [app] = useAppStorage({ keyName: "app", defaultValue: null })
-    const { setLoggedInUser, user } = useAuthContext();
-    const paramsCode = searchParams.get('code');
+    const [app] = useAppStorage({keyName: "app", defaultValue: null});
 
     useEffect(() => {
         if (paramsCode !== null && !user) {

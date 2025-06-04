@@ -1,6 +1,6 @@
 {
     "name": "fedialgo-demo-app-foryoufeed",
-    "version": "0.60.6",
+    "version": "0.61.0",
     "private": false,
     "homepage": "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed",
     "dependencies": {
@@ -13,7 +13,7 @@
         "buffer": "^6.0.3",
         "change-case": "^5.4.4",
         "dotenv-flow": "^4.1.0",
-        "fedialgo": "github:michelcrypt4d4mus/fedialgo#v0.60.6",
+        "fedialgo": "github:michelcrypt4d4mus/fedialgo#v0.61.0",
         "html-react-parser": "^3.0.15",
         "masto": "^7.0.0",
         "react": "^18.2.0",
@@ -23,7 +23,6 @@
         "react-dropzone": "^14.3.8",
         "react-error-boundary": "^6.0.0",
         "react-lazy-load-image-component": "^1.6.2",
-        "react-persistent-state": "^1.1.8",
         "react-router-dom": "^7.5.2",
         "react-tooltip": "^5.28.1",
         "recharts": "^2.15.3",

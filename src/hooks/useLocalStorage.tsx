@@ -8,7 +8,7 @@ import { getLogger } from "../helpers/log_helpers";
 
 type StorageKey = {
     keyName: string;
-    defaultValue: Record<string, unknown> | null;
+    defaultValue: Record<string, unknown> | boolean | string | null;
 };
 
 export interface AppStorage extends StorageKey {
@@ -26,7 +26,7 @@ export const useUserStorage = (key: UserStorage) => useLocalStorage<UserStorage>
 const logger = getLogger("useLocalStorage");
 
 
-export const useLocalStorage = <T extends StorageKey,>(key: T): [T["defaultValue"], (value: T["defaultValue"]) => void] => {
+export const useLocalStorage = <T extends StorageKey>(key: T): [T["defaultValue"], (value: T["defaultValue"]) => void] => {
     const { keyName, defaultValue } = key;
 
     const [storedValue, setStoredValue] = useState<T["defaultValue"]>(() => {
