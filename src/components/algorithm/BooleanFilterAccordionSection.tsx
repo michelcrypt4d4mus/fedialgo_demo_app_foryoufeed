@@ -13,6 +13,18 @@ import MinTootsSlider, { computeDefaultValue } from "../helpers/MinTootsSlider";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
+import { useLocalStorage2 } from "../../hooks/useLocalStorage";
+
+// TODO: INVERT_SELECTION is tracked in the filter itself, which isn't great
+type HeaderSwitchState = {
+    [SwitchType.HIGHLIGHTS_ONLY]: boolean;
+    [SwitchType.SORT_BY_COUNT]: boolean;
+};
+
+const DEFAULT_SWITCH_STATE: Readonly<HeaderSwitchState> = {
+    [SwitchType.HIGHLIGHTS_ONLY]: false,
+    [SwitchType.SORT_BY_COUNT]: false,
+};
 
 interface BooleanFilterAccordionProps {
     filter: BooleanFilter,
@@ -23,6 +35,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const { filter } = props;
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.title);
+    const [switchState, setSwitchState] = useLocalStorage2(`${filter.title}-switchState`, DEFAULT_SWITCH_STATE);
 
     const minTootsSliderDefaultValue: number = useMemo(
         () => computeDefaultValue(filter.options, filter.title),
@@ -30,13 +43,21 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     );
 
     const minTootsState = useState<number>(minTootsSliderDefaultValue);
-    const [highlightedOnly, setHighlightedOnly] = useState(false);
-    const [sortByCount, setSortByValue] = useState(false);
 
     if (minTootsState[0] == 0 && minTootsSliderDefaultValue > 0) {
         logger.trace(`Updating minToots from default of 0 to ${minTootsSliderDefaultValue}`);
         minTootsState[1](minTootsSliderDefaultValue);
     }
+
+    const makeHeaderSwitch = (switchType: SwitchType) => (
+        <HeaderSwitch
+            isChecked={switchState[switchType]}
+            key={switchType}
+            label={switchType}
+            // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
+            onChange={(e) => setSwitchState({...switchState, [switchType]: e.target.checked})}
+        />
+    );
 
     const headerSwitches = useMemo(
         () => {
@@ -47,24 +68,12 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                     label={SwitchType.INVERT_SELECTION}
                     onChange={(e) => filter.invertSelection = e.target.checked} // TODO: this is modifying the filter directly
                 />,
-                <HeaderSwitch
-                    isChecked={sortByCount}
-                    key={SwitchType.SORT_BY_COUNT}
-                    label={SwitchType.SORT_BY_COUNT}
-                    onChange={(e) => setSortByValue(e.target.checked)}         // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
-                />,
+                makeHeaderSwitch(SwitchType.SORT_BY_COUNT)
             ];
 
             // Add a highlights-only switch if there are highlighted tooltips configured for this filter
             if (booleanFiltersConfig.optionsFormatting[filter.title]?.tooltips) {
-                _headerSwitches = _headerSwitches.concat([
-                    <HeaderSwitch
-                        isChecked={highlightedOnly}
-                        key={SwitchType.HIGHLIGHTS_ONLY}
-                        label={SwitchType.HIGHLIGHTS_ONLY}
-                        onChange={(e) => setHighlightedOnly(e.target.checked)} // TODO: this will unnecessarily trigger TheAlgorithm.filterFeed(). not a huge problem but not ideal.
-                    />,
-                ]);
+                _headerSwitches = _headerSwitches.concat([makeHeaderSwitch(SwitchType.HIGHLIGHTS_ONLY)])
             }
 
             // Add a slider and tooltip for minimum # of toots if there's enough options in the panel to justify it
@@ -85,10 +94,10 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             filter,
             filter.invertSelection,
             filter.options,
-            highlightedOnly,
+            switchState[SwitchType.HIGHLIGHTS_ONLY],
+            switchState[SwitchType.SORT_BY_COUNT],
             minTootsSliderDefaultValue,
             minTootsState[0],
-            sortByCount
         ]
     );
 
@@ -101,9 +110,9 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         >
             <FilterCheckboxGrid
                 filter={filter}
-                highlightedOnly={highlightedOnly}
+                highlightedOnly={switchState[SwitchType.HIGHLIGHTS_ONLY]}
                 minToots={minTootsState[0]}
-                sortByCount={sortByCount}
+                sortByCount={switchState[SwitchType.SORT_BY_COUNT]}
             />
         </FilterAccordionSection>
     );

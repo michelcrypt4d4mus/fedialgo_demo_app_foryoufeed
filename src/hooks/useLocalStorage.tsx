@@ -61,3 +61,36 @@ export const useLocalStorage = <T extends StorageKey>(key: T): [T["defaultValue"
 
     return [storedValue, setValue];
 };
+
+
+
+// Revamp of pkreissel's original implementation
+export function useLocalStorage2<T>(storageKey: string, defaultValue: T): [T, (value: T) => void] {
+    const [storedValue, setStoredValue] = useState<T>(() => {
+        try {
+            const value = window.localStorage.getItem(storageKey);
+
+            if (value) {
+                return JSON.parse(value);
+            } else {
+                window.localStorage.setItem(storageKey, JSON.stringify(defaultValue));
+                return defaultValue;
+            }
+        } catch (err) {
+            logger.error(`useLocalStorage.getValue(keyname: "${storageKey}") error:`, err);
+            return defaultValue;
+        }
+    });
+
+    const setValue = (newValue: T) => {
+        try {
+            window.localStorage.setItem(storageKey, JSON.stringify(newValue));
+        } catch (err) {
+            logger.error(`setValue() failed!`, err);
+        }
+
+        setStoredValue(newValue);
+    };
+
+    return [storedValue, setValue];
+};
