@@ -236,12 +236,6 @@ const accountTooltipStyle: CSSProperties = {
     width: "500px",
 };
 
-const controlPanelFooter: CSSProperties = {
-    height: "auto",
-    paddingLeft: "2px",
-    paddingRight: "2px",
-};
-
 // TODO: move to LoadingSpinner?
 export const loadingMsgStyle: CSSProperties = {
     fontSize: "16px",
@@ -276,7 +270,9 @@ const statusesColStyle: CSSProperties = {
 };
 
 const stickySwitchContainer: CSSProperties = {
-    ...controlPanelFooter,
+    height: "auto",
+    paddingLeft: "2px",
+    paddingRight: "2px",
     display: "flex",
     justifyContent: "space-between",
 };
