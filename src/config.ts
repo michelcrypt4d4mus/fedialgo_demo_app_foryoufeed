@@ -7,7 +7,6 @@ import { mastodon } from 'masto';
 import { capitalCase } from "change-case";
 import {
     FEDIALGO,
-    LANGUAGE_CODES,
     BooleanFilterName,
     ScoreName,
     TrendingType,
@@ -246,7 +245,6 @@ class Config implements ReadonlyConfig {
                             text: `You post most in this language`,
                         },
                     },
-                    formatLabel: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
                     position: 1,
@@ -263,7 +261,8 @@ class Config implements ReadonlyConfig {
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
                                     endpoints: THEME.followedUserGradient,
-                                    textSuffix: (n: number) => n ? ` (and favourited or retooted them ${n} times recently)` : '',
+                                    // TODO: the code currently requires this string start with "and i" which sucks
+                                    textSuffix: (n: number) => n ? `and interacted ${n} times recently` : '',
                                 },
                             },
                             text: `You follow this account`,

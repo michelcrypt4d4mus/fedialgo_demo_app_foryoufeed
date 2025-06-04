@@ -25,6 +25,7 @@ import { isNumber } from "../../../helpers/number_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
+import { log } from "console";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
@@ -125,15 +126,38 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             return tooltip;
-        } else if (isUserFilter && option[ScoreName.FAVOURITED_ACCOUNTS]) {
-            return getGradientTooltip(option, ScoreName.FAVOURITED_ACCOUNTS);
+        } else if (isUserFilter && isNumber(option[ScoreName.FAVOURITED_ACCOUNTS])) {
+            const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
+            let tooltip = getGradientTooltip(option, dataSource);
+            const userTooltipCfg = tooltipConfig[dataSource];
+
+            if (!tooltip) {
+                logger.warn(`Didn't find a tooltip where we expected to find one for option:`, option);
+                return undefined;
+            }
+
+            // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
+            if (option.isFollowed) {
+                if (option[dataSource] > 0) {
+                    tooltip.highlight.color = userTooltipCfg.highlight.gradient.endpoints[1].toHexString();
+                } else {
+                    const gradientColors = tooltipGradients[dataSource].colors;
+                    tooltip.highlight.color = gradientColors[Math.ceil(gradientColors.length / 2)].toHexString();
+                }
+            } else {
+                tooltip.text = tooltip.text.replace(`${userTooltipCfg.text} and i`, "I");
+            }
+
+            return tooltip;
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
+            const languageOption = algorithm.userData.languagesPostedIn.getObj(option.name);
+
             if (option.name == algorithm.userData.preferredLanguage) {
                 return tooltipConfig[BooleanFilterName.LANGUAGE];
-            } else if (algorithm.userData.languagesPostedIn[option.name]) {
+            } else if (languageOption) {
                 // TODO: use a gradient?
                 const tooltip = {...tooltipConfig[BooleanFilterName.LANGUAGE]};
-                tooltip.text = `You used this language ${algorithm.userData.languagesPostedIn[option.name]} times recently`;
+                tooltip.text = `You used this language ${languageOption.numToots} times recently`;
                 return tooltip;
             }
         }
@@ -143,19 +167,26 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         () => {
             logger.trace(`Rebuilding optionGrid for ${filter.options.length} options...`);
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
-            if (highlightsOnly) options = options.filter(option => !!findTooltip(option));
 
-            const optionCheckboxes = options.objs.map((option, i) => (
-                <FilterCheckbox
-                    isChecked={filter.isOptionEnabled(option.name)}
-                    key={`${filter.title}_${option.name}_${i}`}
-                    label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(option.name) : option.name}
-                    onChange={(e) => filter.updateOption(option.name, e.target.checked)}
-                    option={option}
-                    tooltip={findTooltip(option)}
-                    url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too
-                />
-            ));
+            if (highlightsOnly && !hideFilterHighlights) {
+                options = options.filter(option => !!findTooltip(option));
+            }
+
+            const optionCheckboxes = options.objs.map((option, i) => {
+                const label = option.displayName || option.name;
+
+                return (
+                    <FilterCheckbox
+                        isChecked={filter.isOptionEnabled(option.name)}
+                        key={`${filter.title}_${option.name}_${i}`}
+                        label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(label) : label}
+                        onChange={(e) => filter.updateOption(option.name, e.target.checked)}
+                        option={option}
+                        tooltip={findTooltip(option)}
+                        url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too
+                    />
+                );
+            });
 
             return gridify(optionCheckboxes);
         },
@@ -175,6 +206,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             sortByCount,
         ]
     );
+
+    // if (this.title == BooleanFilterName.USER) {
+        // for (let i = 0; i < filter.options.objs.length; i++) {
+        //     if (filter.options.objs[i].displayName) {
+        //         logger.info(`Found obj with displayName:`, filter.options.objs[i]);
+        //     }
+        // }
+    // }
 
     return optionGrid;
 };
