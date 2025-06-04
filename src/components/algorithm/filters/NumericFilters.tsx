@@ -8,8 +8,8 @@ import { capitalCase } from "change-case";
 import FilterAccordionSection from "../FilterAccordionSection";
 import HeaderSwitch from "./HeaderSwitch";
 import Slider from "./../Slider";
-import { getLogger } from '../../../helpers/log_helpers';
 import { config } from "../../../config";
+import { getLogger } from '../../../helpers/log_helpers';
 import { SwitchType } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
@@ -30,6 +30,7 @@ export default function NumericFilters(props: { isActive: boolean }) {
                     isChecked={numericFilters.every((filter) => filter.invertSelection)}
                     key={SwitchType.INVERT_SELECTION + '--numericFilters'}
                     label={SwitchType.INVERT_SELECTION}
+                    // TODO: this edits the filter object directly which isn't great
                     onChange={(e) => numericFilters.forEach((filter) => filter.invertSelection = e.target.checked)}
                     tooltipText={config.filters.numeric.invertSelectionTooltipTxt}
                 />,

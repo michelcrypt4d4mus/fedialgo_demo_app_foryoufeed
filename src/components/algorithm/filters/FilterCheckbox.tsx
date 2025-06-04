@@ -31,13 +31,14 @@ interface FilterCheckboxProps {
     label: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     option?: BooleanFilterOption,
+    skipUpdateFilters?: boolean,
     tooltip?: CheckboxTooltipConfig,
     url?: string,
 };
 
 
 export default function FilterCheckbox(props: FilterCheckboxProps) {
-    let { capitalize, isChecked, label, option, onChange, tooltip, url } = props;
+    let { capitalize, isChecked, label, option, onChange, skipUpdateFilters, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
 
     const labelExtra = option?.numToots?.toLocaleString();
@@ -81,7 +82,7 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
                 onChange={(e) => {
                     setIsCheckedState(e.target.checked);
                     onChange(e);
-                    algorithm?.updateFilters(algorithm.filters);
+                    !skipUpdateFilters && algorithm?.updateFilters(algorithm.filters);
                 }}
                 style={{...style}}
             />

@@ -24,13 +24,12 @@ interface PersistentCheckboxProps {
     label: string,
     state?: BooleanState,  // Optional if you want to manage state outside this component
     tooltipConfig?: CheckboxTooltipConfig,
-    useSwitch?: boolean,  // Optional, if true will use HeaderSwitch instead of a checkbox
 };
 
 
 // Note this returns an array!
 export default function persistentCheckbox(props: PersistentCheckboxProps): StateWithComponent {
-    const { className, isChecked, label, state, tooltipConfig, useSwitch } = props;
+    const { className, isChecked, label, state, tooltipConfig } = props;
     const tooltipAnchor = tooltipConfig?.anchor || CHECKBOX_TOOLTIP_ANCHOR;
     const [value, setValue] = state || useLocalStorage({keyName: label, defaultValue: isChecked || false});
     let checkbox: ReactElement;
@@ -42,25 +41,10 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
         style={tooltipZIndex}
     />;
 
-    if (useSwitch) {
-        checkbox = (
-            <HeaderSwitch
-                isChecked={value}
-                key={`${label}-switch`}
-                label={label}
-                onChange={(e) => setValue(e.target.checked)}
-                tooltip={tooltipConfig}
-            />
-        );
-
-        return [value, checkbox, tooltip];
-    }
-
     checkbox = (
         <Form.Check
             checked={value}
             className={className || ''}
-            key={`${label}-checkbox`}
             label={label}
             onChange={(e) => {
                 setValue(e.target.checked);
@@ -76,14 +60,7 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
                 data-tooltip-content={tooltipConfig.text}
                 key={`${label}-tooltip-anchor`}
             >
-                <Form.Check
-                    checked={value}
-                    className={className || ''}
-                    key={`${label}-checkbox`}
-                    label={label}
-                    onChange={(e) => setValue(e.target.checked)}
-                    type="checkbox"
-                />
+                {checkbox}
             </a>
         );
     }

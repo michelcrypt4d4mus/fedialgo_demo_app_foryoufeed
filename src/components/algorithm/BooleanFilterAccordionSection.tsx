@@ -53,7 +53,6 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             isChecked={switchState[switchType]}
             key={switchType}
             label={switchType}
-            // TODO: this will unnecessarily call TheAlgorithm.filterFeed(). not a huge problem but not ideal.
             onChange={(e) => setSwitchState({...switchState, [switchType]: e.target.checked})}
         />
     );
