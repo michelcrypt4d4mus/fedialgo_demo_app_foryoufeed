@@ -199,7 +199,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                         as="textarea"
                         autoFocus={true}
                         onChange={(e) => setReplyText(e.target.value)}
-                        placeholder={'Type your reply here...'}
+                        placeholder={'Your thoughts go here...'}
                         rows={4}
                         style={formStyle}
                         value={replyText}
