@@ -4,11 +4,9 @@
  * are trending in the Fedivers.
  */
 import Accordion from 'react-bootstrap/esm/Accordion';
-import { CSSProperties } from 'react';
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
 import NumericFilters from "./filters/NumericFilters";
-import persistentCheckbox from "../helpers/persistent_checkbox";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
 import { getLogger } from '../../helpers/log_helpers';
 import { config } from "../../config";

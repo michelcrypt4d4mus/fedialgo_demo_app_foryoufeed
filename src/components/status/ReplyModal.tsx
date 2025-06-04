@@ -44,6 +44,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     // State
     const replyMentionsStr = toot ? (toot.replyMentions().join(' ') + '\n\n') : '';
     const [isAttaching, setIsAttaching] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
     const [replyText, setReplyText] = React.useState<string>(replyMentionsStr);
     // null means we don't need a resolved ID, undefined means we are waiting for it to resolve
@@ -140,13 +141,18 @@ export default function ReplyModal(props: ReplyModalProps) {
             );
 
             return;
+        } else if (isSubmitting) {
+            handleError("Already submitting a reply! Please wait until it finishes.");
+            return;
         }
+
+        setIsSubmitting(true);
 
         const createStatusParams = {
             inReplyToId: resolvedID,
             mediaIds: mediaAttachments.map(m => m.id),
             status: replyText.trim()
-        }
+        };
 
         logger.log(`Creating toot with params:`, createStatusParams);
 
@@ -156,6 +162,11 @@ export default function ReplyModal(props: ReplyModalProps) {
                 setShow(false);
             }).catch(err => {
                 handleError(`Failed to submit reply`, null, err);
+            }).finally(() => {
+                setIsSubmitting(false);
+                setReplyText(replyMentionsStr);  // Reset the reply text
+                setMediaAttachments([]);  // Clear media attachments
+                setResolvedID(null);  // Reset resolved ID
             });
     };
 
@@ -217,7 +228,8 @@ export default function ReplyModal(props: ReplyModalProps) {
                         <Button
                             className="btn-lg"
                             disabled={isAttaching || currentReplyLen() == 0 || resolvedID === undefined}
-                            onClick={() => createToot()} style={buttonStyle}
+                            onClick={createToot}
+                            style={buttonStyle}
                         >
                             {isAttaching
                                 ? `Attaching...`
