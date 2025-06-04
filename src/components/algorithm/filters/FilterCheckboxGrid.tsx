@@ -145,7 +145,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         () => {
             logger.trace(`Rebuilding optionGrid for ${filter.options.length} options...`);
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
-            if (highlightsOnly) options = options.filter(option => !!findTooltip(option));
+
+            if (highlightsOnly && !hideFilterHighlights) {
+                options = options.filter(option => !!findTooltip(option));
+            }
 
             const optionCheckboxes = options.objs.map((option, i) => {
                 const label = option.displayName || option.name;
@@ -183,11 +186,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     );
 
     // if (this.title == BooleanFilterName.USER) {
-        for (let i = 0; i < filter.options.objs.length; i++) {
-            if (filter.options.objs[i].displayName) {
-                logger.info(`Found obj with displayName:`, filter.options.objs[i]);
-            }
-        }
+        // for (let i = 0; i < filter.options.objs.length; i++) {
+        //     if (filter.options.objs[i].displayName) {
+        //         logger.info(`Found obj with displayName:`, filter.options.objs[i]);
+        //     }
+        // }
     // }
 
     return optionGrid;
