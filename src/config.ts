@@ -7,7 +7,6 @@ import { mastodon } from 'masto';
 import { capitalCase } from "change-case";
 import {
     FEDIALGO,
-    LANGUAGE_CODES,
     BooleanFilterName,
     ScoreName,
     TrendingType,
@@ -246,7 +245,6 @@ class Config implements ReadonlyConfig {
                             text: `You post most in this language`,
                         },
                     },
-                    formatLabel: (code: string) => LANGUAGE_CODES[code] ? capitalCase(LANGUAGE_CODES[code]) : code,
                 },
                 [BooleanFilterName.TYPE]: {
                     position: 1,
