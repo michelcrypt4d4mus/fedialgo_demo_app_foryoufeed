@@ -27,6 +27,7 @@ const logger = getLogger("FilterCheckbox");
 
 interface FilterCheckboxProps {
     capitalize?: boolean,
+    disabled?: boolean,
     isChecked: boolean,
     label: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
@@ -38,7 +39,7 @@ interface FilterCheckboxProps {
 
 
 export default function FilterCheckbox(props: FilterCheckboxProps) {
-    let { capitalize, isChecked, label, option, onChange, skipUpdateFilters, tooltip, url } = props;
+    let { capitalize, disabled, isChecked, label, option, onChange, skipUpdateFilters, tooltip, url } = props;
     const { algorithm } = useAlgorithm();
 
     const labelExtra = option?.numToots?.toLocaleString();
@@ -76,6 +77,7 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
         <a data-tooltip-id={tooltipAnchor} data-tooltip-content={tooltip?.text} key={label}>
             <Form.Switch
                 checked={isCheckedState}
+                disabled={disabled}
                 id={label}
                 key={label + "_switch"}
                 label={<>{labelNode}{labelExtra && ` (${labelExtra})`}</>}

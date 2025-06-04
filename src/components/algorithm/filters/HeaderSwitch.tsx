@@ -11,6 +11,7 @@ import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { SwitchType, tooltipZIndex } from "../../../helpers/style_helpers";
+import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
 
@@ -43,6 +44,7 @@ interface HeaderSwitchProps {
 
 export default function HeaderSwitch(props: HeaderSwitchProps) {
     let { isChecked, label, onChange, tooltip, tooltipText } = props;
+    const { hideFilterHighlights } = useAlgorithm();
 
     if (tooltipText && tooltip) {
         logger.warn(`HeaderSwitch received both tooltipText and tooltip props, ignoring tooltipText: ${tooltipText}`);
@@ -56,6 +58,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
     return (
         <FilterCheckbox
             capitalize={true}
+            disabled={(label == SwitchType.HIGHLIGHTS_ONLY) && hideFilterHighlights}
             isChecked={isChecked}
             label={label}
             onChange={onChange}
