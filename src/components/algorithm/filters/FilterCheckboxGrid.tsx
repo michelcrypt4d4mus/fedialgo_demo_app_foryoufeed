@@ -125,7 +125,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             return tooltip;
-        } else if (isUserFilter && option[ScoreName.FAVOURITED_ACCOUNTS]) {
+        } else if (isUserFilter && isNumber(option[ScoreName.FAVOURITED_ACCOUNTS])) {
             return getGradientTooltip(option, ScoreName.FAVOURITED_ACCOUNTS);
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
             const languageOption = algorithm.userData.languagesPostedIn.getObj(option.name);
@@ -147,17 +147,21 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
             if (highlightsOnly) options = options.filter(option => !!findTooltip(option));
 
-            const optionCheckboxes = options.objs.map((option, i) => (
-                <FilterCheckbox
-                    isChecked={filter.isOptionEnabled(option.name)}
-                    key={`${filter.title}_${option.name}_${i}`}
-                    label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(option.name) : option.name}
-                    onChange={(e) => filter.updateOption(option.name, e.target.checked)}
-                    option={option}
-                    tooltip={findTooltip(option)}
-                    url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too
-                />
-            ));
+            const optionCheckboxes = options.objs.map((option, i) => {
+                const label = option.displayName || option.name;
+
+                return (
+                    <FilterCheckbox
+                        isChecked={filter.isOptionEnabled(option.name)}
+                        key={`${filter.title}_${option.name}_${i}`}
+                        label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(label) : label}
+                        onChange={(e) => filter.updateOption(option.name, e.target.checked)}
+                        option={option}
+                        tooltip={findTooltip(option)}
+                        url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too
+                    />
+                );
+            });
 
             return gridify(optionCheckboxes);
         },
@@ -177,6 +181,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             sortByCount,
         ]
     );
+
+    // if (this.title == BooleanFilterName.USER) {
+        for (let i = 0; i < filter.options.objs.length; i++) {
+            if (filter.options.objs[i].displayName) {
+                logger.info(`Found obj with displayName:`, filter.options.objs[i]);
+            }
+        }
+    // }
 
     return optionGrid;
 };
