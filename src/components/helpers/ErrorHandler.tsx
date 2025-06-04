@@ -9,9 +9,10 @@ import { Logger } from "fedialgo";
 import { ErrorBoundary } from "react-error-boundary";
 
 import BugReportLink from "./BugReportLink";
+import { extractText } from "../../helpers/react_helpers";
 import { getLogger } from "../../helpers/log_helpers";
 import { isEmptyStr, isString } from "../../helpers/string_helpers";
-import { extractText } from "../../helpers/react_helpers";
+import { rawErrorContainer } from "../../helpers/style_helpers";
 
 const ERROR_FONT_SIZE = 18;
 const errorLogger = getLogger("ErrorHandler");
@@ -193,15 +194,6 @@ const errorHeadline: CSSProperties = {
     fontWeight: "bold",
     marginBottom: "10px",
     width: "100%",
-}
-
-const rawErrorContainer: CSSProperties = {
-    backgroundColor: "black",
-    borderRadius: "10px",
-    fontFamily: "monospace",
-    marginTop: "15px",
-    minHeight: "120px",
-    padding: "35px",
 };
 
 const rawErrorInPopup: CSSProperties = {

@@ -240,9 +240,12 @@ class Config implements ReadonlyConfig {
                     tooltips: {
                         [BooleanFilterName.LANGUAGE]: {
                             highlight: {
-                                color: THEME.followedUserColor,
+                                gradient: {
+                                    endpoints: THEME.followedUserGradient,
+                                    textSuffix: (n: number) => n ? ` ${n} times recently` : '',
+                                },
                             },
-                            text: `You post most in this language`,
+                            text: `You used this language`,
                         },
                     },
                 },

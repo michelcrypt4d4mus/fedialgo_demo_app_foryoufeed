@@ -21,7 +21,7 @@ import WeightSetter from "../components/algorithm/WeightSetter";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
-import { linkesque, tooltipZIndex } from "../helpers/style_helpers";
+import { linkesque, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import { useError } from "../components/helpers/ErrorHandler";
 
@@ -186,6 +186,19 @@ export default function Feed() {
                                 {`Create New Toot`}
                             </Button>
                         </div>
+
+                        {algorithm && (algorithm.getApiErrorMsgs().length > 0) &&
+                            <div className="d-grid gap-2" style={rawErrorContainer}>
+                                <p style={{color: "white"}}>Non-fatal errors encountered while loading data:</p>
+
+                                <ul>
+                                    {algorithm.getApiErrorMsgs().map((msg, i) => (
+                                        <li key={`${msg}_${i}`} style={errorItem}>
+                                            {msg}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>}
                     </div>
                 </Col>
 
@@ -235,6 +248,11 @@ export default function Feed() {
 const accountTooltipStyle: CSSProperties = {
     ...tooltipZIndex,
     width: "500px",
+};
+
+const errorItem: CSSProperties = {
+    color: "#9e0d12",
+    marginTop: "10px",
 };
 
 // TODO: move to LoadingSpinner?

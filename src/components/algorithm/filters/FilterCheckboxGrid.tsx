@@ -25,7 +25,6 @@ import { isNumber } from "../../../helpers/number_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
-import { log } from "console";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
@@ -126,8 +125,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
             return tooltip;
-        } else if (isUserFilter && isNumber(option[ScoreName.FAVOURITED_ACCOUNTS])) {
+        } else if (isUserFilter) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
+            if (!isNumber(option[dataSource])) return undefined;
             let tooltip = getGradientTooltip(option, dataSource);
             const userTooltipCfg = tooltipConfig[dataSource];
 
@@ -150,17 +150,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
             return tooltip;
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
-            const languageOption = algorithm.userData.languagesPostedIn.getObj(option.name);
-            const userTooltipCfg = tooltipConfig[ScoreName.FAVOURITED_ACCOUNTS];  // TODO: stop using this for language tooltips
-
-            if (option.name == algorithm.userData.preferredLanguage) {
-                return tooltipConfig[BooleanFilterName.LANGUAGE];
-            } else if (languageOption) {
-                const tooltip = {...tooltipConfig[BooleanFilterName.LANGUAGE]};
-                tooltip.text = `You used this language ${languageOption.numToots} times recently`;
-                tooltip.highlight.color = userTooltipCfg.highlight.gradient.endpoints[0].toHexString();
-                return tooltip;
-            }
+            const dataSource = BooleanFilterName.LANGUAGE;
+            if (!isNumber(option[dataSource])) return undefined;
+            let tooltip = getGradientTooltip(option, dataSource);
+            const languageTooltipCfg = tooltipConfig[dataSource];
+            return tooltip;
         }
     };
 
