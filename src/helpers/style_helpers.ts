@@ -132,6 +132,15 @@ export const paddingBorder: CSSProperties = {
     padding: "2px",
 };
 
+export const rawErrorContainer: CSSProperties = {
+    backgroundColor: "black",
+    borderRadius: "10px",
+    fontFamily: "monospace",
+    marginTop: "15px",
+    minHeight: "120px",
+    padding: "35px",
+};
+
 export const roundedBox: CSSProperties = {
     borderRadius: "20px",
     background: "lightgrey",
