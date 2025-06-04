@@ -177,11 +177,11 @@ export default function Feed() {
                             </p>
                         </div>
 
-                        <div style={newTootButton}>
+                        <div className="d-grid gap-2" style={newTootButton}>
                             <Button
                                 className='p-2 text-center'
                                 onClick={() => setShowNewTootModal(true)}
-                                variant="outline-primary"
+                                variant="outline-secondary"
                             >
                                 {`Create New Toot`}
                             </Button>
@@ -271,15 +271,16 @@ const statusesColStyle: CSSProperties = {
 };
 
 const stickySwitchContainer: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
     height: "auto",
     paddingLeft: "2px",
     paddingRight: "2px",
-    display: "flex",
-    justifyContent: "space-between",
 };
 
 const newTootButton: CSSProperties = {
-    ...stickySwitchContainer,
-    justifyContent: "space-around",
-    margin: "25px",
+    // justifyContent: "space-between",
+    marginTop: "35px",
+    marginLeft: "200px",
+    marginRight: "200px",
 };
