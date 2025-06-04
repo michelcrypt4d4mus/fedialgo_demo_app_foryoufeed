@@ -36,14 +36,20 @@ const OAUTH_SCOPES = [
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed";
 
 
-// Config types
-type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
+type FilterTooltipConfigKey = (
+      FilterOptionDataSource
+    | BooleanFilterName.LANGUAGE
+    | TypeFilterName.FOLLOWED_HASHTAGS
+);
+
 
 // Subconfig types
+type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
+
 type AppConfig = {
     accessTokenRevokedMsg: string;
     changelogUrl: string;
-    createAppParams: Omit<CreateAppParams, "redirectUris">;
+    createAppParams: Readonly<Omit<CreateAppParams, "redirectUris">>;
     defaultServer: string;
     developerMastodonUrl: string;
     headerIconUrl: string;
@@ -53,41 +59,35 @@ type AppConfig = {
     showcaseImageUrl: string;
 };
 
-type FilterTooltipConfigKey = (
-      FilterOptionDataSource
-    | BooleanFilterName.LANGUAGE
-    | TypeFilterName.FOLLOWED_HASHTAGS
-);
-
 type FilterOptionFormatCfg = {
     formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
     hidden?: boolean;                        // If true hide this option from the UI
     position: number;                        // Position of this filter in the filters section, used for ordering
     tooltips?: {                             // Color highlight config for filter options
-        [key in FilterTooltipConfigKey]?: CheckboxTooltipConfig
+        readonly [key in FilterTooltipConfigKey]?: Readonly<CheckboxTooltipConfig>
     };
 };
 
 type FilterConfig = {
     boolean: {
-        maxLabelLength: number;
+        readonly maxLabelLength: number;
         minTootsSlider: {
-            idealNumOptions: number,
-            minItems: number;
-            tooltipHoverDelay: number;
+            readonly idealNumOptions: number,
+            readonly minItems: number;
+            readonly tooltipHoverDelay: number;
         },
-        optionsFormatting: Record<BooleanFilterName, FilterOptionFormatCfg>,
+        readonly optionsFormatting: Record<BooleanFilterName, Readonly<FilterOptionFormatCfg>>,
     };
     headerSwitches: {
-        tooltipHoverDelay: number;
-        tooltipText: Record<SwitchType, string>;
+        readonly tooltipHoverDelay: number;
+        readonly tooltipText: Record<SwitchType, string>;
     };
     numeric: {
-        description: string;
-        invertSelectionTooltipTxt: string;
-        maxValue: number;
-        position: number;
-        title: string;
+        readonly description: string;
+        readonly invertSelectionTooltipTxt: string;
+        readonly maxValue: number;
+        readonly position: number;
+        readonly title: string;
     };
 };
 
@@ -115,9 +115,9 @@ type TimelineConfig = {
     noTootsMsg: string;
     numTootsToLoadOnScroll: number;
     checkboxTooltipText: {
-        autoupdate: string;
-        hideLinkPreviews: string;
-        stickToTop: string;
+        readonly autoupdate: string;
+        readonly hideLinkPreviews: string;
+        readonly stickToTop: string;
     };
 };
 
@@ -148,20 +148,22 @@ type WeightsConfig = {
 };
 
 interface ConfigType {
-    filters: FilterConfig;
-    locale: LocaleConfig;
-    replies: ReplyConfig;
-    stats: StatsConfig;
-    theme: ThemeConfig;
-    timeline: TimelineConfig;
-    toots: TootConfig;
-    trending: TrendingConfig;
-    weights: WeightsConfig;
+    filters: Readonly<FilterConfig>;
+    locale: Readonly<LocaleConfig>;
+    replies: Readonly<ReplyConfig>;
+    stats: Readonly<StatsConfig>;
+    theme: Readonly<ThemeConfig>;
+    timeline: Readonly<TimelineConfig>;
+    toots: Readonly<TootConfig>;
+    trending: Readonly<TrendingConfig>;
+    weights: Readonly<WeightsConfig>;
 };
+
+interface ReadonlyConfig extends Readonly<ConfigType> {};
 
 
 // App level config that is not user configurable
-class Config implements ConfigType {
+class Config implements ReadonlyConfig {
     app: AppConfig = {
         accessTokenRevokedMsg: `Your access token expired. Please log in again to continue using the app.`,
         changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases`,

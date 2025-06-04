@@ -19,25 +19,24 @@ import {
 import FilterCheckbox from "./FilterCheckbox";
 import { buildGradient } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
-import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { isNumber } from "../../../helpers/number_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
+import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
+import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
-interface FilterCheckboxGridProps {
+interface FilterCheckboxGridProps extends HeaderSwitchState {
     filter: BooleanFilter,
-    highlightedOnly?: boolean,
     minToots?: number,
-    sortByCount?: boolean,
 };
 
 
 // TODO: maybe rename this BooleanFilterCheckboxGrid?
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
-    const { filter, highlightedOnly, minToots, sortByCount } = props;
+    const { filter, highlightsOnly, minToots, sortByCount } = props;
     const { algorithm, hideFilterHighlights } = useAlgorithm();
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
 
@@ -128,8 +127,15 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return tooltip;
         } else if (isUserFilter && option[ScoreName.FAVOURITED_ACCOUNTS]) {
             return getGradientTooltip(option, ScoreName.FAVOURITED_ACCOUNTS);
-        } else if (filter.title == BooleanFilterName.LANGUAGE && option.name == algorithm.userData.preferredLanguage) {
-            return tooltipConfig[BooleanFilterName.LANGUAGE];
+        } else if (filter.title == BooleanFilterName.LANGUAGE) {
+            if (option.name == algorithm.userData.preferredLanguage) {
+                return tooltipConfig[BooleanFilterName.LANGUAGE];
+            } else if (algorithm.userData.languagesPostedIn[option.name]) {
+                // TODO: use a gradient?
+                const tooltip = {...tooltipConfig[BooleanFilterName.LANGUAGE]};
+                tooltip.text = `You used this language ${algorithm.userData.languagesPostedIn[option.name]} times recently`;
+                return tooltip;
+            }
         }
     };
 
@@ -137,7 +143,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         () => {
             logger.trace(`Rebuilding optionGrid for ${filter.options.length} options...`);
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
-            if (highlightedOnly) options = options.filter(option => !!findTooltip(option));
+            if (highlightsOnly) options = options.filter(option => !!findTooltip(option));
 
             const optionCheckboxes = options.objs.map((option, i) => (
                 <FilterCheckbox
@@ -160,10 +166,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
             (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
             isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
+            filter,
             filter.options,
             filter.selectedOptions,
             hideFilterHighlights,
-            highlightedOnly,
+            highlightsOnly,
             minToots,
             sortByCount,
         ]
