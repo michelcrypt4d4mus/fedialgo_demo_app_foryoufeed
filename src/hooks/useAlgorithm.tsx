@@ -53,12 +53,12 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     // Instance info for the server
     const [serverInfo, setServerInfo] = useState<mastodon.v1.Instance | mastodon.v2.Instance>(null);
     const [timeline, setTimeline] = useState<Toot[]>([]);
-    // User checkbox to load new toots on refocus
+    // Checkbox to enable updating timeline on browser tab refocus
     const shouldAutoUpdateState = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
 
     const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
         label: `Hide Filter Highlights`,
-        tooltipConfig: {text: `Don't color the notable filter options`},
+        tooltipConfig: {text: config.timeline.checkboxTooltipText.hideFilterHighlights},
     });
 
     // TODO: this doesn't make any API calls yet, right?
@@ -99,13 +99,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // Initial load of the feed
     useEffect(() => {
-        if (!user) {
-            logger.warn(`constructFeed() useEffect called without user, skipping initial load`);
-            return;
-        } else if (algorithm) {
-            logger.trace(`constructFeed() useEffect called but algo already exists, skipping repeating initial load`);
-            return;
-        }
+        if (!user || algorithm) return;
 
         // Check that we have valid user credentials and load timeline toots, otherwise force a logout.
         const constructFeed = async (): Promise<void> => {

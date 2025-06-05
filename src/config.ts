@@ -116,6 +116,7 @@ type TimelineConfig = {
     numTootsToLoadOnScroll: number;
     checkboxTooltipText: {
         readonly autoupdate: string;
+        readonly hideFilterHighlights: string;
         readonly hideLinkPreviews: string;
         readonly stickToTop: string;
     };
@@ -318,6 +319,7 @@ class Config implements ReadonlyConfig {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
         checkboxTooltipText: {
             autoupdate: "Automatically update the timeline when you focus this browser tab",
+            hideFilterHighlights: `Don't color the notable filter options`,
             hideLinkPreviews: "Show only the headline and description for embedded links",
             stickToTop: `Keep control panel on screen while scrolling`,
         },
