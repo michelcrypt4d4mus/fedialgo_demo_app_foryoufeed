@@ -5,7 +5,6 @@ import type { mastodon } from 'masto';
 
 export type BooleanState = ReactState<boolean>;
 export type ErrorHandler = (msg: string, errorObj?: Error, note?: string) => void;
-export type MimeExtensions = Record<string, string[]>;
 export type ReactState<T> = ReturnType<typeof useState<T>>;
 
 

@@ -5,7 +5,6 @@ import { MediaCategory, type TrendingData, TrendingType } from "fedialgo";
 
 import { appLogger } from "./log_helpers";
 import { config } from "../config";
-import { MimeExtensions } from "../types";
 
 // Window events: https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event
 export enum Events {
@@ -22,6 +21,7 @@ export const alphabetize = (arr: string[]) => arr.sort(compareStr);
 export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
 export const nTimes = (n: number) => `${n} time${n === 1 ? '' : 's'}`;
 // Boolean helpers
+export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
 export const isEmptyStr = (s: string | null | undefined) => s === null || s === undefined || s.trim() === '';
 export const isString = (s: unknown) => typeof s === 'string';
 
@@ -30,56 +30,16 @@ const DATE_FORMAT = Intl.DateTimeFormat(
     {year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric"}
 );
 
-const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
+export const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
     acc[value] = `${value}/*`;
     return acc;
 }, {} as Record<MediaCategory, string>);
-
-
-// Build a map of MIME types to file extensions used by DropZone for image attachments etc.
-export const buildMimeExtensions = (mimeTypes: string[]): MimeExtensions => {
-    const mimeExtensions = mimeTypes.reduce((acc, mimeType) => {
-        const [category, fileType] = mimeType.split('/');
-        if (fileType.startsWith('x-') || fileType.includes('.')) return acc;  // skip invalid file extensions
-
-        if (category == MediaCategory.AUDIO) {
-            acc[MIME_GROUPS[MediaCategory.AUDIO]] ||= [];
-            acc[MIME_GROUPS[MediaCategory.AUDIO]].push(mimeTypeExtension(mimeType));
-        } else if (category == MediaCategory.IMAGE) {
-            acc[MIME_GROUPS[MediaCategory.IMAGE]] ||= [];
-            acc[MIME_GROUPS[MediaCategory.IMAGE]].push(mimeTypeExtension(mimeType));
-
-            if (fileType === 'jpeg') {
-                acc[MIME_GROUPS[MediaCategory.IMAGE]].push('.jpg'); // Add .jpg extension support
-            }
-        } else if (category == MediaCategory.VIDEO) {
-            acc[MIME_GROUPS[MediaCategory.VIDEO]] ||= [];
-
-            if (mimeType === 'video/quicktime') {
-                acc[MIME_GROUPS[MediaCategory.VIDEO]].push('.mov'); // Add .mov extension support
-            } else {
-                acc[MIME_GROUPS[MediaCategory.VIDEO]].push(mimeTypeExtension(mimeType));
-            }
-        } else {
-            appLogger.warn(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
-        }
-
-        return acc;
-    }, {} as MimeExtensions);
-
-    appLogger.trace(`Server accepted MIME types:`, mimeExtensions);
-    return mimeExtensions;
-};
 
 
 // String summary of info about a file on the local filesystem
 export function fileInfo(file: File): string {
     return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
 };
-
-
-// Returns true if there's any capital letter in the string.
-export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
@@ -173,7 +133,7 @@ export const versionString = () => {
 
 
 // "image/png" => ".png"
-function mimeTypeExtension(mimeType: string): string {
+export function mimeTypeExtension(mimeType: string): string {
     const parts = mimeType.split('/');
     return parts.length > 1 ? `.${parts[1]}` : '';
 };

@@ -29,11 +29,11 @@ interface ReplyModalProps extends ModalProps {
 
 export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
-    const { api, mimeExtensions, serverInfo } = useAlgorithm();
+    const { api, serverInfo } = useAlgorithm();
     const { logAndSetFormattedError } = useError();
 
     // Server configuration stuff
-    const acceptedAttachments = mimeExtensions || config.replies.defaultAcceptedAttachments;
+    const acceptedAttachments = serverInfo?.mimeExtensions || config.replies.defaultAcceptedAttachments;
     const statusConfig = serverInfo?.configuration?.statuses;
     const maxChars = statusConfig?.maxCharacters || config.replies.defaultMaxCharacters;
     const maxMediaAttachments = statusConfig?.maxMediaAttachments || config.replies.defaultMaxAttachments;
