@@ -92,7 +92,7 @@ export const computeDefaultValue = (objList: ObjList, title: string, idealNumOpt
     logger.deep(`Computing default value for minToots slider with ${objList.length} options`);
 
     // Don't show the slider if there are too few options
-    if (objList.objs.length < (idealNumOptions + 1)) {
+    if (objList.objs.length < (idealNumOptions - 1)) {
         return 0;
     } else {
         // It's "ideal" just in the sense that it has a value for numToots that works well
