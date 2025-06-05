@@ -122,14 +122,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return tooltip;
         } else if (isUserFilter) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
-            if (!isNumber(option[dataSource])) return undefined;
             let tooltip = getGradientTooltip(option, dataSource);
+            if (!tooltip) return undefined;
             const userTooltipCfg = tooltipConfig[dataSource];
-
-            if (!tooltip) {
-                logger.warn(`Didn't find a tooltip where we expected to find one for option:`, option);
-                return undefined;
-            }
 
             // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
             if (option.isFollowed) {
@@ -145,10 +140,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
             return tooltip;
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
-            const dataSource = BooleanFilterName.LANGUAGE;
-            if (!isNumber(option[dataSource])) return undefined;
-            let tooltip = getGradientTooltip(option, dataSource);
-            return tooltip;
+            return getGradientTooltip(option, filter.title);
         }
     };
 
