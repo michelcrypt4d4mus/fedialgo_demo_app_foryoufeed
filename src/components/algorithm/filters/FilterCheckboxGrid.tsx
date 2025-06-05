@@ -77,12 +77,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             },
             {} as DataSourceGradients
         ),
-        [
-            algorithm.trendingData.tags,
-            algorithm.userData.favouriteAccounts,
-            algorithm.userData.favouritedTags,
-            algorithm.userData.participatedTags
-        ]
+        [filter.options]
     );
 
     // Get the color & text for the tooltip based on the number stored in the option prop w/name same as dataSource param
@@ -99,7 +94,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         let color = gradientCfg.colors[Math.max(optionGradientValue, 1) - 1];  // Math.max() to avoid negative indices
 
         if (!color) {
-            logger.warn(`No color found for option:`, option);
+            logger.warn(`No color found for option (gradient color array has ${gradientCfg.colors?.length} elements):`, option);
             color = gradientCfg.highlight.gradient.endpoints[1];  // Use the top color
         }
 
@@ -191,6 +186,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             (isTagFilter || isTypeFilter) ? algorithm.userData.participatedTags : undefined,
             (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
             isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
+            algorithm.userData.followedAccounts,
             filter,
             filter.options,
             filter.selectedOptions,
