@@ -87,7 +87,7 @@
         "webpack": "^5.99.8",
         "webpack-bundle-analyzer": "^4.10.2",
         "webpack-cli": "^5.0.1",
-        "webpack-dev-server": "^4.13.3",
+        "webpack-dev-server": "^5.2.2",
         "workbox-webpack-plugin": "^6.5.4"
     }
 }
