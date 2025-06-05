@@ -15,10 +15,10 @@ export interface MastodonServer extends mastodon.v2.Instance {
 
 
 // Populate our mimeExtensions field in the mastodon.v2.Instance object based on the server's configuration.
+// Turns Mastodon server configuration into what we need for DropZone to work with image attachments etc.
 export function addMimeExtensionsToServer(server: mastodon.v2.Instance): MastodonServer {
     try {
         const mimeExtensions = buildMimeExtensions(server.configuration.mediaAttachments.supportedMimeTypes);
-        appLogger.debug(`Adding MIME extensions to mastodon.v2.Instance:`, mimeExtensions);
         return { ...server, mimeExtensions };
     } catch (error) {
         appLogger.error(`Failed to add MIME extensions to server: ${server.domain}`, error, `\nserver info:`, server);
@@ -29,34 +29,37 @@ export function addMimeExtensionsToServer(server: mastodon.v2.Instance): Mastodo
 
 // Build a map of MIME types to file extensions used by DropZone for image attachments etc.
 function buildMimeExtensions (mimeTypes: string[]): MimeExtensions {
-    const mimeExtensions = mimeTypes.reduce((acc, mimeType) => {
-        const [category, fileType] = mimeType.split('/');
-        if (fileType.startsWith('x-') || fileType.includes('.')) return acc; // skip invalid file extensions
+    const mimeExtensions = mimeTypes.reduce(
+        (acc, mimeType) => {
+            const [category, fileType] = mimeType.split('/');
+            if (fileType.startsWith('x-') || fileType.includes('.')) return acc; // skip invalid file extensions
 
-        if (category == MediaCategory.AUDIO) {
-            acc[MIME_GROUPS[MediaCategory.AUDIO]] ||= [];
-            acc[MIME_GROUPS[MediaCategory.AUDIO]].push(mimeTypeExtension(mimeType));
-        } else if (category == MediaCategory.IMAGE) {
-            acc[MIME_GROUPS[MediaCategory.IMAGE]] ||= [];
-            acc[MIME_GROUPS[MediaCategory.IMAGE]].push(mimeTypeExtension(mimeType));
+            if (category == MediaCategory.AUDIO) {
+                acc[MIME_GROUPS[MediaCategory.AUDIO]] ||= [];
+                acc[MIME_GROUPS[MediaCategory.AUDIO]].push(mimeTypeExtension(mimeType));
+            } else if (category == MediaCategory.IMAGE) {
+                acc[MIME_GROUPS[MediaCategory.IMAGE]] ||= [];
+                acc[MIME_GROUPS[MediaCategory.IMAGE]].push(mimeTypeExtension(mimeType));
 
-            if (fileType === 'jpeg') {
-                acc[MIME_GROUPS[MediaCategory.IMAGE]].push('.jpg'); // Add .jpg extension support
-            }
-        } else if (category == MediaCategory.VIDEO) {
-            acc[MIME_GROUPS[MediaCategory.VIDEO]] ||= [];
+                if (fileType === 'jpeg') {
+                    acc[MIME_GROUPS[MediaCategory.IMAGE]].push('.jpg'); // Add .jpg extension support
+                }
+            } else if (category == MediaCategory.VIDEO) {
+                acc[MIME_GROUPS[MediaCategory.VIDEO]] ||= [];
 
-            if (mimeType === 'video/quicktime') {
-                acc[MIME_GROUPS[MediaCategory.VIDEO]].push('.mov'); // Add .mov extension support
+                if (mimeType === 'video/quicktime') {
+                    acc[MIME_GROUPS[MediaCategory.VIDEO]].push('.mov'); // Add .mov extension support
+                } else {
+                    acc[MIME_GROUPS[MediaCategory.VIDEO]].push(mimeTypeExtension(mimeType));
+                }
             } else {
-                acc[MIME_GROUPS[MediaCategory.VIDEO]].push(mimeTypeExtension(mimeType));
+                appLogger.warn(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
             }
-        } else {
-            appLogger.warn(`Unknown MIME type in home server's attachmentsConfig: ${mimeType}`);
-        }
 
-        return acc;
-    }, {} as MimeExtensions);
+            return acc;
+        },
+        {} as MimeExtensions
+    );
 
     appLogger.trace(`Server accepted MIME types:`, mimeExtensions);
     return mimeExtensions;
