@@ -1,3 +1,6 @@
+/*
+ * Types and methods for helping with tooltip coloring etc.
+ */
 import { CSSProperties } from "react";
 
 import tinycolor from "tinycolor2";
@@ -28,7 +31,7 @@ export type CheckboxTooltipConfig = {
 };
 
 
-// Same as CheckboxTooltipConfig but with the actual array of colors set
+// Same as CheckboxTooltipConfig but with the actual array of colors for the gradient
 export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
-    colors: tinycolor.Instance[]; // Array of colors for the gradient
+    colors: tinycolor.Instance[];
 };

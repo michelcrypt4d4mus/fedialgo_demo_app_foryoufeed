@@ -49,6 +49,7 @@ const THEME_BASE: ThemeConfigBase = {
     trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')], // Gradient for trending tags
 };
 
+// Fill in a few extra colors that are the last color in the gradients as a convenience
 export const THEME: ThemeConfig = {
     ...THEME_BASE,
     favouritedTagColor: THEME_BASE.favouritedTagGradient.slice(-1)[0].toHexString(),
