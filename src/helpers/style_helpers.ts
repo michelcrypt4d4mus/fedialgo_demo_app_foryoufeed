@@ -35,16 +35,18 @@ export interface ThemeConfig extends ThemeConfigBase {
     readonly followedUserColor: CSSProperties["color"];
 }
 
+
+// Color blender: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
 const THEME_BASE: ThemeConfigBase = {
     accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-    favouritedTagGradient: [tinycolor("#cfe3e3"), tinycolor("cyan")], // Gradient for favourited tags
+    favouritedTagGradient: [tinycolor("#DACFB0"), tinycolor("#e1ff00")], // Gradient for favourited tags
     feedBackgroundColor: '#15202b', // background color for the timeline
     feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
-    followedTagColor: 'yellow', // Color for followed tags
+    followedTagColor: 'cyan', // Color for followed tags
     followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')], // Color for followed users
     participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Color for participated tags
     trendingObjFontSize: 16, // Font size for trending objects
-    trendingTagGradient: [tinycolor('#f08c8c'), tinycolor('firebrick')], // Gradient for trending tags
+    trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')], // Gradient for trending tags
 };
 
 export const THEME: ThemeConfig = {
