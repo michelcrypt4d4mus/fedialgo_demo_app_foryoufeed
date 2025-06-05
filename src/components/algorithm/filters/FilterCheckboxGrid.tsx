@@ -71,7 +71,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 }
 
                 // Add the colors array to the baseTooltipCfg
-                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxValue, false)};
+                // gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxValue, false)};
+                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.rgb(maxValue)};
                 logger.trace(`Rebuilt ${filter.title} gradient, maxValue=${maxValue}`);
                 return gradients;
             },
