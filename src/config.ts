@@ -17,6 +17,7 @@ import {
 
 import { CheckboxTooltipConfig } from './helpers/tooltip_helpers';
 import { MB } from "./helpers/number_helpers";
+import { nTimes } from './helpers/string_helpers';
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
 import { type TrendingPanelName } from "./components/TrendingSection";
 
@@ -200,7 +201,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.favouritedTagGradient,
-                                    textWithSuffix: (txt: string, n: number) => `${txt} ${n} times recently`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} ${nTimes(n)} recently`,
                                 },
                             },
                             text: `You've favourited this hashtag`
@@ -213,7 +214,7 @@ class Config implements ReadonlyConfig {
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
                                     endpoints: THEME.participatedTagGradient,
-                                    textWithSuffix: (txt: string, n: number) => `${txt} ${n} times recently`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} ${nTimes(n)} recently`,
                                 },
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
@@ -222,7 +223,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.trendingTagGradient,
-                                    textWithSuffix: (txt: string, n: number) => `${txt} (${n} recent toots)`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} (${n} recent toot${n > 1 ? 's' : ''})`,
                                 },
                             },
                             text: `This hashtag is trending`,
@@ -242,7 +243,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.followedUserGradient,
-                                    textWithSuffix: (txt: string, n: number) => txt + (n ? ` ${n} times recently` : ''),
+                                    textWithSuffix: (txt: string, n: number) => txt + (n ? ` ${nTimes(n)} recently` : ''),
                                 },
                             },
                             text: `You used this language`,
@@ -265,7 +266,7 @@ class Config implements ReadonlyConfig {
                                     },
                                     endpoints: THEME.followedUserGradient,
                                     // TODO: the code currently requires this string start with "and i" which sucks
-                                    textWithSuffix: (txt: string, n: number) => n ? `Interacted ${n} times recently` : '',
+                                    textWithSuffix: (txt: string, n: number) => n ? `Interacted ${nTimes(n)} recently` : '',
                                 },
                             },
                             text: `You follow this account`,
