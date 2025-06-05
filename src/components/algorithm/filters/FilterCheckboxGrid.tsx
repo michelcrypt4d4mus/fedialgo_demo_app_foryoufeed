@@ -54,24 +54,25 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const gradientCfg = baseTooltipCfg?.highlight?.gradient;
                 if (!gradientCfg) return gradients; // Skip if there's no configured gradient
 
-                const maxNumToots = Math.max(filter.options.maxNumToots || 0, 2);  // Ensure at least 2 for the gradient
+                // Ensure at least 2 for the gradient
+                const maxValue = Math.max(filter.options.maxValue(dataSource) || 0, 2);
                 let colorGradient = buildGradient(gradientCfg.endpoints);
-                logger.trace(`Rebuilt ${filter.title} gradient, filter.options.maxNumToots=${filter.options.maxNumToots}`);
 
                 // Adjust the color gradient so there's more color variation in the low/middle range
                 if (gradientCfg.adjustment && filter.options.length > gradientCfg.adjustment.minTagsToAdjust) {
                     try {
-                        const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
+                        const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxValue * p));
                         const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                         colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
-                        logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}`);
+                        logger.deep(`Adjusted ${dataSource} gradient, maxValue=${maxValue}`);
                     } catch (err) {
-                        logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err);
+                        logger.error(`Failed to adjust ${dataSource} gradient w/maxValue=${maxValue}):`, err);
                     }
                 }
 
                 // Add the colors array to the baseTooltipCfg
-                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxNumToots, false)};
+                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxValue, false)};
+                logger.trace(`Rebuilt ${filter.title} gradient, maxValue=${maxValue}`);
                 return gradients;
             },
             {} as DataSourceGradients
@@ -93,7 +94,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         let color = gradientCfg.colors[Math.max(optionGradientValue, 1) - 1];  // Math.max() to avoid negative indices
 
         if (!color) {
-            logger.warn(`No color found for option (gradient color array has ${gradientCfg.colors?.length} elements):`, option);
+            logger.warn(`No color found for option (dataSource="${dataSource}", gradient color array has ${gradientCfg.colors?.length} elements):`, option);
             color = gradientCfg.highlight.gradient.endpoints[1];  // Use the top color
         }
 
@@ -147,7 +148,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             const dataSource = BooleanFilterName.LANGUAGE;
             if (!isNumber(option[dataSource])) return undefined;
             let tooltip = getGradientTooltip(option, dataSource);
-            const languageTooltipCfg = tooltipConfig[dataSource];
             return tooltip;
         }
     };
@@ -180,9 +180,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return gridify(optionCheckboxes);
         },
         [
-            algorithm.userData.followedAccounts,
             filter.options,
             filter.selectedOptions,
+            tooltipGradients,
             hideFilterHighlights,
             highlightsOnly,
             minToots,
