@@ -110,7 +110,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (hideFilterHighlights) return undefined;
 
         if (isTagFilter) {
-            if (option.name in algorithm.userData.followedTags) {
+            if (option.isFollowed) {
                 return tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS];
             }
 
