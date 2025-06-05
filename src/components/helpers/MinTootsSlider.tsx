@@ -38,7 +38,7 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
             }
 
             const topTags = objList.topObjs();
-            const maxValueInTags = objList.maxNumToots();
+            const maxValueInTags = objList.maxNumToots;
             const maxValueOptionIdx = Math.min(minTootsSliderCfg.minItems, objList.length - 1);
             let maxValue = topTags.slice(maxValueOptionIdx)[0]?.numToots;
 

@@ -55,9 +55,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 if (!gradientCfg) return gradients; // Skip if there's no configured gradient
 
                 const objList = algorithm.filterOptionDataSources()[dataSource];
-                const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
+                const maxNumToots = Math.max(objList.maxNumToots || 0, 2);  // Ensure at least 2 for the gradient
                 let colorGradient = buildGradient(gradientCfg.endpoints);
-                logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots()}`);
+                logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots}`);
 
                 // Adjust the color gradient so there's more color variation in the low/middle range
                 if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
