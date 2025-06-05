@@ -82,16 +82,22 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     // Get the color & text for the tooltip based on the number stored in the option prop w/name same as dataSource param
     // Returns null if the option doesn't have a number for that dataSource.
+    //   - 'boostValue' can be used to boost the color farther down the gradient, e.g. for followed accounts
     const getGradientTooltip = (
         option: BooleanFilterOption,
-        dataSource: FilterOptionDataSource
+        dataSource: FilterOptionDataSource,
+        boostValue?: boolean
     ): CheckboxTooltipConfig | undefined => {
+        const gradientCfg = tooltipGradients[dataSource];
         const optionGradientValue = option[dataSource];  // The value driving the gradient, e.g. num favourites
         if (!isNumber(optionGradientValue)) return undefined;
-        const gradientCfg = tooltipGradients[dataSource];
         if (!gradientCfg) logger.logAndThrowError(`No gradientCfg found for "${dataSource}"!`);
 
-        let color = gradientCfg.colors[Math.max(optionGradientValue, 1) - 1];  // Math.max() to avoid negative indices
+         // Boost the value half way up the gradient if requested
+        const numColors = gradientCfg.colors.length;
+        const boostAmount = boostValue ? Math.ceil(numColors / 2) : 0;
+        const boostedValue = Math.min(optionGradientValue + boostAmount, gradientCfg.colors.length - 1);  // Ensure we don't go above the max index
+        let color = gradientCfg.colors[Math.max(boostedValue, 1) - 1];  // Math.max() to avoid negative indices on 0
 
         if (!color) {
             logger.warn(`No color found for option (dataSource="${dataSource}", gradient color array has ${gradientCfg.colors?.length} elements):`, option);
@@ -120,18 +126,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         } else if (isUserFilter) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
             const userTooltipCfg = tooltipConfig[dataSource];
-            tooltip = getGradientTooltip(option, dataSource);
+            tooltip = getGradientTooltip(option, dataSource, option.isFollowed);
             if (!tooltip) return undefined;
 
             // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
-            if (option.isFollowed) {
-                if (option[dataSource] > 0) {
-                    tooltip.highlight.color = userTooltipCfg.highlight.gradient.endpoints[1].toHexString();
-                } else {
-                    const gradientColors = tooltipGradients[dataSource].colors;
-                    tooltip.highlight.color = gradientColors[Math.ceil(gradientColors.length / 2)].toHexString();
-                }
-            } else {
+            if (!option.isFollowed) {
                 tooltip.text = tooltip.text.replace(`${userTooltipCfg.text} and i`, "I");
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
