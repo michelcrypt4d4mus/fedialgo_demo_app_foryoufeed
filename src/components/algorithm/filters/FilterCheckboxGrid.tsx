@@ -109,22 +109,19 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     // Return a finalized CheckboxTooltipConfig with full text and color for the option
     const findTooltip = (option: BooleanFilterOption): CheckboxTooltipConfig | undefined => {
         if (hideFilterHighlights) return undefined;
+        let tooltip: CheckboxTooltipConfig | undefined;
 
         if (isTagFilter) {
-            if (option.isFollowed) {
-                return tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS];
-            }
-
             // Fall through to the first gradient color we have a non-zero value for in the option
-            let tooltip = getGradientTooltip(option, TagTootsCacheKey.TRENDING_TAG_TOOTS);
+            tooltip = option.isFollowed ? tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS] : undefined;
+            tooltip ||= getGradientTooltip(option, TagTootsCacheKey.TRENDING_TAG_TOOTS);
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
-            return tooltip;
         } else if (isUserFilter) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
-            let tooltip = getGradientTooltip(option, dataSource);
-            if (!tooltip) return undefined;
             const userTooltipCfg = tooltipConfig[dataSource];
+            tooltip = getGradientTooltip(option, dataSource);
+            if (!tooltip) return undefined;
 
             // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
             if (option.isFollowed) {
@@ -137,11 +134,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             } else {
                 tooltip.text = tooltip.text.replace(`${userTooltipCfg.text} and i`, "I");
             }
-
-            return tooltip;
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
-            return getGradientTooltip(option, filter.title);
+            tooltip = getGradientTooltip(option, filter.title);
         }
+
+        return tooltip;
     };
 
     const optionGrid = useMemo(
