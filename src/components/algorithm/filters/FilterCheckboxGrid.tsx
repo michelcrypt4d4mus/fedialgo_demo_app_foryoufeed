@@ -54,13 +54,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const gradientCfg = baseTooltipCfg?.highlight?.gradient;
                 if (!gradientCfg) return gradients; // Skip if there's no configured gradient
 
-                const objList = algorithm.filterOptionDataSources()[dataSource];
-                const maxNumToots = Math.max(objList.maxNumToots || 0, 2);  // Ensure at least 2 for the gradient
+                const maxNumToots = Math.max(filter.options.maxNumToots || 0, 2);  // Ensure at least 2 for the gradient
                 let colorGradient = buildGradient(gradientCfg.endpoints);
-                logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots}`);
+                logger.trace(`Rebuilt ${filter.title} gradient, filter.options.maxNumToots=${filter.options.maxNumToots}`);
 
                 // Adjust the color gradient so there's more color variation in the low/middle range
-                if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
+                if (gradientCfg.adjustment && filter.options.length > gradientCfg.adjustment.minTagsToAdjust) {
                     try {
                         const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
                         const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
@@ -181,13 +180,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return gridify(optionCheckboxes);
         },
         [
-            // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
-            (isTagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
-            (isTagFilter || isTypeFilter) ? algorithm.userData.participatedTags : undefined,
-            (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
-            isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
             algorithm.userData.followedAccounts,
-            filter,
             filter.options,
             filter.selectedOptions,
             hideFilterHighlights,
