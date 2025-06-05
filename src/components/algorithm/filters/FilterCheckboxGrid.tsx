@@ -54,35 +54,30 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const gradientCfg = baseTooltipCfg?.highlight?.gradient;
                 if (!gradientCfg) return gradients; // Skip if there's no configured gradient
 
-                const objList = algorithm.filterOptionDataSources()[dataSource];
-                const maxNumToots = Math.max(objList.maxNumToots() || 0, 2);  // Ensure at least 2 for the gradient
+                // Ensure at least 2 for the gradient
+                const maxValue = Math.max(filter.options.maxValue(dataSource) || 0, 2);
                 let colorGradient = buildGradient(gradientCfg.endpoints);
-                logger.trace(`Rebuilt ${objList.source} gradient objList.maxNumToots=${objList.maxNumToots()}`);
 
                 // Adjust the color gradient so there's more color variation in the low/middle range
-                if (gradientCfg.adjustment && objList.length > gradientCfg.adjustment.minTagsToAdjust) {
+                if (gradientCfg.adjustment && filter.options.length > gradientCfg.adjustment.minTagsToAdjust) {
                     try {
-                        const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxNumToots * p));
+                        const highPctiles = gradientCfg.adjustment.adjustPctiles.map(p => Math.floor(maxValue * p));
                         const middleColors = highPctiles.map(n => colorGradient[n]).filter(Boolean);
                         colorGradient = buildGradient(gradientCfg.endpoints, middleColors);
-                        logger.deep(`Adjusted ${dataSource} gradient, maxNumToots=${maxNumToots}`);
+                        logger.deep(`Adjusted ${dataSource} gradient, maxValue=${maxValue}`);
                     } catch (err) {
-                        logger.error(`Failed to adjust ${dataSource} gradient w/maxNumToots=${maxNumToots}):`, err);
+                        logger.error(`Failed to adjust ${dataSource} gradient w/maxValue=${maxValue}):`, err);
                     }
                 }
 
                 // Add the colors array to the baseTooltipCfg
-                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxNumToots, false)};
+                gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxValue, false)};
+                logger.trace(`Rebuilt ${filter.title} gradient, maxValue=${maxValue}`);
                 return gradients;
             },
             {} as DataSourceGradients
         ),
-        [
-            algorithm.trendingData.tags,
-            algorithm.userData.favouriteAccounts,
-            algorithm.userData.favouritedTags,
-            algorithm.userData.participatedTags
-        ]
+        [filter.options]
     );
 
     // Get the color & text for the tooltip based on the number stored in the option prop w/name same as dataSource param
@@ -99,7 +94,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         let color = gradientCfg.colors[Math.max(optionGradientValue, 1) - 1];  // Math.max() to avoid negative indices
 
         if (!color) {
-            logger.warn(`No color found for option:`, option);
+            logger.warn(`No color found for option (dataSource="${dataSource}", gradient color array has ${gradientCfg.colors?.length} elements):`, option);
             color = gradientCfg.highlight.gradient.endpoints[1];  // Use the top color
         }
 
@@ -116,7 +111,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (hideFilterHighlights) return undefined;
 
         if (isTagFilter) {
-            if (option.name in algorithm.userData.followedTags) {
+            if (option.isFollowed) {
                 return tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS];
             }
 
@@ -127,14 +122,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return tooltip;
         } else if (isUserFilter) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
-            if (!isNumber(option[dataSource])) return undefined;
             let tooltip = getGradientTooltip(option, dataSource);
+            if (!tooltip) return undefined;
             const userTooltipCfg = tooltipConfig[dataSource];
-
-            if (!tooltip) {
-                logger.warn(`Didn't find a tooltip where we expected to find one for option:`, option);
-                return undefined;
-            }
 
             // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
             if (option.isFollowed) {
@@ -150,11 +140,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
             return tooltip;
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
-            const dataSource = BooleanFilterName.LANGUAGE;
-            if (!isNumber(option[dataSource])) return undefined;
-            let tooltip = getGradientTooltip(option, dataSource);
-            const languageTooltipCfg = tooltipConfig[dataSource];
-            return tooltip;
+            return getGradientTooltip(option, filter.title);
         }
     };
 
@@ -186,14 +172,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             return gridify(optionCheckboxes);
         },
         [
-            // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
-            (isTagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
-            (isTagFilter || isTypeFilter) ? algorithm.userData.participatedTags : undefined,
-            (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
-            isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
-            filter,
             filter.options,
             filter.selectedOptions,
+            tooltipGradients,
             hideFilterHighlights,
             highlightsOnly,
             minToots,
