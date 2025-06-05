@@ -189,7 +189,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             // Not all filters need to watch all values in userData, so we only watch the ones that are relevant
             (isTagFilter || isTypeFilter) ? algorithm.userData.followedTags : undefined,
             (isTagFilter || isTypeFilter) ? algorithm.userData.participatedTags : undefined,
-            (filter.title == BooleanFilterName.LANGUAGE) ? algorithm.userData.preferredLanguage : undefined,
             (isUserFilter || isTypeFilter) ? algorithm.userData.followedAccounts : undefined,
             isUserFilter ? algorithm.userData.favouriteAccounts : undefined,
             filter,
@@ -201,14 +200,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             sortByCount,
         ]
     );
-
-    // if (this.title == BooleanFilterName.USER) {
-        // for (let i = 0; i < filter.options.objs.length; i++) {
-        //     if (filter.options.objs[i].displayName) {
-        //         logger.info(`Found obj with displayName:`, filter.options.objs[i]);
-        //     }
-        // }
-    // }
 
     return optionGrid;
 };
