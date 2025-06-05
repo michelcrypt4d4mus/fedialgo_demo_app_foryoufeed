@@ -29,7 +29,7 @@ const logger = getLogger("Feed");
 
 
 export default function Feed() {
-    const { algorithm, hideFilterHighlightsCheckbox, isLoading, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
+    const { algorithm, hideFilterHighlightsCheckbox, isLoading, lastLoadDurationSeconds, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
     const { resetErrors } = useError();
 
     // State variables
@@ -113,7 +113,7 @@ export default function Feed() {
 
     // TODO: probably easier to not rely on fedialgo's measurement of the last load time; we can easily track it ourselves.
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
-    footerMsg += (algorithm?.lastLoadTimeInSeconds) ? ` in ${algorithm?.lastLoadTimeInSeconds?.toFixed(1)} seconds` : '';
+    footerMsg += lastLoadDurationSeconds ? ` in ${lastLoadDurationSeconds.toFixed(1)} seconds` : '';
 
     return (
         <Container fluid style={{height: "auto"}}>

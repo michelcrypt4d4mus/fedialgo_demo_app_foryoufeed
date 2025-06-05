@@ -19,6 +19,7 @@ import { useLocalStorage } from "./useLocalStorage";
 import { type ErrorHandler } from "../types";
 
 const logger = getLogger("AlgorithmProvider");
+const loadLogger = logger.tempLogger("setLoadState");
 
 interface AlgoContext {
     algorithm?: TheAlgorithm,
@@ -64,33 +65,51 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     // TODO: this doesn't make any API calls yet, right?
     const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
 
-    // TODO: somehow this consistently gets called to setIsLoading(false) but the react component's state
-    // has somehow already been updated to isLoading=false, so it logs a warning.
-    const setLoadState = (newIsLoading: boolean) => {
-        const msg = `setLoadState() called (isLoading: "${isLoading}", newIsLoading: "${newIsLoading}")`;
-        (isLoading === newIsLoading) ? logger.warn(msg) : logger.trace(msg);
+    // Pass startedLoadAt as an arg every time because managing the react state of the last load is tricky
+    const setLoadState = (newIsLoading: boolean, startedLoadAt: Date) => {
+        const loadStartedAtStr = startedLoadAt.toISOString();
+        const msg = `called (isLoading: "${isLoading}", newIsLoading: "${newIsLoading}", loadStartedAt: "${loadStartedAtStr}")`;
+        (isLoading === newIsLoading) ? loadLogger.warn(msg) : loadLogger.trace(msg);
+        setIsLoading(newIsLoading);
 
         if (newIsLoading) {
-            const startedAt = new Date();
-            logger.trace(`Marking load as started at ${startedAt.toISOString()}`);
-            setLastLoadStartedAt(startedAt);
+            setLastLoadStartedAt(startedLoadAt);
         } else {
-            if (!lastLoadStartedAt) {
-                logger.error(`setLoadState() called with isLoading false but lastLoadStartedAt is null!`);
-            } else {
-                const lastLoadDuration = ageInSeconds(lastLoadStartedAt).toFixed(1);
-                logger.log(`Load finished in ${lastLoadDuration} seconds`);
-                setLastLoadDurationSeconds(Number(lastLoadDuration));
-            }
+            const lastLoadDuration = ageInSeconds(startedLoadAt).toFixed(1);
+            loadLogger.log(`Load finished in ${lastLoadDuration} seconds (lastLoadStartedAt: "${loadStartedAtStr}")`);
+            setLastLoadDurationSeconds(Number(lastLoadDuration));
         }
-
-        setIsLoading(newIsLoading);
     };
 
     // Log a bunch of info about the current state along with the msg
     const handleError: ErrorHandler = (msg: string, errorObj?: Error) => {
         const args = { api, lastLoadStartedAt, lastLoadDurationSeconds, serverInfo, user };
         logAndSetFormattedError({ args, errorObj, logger, msg });
+    };
+
+    // Wrapper for calls to FediAlgo TheAlgorithm class that can throw a "busy" error
+    const triggerLoadFxn = (
+        loadFxn: () => Promise<void>,
+        handleError: ErrorHandler,
+        setLoadState: (isLoading: boolean, startedLoadAt: Date) => void,
+    ) => {
+        const startedAt = new Date();
+        setLoadState(true, startedAt);
+
+        loadFxn()
+            .then(() => {
+                loadLogger.log(`triggerLoadFxn finished`);
+                setLoadState(false, startedAt);
+            })
+            .catch((err) => {
+                // Don't flip the isLoading state if the feed is just busy loading
+                if (err.message.includes(GET_FEED_BUSY_MSG)) {
+                    handleError(config.timeline.loadingErroMsg);
+                } else {
+                    handleError(`Failure while retrieving timeline data!`, err);
+                    setLoadState(false, startedAt);
+                }
+            });
     };
 
     const trigger = (loadFxn: () => Promise<void>) => triggerLoadFxn(loadFxn, handleError, setLoadState);
@@ -200,29 +219,4 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             {props.children}
         </AlgorithmContext.Provider>
     );
-};
-
-
-// Wrapper for calls to FediAlgo TheAlgorithm class that can throw a "busy" error
-const triggerLoadFxn = (
-    loadFxn: () => Promise<void>,
-    handleError: ErrorHandler,
-    setLoadState: (isLoading: boolean) => void,
-) => {
-    setLoadState(true);
-
-    loadFxn()
-        .then(() => {
-            logger.log(`triggerLoadFxn finished`);
-            setLoadState(false);
-        })
-        .catch((err) => {
-            if (err.message.includes(GET_FEED_BUSY_MSG)) {
-                // Don't flip the isLoading state if the feed is busy
-                handleError(config.timeline.loadingErroMsg);
-            } else {
-                handleError(`Failure while retrieving timeline data!`, err);
-                setLoadState(false);
-            }
-        });
 };
