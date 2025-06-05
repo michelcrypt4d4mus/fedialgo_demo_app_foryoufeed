@@ -25,6 +25,7 @@ import { isNumber } from "../../../helpers/number_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
+import { isEmptyStr } from "fedialgo/dist/helpers/string_helpers";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
@@ -106,10 +107,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         }
 
         return {
-            highlight: {
-                color: color.toHexString()
-            },
-            text: `${gradientCfg.text} ${gradientCfg.highlight.gradient.textSuffix(optionGradientValue)}`,
+            highlight: { color: color.toHexString() },
+            text: gradientCfg.highlight.gradient.textWithSuffix(gradientCfg.text, optionGradientValue),
         }
     };
 
@@ -128,11 +127,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
             const userTooltipCfg = tooltipConfig[dataSource];
             tooltip = getGradientTooltip(option, dataSource, option.isFollowed);
-            if (!tooltip) return undefined;
 
-            // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
-            if (!option.isFollowed) {
-                tooltip.text = tooltip.text.replace(`${userTooltipCfg.text} and i`, "I");
+            if (tooltip && option.isFollowed) {
+                tooltip.text = userTooltipCfg.text + (isEmptyStr(tooltip.text) ? '' : ` (${tooltip.text.toLowerCase()})`);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
             tooltip = getGradientTooltip(option, filter.title);
@@ -171,11 +168,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [
             filter.options,
             filter.selectedOptions,
-            tooltipGradients,
             hideFilterHighlights,
             highlightsOnly,
             minToots,
             sortByCount,
+            tooltipGradients,
         ]
     );
 

@@ -200,7 +200,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.favouritedTagGradient,
-                                    textSuffix: (n: number) => ` ${n} times recently`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} ${n} times recently`,
                                 },
                             },
                             text: `You've favourited this hashtag`
@@ -213,7 +213,7 @@ class Config implements ReadonlyConfig {
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
                                     endpoints: THEME.participatedTagGradient,
-                                    textSuffix: (n: number) => ` ${n} times recently`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} ${n} times recently`,
                                 },
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
@@ -222,7 +222,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.trendingTagGradient,
-                                    textSuffix: (n: number) => ` (${n} recent toots)`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} (${n} recent toots)`,
                                 },
                             },
                             text: `This hashtag is trending`,
@@ -242,7 +242,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.followedUserGradient,
-                                    textSuffix: (n: number) => n ? ` ${n} times recently` : '',
+                                    textWithSuffix: (txt: string, n: number) => txt + (n ? ` ${n} times recently` : ''),
                                 },
                             },
                             text: `You used this language`,
@@ -265,7 +265,7 @@ class Config implements ReadonlyConfig {
                                     },
                                     endpoints: THEME.followedUserGradient,
                                     // TODO: the code currently requires this string start with "and i" which sucks
-                                    textSuffix: (n: number) => n ? `and interacted ${n} times recently` : '',
+                                    textWithSuffix: (txt: string, n: number) => n ? `Interacted ${n} times recently` : '',
                                 },
                             },
                             text: `You follow this account`,

@@ -13,7 +13,7 @@ export interface CheckboxGradientCfg {
         minTagsToAdjust: number;
     };
     endpoints: GradientEndpoints;
-    textSuffix: (n: number) => string;
+    textWithSuffix: (txt: string, n: number) => string;
 };
 
 
