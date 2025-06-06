@@ -39,7 +39,7 @@ export interface ThemeConfig extends ThemeConfigBase {
 // Color blender: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
 const THEME_BASE: ThemeConfigBase = {
     accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-    favouritedTagGradient: [tinycolor("#DACFB0"), tinycolor("#e1ff00")], // Gradient for favourited tags
+    favouritedTagGradient: [tinycolor("#C4DABE"), tinycolor("#fdff83")], // Gradient for favourited tags
     feedBackgroundColor: '#15202b', // background color for the timeline
     feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
     followedTagColor: 'cyan', // Color for followed tags
@@ -49,6 +49,7 @@ const THEME_BASE: ThemeConfigBase = {
     trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')], // Gradient for trending tags
 };
 
+// Fill in a few extra colors that are the last color in the gradients as a convenience
 export const THEME: ThemeConfig = {
     ...THEME_BASE,
     favouritedTagColor: THEME_BASE.favouritedTagGradient.slice(-1)[0].toHexString(),

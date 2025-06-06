@@ -22,6 +22,7 @@ import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { isNumber } from "../../../helpers/number_helpers";
+import { isEmptyStr } from "../../../helpers/string_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
@@ -96,7 +97,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
          // Boost the value half way up the gradient if requested
         const numColors = gradientCfg.colors.length;
-        const boostAmount = boostValue ? Math.ceil(numColors / 2) : 0;
+        const boostAmount = boostValue ? Math.floor(numColors / 2) : 0;
         const boostedValue = Math.min(optionGradientValue + boostAmount, gradientCfg.colors.length - 1);  // Ensure we don't go above the max index
         let color = gradientCfg.colors[Math.max(boostedValue, 1) - 1];  // Math.max() to avoid negative indices on 0
 
@@ -106,10 +107,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         }
 
         return {
-            highlight: {
-                color: color.toHexString()
-            },
-            text: `${gradientCfg.text} ${gradientCfg.highlight.gradient.textSuffix(optionGradientValue)}`,
+            highlight: { color: color.toHexString() },
+            text: gradientCfg.highlight.gradient.textWithSuffix(gradientCfg.text, optionGradientValue),
         }
     };
 
@@ -128,11 +127,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
             const userTooltipCfg = tooltipConfig[dataSource];
             tooltip = getGradientTooltip(option, dataSource, option.isFollowed);
-            if (!tooltip) return undefined;
 
-            // If it's a followed account w/interactions turn gradient to max, otherwise halfway to max
-            if (!option.isFollowed) {
-                tooltip.text = tooltip.text.replace(`${userTooltipCfg.text} and i`, "I");
+            if (tooltip && option.isFollowed) {
+                tooltip.text = userTooltipCfg.text + (isEmptyStr(tooltip.text) ? '' : ` (${tooltip.text.toLowerCase()})`);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
             tooltip = getGradientTooltip(option, filter.title);
@@ -171,11 +168,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [
             filter.options,
             filter.selectedOptions,
-            tooltipGradients,
             hideFilterHighlights,
             highlightsOnly,
             minToots,
             sortByCount,
+            tooltipGradients,
         ]
     );
 

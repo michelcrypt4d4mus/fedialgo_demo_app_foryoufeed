@@ -46,17 +46,17 @@ export default function AuthProvider(props: PropsWithChildren) {
     // If preserveAppErrors is true, which happens during forced logouts because of API errors,
     // don't reset the app's error state, so that the error modal can be shown after logout.
     const logout = async (preserveAppErrors: boolean = false): Promise<void> => {
-        logger.log("logout() called... preserveAppErrors:", preserveAppErrors);
+        logger.log("logout() called with preserveAppErrors:", preserveAppErrors);
         const body = new FormData();
         body.append("token", user.access_token);
         body.append("client_id", app.clientId)
         body.append("client_secret", app.clientSecret);
         const oauthRevokeURL = user.server + '/oauth/revoke';
 
+        // POST to oauthRevokeURL throws error but log show "Status code: 200" so I think it works? Hard to
+        // get at the actual status code variable (it's only in the low level logs).
+        // Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://universeodon.com/oauth/revoke. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.""
         try {
-            // Throws error but log shows "Status code: 200" so I think it works? Hard to get at the actual
-            // status code variable; it's only in the low level logs.
-            // Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://universeodon.com/oauth/revoke. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.""
             const _logoutResponse = await axios.post(oauthRevokeURL, body);
         } catch (error) {
             logger.warn(`(Probably innocuous) error while trying to logout "${error}":`, error);

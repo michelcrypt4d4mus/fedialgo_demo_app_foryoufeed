@@ -15,9 +15,10 @@ import {
     type FilterOptionDataSource
 } from "fedialgo";
 
-import { CheckboxTooltipConfig } from './helpers/tooltip_helpers';
 import { MB } from "./helpers/number_helpers";
+import { nTimes } from './helpers/string_helpers';
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
+import { type CheckboxTooltipConfig, type GuiCheckboxLabel } from './helpers/tooltip_helpers';
 import { type TrendingPanelName } from "./components/TrendingSection";
 
 
@@ -110,14 +111,19 @@ type TimelineConfig = {
     autoloadOnFocusAfterMinutes: number;
     defaultLoadingMsg: string;
     defaultNumDisplayedToots: number;
+    guiCheckboxLabels: {
+        readonly autoupdate: GuiCheckboxLabel;
+        readonly hideFilterHighlights: GuiCheckboxLabel;
+        readonly hideLinkPreviews: GuiCheckboxLabel;
+        readonly stickToTop: GuiCheckboxLabel;
+    };
     loadingErroMsg: string;
     noTootsMsg: string;
     numTootsToLoadOnScroll: number;
-    checkboxTooltipText: {
-        readonly autoupdate: string;
-        readonly hideLinkPreviews: string;
-        readonly stickToTop: string;
-    };
+    tooltips: {
+        readonly accountTooltipDelayMS: number;
+        readonly defaultTooltipDelayMS: number;
+    }
 };
 
 type TootConfig = {
@@ -200,7 +206,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.favouritedTagGradient,
-                                    textSuffix: (n: number) => ` ${n} times recently`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} ${nTimes(n)} recently`,
                                 },
                             },
                             text: `You've favourited this hashtag`
@@ -213,7 +219,7 @@ class Config implements ReadonlyConfig {
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
                                     endpoints: THEME.participatedTagGradient,
-                                    textSuffix: (n: number) => ` ${n} times recently`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} ${nTimes(n)} recently`,
                                 },
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
@@ -222,7 +228,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.trendingTagGradient,
-                                    textSuffix: (n: number) => ` (${n} recent toots)`,
+                                    textWithSuffix: (txt: string, n: number) => `${txt} (${n} recent toot${n > 1 ? 's' : ''})`,
                                 },
                             },
                             text: `This hashtag is trending`,
@@ -242,7 +248,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.followedUserGradient,
-                                    textSuffix: (n: number) => n ? ` ${n} times recently` : '',
+                                    textWithSuffix: (txt: string, n: number) => txt + (n ? ` ${nTimes(n)} recently` : ''),
                                 },
                             },
                             text: `You used this language`,
@@ -265,7 +271,7 @@ class Config implements ReadonlyConfig {
                                     },
                                     endpoints: THEME.followedUserGradient,
                                     // TODO: the code currently requires this string start with "and i" which sucks
-                                    textSuffix: (n: number) => n ? `and interacted ${n} times recently` : '',
+                                    textWithSuffix: (txt: string, n: number) => n ? `Interacted ${nTimes(n)} recently` : '',
                                 },
                             },
                             text: `You follow this account`,
@@ -315,16 +321,34 @@ class Config implements ReadonlyConfig {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
-        checkboxTooltipText: {
-            autoupdate: "Automatically update the timeline when you focus this browser tab",
-            hideLinkPreviews: "Show only the headline and description for embedded links",
-            stickToTop: `Keep control panel on screen while scrolling`,
-        },
         defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
+
+        guiCheckboxLabels: {
+            autoupdate: {
+                label: `Auto Load New Toots`,
+                tooltipText: "Automatically update the timeline when you focus this browser tab",
+            },
+            hideFilterHighlights: {
+                label: `Hide Filter Highlights`,
+                tooltipText: `Don't color the notable filter options`,
+            },
+            hideLinkPreviews: {
+                label: `Hide Link Previews`,
+                tooltipText: "Show only the headline and description for embedded links",
+            },
+            stickToTop: {
+                label: `Stick Control Panel To Top`,
+                tooltipText: `Keep control panel on screen while scrolling`,
+            }
+        },
         loadingErroMsg: `Currently loading, please wait a moment and try again.`,  // Error message when busy
         noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
         numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll
+        tooltips: {
+            accountTooltipDelayMS: 100,       // Delay for account tooltips in milliseconds
+            defaultTooltipDelayMS: 800,       // Default delay for tooltips in milliseconds;
+        }
     }
 
     toots: TootConfig = {
