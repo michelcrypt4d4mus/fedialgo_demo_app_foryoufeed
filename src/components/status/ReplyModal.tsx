@@ -52,6 +52,7 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     const cursor = isAttaching ? 'wait' : 'default';
     const currentReplyLen = () => replyText.replace(replyMentionsStr, '').trim().length;
+    const isSubmitEnabled = !isAttaching && resolvedID && ((currentReplyLen() + mediaAttachments.length) > 0);
 
     const removeMediaAttachment = (mediaID: string) => {
         logger.log(`Removing media attachment with ID: ${mediaID}`);
@@ -227,7 +228,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                     <div style={buttonContainer}>
                         <Button
                             className="btn-lg"
-                            disabled={isAttaching || currentReplyLen() == 0 || resolvedID === undefined}
+                            disabled={!isSubmitEnabled}
                             onClick={createToot}
                             style={buttonStyle}
                         >

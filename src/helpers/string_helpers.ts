@@ -34,6 +34,26 @@ export const isEmptyStr = (s: string | null | undefined) => s === null || s === 
 export const isString = (s: unknown) => typeof s === 'string';
 
 
+// "image/png" => ".png"
+export function mimeTypeExtension(mimeType: string): string {
+    const parts = mimeType.split('/');
+    return parts.length > 1 ? `.${parts[1]}` : '';
+};
+
+
+// 1st, 2nd 3rd, 4th, etc.
+function ordinalSuffix(n: number): string {
+    if (n > 3 && n < 21) return "th";
+
+    switch (n % 10) {
+        case 1: return "st";
+        case 2: return "nd";
+        case 3: return "rd";
+        default: return "th";
+    }
+};
+
+
 // Remove http:// or https:// from the server URL, Remove everything after slash
 export function sanitizeServerUrl(server: string): string {
     server = server.replace(/^https?:\/\//, '').split('/')[0];
@@ -72,6 +92,7 @@ export const scoreString = (score: number | null): string => {
 };
 
 
+// Format a timestamp.
 export const timestampString = (_timestamp: string): string => {
     const timestamp = new Date(_timestamp);
     const ageInSeconds = (Date.now() - timestamp.getTime()) / 1000;
@@ -81,9 +102,9 @@ export const timestampString = (_timestamp: string): string => {
     if (isToday && ageInSeconds < (3600 * 48)) {
         str = `Today ${timestamp.toLocaleTimeString(browserLocale())}`;
     } else if (ageInSeconds < (3600 * 6 * 24)) {
-        str = timestamp.toLocaleTimeString(browserLocale(), { weekday: "short" });
+        str = timestamp.toLocaleTimeString(browserLocale(), {weekday: "short"});
     } else if (ageInSeconds < (3600 * 30 * 24)) {
-        str = timestamp.toLocaleDateString(browserLocale(), { month: "short", day: "numeric" });
+        str = timestamp.toLocaleDateString(browserLocale(), {month: "short", day: "numeric"});
         str += ordinalSuffix(timestamp.getDate());
         str += ` ${timestamp.toLocaleTimeString(browserLocale())}`;
     } else {
@@ -94,25 +115,6 @@ export const timestampString = (_timestamp: string): string => {
 };
 
 
-// Figure out the type of trending object based on the string.
-// TODO: this is janky, but it works for now.
-export function trendingTypeForString(str: string): keyof TrendingData {
-    str = str.toLowerCase().trim();
-
-    if (str.endsWith(TrendingType.TAGS) || str.includes('hashtags')) {
-        return TrendingType.TAGS;
-    } else if (str.includes('links')) {
-        return TrendingType.LINKS;
-    } else if (str.includes('servers')) {
-        return TrendingType.SERVERS;
-    } else if (str.includes('toots')) {
-        return 'toots';  // TODO: TrendingType has STATUSES, not TOOTS
-    } else {
-        throw new Error(`Unknown trending object type for title: "${str}"`);
-    }
-};
-
-
 // Get the Fedialgo version from the environment variable
 export const versionString = () => {
     try {
@@ -120,24 +122,5 @@ export const versionString = () => {
     } catch (e) {
         appLogger.error(`Error getting version string: ${e}`);
         return `?.?.?`;
-    }
-};
-
-
-// "image/png" => ".png"
-export function mimeTypeExtension(mimeType: string): string {
-    const parts = mimeType.split('/');
-    return parts.length > 1 ? `.${parts[1]}` : '';
-};
-
-
-function ordinalSuffix(n: number): string {
-    if (n > 3 && n < 21) return "th";
-
-    switch (n % 10) {
-        case 1: return "st";
-        case 2: return "nd";
-        case 3: return "rd";
-        default: return "th";
     }
 };
