@@ -21,8 +21,9 @@ import {
 
 import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
+import { NETWORK_ERROR } from "../../helpers/string_helpers";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
-import { isEmptyStr, scoreString } from "../../helpers/string_helpers";
+import { scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
@@ -226,6 +227,7 @@ export default function ActionButton(props: ActionButtonProps) {
     const logAndShowError = (error?: Error, desiredState?: boolean, ...args: any[]) => {
         const actionMsg = (desiredState === false ? "un" : "") + action.toString();
         let msg = `Failed to ${actionMsg} `;
+        let note = error?.message.includes(NETWORK_ERROR) ? undefined : OAUTH_ERROR_MSG;
 
         if (isAccountAction(action)) {
             msg += toot.account.displayNameFullHTML();
@@ -233,7 +235,7 @@ export default function ActionButton(props: ActionButtonProps) {
             msg = msg + "toot";
         }
 
-        logAndSetFormattedError({args, logger, msg: msg + '!', errorObj: error, note: OAUTH_ERROR_MSG});
+        logAndSetFormattedError({ args, logger, msg: msg + '!', errorObj: error, note });
     };
 
     return (
