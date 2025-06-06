@@ -97,7 +97,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
          // Boost the value half way up the gradient if requested
         const numColors = gradientCfg.colors.length;
-        const boostAmount = boostValue ? Math.ceil(numColors / 2) : 0;
+        const boostAmount = boostValue ? Math.floor(numColors / 2) : 0;
         const boostedValue = Math.min(optionGradientValue + boostAmount, gradientCfg.colors.length - 1);  // Ensure we don't go above the max index
         let color = gradientCfg.colors[Math.max(boostedValue, 1) - 1];  // Math.max() to avoid negative indices on 0
 
