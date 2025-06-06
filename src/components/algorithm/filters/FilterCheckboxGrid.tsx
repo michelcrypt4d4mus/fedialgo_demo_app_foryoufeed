@@ -22,10 +22,10 @@ import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
 import { isNumber } from "../../../helpers/number_helpers";
+import { isEmptyStr } from "../../../helpers/string_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
-import { isEmptyStr } from "fedialgo/dist/helpers/string_helpers";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 

@@ -111,15 +111,19 @@ type TimelineConfig = {
     autoloadOnFocusAfterMinutes: number;
     defaultLoadingMsg: string;
     defaultNumDisplayedToots: number;
-    loadingErroMsg: string;
-    noTootsMsg: string;
-    numTootsToLoadOnScroll: number;
     guiCheckboxLabels: {
         readonly autoupdate: GuiCheckboxLabel;
         readonly hideFilterHighlights: GuiCheckboxLabel;
         readonly hideLinkPreviews: GuiCheckboxLabel;
         readonly stickToTop: GuiCheckboxLabel;
     };
+    loadingErroMsg: string;
+    noTootsMsg: string;
+    numTootsToLoadOnScroll: number;
+    tooltips: {
+        readonly accountTooltipDelayMS: number;
+        readonly defaultTooltipDelayMS: number;
+    }
 };
 
 type TootConfig = {
@@ -317,6 +321,9 @@ class Config implements ReadonlyConfig {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
+        defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
+        defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
+
         guiCheckboxLabels: {
             autoupdate: {
                 label: `Auto Load New Toots`,
@@ -335,11 +342,13 @@ class Config implements ReadonlyConfig {
                 tooltipText: `Keep control panel on screen while scrolling`,
             }
         },
-        defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
-        defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
         loadingErroMsg: `Currently loading, please wait a moment and try again.`,  // Error message when busy
         noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
         numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll
+        tooltips: {
+            accountTooltipDelayMS: 100,       // Delay for account tooltips in milliseconds
+            defaultTooltipDelayMS: 800,       // Default delay for tooltips in milliseconds;
+        }
     }
 
     toots: TootConfig = {

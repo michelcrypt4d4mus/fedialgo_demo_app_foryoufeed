@@ -15,6 +15,7 @@ import persistentCheckbox, { CHECKBOX_TOOLTIP_ANCHOR } from '../components/helpe
 import ReplyModal from '../components/status/ReplyModal';
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
 import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
+import TooltippedLink from '../components/helpers/TooltippedLink';
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
@@ -29,7 +30,17 @@ const logger = getLogger("Feed");
 
 
 export default function Feed() {
-    const { algorithm, hideFilterHighlightsCheckbox, isLoading, lastLoadDurationSeconds, shouldAutoUpdateCheckbox, timeline, triggerFeedUpdate } = useAlgorithm();
+    const {
+        algorithm,
+        hideFilterHighlightsCheckbox,
+        isLoading,
+        lastLoadDurationSeconds,
+        shouldAutoUpdateCheckbox,
+        timeline,
+        triggerFeedUpdate,
+        triggerMoarData
+    } = useAlgorithm();
+
     const { resetErrors } = useError();
 
     // State variables
@@ -116,7 +127,7 @@ export default function Feed() {
                 <Tooltip
                     border={"solid"}
                     clickable={true}
-                    delayShow={100}
+                    delayShow={config.timeline.tooltips.accountTooltipDelayMS}
                     id={TOOLTIP_ACCOUNT_ANCHOR}
                     opacity={0.95}
                     place="left"
@@ -204,9 +215,21 @@ export default function Feed() {
 
                            {' ● '}
 
-                            <a onClick={() => triggerFeedUpdate(true)} style={linkesque}>
-                                (load more old toots)
-                            </a>
+                            <TooltippedLink
+                                label={"(load old toots)"}
+                                onClick={() => triggerFeedUpdate(true)}
+                                labelStyle={linkesque}
+                                tooltipText={"Load more toots but starting from the oldest toot in your feed and working backwards"}
+                            />
+
+                           {' ● '}
+
+                            <TooltippedLink
+                                label={"(load more of your data)"}
+                                onClick={triggerMoarData}
+                                labelStyle={linkesque}
+                                tooltipText={"Load more of your Mastodon history into the algorithm"}
+                            />
                         </p>}
 
                     <div style={statusesColStyle}>

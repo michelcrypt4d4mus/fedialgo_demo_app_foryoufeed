@@ -10,12 +10,10 @@ import { useError } from "../components/helpers/ErrorHandler";
 import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { addMimeExtensionsToServer, type MastodonServer } from "../helpers/mastodon_helpers";
 import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
-import { BooleanState } from "../types";
 import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
 import { Events } from "../helpers/string_helpers";
 import { useAuthContext } from "./useAuth";
-import { useLocalStorage } from "./useLocalStorage";
 import { type ErrorHandler } from "../types";
 
 const logger = getLogger("AlgorithmProvider");
@@ -32,6 +30,7 @@ interface AlgoContext {
     shouldAutoUpdateCheckbox?: ReactElement,
     timeline: Toot[],
     triggerFeedUpdate?: (moreOldToots?: boolean) => void,
+    triggerMoarData?: () => void,
     triggerPullAllUserData?: () => void,
 };
 
@@ -112,6 +111,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     const trigger = (loadFxn: () => Promise<void>) => triggerLoadFxn(loadFxn, logAndShowError, setLoadState);
     const triggerFeedUpdate = (moreOldToots?: boolean) => trigger(() => algorithm.triggerFeedUpdate(moreOldToots));
+    const triggerMoarData = () => trigger(() => algorithm.triggerMoarData());
     const triggerPullAllUserData = () => trigger(() => algorithm.triggerPullAllUserData());
 
     // Initial load of the feed
@@ -207,6 +207,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
+        triggerMoarData,
         triggerPullAllUserData
     };
 

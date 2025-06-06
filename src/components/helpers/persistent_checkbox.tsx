@@ -7,6 +7,7 @@ import { ReactElement } from "react";
 
 import { Tooltip } from 'react-tooltip';
 
+import { config } from '../../config';
 import { tooltipZIndex } from '../../helpers/style_helpers';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { type BooleanState } from '../../types';
@@ -33,7 +34,7 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
     let checkbox: ReactElement;
 
     const tooltip = <Tooltip
-        delayShow={800}
+        delayShow={config.timeline.tooltips.defaultTooltipDelayMS}
         id={tooltipAnchor}
         place="bottom"
         style={tooltipZIndex}
