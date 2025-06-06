@@ -15,10 +15,10 @@ import {
     type FilterOptionDataSource
 } from "fedialgo";
 
-import { CheckboxTooltipConfig } from './helpers/tooltip_helpers';
 import { MB } from "./helpers/number_helpers";
 import { nTimes } from './helpers/string_helpers';
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
+import { type CheckboxTooltipConfig, type GuiCheckboxLabel } from './helpers/tooltip_helpers';
 import { type TrendingPanelName } from "./components/TrendingSection";
 
 
@@ -114,11 +114,11 @@ type TimelineConfig = {
     loadingErroMsg: string;
     noTootsMsg: string;
     numTootsToLoadOnScroll: number;
-    checkboxTooltipText: {
-        readonly autoupdate: string;
-        readonly hideFilterHighlights: string;
-        readonly hideLinkPreviews: string;
-        readonly stickToTop: string;
+    guiCheckboxLabels: {
+        readonly autoupdate: GuiCheckboxLabel;
+        readonly hideFilterHighlights: GuiCheckboxLabel;
+        readonly hideLinkPreviews: GuiCheckboxLabel;
+        readonly stickToTop: GuiCheckboxLabel;
     };
 };
 
@@ -317,11 +317,23 @@ class Config implements ReadonlyConfig {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
-        checkboxTooltipText: {
-            autoupdate: "Automatically update the timeline when you focus this browser tab",
-            hideFilterHighlights: `Don't color the notable filter options`,
-            hideLinkPreviews: "Show only the headline and description for embedded links",
-            stickToTop: `Keep control panel on screen while scrolling`,
+        guiCheckboxLabels: {
+            autoupdate: {
+                label: `Auto Load New Toots`,
+                tooltipText: "Automatically update the timeline when you focus this browser tab",
+            },
+            hideFilterHighlights: {
+                label: `Hide Filter Highlights`,
+                tooltipText: `Don't color the notable filter options`,
+            },
+            hideLinkPreviews: {
+                label: `Hide Link Previews`,
+                tooltipText: "Show only the headline and description for embedded links",
+            },
+            stickToTop: {
+                label: `Stick Control Panel To Top`,
+                tooltipText: `Keep control panel on screen while scrolling`,
+            }
         },
         defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline

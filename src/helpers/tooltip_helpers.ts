@@ -35,3 +35,10 @@ export type CheckboxTooltipConfig = {
 export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
     colors: tinycolor.Instance[];
 };
+
+
+export type GuiCheckboxLabel = {
+    readonly anchor?: string; // Optional anchor for the tooltip
+    readonly label: string;
+    readonly tooltipText: string;
+};

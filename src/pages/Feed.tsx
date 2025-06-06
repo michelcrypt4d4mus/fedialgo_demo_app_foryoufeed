@@ -29,7 +29,7 @@ const logger = getLogger("Feed");
 
 
 export default function Feed() {
-    const { algorithm, hideFilterHighlightsCheckbox, isLoading, lastLoadDurationSeconds, shouldAutoUpdateState, timeline, triggerFeedUpdate } = useAlgorithm();
+    const { algorithm, hideFilterHighlightsCheckbox, isLoading, lastLoadDurationSeconds, shouldAutoUpdateCheckbox, timeline, triggerFeedUpdate } = useAlgorithm();
     const { resetErrors } = useError();
 
     // State variables
@@ -42,21 +42,13 @@ export default function Feed() {
 
     // Checkboxes for persistent user settings state variables
     const [hideLinkPreviews, hideLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
-        label: `Hide Link Previews`,
-        tooltipConfig: {text: config.timeline.checkboxTooltipText.hideLinkPreviews}
+        labelAndTooltip: config.timeline.guiCheckboxLabels.hideLinkPreviews,
     });
 
     const [isControlPanelSticky, isControlPanelStickyCheckbox] = persistentCheckbox({
         className: 'd-none d-sm-block',
         isChecked: true,
-        label: `Stick Control Panel To Top`,
-        tooltipConfig: {text: config.timeline.checkboxTooltipText.stickToTop}
-    });
-
-    const [_autoUpdateState, autoUpdateCheckbox] = persistentCheckbox({
-        label: `Auto Load New Toots`,
-        state: shouldAutoUpdateState,
-        tooltipConfig: {text: config.timeline.checkboxTooltipText.autoupdate},
+        labelAndTooltip: config.timeline.guiCheckboxLabels.stickToTop,
     });
 
     // Computed variables etc.
@@ -141,7 +133,7 @@ export default function Feed() {
                             {isControlPanelStickyCheckbox}
                             {hideLinkPreviewsCheckbox}
                             {hideFilterHighlightsCheckbox}
-                            {autoUpdateCheckbox}
+                            {shouldAutoUpdateCheckbox}
                         </div>
 
                         {algorithm && <WeightSetter />}

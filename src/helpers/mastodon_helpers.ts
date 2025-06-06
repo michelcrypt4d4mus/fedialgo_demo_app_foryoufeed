@@ -5,13 +5,18 @@ import { mastodon } from "masto";
 import { MediaCategory } from "fedialgo";
 
 import { appLogger } from "./log_helpers";
-import { MIME_GROUPS, mimeTypeExtension } from "./string_helpers";
+import { mimeTypeExtension } from "./string_helpers";
 
 export type MimeExtensions = Record<string, string[]>;
 
 export interface MastodonServer extends mastodon.v2.Instance {
     mimeExtensions: MimeExtensions;  // Map of server's allowed MIME types to file extensions
 };
+
+const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
+    acc[value] = `${value}/*`;
+    return acc;
+}, {} as Record<MediaCategory, string>);
 
 
 // Populate our mimeExtensions field in the mastodon.v2.Instance object based on the server's configuration.

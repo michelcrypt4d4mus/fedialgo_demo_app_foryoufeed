@@ -29,7 +29,7 @@ interface AlgoContext {
     hideFilterHighlightsCheckbox?: ReactElement,
     lastLoadDurationSeconds?: number,
     serverInfo?: MastodonServer,
-    shouldAutoUpdateState?: BooleanState,
+    shouldAutoUpdateCheckbox?: ReactElement,
     timeline: Toot[],
     triggerFeedUpdate?: (moreOldToots?: boolean) => void,
     triggerPullAllUserData?: () => void,
@@ -53,12 +53,14 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // TODO: this doesn't make any API calls yet, right?
     const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
-    // Checkbox to enable updating timeline on browser tab refocus
-    const shouldAutoUpdateState = useLocalStorage({keyName: "shouldAutoUpdate", defaultValue: false});
 
+    // Checkboxes with persistent storage that require somewhat global state
     const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
-        label: `Hide Filter Highlights`,
-        tooltipConfig: {text: config.timeline.checkboxTooltipText.hideFilterHighlights},
+        labelAndTooltip: config.timeline.guiCheckboxLabels.hideFilterHighlights,
+    });
+
+    const [shouldAutoUpdate, shouldAutoUpdateCheckbox, _tooltip2] = persistentCheckbox({
+        labelAndTooltip: config.timeline.guiCheckboxLabels.autoupdate,
     });
 
     // Pass startedLoadAt as an arg every time because managing the react state of the last load is tricky
@@ -166,7 +168,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         if (!user || !algorithm) return;
 
         const shouldReloadFeed = (): boolean => {
-            if (!shouldAutoUpdateState[0]) return false;
+            if (!shouldAutoUpdate) return false;
             let should = false;
             let msg: string;
 
@@ -192,7 +194,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         const handleFocus = () => document.hasFocus() && shouldReloadFeed() && triggerFeedUpdate();
         window.addEventListener(Events.FOCUS, handleFocus);
         return () => window.removeEventListener(Events.FOCUS, handleFocus);
-    }, [algorithm, isLoading, shouldAutoUpdateState[0], timeline, triggerFeedUpdate, user]);
+    }, [algorithm, isLoading, shouldAutoUpdate, timeline, triggerFeedUpdate, user]);
 
     const algoContext: AlgoContext = {
         algorithm,
@@ -202,7 +204,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         isLoading,
         lastLoadDurationSeconds,
         serverInfo,
-        shouldAutoUpdateState,
+        shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
         triggerPullAllUserData

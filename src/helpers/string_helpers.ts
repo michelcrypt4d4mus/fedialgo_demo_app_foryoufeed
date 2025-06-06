@@ -1,7 +1,7 @@
 /*
  * String manipulation helpers.
  */
-import { MediaCategory, type TrendingData, TrendingType } from "fedialgo";
+import { TrendingType, type TrendingData } from "fedialgo";
 
 import { appLogger } from "./log_helpers";
 import { config } from "../config";
@@ -11,35 +11,27 @@ export enum Events {
     FOCUS = "focus",
 };
 
+
 // Locale
 export const browserLocale = () => navigator?.language || config.locale.defaultLocale;
 export const browserLanguage = () => browserLocale().split('-')[0];
 export const browserCountry = () => browserLocale().split('-')[1];
-
-// Helpers
-export const alphabetize = (arr: string[]) => arr.sort(compareStr);
-export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
-export const nTimes = (n: number) => `${n} time${n === 1 ? '' : 's'}`;
-// Boolean helpers
-export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
-export const isEmptyStr = (s: string | null | undefined) => s === null || s === undefined || s.trim() === '';
-export const isString = (s: unknown) => typeof s === 'string';
 
 const DATE_FORMAT = Intl.DateTimeFormat(
     browserLocale(),
     {year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric"}
 );
 
-export const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
-    acc[value] = `${value}/*`;
-    return acc;
-}, {} as Record<MediaCategory, string>);
 
-
-// String summary of info about a file on the local filesystem
-export function fileInfo(file: File): string {
-    return `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
-};
+// Helpers
+export const alphabetize = (arr: string[]) => arr.sort(compareStr);
+export const compareStr = (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase());
+export const fileInfo = (file: File) => `file: "${file.name}", size: ${file.size}, type: ${file.type}`;
+export const nTimes = (n: number) => `${n} time${n === 1 ? '' : 's'}`;
+// Boolean helpers
+export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
+export const isEmptyStr = (s: string | null | undefined) => s === null || s === undefined || s.trim() === '';
+export const isString = (s: unknown) => typeof s === 'string';
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
