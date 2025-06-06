@@ -26,6 +26,7 @@ interface AlgoContext {
     hideFilterHighlights?: boolean,
     hideFilterHighlightsCheckbox?: ReactElement,
     lastLoadDurationSeconds?: number,
+    resetAlgorithm?: () => Promise<void>,
     serverInfo?: MastodonServer,
     shouldAutoUpdateCheckbox?: ReactElement,
     timeline: Toot[],
@@ -40,7 +41,7 @@ export const useAlgorithm = () => useContext(AlgorithmContext);
 
 export default function AlgorithmProvider(props: PropsWithChildren) {
     const { logout, user } = useAuthContext();
-    const { logAndSetFormattedError } = useError();
+    const { logAndSetFormattedError, resetErrors } = useError();
 
     // State variables
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
@@ -113,6 +114,15 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const triggerFeedUpdate = (moreOldToots?: boolean) => trigger(() => algorithm.triggerFeedUpdate(moreOldToots));
     const triggerMoarData = () => trigger(() => algorithm.triggerMoarData());
     const triggerPullAllUserData = () => trigger(() => algorithm.triggerPullAllUserData());
+
+    // Reset all state except for the user and server
+    const resetAlgorithm = async () => {
+        resetErrors();
+        if (!algorithm) return;
+        setIsLoading(true);
+        await algorithm.reset();
+        triggerFeedUpdate();
+    };
 
     // Initial load of the feed
     useEffect(() => {
@@ -203,6 +213,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         hideFilterHighlightsCheckbox,
         isLoading,
         lastLoadDurationSeconds,
+        resetAlgorithm,
         serverInfo,
         shouldAutoUpdateCheckbox,
         timeline,

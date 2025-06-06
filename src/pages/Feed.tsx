@@ -2,7 +2,7 @@
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import TheAlgorithm, { Toot } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
@@ -11,7 +11,7 @@ import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
 import FilterSetter from "../components/algorithm/FilterSetter";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
-import persistentCheckbox, { CHECKBOX_TOOLTIP_ANCHOR } from '../components/helpers/persistent_checkbox';
+import persistentCheckbox from '../components/helpers/persistent_checkbox';
 import ReplyModal from '../components/status/ReplyModal';
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
 import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
@@ -24,7 +24,6 @@ import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
 import { linkesque, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
-import { useError } from "../components/helpers/ErrorHandler";
 
 const logger = getLogger("Feed");
 
@@ -35,13 +34,12 @@ export default function Feed() {
         hideFilterHighlightsCheckbox,
         isLoading,
         lastLoadDurationSeconds,
+        resetAlgorithm,
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
         triggerMoarData
     } = useAlgorithm();
-
-    const { resetErrors } = useError();
 
     // State variables
     const [isLoadingThread, setIsLoadingThread] = useState(false);
@@ -71,11 +69,8 @@ export default function Feed() {
     // Reset all state except for the user and server
     const reset = async () => {
         if (!(await confirm(`Are you sure you want to clear all historical data?`))) return;
-        resetErrors();
         setNumDisplayedToots(config.timeline.defaultNumDisplayedToots);
-        if (!algorithm) return;
-        await algorithm.reset();
-        triggerFeedUpdate();
+        resetAlgorithm();
     };
 
     // Show more toots when the user scrolls to bottom of the page
