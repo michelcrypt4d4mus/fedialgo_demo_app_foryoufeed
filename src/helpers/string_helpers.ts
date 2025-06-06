@@ -11,6 +11,8 @@ export enum Events {
     FOCUS = "focus",
 };
 
+export const NETWORK_ERROR = "NetworkError when attempting to fetch resource";
+
 
 // Locale
 export const browserLocale = () => navigator?.language || config.locale.defaultLocale;
