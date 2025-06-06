@@ -19,8 +19,7 @@ export type GradientEndpoints = [tinycolor.Instance, tinycolor.Instance];
 interface ThemeConfigBase {
     readonly accordionOpenBlue: CSSProperties['color'];
     readonly favouritedTagGradient: GradientEndpoints;
-    readonly feedBackgroundColor: CSSProperties['backgroundColor'];  // TODO: change to GradientEndpoints
-    readonly feedBackgroundColorLite: CSSProperties['backgroundColor'];
+    readonly feedBackgrounGradient: GradientEndpoints;
     readonly followedTagColor: CSSProperties['color'];
     readonly followedUserGradient: GradientEndpoints,
     readonly participatedTagGradient: GradientEndpoints;
@@ -30,6 +29,8 @@ interface ThemeConfigBase {
 
 export interface ThemeConfig extends ThemeConfigBase {
     readonly favouritedTagColor: CSSProperties["color"];
+    readonly feedBackgroundColor: CSSProperties["backgroundColor"];
+    readonly feedBackgroundColorLite: CSSProperties["backgroundColor"];
     readonly trendingTagColor: CSSProperties["color"];
     readonly participatedTagColor: CSSProperties["color"];
     readonly followedUserColor: CSSProperties["color"];
@@ -39,20 +40,21 @@ export interface ThemeConfig extends ThemeConfigBase {
 // Color blender: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
 const THEME_BASE: ThemeConfigBase = {
     accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-    favouritedTagGradient: [tinycolor("#C4DABE"), tinycolor("#fdff83")], // Gradient for favourited tags
-    feedBackgroundColor: '#15202b', // background color for the timeline
-    feedBackgroundColorLite: '#bcddfd', // lighter background color for the application
-    followedTagColor: 'cyan', // Color for followed tags
-    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')], // Color for followed users
-    participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Color for participated tags
-    trendingObjFontSize: 16, // Font size for trending objects
-    trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')], // Gradient for trending tags
+    favouritedTagGradient: [tinycolor("#C4DABE"), tinycolor("#fdff83")],
+    feedBackgrounGradient: [tinycolor('#bcddfd'), tinycolor('#15202b')], // Gradient for the feed background
+    followedTagColor: 'cyan',
+    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')],
+    participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],
+    trendingObjFontSize: 16,    // Font size for trending objects
+    trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')],
 };
 
 // Fill in a few extra colors that are the last color in the gradients as a convenience
 export const THEME: ThemeConfig = {
     ...THEME_BASE,
     favouritedTagColor: THEME_BASE.favouritedTagGradient.slice(-1)[0].toHexString(),
+    feedBackgroundColor: THEME_BASE.feedBackgrounGradient[1].toHexString(),
+    feedBackgroundColorLite: THEME_BASE.feedBackgrounGradient[0].toHexString(),
     followedUserColor: THEME_BASE.followedUserGradient.slice(-1)[0].toHexString(),
     participatedTagColor: THEME_BASE.participatedTagGradient.slice(-1)[0].toHexString(),
     trendingTagColor: THEME_BASE.trendingTagGradient.slice(-1)[0].toHexString(),

@@ -9,9 +9,9 @@ import {
     FEDIALGO,
     BooleanFilterName,
     ScoreName,
+    TagTootsCacheKey,
     TrendingType,
     TypeFilterName,
-    TagTootsCacheKey,
     type FilterOptionDataSource
 } from "fedialgo";
 
@@ -36,13 +36,6 @@ const OAUTH_SCOPES = [
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed";
 
 
-type FilterTooltipConfigKey = (
-      FilterOptionDataSource
-    | BooleanFilterName.LANGUAGE
-    | TypeFilterName.FOLLOWED_HASHTAGS
-);
-
-
 // Subconfig types
 type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
 
@@ -59,6 +52,12 @@ type AppConfig = {
     showcaseImageUrl: string;
 };
 
+type FilterTooltipConfigKey = (
+      FilterOptionDataSource
+    | BooleanFilterName.LANGUAGE
+    | TypeFilterName.FOLLOWED_HASHTAGS
+);
+
 type FilterOptionFormatCfg = {
     formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
     hidden?: boolean;                        // If true hide this option from the UI
@@ -71,16 +70,16 @@ type FilterOptionFormatCfg = {
 type FilterConfig = {
     boolean: {
         readonly maxLabelLength: number;
-        minTootsSlider: {
+        readonly minTootsSlider: {
             readonly idealNumOptions: number,
             readonly minItems: number;
             readonly tooltipHoverDelay: number;
         },
-        readonly optionsFormatting: Record<BooleanFilterName, Readonly<FilterOptionFormatCfg>>,
+        readonly optionsFormatting: Readonly<Record<BooleanFilterName, Readonly<FilterOptionFormatCfg>>>,
     };
     headerSwitches: {
         readonly tooltipHoverDelay: number;
-        readonly tooltipText: Record<SwitchType, string>;
+        readonly tooltipText: Readonly<Record<SwitchType, string>>;
     };
     numeric: {
         readonly description: string;
@@ -96,7 +95,7 @@ type LocaleConfig = {
 };
 
 type ReplyConfig = {
-    defaultAcceptedAttachments: Record<string, string[]>;
+    defaultAcceptedAttachments: Readonly<Record<string, string[]>>;
     defaultMaxCharacters: number;
     defaultMaxAttachments: number;
     defaultMaxImageSize: number;
@@ -112,10 +111,10 @@ type TimelineConfig = {
     defaultLoadingMsg: string;
     defaultNumDisplayedToots: number;
     guiCheckboxLabels: {
-        readonly autoupdate: GuiCheckboxLabel;
-        readonly hideFilterHighlights: GuiCheckboxLabel;
-        readonly hideLinkPreviews: GuiCheckboxLabel;
-        readonly stickToTop: GuiCheckboxLabel;
+        readonly autoupdate: Readonly<GuiCheckboxLabel>;
+        readonly hideFilterHighlights: Readonly<GuiCheckboxLabel>;
+        readonly hideLinkPreviews: Readonly<GuiCheckboxLabel>;
+        readonly stickToTop: Readonly<GuiCheckboxLabel>;
     };
     loadingErroMsg: string;
     noTootsMsg: string;
@@ -134,7 +133,7 @@ type TootConfig = {
 
 type TrendingConfig = {
     maxLengthForMulticolumn: number;
-    panels: Record<TrendingPanelName, TrendingPanelCfg>;
+    panels: Readonly<Record<TrendingPanelName, Readonly<TrendingPanelCfg>>>;
 };
 
 type TrendingPanelCfg = {
@@ -153,15 +152,15 @@ type WeightsConfig = {
 };
 
 interface ConfigType {
-    filters: Readonly<FilterConfig>;
-    locale: Readonly<LocaleConfig>;
-    replies: Readonly<ReplyConfig>;
-    stats: Readonly<StatsConfig>;
-    theme: Readonly<ThemeConfig>;
-    timeline: Readonly<TimelineConfig>;
-    toots: Readonly<TootConfig>;
-    trending: Readonly<TrendingConfig>;
-    weights: Readonly<WeightsConfig>;
+    filters: FilterConfig;
+    locale: LocaleConfig;
+    replies: ReplyConfig;
+    stats: StatsConfig;
+    theme: ThemeConfig;
+    timeline: TimelineConfig;
+    toots: TootConfig;
+    trending: TrendingConfig;
+    weights: WeightsConfig;
 };
 
 interface ReadonlyConfig extends Readonly<ConfigType> {};
@@ -195,7 +194,7 @@ class Config implements ReadonlyConfig {
                 tooltipHoverDelay: 50,                   // Delay for the minimum toots slider tooltip in milliseconds
             },
             optionsFormatting: {                         // How filter options should be displayed w/what header switches
-                [BooleanFilterName.APP]: {  // App filter is kinda useless (98% of toots don't have the application property)
+                [BooleanFilterName.APP]: {               // App filter is kinda useless (98% of toots don't have the application property)
                     hidden: true,
                     position: 99,
                 },
@@ -206,7 +205,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.favouritedTagGradient,
-                                    textWithSuffix: (txt: string, n: number) => `${txt} ${nTimes(n)} recently`,
+                                    textWithSuffix: (s: string, n: number) => `${s} ${nTimes(n)} recently`,
                                 },
                             },
                             text: `You've favourited this hashtag`
@@ -219,7 +218,7 @@ class Config implements ReadonlyConfig {
                                         minTagsToAdjust: 40,         // Minimum number of participated tags to adjust the gradient
                                     },
                                     endpoints: THEME.participatedTagGradient,
-                                    textWithSuffix: (txt: string, n: number) => `${txt} ${nTimes(n)} recently`,
+                                    textWithSuffix: (s: string, n: number) => `${s} ${nTimes(n)} recently`,
                                 },
                             },
                             text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
@@ -228,7 +227,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.trendingTagGradient,
-                                    textWithSuffix: (txt: string, n: number) => `${txt} (${n} recent toot${n > 1 ? 's' : ''})`,
+                                    textWithSuffix: (s: string, n: number) => `${s} (${n} recent toot${n > 1 ? 's' : ''})`,
                                 },
                             },
                             text: `This hashtag is trending`,
@@ -248,7 +247,7 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.followedUserGradient,
-                                    textWithSuffix: (txt: string, n: number) => txt + (n ? ` ${nTimes(n)} recently` : ''),
+                                    textWithSuffix: (s: string, n: number) => s + (n ? ` ${nTimes(n)} recently` : ''),
                                 },
                             },
                             text: `You used this language`,
@@ -271,7 +270,7 @@ class Config implements ReadonlyConfig {
                                     },
                                     endpoints: THEME.followedUserGradient,
                                     // TODO: the code currently requires this string start with "and i" which sucks
-                                    textWithSuffix: (txt: string, n: number) => n ? `Interacted ${nTimes(n)} recently` : '',
+                                    textWithSuffix: (_s: string, n: number) => n ? `Interacted ${nTimes(n)} recently` : '',
                                 },
                             },
                             text: `You follow this account`,
