@@ -44,7 +44,6 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.title];
     const tooltipConfig = optionsFormatCfg?.tooltips || {};
     const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
-    const isTypeFilter = (filter.title == BooleanFilterName.TYPE);
     const isUserFilter = (filter.title == BooleanFilterName.USER);
 
     // Build a dict from FilterOptionDataSource to tooltip objs with the color (or gradient) + base text
@@ -124,11 +123,11 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
             tooltip ||= getGradientTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
         } else if (isUserFilter) {
-            const dataSource = ScoreName.FAVOURITED_ACCOUNTS;
-            const userTooltipCfg = tooltipConfig[dataSource];
-            tooltip = getGradientTooltip(option, dataSource, option.isFollowed);
+            tooltip = getGradientTooltip(option, ScoreName.FAVOURITED_ACCOUNTS, option.isFollowed);
 
+            // Adjust tooltip text for followed accounts
             if (tooltip && option.isFollowed) {
+                const userTooltipCfg = tooltipConfig[ScoreName.FAVOURITED_ACCOUNTS];
                 tooltip.text = userTooltipCfg.text + (isEmptyStr(tooltip.text) ? '' : ` (${tooltip.text.toLowerCase()})`);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
