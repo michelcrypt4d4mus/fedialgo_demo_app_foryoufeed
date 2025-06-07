@@ -9,12 +9,13 @@ import { horizontalSpacer } from '../../helpers/react_helpers';
 import { roundedBox } from "../../helpers/style_helpers";
 
 interface FilterAccordionSectionProps extends SubAccordionProps {
+    footerSwitches?: ReactElement[] | null,
     switchbar: ReactElement[],
 };
 
 
 export default function FilterAccordionSection(props: FilterAccordionSectionProps) {
-    let { switchbar } = props;
+    let { footerSwitches, switchbar } = props;
 
     // Default spacing is too far off center if there's only two switches
     if (switchbar.length == 2) {
@@ -35,6 +36,11 @@ export default function FilterAccordionSection(props: FilterAccordionSectionProp
                     </Form.Group>
                 </Form.Group>
             </div>
+
+            {footerSwitches &&
+                <div style={footerContainer} key={"footerSwitchContainer"}>
+                    {footerSwitches}
+                </div>}
         </SubAccordion>
     );
 };
@@ -56,4 +62,11 @@ const switchesContainer: CSSProperties = {
     height: "25px",
     justifyContent: 'space-around',
     marginBottom: '3px',
+};
+
+const footerContainer: CSSProperties = {
+    ...switchesContainer,
+    justifyContent: 'space-around',
+    marginBottom: '0px',
+    marginTop: '7px',
 };

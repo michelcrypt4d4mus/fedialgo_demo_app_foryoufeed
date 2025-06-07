@@ -2,9 +2,9 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import { useMemo, useState } from "react";
+import { CSSProperties, ReactElement, useMemo, useState } from "react";
 
-import { BooleanFilter } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TagTootsCacheKey } from "fedialgo";
 
 import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
@@ -15,6 +15,8 @@ import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
 import { useLocalStorage2 } from "../../hooks/useLocalStorage";
 
+export type TagHighlightSwitchState = Record<TagTootsCacheKey, boolean>;
+
 export type HeaderSwitchState = {
     readonly [SwitchType.HIGHLIGHTS_ONLY]?: boolean;
     readonly [SwitchType.SORT_BY_COUNT]?: boolean;
@@ -23,6 +25,12 @@ export type HeaderSwitchState = {
 const DEFAULT_SWITCH_STATE: HeaderSwitchState = {
     [SwitchType.HIGHLIGHTS_ONLY]: false,
     [SwitchType.SORT_BY_COUNT]: false,
+};
+
+const DEFAULT_TAG_SWITCH_STATE: TagHighlightSwitchState = {
+    [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: true,
+    [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: true,
+    [TagTootsCacheKey.TRENDING_TAG_TOOTS]: true,
 };
 
 interface BooleanFilterAccordionProps {
@@ -35,6 +43,8 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.title);
     const [switchState, setSwitchState] = useLocalStorage2(`${filter.title}-switchState`, DEFAULT_SWITCH_STATE);
+    const [tagSwitchState, setTagSwitchState] = useLocalStorage2(`${filter.title}-tagSwitch`, DEFAULT_TAG_SWITCH_STATE);
+    let footerSwitches: ReactElement[] | null = null;
 
     const minTootsSliderDefaultValue: number = useMemo(
         () => computeDefaultValue(filter.options, filter.title),
@@ -99,9 +109,26 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         ]
     );
 
+    const makeFooterSwitch = (key: TagTootsCacheKey) => (
+        <HeaderSwitch
+            isChecked={tagSwitchState[key]}
+            key={key}
+            label={key}
+            onChange={(e) => setTagSwitchState({
+                ...tagSwitchState,
+                [key]: e.target.checked
+            })}
+        />
+    );
+
+    if (filter.title == BooleanFilterName.HASHTAG) {
+        footerSwitches = Object.values(TagTootsCacheKey).map(k => makeFooterSwitch(k));
+    }
+
     return (
         <FilterAccordionSection
             description={filter.description}
+            footerSwitches={footerSwitches}
             isActive={filter.selectedOptions.length > 0}
             switchbar={headerSwitches}
             title={filter.title}
@@ -111,6 +138,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
                 highlightsOnly={switchState[SwitchType.HIGHLIGHTS_ONLY]}
                 minToots={minTootsState[0]}
                 sortByCount={switchState[SwitchType.SORT_BY_COUNT]}
+                tagSwitchState={tagSwitchState}
             />
         </FilterAccordionSection>
     );

@@ -77,6 +77,7 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
         <a data-tooltip-id={tooltipAnchor} data-tooltip-content={tooltip?.text} key={label}>
             <Form.Switch
                 checked={isCheckedState}
+                // className={"btn-check"}
                 disabled={disabled}
                 id={label}
                 key={label + "_switch"}
