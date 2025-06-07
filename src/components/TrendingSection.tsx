@@ -222,8 +222,8 @@ const boldTagLinkStyle: CSSProperties = {
 };
 
 const colStyle: CSSProperties = {
-    marginLeft: "5px",
-    marginRight: "5px",
+    marginLeft: "1px",
+    marginRight: "1px",
 };
 
 const descriptionStyle: CSSProperties = {
