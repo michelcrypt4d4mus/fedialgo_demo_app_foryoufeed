@@ -94,7 +94,7 @@ export function gridify(elements: ReactElement[], numCols?: number, colStyle?: C
     return (
         <Row>
             {columns.map((columnItems, i) => (
-                <Col className="px-1" key={i} style={colStyle || {}}>
+                <Col key={i} style={colStyle || {}}>
                     {columnItems}
                 </Col>
             ))}
