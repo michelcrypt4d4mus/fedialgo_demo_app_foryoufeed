@@ -4,6 +4,7 @@
  */
 import { ChangeEvent } from "react";
 
+import { TagTootsCacheKey } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import FilterCheckbox from "./FilterCheckbox";
@@ -15,8 +16,15 @@ import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
 
+const TAG_HIGHLIGHT_LABELS: Record<TagTootsCacheKey, string> = {
+    [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: "Color Favourites",
+    [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: "Color Participated",
+    [TagTootsCacheKey.TRENDING_TAG_TOOTS]: "Color Trending",
+};
+
 // Only invert selection requires a call to fedialgo's updateFilters() method
 const SKIP_UPDATE_FILTERS_SWITCHES = [
+    ...Object.values(TagTootsCacheKey),
     SwitchType.HIGHLIGHTS_ONLY,
     SwitchType.SORT_BY_COUNT,
 ];
@@ -35,7 +43,7 @@ export const HEADER_SWITCH_TOOLTIP = (
 
 interface HeaderSwitchProps {
     isChecked: boolean;
-    label: SwitchType;
+    label: SwitchType | TagTootsCacheKey;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     tooltipText?: string;
     tooltip?: CheckboxTooltipConfig;
@@ -60,7 +68,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
             capitalize={true}
             disabled={(label == SwitchType.HIGHLIGHTS_ONLY) && hideFilterHighlights}
             isChecked={isChecked}
-            label={label}
+            label={TAG_HIGHLIGHT_LABELS[label] || label}
             onChange={onChange}
             skipUpdateFilters={SKIP_UPDATE_FILTERS_SWITCHES.includes(label)}
             tooltip={tooltip}

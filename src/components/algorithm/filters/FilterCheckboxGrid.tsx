@@ -25,19 +25,20 @@ import { isNumber } from "../../../helpers/number_helpers";
 import { isEmptyStr } from "../../../helpers/string_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
-import { type HeaderSwitchState } from "../BooleanFilterAccordionSection";
+import { type HeaderSwitchState, type TagHighlightSwitchState } from "../BooleanFilterAccordionSection";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
 interface FilterCheckboxGridProps extends HeaderSwitchState {
     filter: BooleanFilter,
     minToots?: number,
+    tagSwitchState?: TagHighlightSwitchState,
 };
 
 
 // TODO: maybe rename this BooleanFilterCheckboxGrid?
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
-    const { filter, highlightsOnly, minToots, sortByCount } = props;
+    const { filter, highlightsOnly, minToots, sortByCount, tagSwitchState } = props;
     const { algorithm, hideFilterHighlights } = useAlgorithm();
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
 
@@ -119,9 +120,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         if (isTagFilter) {
             // Fall through to the first gradient color we have a non-zero value for in the option
             tooltip = option.isFollowed ? tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS] : undefined;
-            tooltip ||= getGradientTooltip(option, TagTootsCacheKey.TRENDING_TAG_TOOTS);
-            tooltip ||= getGradientTooltip(option, TagTootsCacheKey.PARTICIPATED_TAG_TOOTS);
-            tooltip ||= getGradientTooltip(option, TagTootsCacheKey.FAVOURITED_TAG_TOOTS);
+
+            Object.values(TagTootsCacheKey).forEach((dataSource) => {
+                tooltip ||= tagSwitchState?.[dataSource] && getGradientTooltip(option, dataSource);
+            });
         } else if (isUserFilter) {
             tooltip = getGradientTooltip(option, ScoreName.FAVOURITED_ACCOUNTS, option.isFollowed);
 
@@ -171,6 +173,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             highlightsOnly,
             minToots,
             sortByCount,
+            tagSwitchState,
             tooltipGradients,
         ]
     );
