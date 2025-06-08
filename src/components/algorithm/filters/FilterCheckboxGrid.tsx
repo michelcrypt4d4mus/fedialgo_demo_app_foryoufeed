@@ -121,7 +121,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             // Fall through to the first gradient color we have a non-zero value for in the option
             tooltip = option.isFollowed ? tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS] : undefined;
 
-            Object.values(TagTootsCacheKey).forEach((dataSource) => {
+            Object.values(TagTootsCacheKey).toReversed().forEach((dataSource) => {
                 tooltip ||= tagSwitchState?.[dataSource] && getGradientTooltip(option, dataSource);
             });
         } else if (isUserFilter) {
