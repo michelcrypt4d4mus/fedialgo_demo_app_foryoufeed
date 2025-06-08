@@ -23,8 +23,6 @@ export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
 );
 
-const logger = getLogger("FilterCheckbox");
-
 interface FilterCheckboxProps {
     capitalize?: boolean,
     disabled?: boolean,
@@ -77,7 +75,6 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
         <a data-tooltip-id={tooltipAnchor} data-tooltip-content={tooltip?.text} key={label}>
             <Form.Switch
                 checked={isCheckedState}
-                // className={"btn-check"}
                 disabled={disabled}
                 id={label}
                 key={label + "_switch"}
