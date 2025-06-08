@@ -23,8 +23,6 @@ export const HIGHLIGHTED_TOOLTIP = (
     <Tooltip id={HIGHLIGHTED_TOOLTIP_ANCHOR} place="top" style={tooltipZIndex} />
 );
 
-const logger = getLogger("FilterCheckbox");
-
 interface FilterCheckboxProps {
     capitalize?: boolean,
     disabled?: boolean,
