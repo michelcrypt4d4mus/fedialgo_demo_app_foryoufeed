@@ -74,7 +74,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 // Add the colors array to the baseTooltipCfg
                 // gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.hsv(maxValue, false)};
                 gradients[dataSource] = {...baseTooltipCfg, colors: colorGradient.rgb(maxValue)};
-                logger.trace(`Rebuilt ${filter.title} gradient, maxValue=${maxValue}`);
+                logger.deep(`Rebuilt gradient, maxValue=${maxValue}`);
                 return gradients;
             },
             {} as DataSourceGradients
@@ -141,7 +141,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionGrid = useMemo(
         () => {
-            logger.trace(`Rebuilding optionGrid for ${filter.options.length} options...`);
+            logger.deep(`Rebuilding optionGrid for ${filter.options.length} options...`);
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
 
             if (highlightsOnly && !hideFilterHighlights) {
