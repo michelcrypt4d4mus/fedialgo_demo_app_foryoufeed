@@ -52,7 +52,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const [timeline, setTimeline] = useState<Toot[]>([]);
 
     // TODO: this doesn't make any API calls yet, right?
-    const api: mastodon.rest.Client = createRestAPIClient({accessToken: user.access_token, url: user.server});
+    const api = createRestAPIClient({accessToken: user.access_token, url: user.server});
 
     // Checkboxes with persistent storage that require somewhat global state
     const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
@@ -136,15 +136,16 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             try {
                 currentUser = await api.v1.accounts.verifyCredentials();
             } catch (err) {
-                if (isAccessTokenRevokedError(err)) {
+                // TODO: are these kind of errors actually recoverable?
+                if (err.message.includes("NetworkError when attempting to fetch resource")) {
+                    logger.error(`NetworkError during verifyCredentials() but not going to log out`, err);
+                    return;
+                } else if (isAccessTokenRevokedError(err)) {
                     logAndShowError(config.app.accessTokenRevokedMsg, err);
                 } else {
-                    // TODO: we often get TypeError: NetworkError when attempting to fetch resource which is probably
-                    // survivable without deleting the access token.
                     logAndShowError(`Failed to verifyCredentials(), logging out...`, err);
                 }
 
-                // TODO: we don't always actually logout here? Sometimes it just keeps working despite getting the error in logs
                 logout(true);
                 return;
             }

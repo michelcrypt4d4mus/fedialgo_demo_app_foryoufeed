@@ -54,7 +54,7 @@ echo -e "\nFinished tagging fedialgo $VERSION_NUMBER."
 if [[ -z "$SKIP_DEPLOY" ]]; then
     ./deploy.sh
 else
-    echo "Skipping deploy..."
+    echo "\n\n\n\nSkipping deploy...\n\n\n\n"
 fi
 
 ./link_local_fedialgo.sh
