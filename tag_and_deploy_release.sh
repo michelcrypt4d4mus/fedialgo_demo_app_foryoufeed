@@ -44,14 +44,17 @@ if [[ "$VERSION_NUMBER" != v* ]]; then
     VERSION_NUMBER="v$VERSION_NUMBER"
 fi
 
+
 # Handle fedialgo dir
 pushd ../fedialgo
 assert_repo_is_ready
 update_changelog "$VERSION_NUMBER"
 tag_repo "$VERSION_NUMBER"
+./deploy_documentation.sh
+popd
+
 
 # Handle demo app dir (this dir)
-popd
 ./bump_fedialgo_commit_hash.sh "$VERSION_NUMBER"  # This will execute a commit
 tag_repo "$VERSION_NUMBER"
 echo -e "\nFinished tagging fedialgo $VERSION_NUMBER."
