@@ -17,15 +17,17 @@ tag_repo() {
     local version_number="$1"
     local repo_dir=`basename $PWD`
 
+    echo "Updating package.json in $repo_dir with version: $version_number..."
     local package_json_sed_cmd="s/\"version\": \"[0-9]+\.[0-9]+\.[0-9]+\",/\"version\": \"${version_number#v}\",/g"
     sed -E -i .sedbak "$package_json_sed_cmd" package.json
     rm package.json.sedbak
     git commit -am"Bump package.json version to $version_number"
 
-    echo "Tagging repo $repo_dir with version: $version_number"
+    echo "Tagging repo $repo_dir with version: $version_number..."
     git push origin "$MASTER_BRANCH"
     git tag "$version_number"
     git push origin "$version_number"
+    echo "Finished tagging $repo_dir with version: $version_number."
 }
 
 
