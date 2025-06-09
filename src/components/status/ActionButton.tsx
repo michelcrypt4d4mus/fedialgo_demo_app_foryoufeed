@@ -49,20 +49,24 @@ const ACCOUNT_ACTION_BUTTON_CLASS = "fa-xs";
 const ICON_BUTTON_CLASS = "status__action-bar__button icon-button"
 const ACTION_ICON_BASE_CLASS = `${ICON_BUTTON_CLASS} icon-button--with-counter`;
 
+type AccountBoolean = "isFollowed" | "muted";
+type TootBoolean = "bookmarked" | "favourited" | "reblogged";
+type TootCount = "reblogsCount" | "favouritesCount" | "repliesCount";
+
 type ActionInfo = {
-    booleanName?: KeysOfValueType<Account, boolean> | KeysOfValueType<Toot, boolean>,
-    countName?: KeysOfValueType<Toot, number>,
+    booleanName?: AccountBoolean | TootBoolean,
+    countName?: TootCount,
     icon: IconDefinition,
     label?: string,
 };
 
 const ACTION_INFO: Record<ButtonAction, ActionInfo> = {
     [TootAction.Bookmark]: {
-        booleanName: `${TootAction.Bookmark}ed`,
+        booleanName: "bookmarked",
         icon: faBookmark
     },
     [TootAction.Favourite]: {
-        booleanName: `${TootAction.Favourite}d`,
+        booleanName: "favourited",
         countName: `${TootAction.Favourite}sCount`,
         icon: faStar,
     },
@@ -71,7 +75,7 @@ const ACTION_INFO: Record<ButtonAction, ActionInfo> = {
         icon: faUserPlus,
     },
     [AccountAction.Mute]: {
-        booleanName: `${AccountAction.Mute}d`,
+        booleanName: "muted",
         icon: faVolumeMute,
     },
     [TootAction.Reblog]: {
@@ -145,7 +149,7 @@ export default function ActionButton(props: ActionButtonProps) {
             const newState = !startingState;
             logger.log(`${action}() toot (startingState: ${startingState}, count: ${startingCount}): `, toot);
             // Optimistically update the GUI (we will reset to original state if the server call fails later)
-            toot[actionInfo.booleanName] = newState;
+            toot[actionInfo.booleanName as TootBoolean] = newState;
             setCurrentState(newState);
 
             if (newState && actionInfo.countName && action != TootAction.Reply) {
@@ -172,7 +176,7 @@ export default function ActionButton(props: ActionButtonProps) {
                 } catch (error) {
                     // If there's an error, roll back the change to the original state
                     setCurrentState(startingState);
-                    toot[actionInfo.booleanName] = startingState;
+                    toot[actionInfo.booleanName as TootBoolean] = startingState;
                     let errorMsg = "";
 
                     if (actionInfo.countName) {
