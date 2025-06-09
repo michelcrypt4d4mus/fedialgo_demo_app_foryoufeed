@@ -121,7 +121,7 @@ export default function StatusComponent(props: StatusComponentProps) {
             <span>
                 {toot.reblogsBy.map((account, i) => {
                     const rebloggerLink = (
-                        <NewTabLink className="status__display-name muted" href={account.homserverURL()} key={i}>
+                        <NewTabLink className="status__display-name muted" href={account.homserverURL} key={i}>
                             <bdi><strong>
                                 {parse(account.displayNameWithEmojis())}
                             </strong></bdi>
@@ -245,7 +245,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div title={toot.account.webfingerURI} className="status__display-name">
                             <a
                                 data-tooltip-id={TOOLTIP_ACCOUNT_ANCHOR}
-                                data-tooltip-html={toot.account.noteWithAccountInfo()}
+                                data-tooltip-html={toot.account.noteWithAccountInfo}
                             >
                                 <div className="status__avatar">
                                     <div className="account__avatar" style={{height: "46px", width: "46px"}}>
@@ -258,7 +258,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 <bdi>
                                     <strong key="internalBDI" className="display-name__html">
                                         <NewTabLink
-                                            href={toot.account.homserverURL()}
+                                            href={toot.account.homserverURL}
                                             style={{...accountLink, ...fontStyle}}
                                         >
                                             {parse(toot.account.displayNameWithEmojis())}
