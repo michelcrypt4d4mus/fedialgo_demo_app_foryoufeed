@@ -35,15 +35,16 @@ export type LinkRenderer = {
 interface TrendingPropsBase {
     linkRenderer?: LinkRenderer;
     objRenderer?: (obj: TrendingListObj) => React.ReactElement;
-    panelType: TrendingPanelName;
 };
 
 interface TrendingTagListProps extends TrendingPropsBase {
+    panelType?: never;  // panelType is not used when tagList is provided
     tagList: TagList;
     trendingObjs?: never;
 };
 
 interface TrendingObjsProps extends TrendingPropsBase {
+    panelType: TrendingPanelName;
     tagList?: never;
     trendingObjs: TrendingListObj[];
 };
