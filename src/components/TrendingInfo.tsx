@@ -77,7 +77,6 @@ export default function TrendingInfo() {
                         ...trendingObjLinkRenderer,
                         linkLabel: tagNameMapper,
                     }}
-                    panelType={TagTootsCacheKey.TRENDING_TAG_TOOTS}
                     tagList={algorithm.trendingData.tags}
                 />
 
@@ -107,13 +106,11 @@ export default function TrendingInfo() {
 
                 <TrendingSection
                     linkRenderer={simpleTagRenderer}
-                    panelType={TagTootsCacheKey.PARTICIPATED_TAG_TOOTS}
                     tagList={algorithm.userData.participatedTags}
                 />
 
                 <TrendingSection
                     linkRenderer={simpleTagRenderer}
-                    panelType={TagTootsCacheKey.FAVOURITED_TAG_TOOTS}
                     tagList={algorithm.userData.favouritedTags}
                 />
             </Accordion>

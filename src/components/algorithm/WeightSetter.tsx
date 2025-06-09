@@ -5,7 +5,7 @@
  */
 import { CSSProperties, useState, useEffect } from "react";
 
-import { type Weights, NonScoreWeightName, WeightName } from "fedialgo";
+import TheAlgorithm, { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
 
 import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
@@ -65,7 +65,7 @@ export default function WeightSetter() {
                 id="presetWeights"
                 initialLabel={config.weights.presetMenuLabel}
                 onClick={updateWeightsToPreset}
-                options={Object.keys(algorithm.weightPresets)}
+                options={Object.keys(TheAlgorithm.weightPresets)}
             />
 
             {Object.values(NonScoreWeightName).map((weight) => makeWeightSlider(weight))}

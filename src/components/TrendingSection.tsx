@@ -55,6 +55,7 @@ type TrendingProps = TrendingTagListProps | TrendingObjsProps;
 
 export default function TrendingSection(props: TrendingProps) {
     let { linkRenderer, objRenderer, panelType, tagList, trendingObjs } = props;
+    panelType ||= tagList?.source as TrendingPanelName;
     const logger = useMemo(() => getLogger("TrendingSection", panelType), []);
 
     if (!objRenderer && !linkRenderer) {
