@@ -13,6 +13,7 @@ assert_repo_is_ready() {
 }
 
 
+# TODO: package-lock.json doesn't update its version number, so we should also update it.
 tag_repo() {
     local version_number="$1"
     local repo_dir=`basename $PWD`
@@ -20,8 +21,11 @@ tag_repo() {
     echo "Updating package.json in $repo_dir with version: $version_number..."
     local package_json_sed_cmd="s/\"version\": \"[0-9]+\.[0-9]+\.[0-9]+\",/\"version\": \"${version_number#v}\",/g"
     sed -E -i .sedbak "$package_json_sed_cmd" package.json
+
+    set +e
     rm package.json.sedbak
     git commit -am"Bump package.json version to $version_number"
+    set -e
 
     echo "Tagging repo $repo_dir with version: $version_number..."
     git push origin "$MASTER_BRANCH"
