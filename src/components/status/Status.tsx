@@ -87,8 +87,13 @@ export default function StatusComponent(props: StatusComponentProps) {
     const fontStyle = fontColor ? { color: fontColor } : {};
 
     // If it's a retoot set 'toot' to the original toot
-    const toot = status.realToot();
-    const hasAttachments = toot.mediaAttachments.length > 0;
+    const toot = status.realToot;
+
+    if (!toot.mediaAttachments) {
+        logger.error(`StatusComponent received toot with no mediaAttachments:`, toot);
+    }
+
+    const hasAttachments = (toot.mediaAttachments?.length || 0) > 0;
     const isReblog = toot.reblogsBy.length > 0;
     const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
 
@@ -221,7 +226,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                     {toot.trendingLinks.length > 0 && infoIcon(InfoIconType.TrendingLink)}
                                     {toot.containsUserMention() && infoIcon(InfoIconType.Mention)}
                                     {toot.containsTagsMsg() && infoIcon(InfoIconType.Hashtags)}
-                                    {toot.isDM() && infoIcon(InfoIconType.DM)}
+                                    {toot.isDM && infoIcon(InfoIconType.DM)}
                                     {toot.account.bot && infoIcon(InfoIconType.Bot)}
                                 </span>
 
@@ -295,9 +300,9 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {toot.poll && <Poll poll={toot.poll} />}
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
-                    {toot.contentTagsParagraph() &&
+                    {toot.contentTagsParagraph &&
                         <div className={contentClass} style={{paddingTop: "12px"}}>
-                            <span style={tagFontStyle}>{parse(toot.contentTagsParagraph())}</span>
+                            <span style={tagFontStyle}>{parse(toot.contentTagsParagraph)}</span>
                         </div>}
 
                     {setThread && ((toot.repliesCount > 0) || !!toot.inReplyToAccountId) &&
