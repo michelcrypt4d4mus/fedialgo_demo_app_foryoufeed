@@ -185,12 +185,12 @@ export default function Feed() {
                             </Button>
                         </div>
 
-                        {algorithm && (algorithm.getApiErrorMsgs().length > 0) &&
+                        {algorithm?.apiErrorMsgs && (algorithm.apiErrorMsgs.length > 0) &&
                             <div className="d-grid gap-2" style={rawErrorContainer}>
                                 <p style={{color: "white"}}>Non-fatal errors encountered while loading data:</p>
 
                                 <ul>
-                                    {algorithm.getApiErrorMsgs().map((msg, i) => (
+                                    {algorithm.apiErrorMsgs.map((msg, i) => (
                                         <li key={`${msg}_${i}`} style={errorItem}>
                                             {msg}
                                         </li>

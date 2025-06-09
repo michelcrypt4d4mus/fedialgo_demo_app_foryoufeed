@@ -87,8 +87,13 @@ export default function StatusComponent(props: StatusComponentProps) {
     const fontStyle = fontColor ? { color: fontColor } : {};
 
     // If it's a retoot set 'toot' to the original toot
-    const toot = status.realToot();
-    const hasAttachments = toot.mediaAttachments.length > 0;
+    const toot = status.realToot;
+
+    if (!toot.mediaAttachments) {
+        logger.error(`StatusComponent received toot with no mediaAttachments:`, toot);
+    }
+
+    const hasAttachments = (toot.mediaAttachments?.length || 0) > 0;
     const isReblog = toot.reblogsBy.length > 0;
     const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
 
@@ -116,7 +121,7 @@ export default function StatusComponent(props: StatusComponentProps) {
             <span>
                 {toot.reblogsBy.map((account, i) => {
                     const rebloggerLink = (
-                        <NewTabLink className="status__display-name muted" href={account.homserverURL()} key={i}>
+                        <NewTabLink className="status__display-name muted" href={account.homserverURL} key={i}>
                             <bdi><strong>
                                 {parse(account.displayNameWithEmojis())}
                             </strong></bdi>
@@ -221,7 +226,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                     {toot.trendingLinks.length > 0 && infoIcon(InfoIconType.TrendingLink)}
                                     {toot.containsUserMention() && infoIcon(InfoIconType.Mention)}
                                     {toot.containsTagsMsg() && infoIcon(InfoIconType.Hashtags)}
-                                    {toot.isDM() && infoIcon(InfoIconType.DM)}
+                                    {toot.isDM && infoIcon(InfoIconType.DM)}
                                     {toot.account.bot && infoIcon(InfoIconType.Bot)}
                                 </span>
 
@@ -240,7 +245,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div title={toot.account.webfingerURI} className="status__display-name">
                             <a
                                 data-tooltip-id={TOOLTIP_ACCOUNT_ANCHOR}
-                                data-tooltip-html={toot.account.noteWithAccountInfo()}
+                                data-tooltip-html={toot.account.noteWithAccountInfo}
                             >
                                 <div className="status__avatar">
                                     <div className="account__avatar" style={{height: "46px", width: "46px"}}>
@@ -253,7 +258,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 <bdi>
                                     <strong key="internalBDI" className="display-name__html">
                                         <NewTabLink
-                                            href={toot.account.homserverURL()}
+                                            href={toot.account.homserverURL}
                                             style={{...accountLink, ...fontStyle}}
                                         >
                                             {parse(toot.account.displayNameWithEmojis())}
@@ -295,9 +300,9 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {toot.poll && <Poll poll={toot.poll} />}
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
-                    {toot.contentTagsParagraph() &&
+                    {toot.contentTagsParagraph &&
                         <div className={contentClass} style={{paddingTop: "12px"}}>
-                            <span style={tagFontStyle}>{parse(toot.contentTagsParagraph())}</span>
+                            <span style={tagFontStyle}>{parse(toot.contentTagsParagraph)}</span>
                         </div>}
 
                     {setThread && ((toot.repliesCount > 0) || !!toot.inReplyToAccountId) &&

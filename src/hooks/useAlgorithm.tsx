@@ -183,7 +183,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             let should = false;
             let msg: string;
 
-            if (isLoading || algorithm.isLoading()) {
+            if (isLoading || algorithm.isLoading) {
                 msg = `load in progress`;
                 if (!isLoading) logger.error(`isLoading is true but ${msg}`);
             } else {

@@ -42,7 +42,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
     // State
-    const replyMentionsStr = toot ? (toot.replyMentions().join(' ') + '\n\n') : '';
+    const replyMentionsStr = toot ? (toot.replyMentions.join(' ') + '\n\n') : '';
     const [isAttaching, setIsAttaching] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
