@@ -11,8 +11,8 @@ import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { addMimeExtensionsToServer, type MastodonServer } from "../helpers/mastodon_helpers";
 import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
 import { config } from "../config";
-import { getLogger } from "../helpers/log_helpers";
 import { Events } from "../helpers/string_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { useAuthContext } from "./useAuth";
 import { type ErrorHandler } from "../types";
 
