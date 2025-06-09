@@ -204,7 +204,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         const handleFocus = () => document.hasFocus() && shouldReloadFeed() && triggerFeedUpdate();
         window.addEventListener(Events.FOCUS, handleFocus);
         return () => window.removeEventListener(Events.FOCUS, handleFocus);
-    }, [algorithm, isLoading, shouldAutoUpdate, timeline, triggerFeedUpdate, user]);
+    }, [algorithm, isLoading, shouldAutoUpdate, timeline, user]);
 
     const algoContext: AlgoContext = {
         algorithm,
