@@ -130,7 +130,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
         // Check that we have valid user credentials and load timeline toots, otherwise force a logout.
         const constructFeed = async (): Promise<void> => {
-            logger.log(`constructFeed() called with user ID ${user?.id} (feed already has ${timeline.length} toots)`);
+            logger.log(`constructFeed() called with user ID ${user?.id} (feed has ${timeline.length} toots)`);
             let currentUser: mastodon.v1.Account;
 
             try {
