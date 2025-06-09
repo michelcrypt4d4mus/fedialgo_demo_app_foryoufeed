@@ -5,6 +5,7 @@ MASTER_BRANCH="master"
 GITHUB_PAGES_BRANCH="github_pages"
 
 echo -e "Deploying..."
+rm -fr docs
 git checkout $GITHUB_PAGES_BRANCH
 git merge $MASTER_BRANCH --no-edit
 NODE_ENV=production npx webpack --mode production
