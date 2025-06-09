@@ -138,8 +138,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             } catch (err) {
                 // TODO: are these kind of errors actually recoverable?
                 if (err.message.includes("NetworkError when attempting to fetch resource")) {
-                    logger.error(`NetworkError during verifyCredentials() but not going to log out`, err);
-                    return;
+                    logger.error(`NetworkError during verifyCredentials(), going to log out`, err);
                 } else if (isAccessTokenRevokedError(err)) {
                     logAndShowError(config.app.accessTokenRevokedMsg, err);
                 } else {

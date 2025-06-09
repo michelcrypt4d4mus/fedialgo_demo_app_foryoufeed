@@ -4,8 +4,8 @@
  */
 import { useMemo, useState } from "react";
 
-import { ObjList } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
+import { type ObjList } from "fedialgo";
 
 import Slider from "../algorithm/Slider";
 import { config } from "../../config";
