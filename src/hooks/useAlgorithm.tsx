@@ -126,7 +126,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // Initial load of the feed
     useEffect(() => {
-        if (!user || algorithm) return;
+        if (algorithm || !user) return;
 
         // Check that we have valid user credentials and load timeline toots, otherwise force a logout.
         const constructFeed = async (): Promise<void> => {
@@ -160,18 +160,18 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             triggerLoadFxn(() => algo.triggerFeedUpdate(), logAndShowError, setLoadState);
 
             algo.serverInfo()
-                .then(serverInfo => {
+                .then((serverInfo) => {
                     logger.trace(`User's server info retrieved for "${serverInfo.domain}":`, serverInfo);
                     setServerInfo(addMimeExtensionsToServer(serverInfo));
                 })
-                .catch(err => {
+                .catch((err) => {
                     // Not serious enough error to alert the user as we can fallback to our configured defaults
                     logger.error(`Failed to get server info:`, err);
                 });
         };
 
         constructFeed();
-    }, [algorithm, setLastLoadDurationSeconds, setLoadState, user]);
+    }, [algorithm, user]);
 
     // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after configured amount of time
     useEffect(() => {
