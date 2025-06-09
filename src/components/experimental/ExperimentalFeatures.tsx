@@ -53,7 +53,7 @@ export default function ExperimentalFeatures() {
 
     // Show modal with algorithm internal state
     const showAlgoState = () => {
-        logger.log(`State (isLoading=${isLoading}, algorithm.isLoading()=${algorithm.isLoading()}, timeline.length=${timeline.length})`);
+        logger.log(`State (isLoading=${isLoading}, algorithm.isLoading=${algorithm.isLoading}, timeline.length=${timeline.length})`);
         setIsLoadingState(true);
 
         algorithm.getCurrentState()
