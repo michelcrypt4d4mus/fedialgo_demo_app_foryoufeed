@@ -220,10 +220,10 @@ export default function Feed() {
                            {' ● '}
 
                             <TooltippedLink
-                                label={"(load more of your data)"}
+                                label={"(load more algorithm data)"}
                                 onClick={triggerMoarData}
                                 labelStyle={linkesque}
-                                tooltipText={"Load more of your Mastodon history into the algorithm"}
+                                tooltipText={"Use more of your Mastodon activity to refine the algorithm"}
                             />
                         </p>}
 
