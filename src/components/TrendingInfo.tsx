@@ -5,13 +5,12 @@ import React, { CSSProperties, useMemo, useState } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
 import {
+    Toot,
+    TrendingType,
+    extractDomain,
     type TagWithUsageCounts,
     type TrendingLink,
     type TrendingWithHistory,
-    TagTootsCacheKey,
-    Toot,
-    TrendingType,
-    extractDomain
 } from "fedialgo";
 
 import StatusComponent from "./status/Status";

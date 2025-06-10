@@ -11,8 +11,8 @@ import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { addMimeExtensionsToServer, type MastodonServer } from "../helpers/mastodon_helpers";
 import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
 import { config } from "../config";
-import { getLogger } from "../helpers/log_helpers";
 import { Events } from "../helpers/string_helpers";
+import { getLogger } from "../helpers/log_helpers";
 import { useAuthContext } from "./useAuth";
 import { type ErrorHandler } from "../types";
 
@@ -126,11 +126,11 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // Initial load of the feed
     useEffect(() => {
-        if (!user || algorithm) return;
+        if (algorithm || !user) return;
 
         // Check that we have valid user credentials and load timeline toots, otherwise force a logout.
         const constructFeed = async (): Promise<void> => {
-            logger.log(`constructFeed() called with user ID ${user?.id} (feed already has ${timeline.length} toots)`);
+            logger.log(`constructFeed() called with user ID ${user?.id} (feed has ${timeline.length} toots)`);
             let currentUser: mastodon.v1.Account;
 
             try {
@@ -160,18 +160,18 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             triggerLoadFxn(() => algo.triggerFeedUpdate(), logAndShowError, setLoadState);
 
             algo.serverInfo()
-                .then(serverInfo => {
+                .then((serverInfo) => {
                     logger.trace(`User's server info retrieved for "${serverInfo.domain}":`, serverInfo);
                     setServerInfo(addMimeExtensionsToServer(serverInfo));
                 })
-                .catch(err => {
+                .catch((err) => {
                     // Not serious enough error to alert the user as we can fallback to our configured defaults
                     logger.error(`Failed to get server info:`, err);
                 });
         };
 
         constructFeed();
-    }, [algorithm, setLastLoadDurationSeconds, setLoadState, user]);
+    }, [algorithm, user]);
 
     // Set up feed reloader to call algorithm.triggerFeedUpdate() on focus after configured amount of time
     useEffect(() => {
@@ -204,7 +204,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         const handleFocus = () => document.hasFocus() && shouldReloadFeed() && triggerFeedUpdate();
         window.addEventListener(Events.FOCUS, handleFocus);
         return () => window.removeEventListener(Events.FOCUS, handleFocus);
-    }, [algorithm, isLoading, shouldAutoUpdate, timeline, triggerFeedUpdate, user]);
+    }, [algorithm, isLoading, shouldAutoUpdate, timeline, user]);
 
     const algoContext: AlgoContext = {
         algorithm,
