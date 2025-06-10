@@ -110,7 +110,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
         // Pre-emptively resolve the toot ID as it appears on screen to speed up future interactions
         // TODO: disabled this for now as it increases storage demands for small instances
-        // toot.resolveID().catch((e) => logger.error(`Error resolving toot ID: ${toot.describe()}`, e));
+        // toot.resolveID().catch((e) => logger.error(`Error resolving toot ID: ${toot.description}`, e));
         toot.numTimesShown = (toot.numTimesShown || 0) + 1;
     }, [isLoading, isOnScreen])
 
@@ -121,7 +121,7 @@ export default function StatusComponent(props: StatusComponentProps) {
             <span>
                 {toot.reblogsBy.map((account, i) => {
                     const rebloggerLink = (
-                        <NewTabLink className="status__display-name muted" href={account.homserverURL} key={i}>
+                        <NewTabLink className="status__display-name muted" href={account.localServerUrl} key={i}>
                             <bdi><strong>
                                 {parse(account.displayNameWithEmojis())}
                             </strong></bdi>
@@ -258,7 +258,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 <bdi>
                                     <strong key="internalBDI" className="display-name__html">
                                         <NewTabLink
-                                            href={toot.account.homserverURL}
+                                            href={toot.account.localServerUrl}
                                             style={{...accountLink, ...fontStyle}}
                                         >
                                             {parse(toot.account.displayNameWithEmojis())}
@@ -309,7 +309,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <p style={{paddingTop: "8px"}}>
                             <a
                                 onClick={() => {
-                                    logger.debug(`setIsLoadingThread for toot: ${toot.describe()}`);
+                                    logger.debug(`setIsLoadingThread for toot: ${toot.description}`);
                                     // TODO; just use global isLoading?
                                     setIsLoadingThread(true);
 

@@ -31,7 +31,7 @@ export function followUri(uri: string, e: React.MouseEvent): boolean {
 export async function openToot(toot: Toot, e: React.MouseEvent): Promise<boolean> {
     e.preventDefault();
     appLogger.log("openToot() called with:", toot);
-    const resolvedURL = await toot.homeserverURL();
+    const resolvedURL = await toot.localServerUrl();
     return followUri(resolvedURL, e);
 };
 
