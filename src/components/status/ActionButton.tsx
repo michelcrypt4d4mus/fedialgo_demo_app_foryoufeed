@@ -4,7 +4,7 @@
  */
 import React, { CSSProperties } from "react";
 
-import { Account, KeysOfValueType, Toot, isValueInStringEnum } from "fedialgo";
+import { Account, Toot, isValueInStringEnum } from "fedialgo";
 import { capitalCase } from "change-case";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

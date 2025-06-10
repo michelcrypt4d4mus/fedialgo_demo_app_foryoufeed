@@ -2,7 +2,7 @@
  * Component for collecting a list of options for a BooleanFilter and displaying
  * them as checkboxes, with a switchbar for invertSelection, sortByCount, etc.
  */
-import { CSSProperties, ReactElement, useMemo, useState } from "react";
+import { ReactElement, useMemo, useState } from "react";
 
 import { BooleanFilter, BooleanFilterName, TagTootsCacheKey } from "fedialgo";
 
