@@ -25,7 +25,7 @@ export default function StatsModal(props: ModalProps) {
     const { algorithm } = useAlgorithm();
     if (!algorithm) return <>   </>;
 
-    const data = show ? algorithm.getRechartsStatsData(10) : [];
+    const data = show ? algorithm.getRechartsStatsData(config.stats.numPercentiles) : [];
     const [hiddenLines, setHiddenLines] = React.useState<Array<DataKey<string | number>>>([]);
     const [scoreType, setScoreType] = React.useState<keyof ScoreStats>("weighted");
     const [valueType, setValueType] = React.useState<keyof MinMaxAvgScore>("average");

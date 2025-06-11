@@ -40,8 +40,8 @@ export default function NumericFilters(props: { isActive: boolean }) {
             {Object.entries(algorithm.filters.numericFilters).map(([name, numericFilter], i) => (
                 <Slider
                     description={numericFilter.description}
-                    key={`${numericFilter.title}_${i}`}
-                    label={capitalCase(numericFilter.title)}
+                    key={`${numericFilter.propertyName}_${i}`}
+                    label={capitalCase(numericFilter.propertyName)}
                     maxValue={config.filters.numeric.maxValue}
                     minValue={0}
                     // TODO: useCallback() could save a lot of re-renders here maybe...

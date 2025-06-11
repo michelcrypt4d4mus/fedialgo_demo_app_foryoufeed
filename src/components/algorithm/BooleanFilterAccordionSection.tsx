@@ -41,13 +41,13 @@ interface BooleanFilterAccordionProps {
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
     const booleanFiltersConfig = config.filters.boolean;
-    const logger = getLogger("BooleanFilterAccordionSection", filter.title);
-    const [switchState, setSwitchState] = useLocalStorage2(`${filter.title}-switchState`, DEFAULT_SWITCH_STATE);
-    const [tagSwitchState, setTagSwitchState] = useLocalStorage2(`${filter.title}-tagSwitch`, DEFAULT_TAG_SWITCH_STATE);
+    const logger = getLogger("BooleanFilterAccordionSection", filter.propertyName);
+    const [switchState, setSwitchState] = useLocalStorage2(`${filter.propertyName}-switchState`, DEFAULT_SWITCH_STATE);
+    const [tagSwitchState, setTagSwitchState] = useLocalStorage2(`${filter.propertyName}-tagSwitch`, DEFAULT_TAG_SWITCH_STATE);
     let footerSwitches: ReactElement[] | null = null;
 
     const minTootsSliderDefaultValue: number = useMemo(
-        () => computeDefaultValue(filter.options, filter.title),
+        () => computeDefaultValue(filter.options, filter.propertyName),
         [filter.options]
     );
 
@@ -80,7 +80,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             ];
 
             // Add a highlights-only switch if there are highlighted tooltips configured for this filter
-            if (booleanFiltersConfig.optionsFormatting[filter.title]?.tooltips) {
+            if (booleanFiltersConfig.optionsFormatting[filter.propertyName]?.tooltips) {
                 _headerSwitches = _headerSwitches.concat([makeHeaderSwitch(SwitchType.HIGHLIGHTS_ONLY)])
             }
 
@@ -88,9 +88,9 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             if (minTootsSliderDefaultValue > 0) {
                 _headerSwitches = _headerSwitches.concat(
                     <MinTootsSlider
-                        key={`${filter.title}-minTootsSlider`}
+                        key={`${filter.propertyName}-minTootsSlider`}
                         minTootsState={minTootsState}
-                        panelTitle={filter.title}
+                        panelTitle={filter.propertyName}
                         objList={filter.options}
                     />
                 );
@@ -121,7 +121,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         />
     );
 
-    if (filter.title == BooleanFilterName.HASHTAG) {
+    if (filter.propertyName == BooleanFilterName.HASHTAG) {
         footerSwitches = Object.values(TagTootsCacheKey).map(k => makeFooterSwitch(k));
     }
 
@@ -131,7 +131,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
             footerSwitches={footerSwitches}
             isActive={filter.selectedOptions.length > 0}
             switchbar={headerSwitches}
-            title={filter.title}
+            title={filter.propertyName}
         >
             <FilterCheckboxGrid
                 filter={filter}

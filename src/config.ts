@@ -104,6 +104,7 @@ type ReplyConfig = {
 
 type StatsConfig = {
     animationDuration: number;
+    numPercentiles: number;
 };
 
 type TimelineConfig = {
@@ -314,6 +315,7 @@ class Config implements ReadonlyConfig {
 
     stats: StatsConfig = {
         animationDuration: 500,               // Duration of stats animations in milliseconds
+        numPercentiles: 10,                   // Number of quartiles/quintiles/deciles/etc. to display in stats
     }
 
     theme: ThemeConfig = THEME;

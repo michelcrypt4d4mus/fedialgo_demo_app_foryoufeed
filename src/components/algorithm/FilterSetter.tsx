@@ -23,7 +23,7 @@ export default function FilterSetter() {
 
     const booleanFiltersCfg = config.filters.boolean.optionsFormatting;
     // Filter for 'visible' because the APP filters are currently hidden
-    const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => !booleanFiltersCfg[f.title].hidden);
+    const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => !booleanFiltersCfg[f.propertyName].hidden);
     const numericFilters = Object.values(algorithm.filters.numericFilters);
     const hasActiveBooleanFilter = booleanFilters.some(f => f.selectedOptions.length);
     const hasActiveNumericFilter = numericFilters.some(f => f.value > 0);
@@ -31,8 +31,8 @@ export default function FilterSetter() {
 
     const filterPositions = booleanFilters.reduce(
         (filters, f) => {
-            const position = booleanFiltersCfg[f.title].position;
-            filters[position] = <BooleanFilterAccordionSection filter={f} key={f.title}/>
+            const position = booleanFiltersCfg[f.propertyName].position;
+            filters[position] = <BooleanFilterAccordionSection filter={f} key={f.propertyName}/>
             return filters;
         },
         {[config.filters.numeric.position]: <NumericFilters isActive={hasActiveNumericFilter} key={"numeric"} />}
