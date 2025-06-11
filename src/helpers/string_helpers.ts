@@ -33,7 +33,6 @@ export const nTimes = (n: number) => `${n} time${n === 1 ? '' : 's'}`;
 // Boolean helpers
 export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
 export const isEmptyStr = (s: string | null | undefined) => s === null || s === undefined || s.trim() === '';
-export const isString = (s: unknown) => typeof s === 'string';
 
 
 // "image/png" => ".png"
