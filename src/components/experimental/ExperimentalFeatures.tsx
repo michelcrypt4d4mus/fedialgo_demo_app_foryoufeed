@@ -123,7 +123,7 @@ export default function ExperimentalFeatures() {
             </p>
 
             <div style={container}>
-                <ul style={listStyle}>
+                <ul>
                     {makeLabeledButton(SHOW_STATE, showAlgoState)}
                     <hr className="hr hr-narrow" />
                     {makeLabeledButton(SCORE_STATS, () => setShowStatsModal(true))}
@@ -142,8 +142,6 @@ export default function ExperimentalFeatures() {
 
 
 const buttonStyle: CSSProperties = {
-    // borderColor: "black",
-    // borderWidth: "1px",
     flex: 2,
     marginBottom: "5px",
     marginTop: "5px",
@@ -161,8 +159,4 @@ const listElement: CSSProperties = {
     flexDirection: "row",
     fontSize: "18px",
     marginBottom: "2px",
-};
-
-const listStyle: CSSProperties = {
-    // listStyle: "disc",
 };

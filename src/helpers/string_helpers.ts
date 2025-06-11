@@ -1,7 +1,7 @@
 /*
  * String manipulation helpers.
  */
-import { TrendingType, type TrendingData } from "fedialgo";
+import { isEmpty, isNil } from "lodash";
 
 import { appLogger } from "./log_helpers";
 import { config } from "../config";
@@ -32,8 +32,7 @@ export const fileInfo = (file: File) => `file: "${file.name}", size: ${file.size
 export const nTimes = (n: number) => `${n} time${n === 1 ? '' : 's'}`;
 // Boolean helpers
 export const hasAnyCapitalLetters = (str: string) => /[A-Z]/.test(str);
-export const isEmptyStr = (s: string | null | undefined) => s === null || s === undefined || s.trim() === '';
-export const isString = (s: unknown) => typeof s === 'string';
+export const isEmptyStr = (s: string | null | undefined) => isNil(s) || isEmpty(s!.trim());
 
 
 // "image/png" => ".png"

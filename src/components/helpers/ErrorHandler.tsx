@@ -5,13 +5,14 @@
 import { CSSProperties, PropsWithChildren, ReactNode, createContext, useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
 
-import { Logger } from "fedialgo";
 import { ErrorBoundary } from "react-error-boundary";
+import { isString } from "lodash";
+import { Logger } from "fedialgo";
 
 import BugReportLink from "./BugReportLink";
 import { extractText } from "../../helpers/react_helpers";
 import { getLogger } from "../../helpers/log_helpers";
-import { isEmptyStr, isString } from "../../helpers/string_helpers";
+import { isEmptyStr } from "../../helpers/string_helpers";
 import { rawErrorContainer } from "../../helpers/style_helpers";
 
 const ERROR_FONT_SIZE = 18;

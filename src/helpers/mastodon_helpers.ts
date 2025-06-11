@@ -7,11 +7,12 @@ import { MediaCategory } from "fedialgo";
 import { appLogger } from "./log_helpers";
 import { mimeTypeExtension } from "./string_helpers";
 
-export type MimeExtensions = Record<string, string[]>;
-
 export interface MastodonServer extends mastodon.v2.Instance {
-    mimeExtensions: MimeExtensions;  // Map of server's allowed MIME types to file extensions
+    mimeExtensions: MimeExtensions;
 };
+
+// Map of server's allowed MIME types to file extensions
+type MimeExtensions = Record<string, string[]>;
 
 const MIME_GROUPS = Object.values(MediaCategory).reduce((acc, value) => {
     acc[value] = `${value}/*`;

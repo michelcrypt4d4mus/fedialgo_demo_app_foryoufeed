@@ -1,8 +1,8 @@
 /*
  * Help with numbers.
  */
-import { config } from "../config";
 import { appLogger } from "./log_helpers";
+import { config } from "../config";
 
 export const KB = 1024;
 export const MB = KB * KB;
@@ -36,6 +36,3 @@ export function formatScore(score: number): number {
     if (Math.abs(score) < Math.pow(10, -1 * config.toots.scoreDigits)) return score;
     return Number(score.toPrecision(config.toots.scoreDigits));
 };
-
-
-export const isNumber = (n: number | undefined) => typeof n === "number" && !isNaN(n) && isFinite(n);

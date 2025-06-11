@@ -5,6 +5,7 @@
  */
 import { useMemo, useState } from "react";
 
+import { isEmpty, isFinite } from "lodash";
 import {
     FILTER_OPTION_DATA_SOURCES,
     BooleanFilter,
@@ -21,8 +22,6 @@ import { buildGradient } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { gridify } from '../../../helpers/react_helpers';
-import { isNumber } from "../../../helpers/number_helpers";
-import { isEmptyStr } from "../../../helpers/string_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState, type TagHighlightSwitchState } from "../BooleanFilterAccordionSection";
@@ -92,7 +91,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     ): CheckboxTooltipConfig | undefined => {
         const gradientCfg = tooltipGradients[dataSource];
         const optionGradientValue = option[dataSource];  // The value driving the gradient, e.g. num favourites
-        if (!isNumber(optionGradientValue)) return undefined;
+        if (!isFinite(optionGradientValue)) return undefined;
         if (!gradientCfg) logger.logAndThrowError(`No gradientCfg found for "${dataSource}"!`);
 
          // Boost the value half way up the gradient if requested
@@ -130,7 +129,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             // Adjust tooltip text for followed accounts
             if (tooltip && option.isFollowed) {
                 const userTooltipCfg = tooltipConfig[ScoreName.FAVOURITED_ACCOUNTS];
-                tooltip.text = userTooltipCfg.text + (isEmptyStr(tooltip.text) ? '' : ` (${tooltip.text.toLowerCase()})`);
+                tooltip.text = userTooltipCfg.text + (isEmpty(tooltip.text) ? '' : ` (${tooltip.text.toLowerCase()})`);
             }
         } else if (filter.title == BooleanFilterName.LANGUAGE) {
             tooltip = getGradientTooltip(option, filter.title);
