@@ -3,9 +3,9 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { CSSProperties, useState, useEffect } from "react";
+import { CSSProperties, useState, useCallback, useEffect } from "react";
 
-import TheAlgorithm, { NonScoreWeightName, WeightName, type Weights } from "fedialgo";
+import TheAlgorithm, { NonScoreWeightName, ScoreName, type WeightName, type Weights } from "fedialgo";
 
 import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
@@ -22,38 +22,42 @@ const logger = getLogger("WeightSetter");
 export default function WeightSetter() {
     const { algorithm } = useAlgorithm();
     const { logAndSetError } = useError();
-
     const [userWeights, setUserWeights] = useState<Weights>({} as Weights);
-    const sortedScorers = algorithm.weightedScorers.sort((a, b) => a.name.localeCompare(b.name));
 
     const initWeights = async () => setUserWeights(await algorithm.getUserWeights());
     useEffect(() => {initWeights()}, []);
 
     // Update the user weightings stored in TheAlgorithm when a user moves a weight slider
-    const updateWeights = async (newWeights: Weights): Promise<void> => {
-        try {
-            logger.log(`updateWeights() called with:`, newWeights);
-            setUserWeights(newWeights);  // Note lack of await here
-            algorithm.updateUserWeights(newWeights);
-        } catch (error) {
-            logAndSetError(logger, error);
-        }
-    };
+    const updateWeights = useCallback(
+        async (newWeights: Weights): Promise<void> => {
+            try {
+                logger.log(`updateWeights() called with:`, newWeights);
+                setUserWeights(newWeights);  // Note lack of await here
+                algorithm.updateUserWeights(newWeights);
+            } catch (error) {
+                logAndSetError(logger, error);
+            }
+        },
+        [algorithm, logAndSetError]
+    );
 
-    const updateWeightsToPreset = async (preset: string): Promise<void> => {
-        try {
-            logger.log(`updateWeightsToPreset() called with:`, preset);
-            await algorithm.updateUserWeightsToPreset(preset);
-            setUserWeights(await algorithm.getUserWeights());
-        } catch (error) {
-            logAndSetError(logger, error);
-        }
-    };
+    const updateWeightsToPreset = useCallback(
+        async (preset: string): Promise<void> => {
+            try {
+                logger.log(`updateWeightsToPreset() called with:`, preset);
+                await algorithm.updateUserWeightsToPreset(preset);
+                setUserWeights(await algorithm.getUserWeights());
+            } catch (error) {
+                logAndSetError(logger, error);
+            }
+        },
+        [algorithm, logAndSetError]
+    );
 
-    const makeWeightSlider = (scoreName: WeightName) => (
+    const makeWeightSlider = (weightName: WeightName) => (
         <WeightSlider
-            key={scoreName}
-            scoreName={scoreName}
+            key={weightName}
+            weightName={weightName}
             updateWeights={updateWeights}
             userWeights={userWeights}
         />
@@ -76,7 +80,7 @@ export default function WeightSetter() {
                     Weightings
                 </p>
 
-                {sortedScorers.map((scorer) => makeWeightSlider(scorer.name))}
+                {Object.values(ScoreName).sort().map((scoreName) => makeWeightSlider(scoreName))}
             </div>
         </TopLevelAccordion>
     );
