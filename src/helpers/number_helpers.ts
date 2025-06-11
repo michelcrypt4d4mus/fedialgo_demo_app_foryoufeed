@@ -36,6 +36,3 @@ export function formatScore(score: number): number {
     if (Math.abs(score) < Math.pow(10, -1 * config.toots.scoreDigits)) return score;
     return Number(score.toPrecision(config.toots.scoreDigits));
 };
-
-
-export const isNumber = (n: number | undefined) => typeof n === "number" && !isNaN(n) && isFinite(n);
