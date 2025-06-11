@@ -39,12 +39,12 @@ interface FilterCheckboxGridProps extends HeaderSwitchState {
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightsOnly, minToots, sortByCount, tagSwitchState } = props;
     const { algorithm, hideFilterHighlights } = useAlgorithm();
-    const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.title), []);
+    const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.propertyName), []);
 
-    const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.title];
+    const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.propertyName];
     const tooltipConfig = optionsFormatCfg?.tooltips || {};
-    const isTagFilter = (filter.title == BooleanFilterName.HASHTAG);
-    const isUserFilter = (filter.title == BooleanFilterName.USER);
+    const isTagFilter = (filter.propertyName == BooleanFilterName.HASHTAG);
+    const isUserFilter = (filter.propertyName == BooleanFilterName.USER);
 
     // Build a dict from FilterOptionDataSource to tooltip objs with the color (or gradient) + base text
     const tooltipGradients: DataSourceGradients = useMemo(
@@ -131,8 +131,8 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 const userTooltipCfg = tooltipConfig[ScoreName.FAVOURITED_ACCOUNTS];
                 tooltip.text = userTooltipCfg.text + (isEmpty(tooltip.text) ? '' : ` (${tooltip.text.toLowerCase()})`);
             }
-        } else if (filter.title == BooleanFilterName.LANGUAGE) {
-            tooltip = getGradientTooltip(option, filter.title);
+        } else if (filter.propertyName == BooleanFilterName.LANGUAGE) {
+            tooltip = getGradientTooltip(option, filter.propertyName);
         }
 
         return tooltip;
@@ -153,7 +153,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                 return (
                     <FilterCheckbox
                         isChecked={filter.isOptionEnabled(option.name)}
-                        key={`${filter.title}_${option.name}_${i}`}
+                        key={`${filter.propertyName}_${option.name}_${i}`}
                         label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(label) : label}
                         onChange={(e) => filter.updateOption(option.name, e.target.checked)}
                         option={option}
