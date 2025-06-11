@@ -1,8 +1,8 @@
 /*
  * Help with numbers.
  */
-import { config } from "../config";
 import { appLogger } from "./log_helpers";
+import { config } from "../config";
 
 export const KB = 1024;
 export const MB = KB * KB;

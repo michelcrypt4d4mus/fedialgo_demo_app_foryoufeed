@@ -5,9 +5,9 @@
 import { CSSProperties, PropsWithChildren, ReactNode, createContext, useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
 
+import { ErrorBoundary } from "react-error-boundary";
 import { isString } from "lodash";
 import { Logger } from "fedialgo";
-import { ErrorBoundary } from "react-error-boundary";
 
 import BugReportLink from "./BugReportLink";
 import { extractText } from "../../helpers/react_helpers";
