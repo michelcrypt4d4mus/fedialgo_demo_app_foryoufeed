@@ -34,10 +34,10 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     // Server configuration stuff
     const acceptedAttachments = serverInfo?.mimeExtensions || config.replies.defaultAcceptedAttachments;
+    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const statusConfig = serverInfo?.configuration?.statuses;
     const maxChars = statusConfig?.maxCharacters || config.replies.defaultMaxCharacters;
     const maxMediaAttachments = statusConfig?.maxMediaAttachments || config.replies.defaultMaxAttachments;
-    const attachmentsConfig = serverInfo?.configuration?.mediaAttachments;
     const maxImageSize = attachmentsConfig?.imageSizeLimit || config.replies.defaultMaxImageSize;
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
