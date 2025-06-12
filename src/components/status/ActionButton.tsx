@@ -123,7 +123,7 @@ export default function ActionButton(props: ActionButtonProps) {
             label = `Unfollow`;
         }
 
-        label += ` ${toot.account.webfingerURI}`;
+        label += ` ${toot.account.webfingerUri}`;
     } else {
         if (actionInfo.countName && toot[actionInfo.countName] > 0) {
             buttonText = toot[actionInfo.countName]?.toLocaleString();
