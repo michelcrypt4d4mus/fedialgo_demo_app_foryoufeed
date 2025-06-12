@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Modal } from 'react-bootstrap';
 
-import { Too, optionalSuffix } from 'fedialgo';
+import { Toot, optionalSuffix } from 'fedialgo';
 import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
