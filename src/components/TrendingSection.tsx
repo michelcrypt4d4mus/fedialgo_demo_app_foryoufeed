@@ -8,6 +8,7 @@ import {
     TagTootsCacheKey,
     TagList,
     TrendingType,
+    optionalSuffix,
     type TagWithUsageCounts,
     type TrendingObj,
 } from "fedialgo";
@@ -135,7 +136,7 @@ export default function TrendingSection(props: TrendingProps) {
 
             logger.trace(`Sliced trendObjs to ${objs.length} items (minTootsState=${minTootsState[0]}, numShown=${numShown})`);
             const { infoTxt, linkLabel, linkUrl, onClick } = linkRenderer!;
-            const labels = objs.map(o => linkLabel(o).toString() + (infoTxt ? ` (${infoTxt(o)})` : ''));
+            const labels = objs.map(o => `${linkLabel(o)}${optionalSuffix(infoTxt, infoTxt(o))}`);
             const maxLength = Math.max(...labels.map(label => label.length));
             const longestLabel = labels.find(label => label.length === maxLength) || "";
             const isSingleCol = panelCfg.hasCustomStyle || (maxLength > config.trending.maxLengthForMulticolumn);

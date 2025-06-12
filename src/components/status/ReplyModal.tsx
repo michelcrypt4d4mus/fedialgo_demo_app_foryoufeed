@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Modal } from 'react-bootstrap';
 
-import { Toot } from 'fedialgo';
+import { Too, optionalSuffix } from 'fedialgo';
 import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
@@ -236,7 +236,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                                 ? `Attaching...`
                                 : (resolvedID === undefined)
                                     ? 'Resolving toot ID...'
-                                    : `Submit` + (toot ? ` Reply` : '')}
+                                    : `Submit${optionalSuffix(toot, 'Reply')}`}
                         </Button>
                     </div>
                 </Form.Group>

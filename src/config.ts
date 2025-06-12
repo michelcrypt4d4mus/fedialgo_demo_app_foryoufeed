@@ -12,6 +12,7 @@ import {
     TagTootsCacheKey,
     TrendingType,
     TypeFilterName,
+    optionalSuffix,
     type FilterOptionDataSource
 } from "fedialgo";
 
@@ -209,7 +210,7 @@ class Config implements ReadonlyConfig {
                                     textWithSuffix: (s: string, n: number) => `${s} ${nTimes(n)} recently`,
                                 },
                             },
-                            text: `You've favourited this hashtag`
+                            text: `You favourited this hashtag`
                         },
                         [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
                             highlight: {
@@ -222,7 +223,7 @@ class Config implements ReadonlyConfig {
                                     textWithSuffix: (s: string, n: number) => `${s} ${nTimes(n)} recently`,
                                 },
                             },
-                            text: `You've posted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
+                            text: `You tooted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
                         },
                         [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
                             highlight: {
@@ -248,7 +249,9 @@ class Config implements ReadonlyConfig {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.followedUserGradient,
-                                    textWithSuffix: (s: string, n: number) => s + (n ? ` ${nTimes(n)} recently` : ''),
+                                    textWithSuffix: (s: string, n: number) => {
+                                        return s + optionalSuffix(n, `${nTimes(n)} recently`);
+                                    },
                                 },
                             },
                             text: `You used this language`,
