@@ -258,6 +258,9 @@ class Config implements ReadonlyConfig {
                         },
                     },
                 },
+                [BooleanFilterName.SERVER]: {
+                    position: 6,
+                },
                 [BooleanFilterName.TYPE]: {
                     position: 1,
                     formatLabel: (name: string) => capitalCase(name),
