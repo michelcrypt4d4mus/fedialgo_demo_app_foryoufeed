@@ -1,7 +1,7 @@
 /*
  * Context to hold the TheAlgorithm variable
  */
-import { PropsWithChildren, ReactElement, createContext, useContext, useEffect, useState } from "react";
+import React, { PropsWithChildren, ReactElement, createContext, useContext, useEffect, useState } from "react";
 
 import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";

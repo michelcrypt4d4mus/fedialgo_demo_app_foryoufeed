@@ -1,7 +1,7 @@
 /*
  * Header component on the feed page.
  */
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import React, { Button, Col, Container, Row } from 'react-bootstrap';
 import { CSSProperties } from 'react';
 
 import { config } from '../config';

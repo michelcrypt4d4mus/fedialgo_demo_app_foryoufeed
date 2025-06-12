@@ -32,7 +32,7 @@
     },
     "scripts": {
         "build": "NODE_ENV=production webpack --mode production",
-        "lint": "eslint src/**/*.ts src/**/*.tsx --fix",
+        "lint": "eslint src/**/*.ts src/**/*.tsx",
         "predeploy": "npm run build",
         "test": "jest",
         "tsc": "npx tsc --noEmit",
