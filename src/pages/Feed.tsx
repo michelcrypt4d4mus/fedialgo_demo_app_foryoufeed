@@ -4,7 +4,7 @@
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
-import TheAlgorithm, { Toot } from "fedialgo";
+import TheAlgorithm, { Toot, optionalSuffix } from "fedialgo";
 import { Tooltip } from 'react-tooltip';
 
 import BugReportLink from "../components/helpers/BugReportLink";
@@ -111,7 +111,7 @@ export default function Feed() {
 
     // TODO: probably easier to not rely on fedialgo's measurement of the last load time; we can easily track it ourselves.
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
-    footerMsg += lastLoadDurationSeconds ? ` in ${lastLoadDurationSeconds.toFixed(1)} seconds` : '';
+    footerMsg += optionalSuffix(lastLoadDurationSeconds, seconds => `in ${seconds.toFixed(1)} seconds`);
 
     return (
         <Container fluid style={{height: "auto"}}>
