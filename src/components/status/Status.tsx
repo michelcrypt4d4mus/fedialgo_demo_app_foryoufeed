@@ -95,7 +95,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     const hasAttachments = (toot.mediaAttachments?.length || 0) > 0;
     const isReblog = toot.reblogsBy.length > 0;
-    const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
+    const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerUri}`;
 
     // idx of the mediaAttachment to show in the media inspection modal (-1 means no modal)
     const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
@@ -242,14 +242,14 @@ export default function StatusComponent(props: StatusComponentProps) {
 
 
                         {/* Account name + avatar */}
-                        <div title={toot.account.webfingerURI} className="status__display-name">
+                        <div title={toot.account.webfingerUri} className="status__display-name">
                             <a
                                 data-tooltip-id={TOOLTIP_ACCOUNT_ANCHOR}
                                 data-tooltip-html={toot.account.noteWithAccountInfo}
                             >
                                 <div className="status__avatar">
                                     <div className="account__avatar" style={{height: "46px", width: "46px"}}>
-                                        <LazyLoadImage src={toot.account.avatar} alt={`${toot.account.webfingerURI}`} />
+                                        <LazyLoadImage src={toot.account.avatar} alt={`${toot.account.webfingerUri}`} />
                                     </div>
                                 </div>
                             </a>
@@ -278,7 +278,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 </bdi>
 
                                 <span key="acctdisplay" className="display-name__account">
-                                    @{toot.account.webfingerURI}
+                                    @{toot.account.webfingerUri}
                                     <span style={{width: "5px"}}>{' '}</span>
                                     {buildActionButton(AccountAction.Follow)}
                                     {buildActionButton(AccountAction.Mute)}
