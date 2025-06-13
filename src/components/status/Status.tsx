@@ -222,8 +222,8 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 <span className="status__visibility-icon">
                                     {toot.editedAt && infoIcon(InfoIconType.Edited)}
                                     {toot.inReplyToAccountId && infoIcon(InfoIconType.Reply)}
-                                    {toot.trendingRank > 0 && infoIcon(InfoIconType.TrendingToot)}
-                                    {toot.trendingLinks.length > 0 && infoIcon(InfoIconType.TrendingLink)}
+                                    {(toot.trendingRank || 0) > 0 && infoIcon(InfoIconType.TrendingToot)}
+                                    {(toot.trendingLinks?.length || 0) > 0 && infoIcon(InfoIconType.TrendingLink)}
                                     {toot.containsUserMention() && infoIcon(InfoIconType.Mention)}
                                     {toot.containsTagsMsg() && infoIcon(InfoIconType.Hashtags)}
                                     {toot.isDM && infoIcon(InfoIconType.DM)}
