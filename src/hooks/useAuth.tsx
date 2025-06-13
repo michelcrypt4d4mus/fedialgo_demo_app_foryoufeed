@@ -1,9 +1,10 @@
 /*
  * Authorization context for the app.
  */
-import axios from "axios";
 import React, { PropsWithChildren, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+
+import axios from "axios";
 
 import { getLogger } from "../helpers/log_helpers";
 import { useAppStorage, useUserStorage } from "./useLocalStorage";
