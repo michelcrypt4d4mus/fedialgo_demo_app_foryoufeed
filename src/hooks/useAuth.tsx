@@ -1,9 +1,10 @@
 /*
  * Authorization context for the app.
  */
-import axios from "axios";
 import React, { PropsWithChildren, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+
+import axios from "axios";
 
 import { getLogger } from "../helpers/log_helpers";
 import { useAppStorage, useUserStorage } from "./useLocalStorage";
@@ -53,7 +54,7 @@ export default function AuthProvider(props: PropsWithChildren) {
         body.append("client_secret", app.clientSecret);
         const oauthRevokeURL = user.server + '/oauth/revoke';
 
-        // POST to oauthRevokeURL throws error but log show "Status code: 200" so I think it works? Hard to
+        // POST to oauthRevokeURL throws error but log shows "Status code: 200" so I think it works? Hard to
         // get at the actual status code variable (it's only in the low level logs).
         // Error: "Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://universeodon.com/oauth/revoke. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.""
         try {
