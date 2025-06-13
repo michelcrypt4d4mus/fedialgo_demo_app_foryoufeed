@@ -6,7 +6,7 @@ import { createRestAPIClient } from 'masto';
 import { FEDIALGO } from "fedialgo";
 import { stringifyQuery } from 'ufo';
 
-import { App } from '../types';
+// import { App } from '../types';
 import { AppStorage, useLocalStorage } from "../hooks/useLocalStorage";
 import { config } from '../config';
 import { getLogger } from '../helpers/log_helpers';
@@ -21,7 +21,7 @@ export default function LoginPage() {
     const [_app, setApp] = useLocalStorage({keyName: "app", defaultValue: {}} as AppStorage);
     const [server, setServer] = useLocalStorage({keyName: "server", defaultValue: config.app.defaultServer});
 
-    const handleError = (errorObj: Error, msg?: string, note?: string, ...args: any[]) => {
+    const handleError = (errorObj: Error, msg?: string, note?: string, ...args: unknown[]) => {
         logAndSetFormattedError({
             args: (args || []).concat([{ server, _app }]),
             errorObj,

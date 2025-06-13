@@ -56,8 +56,8 @@ type TrendingProps = TrendingTagListProps | TrendingObjsProps;
 
 
 export default function TrendingSection(props: TrendingProps) {
-    let { linkRenderer, objRenderer, panelType, tagList, trendingObjs } = props;
-    panelType ||= tagList?.source as TrendingPanelName;
+    const { linkRenderer, objRenderer, tagList, trendingObjs } = props;
+    const panelType = props.panelType ?? tagList?.source as TrendingPanelName;
     const logger = useMemo(() => getLogger("TrendingSection", panelType), []);
 
     if (!objRenderer && !linkRenderer) {
@@ -128,7 +128,7 @@ export default function TrendingSection(props: TrendingProps) {
             // Short circuit the rendering for custom object renderers (so far that's means just Toots)
             if (objRenderer) {
                 return <>
-                    {objs.map((obj, i) => objRenderer(obj))}
+                    {objs.map(objRenderer)}
                     {verticalSpacer(20, `trending-footer-${panelType}`)}
                     {footer}
                 </>;

@@ -2,7 +2,7 @@
  * Authorization context for the app.
  */
 import axios from "axios";
-import { PropsWithChildren, createContext, useContext, useMemo } from "react";
+import React, { PropsWithChildren, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { getLogger } from "../helpers/log_helpers";
@@ -13,8 +13,8 @@ import { User } from "../types";
 const logger = getLogger("AuthProvider");
 
 const AuthContext = createContext({
-    logout: (resetAppErrors?: boolean) => {},
-    setApp: (_app: any) => undefined,
+    logout: (_preserveAppErrors: boolean) => {},
+    setApp: (_app: object) => undefined,
     setLoggedInUser: async (_user: User) => {},
     setUser: (_user: User | null) => undefined,
     user: null,

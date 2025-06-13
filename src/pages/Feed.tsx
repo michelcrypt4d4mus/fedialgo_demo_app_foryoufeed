@@ -1,7 +1,7 @@
 /*
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import React, { Button, Col, Container, Row } from 'react-bootstrap';
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import TheAlgorithm, { Toot, optionalSuffix } from "fedialgo";
@@ -149,7 +149,7 @@ export default function Feed() {
 
                         {(thread.length > 0) &&
                             <TopLevelAccordion onExited={() => setThread([])} startOpen={true} title="Thread">
-                                {thread.map((toot, index) => (
+                                {thread.map((toot) => (
                                     <StatusComponent
                                         fontColor="black"
                                         hideLinkPreviews={hideLinkPreviews}

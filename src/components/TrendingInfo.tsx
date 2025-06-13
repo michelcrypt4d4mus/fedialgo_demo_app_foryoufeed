@@ -1,7 +1,7 @@
 /*
  * WIP: Component for displaying the trending hashtags in the Fediverse.
  */
-import React, { CSSProperties, useMemo, useState } from "react";
+import React, { CSSProperties, useMemo } from "react";
 
 import Accordion from 'react-bootstrap/esm/Accordion';
 import {

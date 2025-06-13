@@ -3,7 +3,7 @@
  */
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode } from "react";
+import React, { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode } from "react";
 
 import { Toot, makeChunks, type TrendingWithHistory } from 'fedialgo';
 
