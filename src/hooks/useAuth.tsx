@@ -13,7 +13,7 @@ import { User } from "../types";
 const logger = getLogger("AuthProvider");
 
 const AuthContext = createContext({
-    logout: (_preserveAppErrors: boolean) => {},
+    logout: (_preserveAppErrors?: boolean) => {},
     setApp: (_app: object) => undefined,
     setLoggedInUser: async (_user: User) => {},
     setUser: (_user: User | null) => undefined,
