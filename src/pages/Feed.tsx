@@ -38,6 +38,7 @@ export default function Feed() {
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
+        triggerHomeTimelineBackFill,
         triggerMoarData
     } = useAlgorithm();
 
@@ -204,7 +205,7 @@ export default function Feed() {
                 <Col xs={12} md={6}>
                     {algorithm && !isLoading &&
                         <p style={loadNewTootsText}>
-                            <a onClick={() => triggerFeedUpdate()} style={linkesque}>
+                            <a onClick={triggerFeedUpdate} style={linkesque}>
                                 (load new toots)
                             </a>
 
@@ -212,7 +213,7 @@ export default function Feed() {
 
                             <TooltippedLink
                                 label={"(load old toots)"}
-                                onClick={() => triggerFeedUpdate(true)}
+                                onClick={triggerHomeTimelineBackFill}
                                 labelStyle={linkesque}
                                 tooltipText={"Load more toots but starting from the oldest toot in your feed and working backwards"}
                             />

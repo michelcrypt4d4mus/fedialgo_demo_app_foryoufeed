@@ -30,7 +30,8 @@ interface AlgoContext {
     serverInfo?: MastodonServer,
     shouldAutoUpdateCheckbox?: ReactElement,
     timeline: Toot[],
-    triggerFeedUpdate?: (moreOldToots?: boolean) => void,
+    triggerFeedUpdate?: () => void,
+    triggerHomeTimelineBackFill?: () => void,
     triggerMoarData?: () => void,
     triggerPullAllUserData?: () => void,
 };
@@ -111,7 +112,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     };
 
     const trigger = (loadFxn: () => Promise<void>) => triggerLoadFxn(loadFxn, logAndShowError, setLoadState);
-    const triggerFeedUpdate = (moreOldToots?: boolean) => trigger(() => algorithm.triggerFeedUpdate(moreOldToots));
+    const triggerFeedUpdate = () => trigger(() => algorithm.triggerFeedUpdate());
+    const triggerHomeTimelineBackFill = () => trigger(() => algorithm.triggerHomeTimelineBackFill());
     const triggerMoarData = () => trigger(() => algorithm.triggerMoarData());
     const triggerPullAllUserData = () => trigger(() => algorithm.triggerPullAllUserData());
 
@@ -218,6 +220,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
+        triggerHomeTimelineBackFill,
         triggerMoarData,
         triggerPullAllUserData
     };
