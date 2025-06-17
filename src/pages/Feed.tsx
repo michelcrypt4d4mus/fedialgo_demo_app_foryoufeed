@@ -204,7 +204,7 @@ export default function Feed() {
                 {/* Feed column */}
                 <Col xs={12} md={6}>
                     {algorithm && !isLoading &&
-                        <p style={loadNewTootsText}>
+                        <div style={loadNewTootsText}>
                             <a onClick={triggerFeedUpdate} style={linkesque}>
                                 (load new toots)
                             </a>
@@ -226,7 +226,7 @@ export default function Feed() {
                                 labelStyle={linkesque}
                                 tooltipText={"Use more of your Mastodon activity to refine the algorithm"}
                             />
-                        </p>}
+                        </div>}
 
                     <div style={statusesColStyle}>
                         {timeline.slice(0, numShownToots).map((toot) => (
