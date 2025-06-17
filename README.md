@@ -139,7 +139,7 @@ Someone reported they were unable to build with `npm run build` but using `NODE_
 
 #### Hashtags
 ```
-#activitypub #algorithm #algorithmicFeed #algorithmicTimeline #Fedi #FediTips #FediTools #Fediverse #Feed #FOSS #MastoAdmin #Mastodon #mastohelp #nodejs #nod #opensource #SocialWeb #timeline #TL #webdev #mastojs #hashtags
+#activitypub #algorithm #algorithmicFeed #algorithmicTimeline #Fedi #FediTips #FediTools #Fediverse #Feed #FOSS #MastoAdmin #Mastodon #mastohelp #nodejs #nod #opensource #SocialWeb #timeline #TL #webdev #mastojs #hashtags #MastodonApi #socialmedia
 ```
 
 
