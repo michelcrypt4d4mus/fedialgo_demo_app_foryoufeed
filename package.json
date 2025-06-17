@@ -18,7 +18,7 @@
         "lodash": "^4.17.21",
         "masto": "^7.1.0",
         "react": "^18.2.0",
-        "react-bootstrap": "^2.7.4",
+        "react-bootstrap": "^2.10.10",
         "react-confirm": "^0.3.0",
         "react-dom": "^18.2.0",
         "react-dropzone": "^14.3.8",
