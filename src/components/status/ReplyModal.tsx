@@ -2,7 +2,7 @@
  * Modal to display JSON data.
  * React Bootstrap Modal: https://getbootstrap.com/docs/5.0/components/modal/
  */
-import React, { CSSProperties, useCallback, useEffect, useState } from 'react';
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Modal } from 'react-bootstrap';
@@ -20,7 +20,7 @@ import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
 
-const logger = getLogger('ReplyModal');
+const replyLogger = getLogger('ReplyModal');
 
 interface ReplyModalProps extends ModalProps {
     toot?: Toot;
@@ -31,6 +31,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const { show, setShow, toot } = props;
     const { api, serverInfo } = useAlgorithm();
     const { logAndSetFormattedError } = useError();
+    const logger = replyLogger.tempLogger(toot ? `Reply to ${toot.account.description}` : 'Create New Toot');
 
     // Server configuration stuff
     const acceptedAttachments = serverInfo?.mimeExtensions || config.replies.defaultAcceptedAttachments;
@@ -42,17 +43,21 @@ export default function ReplyModal(props: ReplyModalProps) {
     const maxVideoSize = attachmentsConfig?.videoSizeLimit || config.replies.defaultMaxVideoSize;
 
     // State
-    const replyMentionsStr = toot ? (toot.replyMentions.join(' ') + '\n\n') : '';
+    const mentionsStr = toot ? toot.replyMentions.join(' ') : '';
     const [isAttaching, setIsAttaching] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [mediaAttachments, setMediaAttachments] = React.useState<Toot["mediaAttachments"]>([]);
-    const [replyText, setReplyText] = React.useState<string>(replyMentionsStr);
+    const [replyText, setReplyText] = React.useState<string>(mentionsStr.length ? mentionsStr + '\n\n' : '');
     // null means we don't need a resolved ID, undefined means we are waiting for it to resolve
     const [resolvedID, setResolvedID] = React.useState<string | null | undefined>(toot ? undefined : null);
 
-    const cursor = isAttaching ? 'wait' : 'default';
-    const currentReplyLen = () => replyText.replace(replyMentionsStr, '').trim().length;
-    const isSubmitEnabled = !isAttaching && (!toot || resolvedID) && ((currentReplyLen() + mediaAttachments.length) > 0);
+    // Variables
+    const currentReplyLen = replyText.replace(mentionsStr, '').trim().length;
+    const hasReply = ((currentReplyLen + mediaAttachments.length) > 0);
+    const isResolved = !!(resolvedID || !toot);
+    const isSubmitEnabled = hasReply && isResolved && !isAttaching && !isSubmitting;
+    const cursor = (isAttaching || isSubmitting) ? 'wait' : 'default';
+    const textareaRef = useRef(null);
 
     const removeMediaAttachment = (mediaID: string) => {
         logger.log(`Removing media attachment with ID: ${mediaID}`);
@@ -61,35 +66,33 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     // Resolve the toot ID if we are replying to an existing toot
     useEffect(() => {
-        if (!(show && toot)) return;
+        if (!show || isResolved) return;
+        logger.log(`Resolving toot ID for`, toot);
 
-        if (!resolvedID) {
-            logger.log(`Resolving toot ID for`, toot);
-
-            toot.resolveID()
-                .then(id => setResolvedID(id))
-                .catch(err => {
-                    handleError(`Failed to resolve toot on ${serverInfo?.title}!`, `Can't reply right now.`, err);
-                });
-        }
+        toot.resolveID()
+            .then(id => setResolvedID(id))
+            .catch(err => handleError(`Resolve toot failed on ${serverInfo?.title}!`, `Can't reply right now.`, err));
     }, [api, show, toot])
 
+    // Place the initial cursor at the end of the textarea
+    useEffect(() => {
+        if (!(show && textareaRef.current)) return;
+        textareaRef.current.setSelectionRange(textareaRef.current.value.length, textareaRef.current.value.length);
+        textareaRef.current.focus();
+    }, [show]);
+
     // Drop zone stuff from the react-dropzone template
-    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
+    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]): Promise<void> => {
         logger.log(`Processing files:`, acceptedFiles);
 
         if (fileRejections.length > 0) {
-            handleError(`Invalid file type!`, fileRejections[0]?.errors[0]?.message);
-            return;
+            return handleError(`Invalid file type!`, fileRejections[0]?.errors[0]?.message);
         } else if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
-            handleError(`No more than ${maxMediaAttachments} files can be attached!`);
-            return;
+            return handleError(`No more than ${maxMediaAttachments} files can be attached!`);
         } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
-            handleError(`Image file size exceeds ${maxImageSize / 1048576} MB limit!`);
-            return;
+            return handleError(`Image file size exceeds ${maxImageSize / 1048576} MB limit!`);
         } else if (acceptedFiles.some(f => f.type.startsWith('video/') && f.size > maxVideoSize)) {
-            handleError(`Video file size exceeds ${maxVideoSize / 1048576} MB limit!`);
-            return;
+            return handleError(`Video file size exceeds ${maxVideoSize / 1048576} MB limit!`);
         }
 
         setIsAttaching(true);
@@ -128,23 +131,18 @@ export default function ReplyModal(props: ReplyModalProps) {
     const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
 
     // Actually submit the new Status object to the server
-    const createToot = async () => {
-        if (toot && !resolvedID) {
-            handleError("Failed to resolve toot ID to reply to!");
-            return;
-        } else if ((replyText.length + mediaAttachments.length) == 0) {
-            handleError("Reply cannot be empty!");
-            return;
+    const createToot = async (): Promise<void> => {
+        if (!isResolved) {
+            return handleError("Failed to resolve toot ID to reply to!");
+        } else if (!hasReply) {
+            return handleError("Reply cannot be empty!");
         } else if (replyText.length > maxChars) {
-            handleError(
+            return handleError(
                 `Reply text exceeds maximum length of ${maxChars} characters!`,
                 `Current length: ${replyText.length}`,
             );
-
-            return;
         } else if (isSubmitting) {
-            handleError("Already submitting a reply! Please wait until it finishes.");
-            return;
+            return handleError("Already submitting a reply! Please wait until it finishes.");
         }
 
         setIsSubmitting(true);
@@ -165,7 +163,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                 handleError(`Failed to submit reply`, null, err);
             }).finally(() => {
                 setIsSubmitting(false);
-                setReplyText(replyMentionsStr);  // Reset the reply text
+                setReplyText(mentionsStr);  // Reset the reply text
                 setMediaAttachments([]);  // Clear media attachments
                 setResolvedID(null);  // Reset resolved ID
             });
@@ -201,6 +199,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                         autoFocus={true}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder={'Your thoughts go here...'}
+                        ref={textareaRef}
                         rows={4}
                         style={formStyle}
                         value={replyText}
