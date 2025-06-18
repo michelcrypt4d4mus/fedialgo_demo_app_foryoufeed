@@ -50,13 +50,11 @@ export default function ReplyModal(props: ReplyModalProps) {
     // null means we don't need a resolved ID, undefined means we are waiting for it to resolve
     const [resolvedID, setResolvedID] = React.useState<string | null | undefined>(toot ? undefined : null);
 
-    const cursor = isAttaching ? 'wait' : 'default';
     const currentReplyLen = () => replyText.replace(replyMentionsStr, '').trim().length;
-
-    const isSubmitEnabled = !isAttaching
-                         && !isSubmitting
-                         && (!toot || resolvedID)
-                         && ((currentReplyLen() + mediaAttachments.length) > 0);
+    const hasReply = ((currentReplyLen() + mediaAttachments.length) > 0);
+    const isResolved = !!(resolvedID || !toot);
+    const isSubmitEnabled = isResolved && hasReply && !isAttaching && !isSubmitting;
+    const cursor = (isAttaching || isSubmitting) ? 'wait' : 'default';
 
     const removeMediaAttachment = (mediaID: string) => {
         logger.log(`Removing media attachment with ID: ${mediaID}`);
@@ -79,21 +77,17 @@ export default function ReplyModal(props: ReplyModalProps) {
     }, [api, show, toot])
 
     // Drop zone stuff from the react-dropzone template
-    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]) => {
+    const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any[]): Promise<void> => {
         logger.log(`Processing files:`, acceptedFiles);
 
         if (fileRejections.length > 0) {
-            handleError(`Invalid file type!`, fileRejections[0]?.errors[0]?.message);
-            return;
+            return handleError(`Invalid file type!`, fileRejections[0]?.errors[0]?.message);
         } else if ((acceptedFiles.length + mediaAttachments.length) > maxMediaAttachments) {
-            handleError(`No more than ${maxMediaAttachments} files can be attached!`);
-            return;
+            return handleError(`No more than ${maxMediaAttachments} files can be attached!`);
         } else if (acceptedFiles.some(f => f.type.startsWith('image/') && f.size > maxImageSize)) {
-            handleError(`Image file size exceeds ${maxImageSize / 1048576} MB limit!`);
-            return;
+            return handleError(`Image file size exceeds ${maxImageSize / 1048576} MB limit!`);
         } else if (acceptedFiles.some(f => f.type.startsWith('video/') && f.size > maxVideoSize)) {
-            handleError(`Video file size exceeds ${maxVideoSize / 1048576} MB limit!`);
-            return;
+            return handleError(`Video file size exceeds ${maxVideoSize / 1048576} MB limit!`);
         }
 
         setIsAttaching(true);
@@ -132,23 +126,18 @@ export default function ReplyModal(props: ReplyModalProps) {
     const { getInputProps, getRootProps, isDragActive } = useDropzone({onDrop, accept: acceptedAttachments});
 
     // Actually submit the new Status object to the server
-    const createToot = async () => {
-        if (toot && !resolvedID) {
-            handleError("Failed to resolve toot ID to reply to!");
-            return;
-        } else if ((replyText.length + mediaAttachments.length) == 0) {
-            handleError("Reply cannot be empty!");
-            return;
+    const createToot = async (): Promise<void> => {
+        if (!isResolved) {
+            return handleError("Failed to resolve toot ID to reply to!");
+        } else if (!hasReply) {
+            return handleError("Reply cannot be empty!");
         } else if (replyText.length > maxChars) {
-            handleError(
+            return handleError(
                 `Reply text exceeds maximum length of ${maxChars} characters!`,
                 `Current length: ${replyText.length}`,
             );
-
-            return;
         } else if (isSubmitting) {
-            handleError("Already submitting a reply! Please wait until it finishes.");
-            return;
+            return handleError("Already submitting a reply! Please wait until it finishes.");
         }
 
         setIsSubmitting(true);
