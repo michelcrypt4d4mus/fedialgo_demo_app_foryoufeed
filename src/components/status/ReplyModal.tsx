@@ -52,7 +52,11 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     const cursor = isAttaching ? 'wait' : 'default';
     const currentReplyLen = () => replyText.replace(replyMentionsStr, '').trim().length;
-    const isSubmitEnabled = !isAttaching && (!toot || resolvedID) && ((currentReplyLen() + mediaAttachments.length) > 0);
+
+    const isSubmitEnabled = !isAttaching
+                         && !isSubmitting
+                         && (!toot || resolvedID)
+                         && ((currentReplyLen() + mediaAttachments.length) > 0);
 
     const removeMediaAttachment = (mediaID: string) => {
         logger.log(`Removing media attachment with ID: ${mediaID}`);
