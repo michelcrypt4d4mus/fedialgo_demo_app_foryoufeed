@@ -5,10 +5,10 @@ import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
 import {
-    TagTootsCacheKey,
-    TagList,
+    TagTootsType,
     TrendingType,
     optionalSuffix,
+    type TagList,
     type TagWithUsageCounts,
     type TrendingObj,
 } from "fedialgo";
@@ -23,7 +23,7 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
-export type TrendingPanelName = TagTootsCacheKey | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
+export type TrendingPanelName = TagTootsType | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
 
 export type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;

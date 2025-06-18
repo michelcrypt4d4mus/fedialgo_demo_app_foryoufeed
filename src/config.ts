@@ -9,7 +9,7 @@ import {
     FEDIALGO,
     BooleanFilterName,
     ScoreName,
-    TagTootsCacheKey,
+    TagTootsType,
     TrendingType,
     TypeFilterName,
     optionalSuffix,
@@ -203,7 +203,7 @@ class Config implements ReadonlyConfig {
                 [BooleanFilterName.HASHTAG]: {
                     position: 2,
                     tooltips: {
-                        [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
+                        [TagTootsType.FAVOURITED]: {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.favouritedTagGradient,
@@ -212,7 +212,7 @@ class Config implements ReadonlyConfig {
                             },
                             text: `You favourited this hashtag`
                         },
-                        [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
+                        [TagTootsType.PARTICIPATED]: {
                             highlight: {
                                 gradient: {
                                     adjustment: {
@@ -225,7 +225,7 @@ class Config implements ReadonlyConfig {
                             },
                             text: `You tooted this hashtag`,  // the string "N times" is appended in getTooltipInfo()
                         },
-                        [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
+                        [TagTootsType.TRENDING]: {
                             highlight: {
                                 gradient: {
                                     endpoints: THEME.trendingTagGradient,
@@ -367,7 +367,7 @@ class Config implements ReadonlyConfig {
     trending: TrendingConfig = {
         maxLengthForMulticolumn: 55,          // Maximum length of a trending object label to use multicolumn layout
         panels:  {
-            [TagTootsCacheKey.FAVOURITED_TAG_TOOTS]: {
+            [TagTootsType.FAVOURITED]: {
                 initialNumShown: 40,
                 objTypeLabel: "of your favourite hashtags",
                 title: "Hashtags You Often Favourite",
@@ -377,7 +377,7 @@ class Config implements ReadonlyConfig {
                 initialNumShown: 30,
                 objTypeLabel: `trending ${TrendingType.LINKS}`,
             },
-            [TagTootsCacheKey.PARTICIPATED_TAG_TOOTS]: {
+            [TagTootsType.PARTICIPATED]: {
                 initialNumShown: 40,
                 objTypeLabel: "of your hashtags",
                 title: "Hashtags You Often Post About",
@@ -387,7 +387,7 @@ class Config implements ReadonlyConfig {
                 initialNumShown: 40,        // TODO: unused
                 title: "Servers Telling Us What's Trending In The Fediverse",
             },
-            [TagTootsCacheKey.TRENDING_TAG_TOOTS]: {
+            [TagTootsType.TRENDING]: {
                 initialNumShown: 30,
                 objTypeLabel: "trending hashtags",
             },
