@@ -5,7 +5,7 @@ import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
 import {
-    TagTootsType,
+    TagTootsCategory,
     TrendingType,
     optionalSuffix,
     type TagList,
@@ -23,7 +23,7 @@ import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 
 export type TrendingListObj = TrendingObj | string;
-export type TrendingPanelName = TagTootsType | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
+export type TrendingPanelName = TagTootsCategory | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
 
 export type LinkRenderer = {
     infoTxt?: (obj: TrendingListObj) => string;
