@@ -11,7 +11,7 @@ import {
     BooleanFilter,
     BooleanFilterName,
     ScoreName,
-    TagTootsType,
+    TagTootsCategory,
     TypeFilterName,
     type BooleanFilterOption,
     type FilterOptionDataSource,
@@ -120,7 +120,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             // Fall through to the first gradient color we have a non-zero value for in the option
             tooltip = option.isFollowed ? tooltipConfig[TypeFilterName.FOLLOWED_HASHTAGS] : undefined;
 
-            Object.values(TagTootsType).reverse().forEach((dataSource) => {
+            Object.values(TagTootsCategory).reverse().forEach((dataSource) => {
                 tooltip ||= tagSwitchState?.[dataSource] && getGradientTooltip(option, dataSource);
             });
         } else if (isUserFilter) {

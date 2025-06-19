@@ -4,7 +4,7 @@
  */
 import { ReactElement, useMemo, useState } from "react";
 
-import { BooleanFilter, BooleanFilterName, TagTootsType } from "fedialgo";
+import { BooleanFilter, BooleanFilterName, TagTootsCategory } from "fedialgo";
 
 import FilterAccordionSection from "./FilterAccordionSection";
 import FilterCheckboxGrid from "./filters/FilterCheckboxGrid";
@@ -15,7 +15,7 @@ import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
 import { useLocalStorage2 } from "../../hooks/useLocalStorage";
 
-export type TagHighlightSwitchState = Record<TagTootsType, boolean>;
+export type TagHighlightSwitchState = Record<TagTootsCategory, boolean>;
 
 export type HeaderSwitchState = {
     readonly [SwitchType.HIGHLIGHTS_ONLY]?: boolean;
@@ -28,9 +28,9 @@ const DEFAULT_SWITCH_STATE: HeaderSwitchState = {
 };
 
 const DEFAULT_TAG_SWITCH_STATE: TagHighlightSwitchState = {
-    [TagTootsType.FAVOURITED]: true,
-    [TagTootsType.PARTICIPATED]: true,
-    [TagTootsType.TRENDING]: true,
+    [TagTootsCategory.FAVOURITED]: true,
+    [TagTootsCategory.PARTICIPATED]: true,
+    [TagTootsCategory.TRENDING]: true,
 };
 
 interface BooleanFilterAccordionProps {
@@ -109,7 +109,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
         ]
     );
 
-    const makeFooterSwitch = (key: TagTootsType) => (
+    const makeFooterSwitch = (key: TagTootsCategory) => (
         <HeaderSwitch
             isChecked={tagSwitchState[key]}
             key={key}
@@ -122,7 +122,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     );
 
     if (filter.propertyName == BooleanFilterName.HASHTAG) {
-        footerSwitches = Object.values(TagTootsType).map(k => makeFooterSwitch(k));
+        footerSwitches = Object.values(TagTootsCategory).map(k => makeFooterSwitch(k));
     }
 
     return (
