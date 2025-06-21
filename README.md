@@ -121,31 +121,14 @@ If you set the environment variable `FEDIALGO_DEBUG=true` a _lot_ more debugging
 
 There's also an arrow icon at the top right of ecah toot that will open a display showing the raw JSON of the underlying toot.
 
-### Environment Variables
+#### Environment Variables
 Environment variables are managed by [`dotenv-flow`](https://www.npmjs.com/package/dotenv-flow) so there are files in this repo called `.env.production` and `.env.development` for the main two `NODE_ENV` values. To override the values in those files you should be able to just create files named `.env.production.local` and `.env.development.local`, respectively.
 
 ### Troubleshooting
 Someone reported they were unable to build with `npm run build` but using `NODE_ENV=production npm run build --no-hmr` seemed to fix the issue.
 
-### Beta Users
-* @benroyce@mastodon.social
-* @HistoPol@mastodon.social
-* @joeneXtra@todon.eu
-* @LaurensHof@fediversereport.com
-* @michael@thms.uk
-* @paige@canadiancivil.com
-* @reiver@mastodon.social
-* @rolle@mementomori.social
-
-#### Hashtags
-```
-#activitypub #algorithm #algorithmicFeed #algorithmicTimeline #Fedi #FediTips #FediTools #Fediverse #Feed #FOSS #MastoAdmin #Mastodon #mastohelp #nodejs #nod #opensource #SocialWeb #timeline #TL #webdev #mastojs #hashtags #MastodonApi #socialmedia
-```
-
-
 #### Code Notes
-* There's tons of info on how the scoring and weighting of toots is being done in your browser's javascript debug console logs.
+* There's tons of info on how the scoring and weighting of toots is being done in your browser's javascript debug console logs if `FEDIALGO_DEBUG` is set.
 * The interesting stuff that actually handles the feed is in the [`Feed.tsx`](src/pages/Feed.tsx) file.
-* The bird UI of this app is based on the following repo: https://github.com/ronilaukkarinen/mastodon-bird-ui
-* If you click on the score icon for a toot the `Toot` object will be logged to the javascript console.
+* The UI of this app is based on @ronilaukkarinen's [`mastodon-bird-ui` repo](https://github.com/ronilaukkarinen/mastodon-bird-ui)
 * Deploying to GitHub pages: https://gist.github.com/promto-c/e46ca197f324a2148af919e18c18b5e6
