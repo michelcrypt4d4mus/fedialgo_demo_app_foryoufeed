@@ -102,7 +102,7 @@ export default function CallbackPage() {
             }).catch((errorObj) => {
                 handleAuthError(
                     `${FEDIALGO} failed to register itself with the server!`,
-                    `oAuth() api.v1.apps.verifyCredentials() failed. Try logging out and in again?`,
+                    `api.v1.apps.verifyCredentials() failed. Try logging out and in again?`,
                     errorObj,
                 )
             });
