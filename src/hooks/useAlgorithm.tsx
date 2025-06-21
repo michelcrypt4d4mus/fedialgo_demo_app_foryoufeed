@@ -22,6 +22,7 @@ const loadLogger = logger.tempLogger("setLoadState");
 interface AlgoContext {
     algorithm?: TheAlgorithm,
     api?: mastodon.rest.Client,
+    isGoToSocialUser?: boolean, // Whether the user is on a GoToSocial instance
     isLoading?: boolean,
     hideFilterHighlights?: boolean,
     hideFilterHighlightsCheckbox?: ReactElement,
@@ -46,6 +47,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // State variables
     const [algorithm, setAlgorithm] = useState<TheAlgorithm>(null);
+    const [isGoToSocialUser, setIsGoToSocialUser] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true); // TODO: this shouldn't start as true...
     const [lastLoadDurationSeconds, setLastLoadDurationSeconds] = useState<number | undefined>();
     const [lastLoadStartedAt, setLastLoadStartedAt] = useState<Date>(new Date());
@@ -165,6 +167,10 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
                 .then((serverInfo) => {
                     logger.trace(`User's server info retrieved for "${serverInfo.domain}":`, serverInfo);
                     setServerInfo(addMimeExtensionsToServer(serverInfo));
+
+                    if(serverInfo.sourceUrl?.toLowerCase()?.endsWith('gotosocial')) {
+                        setIsGoToSocialUser(true);
+                    }
                 })
                 .catch((err) => {
                     // Not serious enough error to alert the user as we can fallback to our configured defaults
@@ -213,6 +219,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         api,
         hideFilterHighlights,
         hideFilterHighlightsCheckbox,
+        isGoToSocialUser,
         isLoading,
         lastLoadDurationSeconds,
         resetAlgorithm,
