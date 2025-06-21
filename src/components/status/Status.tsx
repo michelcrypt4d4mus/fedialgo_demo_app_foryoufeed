@@ -82,7 +82,7 @@ interface StatusComponentProps {
 
 export default function StatusComponent(props: StatusComponentProps) {
     const { fontColor, hideLinkPreviews, isLoadingThread, setIsLoadingThread, setThread, status } = props;
-    const { isLoading } = useAlgorithm();
+    const { isGoToSocialUser, isLoading } = useAlgorithm();
     const contentClass = fontColor ? "status__content__alt" : "status__content";
     const fontStyle = fontColor ? { color: fontColor } : {};
 
@@ -218,7 +218,11 @@ export default function StatusComponent(props: StatusComponentProps) {
                     <div className="status__info">
                         {/* Top right icons + timestamp that link to the toot */}
                         <div className="status__relative-time" style={{display: "inline-block"}}>
-                            <NewTabLink className="status__relative-time-icons" href={toot.uri} onClick={(e) => openToot(toot, e)}>
+                            <NewTabLink
+                                className="status__relative-time-icons"
+                                href={toot.realURL}
+                                onClick={(e) => openToot(toot, e, isGoToSocialUser)}
+                            >
                                 <span className="status__visibility-icon">
                                     {toot.editedAt && infoIcon(InfoIconType.Edited)}
                                     {toot.inReplyToAccountId && infoIcon(InfoIconType.Reply)}
