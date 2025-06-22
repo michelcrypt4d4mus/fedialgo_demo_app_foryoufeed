@@ -43,14 +43,14 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
             let maxValue = topTags.slice(maxValueOptionIdx)[0]?.numToots;
 
             if (!maxValue) {
-                logger.warn(`No max value found for minToots slider, using maxValueInTags: ${maxValueInTags}`);
+                logger.warn(`No max value found at maxValueOptionIdx ${maxValueOptionIdx} in list of ${topTags} objs, using maxValueInTags: ${maxValueInTags}`);
                 maxValue = maxValueInTags;
             }
 
             logger.trace(`Computed maxValue ${maxValue} (maxValueInTags: ${maxValueInTags}, maxValueOptionIdx: ${maxValueOptionIdx})`);
             return maxValue;
         },
-        [objList.objs]
+        [objList, objList.objs]
     );
 
     return (<>
@@ -106,7 +106,8 @@ export const computeDefaultValue = (objList: ObjList, title: string, idealNumOpt
             sliderDefault = idealOption.numToots;
         }
 
-        logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${objList.length} tags)`);
+        // TODO: if the objList gets refreshed while the filter is set to a high value, the slider will disappear :(
+        logger.debug(`Adjusted minToots slider default to ${sliderDefault} (${objList.length} tags)`);
         return sliderDefault;
     }
 };
