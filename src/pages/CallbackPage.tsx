@@ -9,9 +9,11 @@ import { useSearchParams } from 'react-router-dom';
 
 import { config } from "../config";
 import { getLogger } from '../helpers/log_helpers';
+import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import { User } from '../types';
 
 const logger = getLogger("CallbackPage");
@@ -38,6 +40,7 @@ export default function CallbackPage() {
     //     website: "https://mastodon.social",
     // }
     const [app] = useAppStorage({keyName: "app", defaultValue: null});
+    const [server, _setServer] = useLocalStorage({keyName: "server", defaultValue: null});
 
     useEffect(() => {
         if (paramsCode !== null && !user) {
@@ -47,7 +50,7 @@ export default function CallbackPage() {
 
     // Get an OAuth token for our app using the code we received from the server
     const oAuthUserAndRegisterApp = async (code: string) => {
-        const body = new FormData();
+        if (!server) throw new Error(`No Mastodon server found in browser storage!`);
 
         const handleAuthError = (msg: string, note: string, errorObj: Error) => {
             logAndSetFormattedError({
@@ -58,6 +61,8 @@ export default function CallbackPage() {
             })
         }
 
+        const sanitizedServer = sanitizeServerUrl(server);
+        const body = new FormData();
         body.append('grant_type', 'authorization_code');
         body.append('client_id', app.clientId)
         body.append('client_secret', app.clientSecret)
@@ -66,12 +71,12 @@ export default function CallbackPage() {
         body.append('scope', config.app.createAppParams.scopes);
 
         // TODO: access_token is retrieved manually via fetch() instead of using the masto.js library
-        const oauthTokenURI = `${app.website}/oauth/token`;
+        const oauthTokenURI = `${sanitizedServer}/oauth/token`;
         logger.trace(`oAuth() oauthTokenURI: "${oauthTokenURI}"\napp:`, app, `\nuser:`, user, `\ncode: "${code}`);
         const oAuthResult = await fetch(oauthTokenURI, {method: 'POST', body});
         const json = await oAuthResult.json()
         const accessToken = json["access_token"];
-        const api = createRestAPIClient({accessToken: accessToken, url: app.website});
+        const api = createRestAPIClient({accessToken: accessToken, url: sanitizedServer});
 
         // Authenticate the user
         api.v1.accounts.verifyCredentials()
@@ -82,7 +87,7 @@ export default function CallbackPage() {
                     access_token: accessToken,
                     id: verifiedUser.id,
                     profilePicture: verifiedUser.avatar,
-                    server: app.website,
+                    server: sanitizedServer,
                     username: verifiedUser.username,
                 };
 

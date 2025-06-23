@@ -55,11 +55,7 @@ export default function LoginPage() {
 
             try {
                 // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
-                registeredApp = await api.v1.apps.create({
-                    ...config.app.createAppParams,
-                    redirectUris: redirectUri,
-                    website: sanitizedServer,  // TODO: why is this not our website URL?
-                });
+                registeredApp = await api.v1.apps.create({...config.app.createAppParams, redirectUris: redirectUri});
             } catch (error) {
                 const msg = `${FEDIALGO} failed to register itself as an app on your Mastodon server!`;
                 handleError(error, msg, "Check your server URL and try again.", { api, redirectUri, sanitizedServer });
