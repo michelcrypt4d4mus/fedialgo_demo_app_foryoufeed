@@ -10,8 +10,10 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
-import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
+import { getLogger } from "../../helpers/log_helpers";
+import { isEmptyStr } from "../../helpers/string_helpers";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 // TODO: what is this for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
@@ -31,7 +33,14 @@ interface MultimediaNodeProps {
 
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
     const { mediaAttachments, removeMediaAttachment, toot } = props;
+    const { hideSensitive } = useAlgorithm();
+    const hasSpoilerText = !isEmptyStr(toot?.spoilerText);
+
     const [mediaInspectionIdx, setMediaInspectionIdx] = useState<number>(-1);
+    const [showContentState, setShowContentState] = React.useState<boolean>(hasSpoilerText);
+
+    const showContent = hideSensitive ? !hasSpoilerText : true;
+    const spoilerText = hasSpoilerText ? `Click to view sensitive content (${toot.spoilerText})` : "";
     let audios: mastodon.v1.MediaAttachment[];
     let images: mastodon.v1.MediaAttachment[];
     let videos: mastodon.v1.MediaAttachment[];
@@ -78,7 +87,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                 {removeMediaAttachment && <CloseButton onClick={() => removeMediaAttachment(image.id)}/>}
 
                 <LazyLoadImage
-                    alt={image.description}
+                    alt={showContent ? image.description : spoilerText}
                     effect="blur"
                     onClick={() => {
                         if (removeMediaAttachment) return;  // Don't open modal if removing media
@@ -86,13 +95,32 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                         setMediaInspectionIdx(idx);
                     }}
                     src={image.previewUrl}
-                    style={{...imageStyle, cursor: removeMediaAttachment ? "default" : "pointer"}}
-                    title={image.description}
+                    style={{
+                        ...imageStyle,
+                        cursor: removeMediaAttachment ? "default" : "pointer",
+                        filter: showContent ? "none" : "blur(1.5rem)",
+                    }}
+                    title={showContent ? image.description : spoilerText}
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
                 />
+
+                {!showContent &&
+                    <>
+                        <div className="warning-text">
+                            This image may contain sensitive content ({toot.spoilerText})
+                        </div>
+
+                        <button
+                            className="toggle-button"
+                            type="button"
+                            onClick={() => setShowContentState(!showContent)}
+                        >
+                            {showContent ? "Hide" : "Show"} Image
+                        </button>
+                    </>}
             </div>
         ),
-        [hasImageAttachments, images, removeMediaAttachment, setMediaInspectionIdx]
+        [hasImageAttachments, hasSpoilerText, hideSensitive, images, removeMediaAttachment, setMediaInspectionIdx]
     );
 
     if (images.length > 0) {
