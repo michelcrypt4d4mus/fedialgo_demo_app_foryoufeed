@@ -61,11 +61,11 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // Checkboxes with persistent storage that require somewhat global state
     const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
-        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.hideFilterHighlights,
     });
 
     const [hideSensitive, hideSensitiveCheckbox, _tooltip3] = persistentCheckbox({
+        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.hideSensitive,
     });
 
