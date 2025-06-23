@@ -1,4 +1,4 @@
-# FediAlgo: A Configurable Mastodon Timeline Algorithm and Filtering System
+# FediAlgo: A Customizable Mastodon Timeline Algorithm and Filtering System
 
 * Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/)
 * Watch a demo of most of the features [on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk)
@@ -31,7 +31,7 @@ Both this repo and the `fedialgo` package linked above were forked from [pkreiss
 1. Have fun.
 1. Profit.
 
-If you try out FediAlgo but don't plan on using it again you may want to revoke its permissions. This can be done by going to `https://{YOUR_SERVER}/oauth/authorized_applications` and clicking the "revoke" button.
+If you try out FediAlgo but don't plan on using it again you may want to revoke its permissions. This can be done by going to `https://{YOUR_MASTODON_SERVER}/oauth/authorized_applications` and clicking the "revoke" button.
 
 
 ## Setting Weights
