@@ -116,6 +116,7 @@ type TimelineConfig = {
         readonly autoupdate: Readonly<GuiCheckboxLabel>;
         readonly hideFilterHighlights: Readonly<GuiCheckboxLabel>;
         readonly hideLinkPreviews: Readonly<GuiCheckboxLabel>;
+        readonly hideSensitive: Readonly<GuiCheckboxLabel>;
         readonly stickToTop: Readonly<GuiCheckboxLabel>;
     };
     loadingErroMsg: string;
@@ -343,6 +344,10 @@ class Config implements ReadonlyConfig {
             hideLinkPreviews: {
                 label: `Hide Link Previews`,
                 tooltipText: "Show only the headline and description for embedded links",
+            },
+            hideSensitive: {
+                label: `Hide Sensitive`,
+                tooltipText: "Hide sensitive images behind a click through",
             },
             stickToTop: {
                 label: `Stick Control Panel To Top`,

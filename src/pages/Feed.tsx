@@ -32,6 +32,7 @@ export default function Feed() {
     const {
         algorithm,
         hideFilterHighlightsCheckbox,
+        hideSensitiveCheckbox,
         isLoading,
         lastLoadDurationSeconds,
         resetAlgorithm,
@@ -140,6 +141,7 @@ export default function Feed() {
                             {isControlPanelStickyCheckbox}
                             {hideLinkPreviewsCheckbox}
                             {hideFilterHighlightsCheckbox}
+                            {hideSensitiveCheckbox}
                             {shouldAutoUpdateCheckbox}
                         </div>
 

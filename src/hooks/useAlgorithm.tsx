@@ -26,6 +26,8 @@ interface AlgoContext {
     isLoading?: boolean,
     hideFilterHighlights?: boolean,
     hideFilterHighlightsCheckbox?: ReactElement,
+    hideSensitive?: boolean,
+    hideSensitiveCheckbox?: ReactElement,
     lastLoadDurationSeconds?: number,
     resetAlgorithm?: () => Promise<void>,
     serverInfo?: MastodonServer,
@@ -60,6 +62,10 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     // Checkboxes with persistent storage that require somewhat global state
     const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
         labelAndTooltip: config.timeline.guiCheckboxLabels.hideFilterHighlights,
+    });
+
+    const [hideSensitive, hideSensitiveCheckbox, _tooltip3] = persistentCheckbox({
+        labelAndTooltip: config.timeline.guiCheckboxLabels.hideSensitive,
     });
 
     const [shouldAutoUpdate, shouldAutoUpdateCheckbox, _tooltip2] = persistentCheckbox({
@@ -219,6 +225,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         api,
         hideFilterHighlights,
         hideFilterHighlightsCheckbox,
+        hideSensitive,
+        hideSensitiveCheckbox,
         isGoToSocialUser,
         isLoading,
         lastLoadDurationSeconds,
