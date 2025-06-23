@@ -52,6 +52,7 @@ export default function Feed() {
     const [thread, setThread] = useState<Toot[]>([]);
 
     // Checkboxes for persistent user settings state variables
+    // TODO: the returned checkboxTooltip is shared by all tooltips which kind of sucks
     const [hideLinkPreviews, hideLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
         labelAndTooltip: config.timeline.guiCheckboxLabels.hideLinkPreviews,
     });

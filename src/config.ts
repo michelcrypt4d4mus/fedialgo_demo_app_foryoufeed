@@ -347,7 +347,7 @@ class Config implements ReadonlyConfig {
             },
             hideSensitive: {
                 label: `Hide Sensitive`,
-                tooltipText: "Hide sensitive images behind a click through",
+                tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through",
             },
             stickToTop: {
                 label: `Stick Control Panel To Top`,

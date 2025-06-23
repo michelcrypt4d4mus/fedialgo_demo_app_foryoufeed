@@ -46,10 +46,6 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     let videos: mastodon.v1.MediaAttachment[];
     let imageHeight = config.toots.imageHeight;
 
-    if (hasSpoilerText) {
-        logger.debug(`Toot has spoiler text, showContent: ${showContent}, hideSensitive: ${hideSensitive}, spoilerText: ${spoilerText}, toot:`, toot);
-    }
-
     if (toot) {
         audios = toot.audioAttachments;
         images = toot.imageAttachments;
