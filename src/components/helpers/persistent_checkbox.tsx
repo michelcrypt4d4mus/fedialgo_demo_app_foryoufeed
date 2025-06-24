@@ -11,7 +11,7 @@ import { config } from '../../config';
 import { tooltipZIndex } from '../../helpers/style_helpers';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { type BooleanState } from '../../types';
-import { type CheckboxTooltipConfig, type GuiCheckboxLabel } from '../../helpers/tooltip_helpers';
+import { type GuiCheckboxLabel } from '../../helpers/tooltip_helpers';
 
 export const CHECKBOX_TOOLTIP_ANCHOR = "checkbox-tooltip-anchor";
 
@@ -30,7 +30,7 @@ interface PersistentCheckboxProps {
 export default function persistentCheckbox(props: PersistentCheckboxProps): StateWithComponent {
     const { className, isChecked, labelAndTooltip, state } = props;
     const tooltipAnchor = labelAndTooltip?.anchor || CHECKBOX_TOOLTIP_ANCHOR;
-    const [value, setValue] = state || useLocalStorage({keyName: labelAndTooltip.label, defaultValue: isChecked || false});
+    const [value, setValue] = state || useLocalStorage(labelAndTooltip.label, isChecked || false);
     let checkbox: ReactElement;
 
     const tooltip = <Tooltip

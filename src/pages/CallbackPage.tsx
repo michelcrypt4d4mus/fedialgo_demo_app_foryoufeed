@@ -10,10 +10,9 @@ import { useSearchParams } from 'react-router-dom';
 import { config } from "../config";
 import { getLogger } from '../helpers/log_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
-import { useAppStorage } from '../hooks/useLocalStorage';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useAppStorage, useServerStorage } from '../hooks/useLocalStorage';
 import { User } from '../types';
 
 const logger = getLogger("CallbackPage");
@@ -39,8 +38,8 @@ export default function CallbackPage() {
     //     vapidKey: "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah",
     //     website: "https://mastodon.social",
     // }
-    const [app] = useAppStorage({keyName: "app", defaultValue: null});
-    const [server, _setServer] = useLocalStorage({keyName: "server", defaultValue: null});
+    const [app] = useAppStorage();
+    const [server] = useServerStorage();
 
     useEffect(() => {
         if (paramsCode !== null && !user) {
