@@ -2,7 +2,7 @@
 
 This repo contains a simple demo React application (a website, basically) for the (almost) pure javascript [`fedialgo`](https://github.com/michelcrypt4d4mus/fedialgo) package, a customizable algorithm for the federated social media platform [Mastodon](https://joinmastodon.org/) that can free you from the tyranny of Mastodon's reverse chronological order timeline.
 
-* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (none of your data leaves your browser)
+* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (**None of your data ever leaves your browser.** All computations and reorderings are done in client side javascript.)
 * Watch a demo of most of the features [on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk)
 * Check out [the release notes](https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases) or the even more granular [`CHANGELOG`](https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md)
 
@@ -12,10 +12,7 @@ Each incoming toot in your recent timeline will be scored based on a variety of 
     <img src="public/assets/Showcase.png" alt="Algorithm Weighting Sliders" width="600">
 </p>
 
-**None of your data ever leaves your browser.** All computations and reorderings are done in client side javascript.
-
 Both this repo and the `fedialgo` package linked above were forked from [pkreissel's original implementations](https://github.com/pkreissel/fedialgo).
-
 
 
 # Usage
