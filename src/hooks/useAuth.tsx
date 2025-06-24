@@ -26,8 +26,8 @@ export default function AuthProvider(props: PropsWithChildren) {
     const { resetErrors } = useError();
     const navigate = useNavigate();
 
-    const [app, setApp] = useAppStorage({ keyName: "app", defaultValue: null });
-    const [user, setUser] = useUserStorage({ keyName: "user", defaultValue: null });
+    const [app, setApp] = useAppStorage();
+    const [user, setUser] = useUserStorage();
 
     // User object looks like this:
     // {

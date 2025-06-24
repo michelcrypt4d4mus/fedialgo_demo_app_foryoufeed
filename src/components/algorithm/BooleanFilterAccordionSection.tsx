@@ -13,7 +13,7 @@ import MinTootsSlider, { computeDefaultValue } from "../helpers/MinTootsSlider";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
-import { useLocalStorage2 } from "../../hooks/useLocalStorage";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export type TagHighlightSwitchState = Record<TagTootsCategory, boolean>;
 
@@ -42,8 +42,8 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const { filter } = props;
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.propertyName);
-    const [switchState, setSwitchState] = useLocalStorage2(`${filter.propertyName}-switchState`, DEFAULT_SWITCH_STATE);
-    const [tagSwitchState, setTagSwitchState] = useLocalStorage2(`${filter.propertyName}-tagSwitch`, DEFAULT_TAG_SWITCH_STATE);
+    const [switchState, setSwitchState] = useLocalStorage(`${filter.propertyName}-switchState`, DEFAULT_SWITCH_STATE);
+    const [tagSwitchState, setTagSwitchState] = useLocalStorage(`${filter.propertyName}-tagSwitch`, DEFAULT_TAG_SWITCH_STATE);
     let footerSwitches: ReactElement[] | null = null;
 
     const minTootsSliderDefaultValue: number = useMemo(
