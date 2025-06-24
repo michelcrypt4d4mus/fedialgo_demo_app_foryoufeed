@@ -35,9 +35,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     const { mediaAttachments, removeMediaAttachment, toot } = props;
     const { hideSensitive } = useAlgorithm();
     const hasSpoilerText = !isEmptyStr(toot?.spoilerText);
-
     const [mediaInspectionIdx, setMediaInspectionIdx] = useState<number>(-1);
-    const [showContentState, setShowContentState] = React.useState<boolean>(hasSpoilerText);
 
     const showContent = hideSensitive ? !hasSpoilerText : true;
     const spoilerText = hasSpoilerText ? `Click to view sensitive content (${toot.spoilerText})` : "";
@@ -103,21 +101,6 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     title={showContent ? image.description : spoilerText}
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
                 />
-
-                {!showContent &&
-                    <>
-                        <div className="warning-text">
-                            This image may contain sensitive content ({toot.spoilerText})
-                        </div>
-
-                        <button
-                            className="toggle-button"
-                            type="button"
-                            onClick={() => setShowContentState(!showContent)}
-                        >
-                            {showContent ? "Hide" : "Show"} Image
-                        </button>
-                    </>}
             </div>
         ),
         [hasImageAttachments, hasSpoilerText, hideSensitive, images, removeMediaAttachment, setMediaInspectionIdx]
