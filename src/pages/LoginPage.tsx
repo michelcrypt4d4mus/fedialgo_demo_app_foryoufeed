@@ -43,7 +43,6 @@ export default function LoginPage() {
 
         // OAuth won't allow HashRouter's "#" chars in redirectUris
         const redirectUri = `${window.location.origin}${window.location.pathname}`.replace(/\/+$/, '');
-        logger.log(`window.location.pathname: ${window.location.pathname}, redirectUri: ${redirectUri}`); // TODO: remove this log line
         const api = createRestAPIClient({url: sanitizedServer});
         let registeredApp;  // TODO: using 'App' type causes a type error
 
@@ -83,7 +82,7 @@ export default function LoginPage() {
             <img src={config.app.showcaseImageUrl} alt="FediAlgo Showcase" style={previewImage} />
 
             <div>
-                <p style={{ lineHeight: 1.3, marginBottom: "10px", marginTop: "13px", textAlign: "center" }}>
+                <p style={descriptionText}>
                     Fedi-Feed features a customizable algorithm for sorting your feed.<br />
                     You can choose which factors influence the sorting of your timeline.<br />
 
@@ -96,7 +95,7 @@ export default function LoginPage() {
                 </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '5px', marginTop: '5px' }}>
+            <div style={serverContainer}>
                 <Form.Group className="mb-0">
                     <Form.Control
                         id="mastodon_server"
@@ -107,7 +106,7 @@ export default function LoginPage() {
                     />
                 </Form.Group>
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginLeft: '10px' }}>
+                <div style={loginButtonStyle}>
                     <Button onClick={oAuthLogin}>Login</Button>
                 </div>
             </div>
@@ -115,6 +114,19 @@ export default function LoginPage() {
     );
 };
 
+
+const descriptionText: CSSProperties = {
+    lineHeight: 1.3,
+    marginBottom: "10px",
+    marginTop: "13px",
+    textAlign: "center"
+};
+
+const loginButtonStyle: CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginLeft: '10px'
+};
 
 const loginContainer: CSSProperties = {
     alignItems: 'center',
@@ -136,4 +148,11 @@ const privacyText: CSSProperties = {
     fontSize: 17,
     marginTop: "3px",
     marginBottom: "20px",
+};
+
+const serverContainer: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: '5px',
+    marginTop: '5px'
 };
