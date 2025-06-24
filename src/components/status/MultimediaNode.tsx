@@ -38,6 +38,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     const [mediaInspectionIdx, setMediaInspectionIdx] = useState<number>(-1);
 
     const showContent = hideSensitive ? !hasSpoilerText : true;
+    const filterStyle = {filter: showContent ? "none" : "blur(1.5rem)"};
     const spoilerText = hasSpoilerText ? `Click to view sensitive content (${toot.spoilerText})` : "";
     let audios: mastodon.v1.MediaAttachment[];
     let images: mastodon.v1.MediaAttachment[];
@@ -94,9 +95,9 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     }}
                     src={image.previewUrl}
                     style={{
+                        ...filterStyle,
                         ...imageStyle,
                         cursor: removeMediaAttachment ? "default" : "pointer",
-                        filter: showContent ? "none" : "blur(1.5rem)",
                     }}
                     title={showContent ? image.description : spoilerText}
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
@@ -124,18 +125,19 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
             <div className="media-gallery" style={{height: `${VIDEO_HEIGHT}px`, ...style}}>
                 {videos.map((video, i) => {
                     const sourceTag = <source src={video?.remoteUrl || video?.url} type="video/mp4" />;
+                    const videoStyle = {...filterStyle, ...videoEmbedStyle};
                     let videoTag: React.ReactElement;
 
                     // GIFs autoplay play in a loop; mp4s are controlled by the user.
                     if (video.type == GIFV) {
                         videoTag = (
-                            <video autoPlay height={"100%"} loop playsInline style={videoEmbedStyle}>
+                            <video autoPlay height={"100%"} loop playsInline style={videoStyle}>
                                 {sourceTag}
                             </video>
                         );
                     } else {
                         videoTag = (
-                            <video controls height={"100%"} playsInline style={videoEmbedStyle}>
+                            <video controls height={"100%"} playsInline style={videoStyle}>
                                 {sourceTag}
                             </video>
                         );
