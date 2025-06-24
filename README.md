@@ -16,12 +16,12 @@ Both this repo and the `fedialgo` package linked above were forked from [pkreiss
 
 
 # Usage
-1. Click on the link to [the demo](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (it's deployed on GitHub Pages).
+1. Click on the link to [the demo](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/). It's deployed on GitHub Pages so there is no server - everything is handled in your browser.
 1. Specify the Mastodon server your account lives on and click "Login". If you're already logged in with that browser you won't have to enter a password. (Note: passwords and tokens are never sent to FediAlgo! Your login in strictly between you and your Mastodon server. Once authenticated your Mastodon server gives your browser a temporary token FediAlgo uses to read your timeline, the same as any other Mastodon client app.)
    <p align="center">
      <img src="doc/login_screen.png" alt="OAuth Permissions Request" width="600">
    </p>
-1. After you've logged in to your Mastodon server (or if you're logged in in that browser) your browser will request that you give `fedialgo` permission to access your Mastodon account. If you don't accept this the app will not work.
+1. After you've logged in to your Mastodon server (or if you're already logged into that server in the browser you're using) your browser will request that you give `fedialgo` permission to access your Mastodon account. If you don't accept this the app will not work.
    <p align="center">
      <img src="doc/permissions_request.png" alt="OAuth Permissions Request" width="300">
    </p>
