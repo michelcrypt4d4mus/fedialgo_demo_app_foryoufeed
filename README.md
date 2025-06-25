@@ -1,9 +1,10 @@
 # FediAlgo: A Customizable Mastodon Timeline Algorithm and Filtering System
 
-* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/)
-* Watch a demo of most of the features [on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk)
-
 This repo contains a simple demo React application (a website, basically) for the (almost) pure javascript [`fedialgo`](https://github.com/michelcrypt4d4mus/fedialgo) package, a customizable algorithm for the federated social media platform [Mastodon](https://joinmastodon.org/) that can free you from the tyranny of Mastodon's reverse chronological order timeline.
+
+* Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (**None of your data ever leaves your browser.** All computations and reorderings are done in client side javascript.)
+* Watch a demo of most of the features [on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk)
+* Check out [the release notes](https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases) or the even more granular [`CHANGELOG`](https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md)
 
 Each incoming toot in your recent timeline will be scored based on a variety of factors and resorted top to bottom based on what toots have the highest scores instead of just reverse chronological order. You can adjust in a very fine grained way how much weight you want to give to each of those factors in determining each toot's scores. There are also some easy to use presets, including reverting to the standard reverse chronological order.
 
@@ -11,19 +12,16 @@ Each incoming toot in your recent timeline will be scored based on a variety of 
     <img src="public/assets/Showcase.png" alt="Algorithm Weighting Sliders" width="600">
 </p>
 
-**None of your data ever leaves your browser.** All computations and reorderings are done in client side javascript.
-
 Both this repo and the `fedialgo` package linked above were forked from [pkreissel's original implementations](https://github.com/pkreissel/fedialgo).
 
 
-
 # Usage
-1. Click on the link to [the demo](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (it's deployed on GitHub Pages).
+1. Click on the link to [the demo](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/). It's deployed on GitHub Pages so there is no server - everything is handled in your browser.
 1. Specify the Mastodon server your account lives on and click "Login". If you're already logged in with that browser you won't have to enter a password. (Note: passwords and tokens are never sent to FediAlgo! Your login in strictly between you and your Mastodon server. Once authenticated your Mastodon server gives your browser a temporary token FediAlgo uses to read your timeline, the same as any other Mastodon client app.)
    <p align="center">
      <img src="doc/login_screen.png" alt="OAuth Permissions Request" width="600">
    </p>
-1. After you've logged in to your Mastodon server (or if you're logged in in that browser) your browser will request that you give `fedialgo` permission to access your Mastodon account. If you don't accept this the app will not work.
+1. After you've logged in to your Mastodon server (or if you're already logged into that server in the browser you're using) your browser will request that you give `fedialgo` permission to access your Mastodon account. If you don't accept this the app will not work.
    <p align="center">
      <img src="doc/permissions_request.png" alt="OAuth Permissions Request" width="300">
    </p>
