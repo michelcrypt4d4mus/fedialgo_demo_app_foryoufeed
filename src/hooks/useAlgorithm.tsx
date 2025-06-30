@@ -167,6 +167,18 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
                 locale: navigator?.language
             });
 
+            if (await algo.isGoToSocialUser()) {
+                logger.info(`User is on a GoToSocial instance, skipping call to api.v1.apps.verifyCredentials()...`);
+            } else {
+                // Verify the app crednentials
+                api.v1.apps.verifyCredentials()
+                    .then((verifyResponse) => {
+                        logger.trace(`oAuth() api.v1.apps.verifyCredentials() succeeded:`, verifyResponse);
+                    }).catch((err) => {
+                        logAndShowError(`api.v1.apps.verifyCredentials() failed. It might be OK, if not try logging out & back in.`, err)
+                    });
+            }
+
             setAlgorithm(algo);
             triggerLoadFxn(() => algo.triggerFeedUpdate(), logAndShowError, setLoadState);
 

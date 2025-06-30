@@ -98,18 +98,6 @@ export default function CallbackPage() {
                     errorObj,
                 )
             });
-
-        // Verify or register the app
-        api.v1.apps.verifyCredentials()
-            .then((verifyResponse) => {
-                logger.trace(`oAuth() api.v1.apps.verifyCredentials() succeeded:`, verifyResponse);
-            }).catch((errorObj) => {
-                handleAuthError(
-                    `${FEDIALGO} failed to register itself with the server!`,
-                    `api.v1.apps.verifyCredentials() failed. Try logging out and in again?`,
-                    errorObj,
-                )
-            });
     };
 
     return (
