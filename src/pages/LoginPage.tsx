@@ -23,7 +23,7 @@ export default function LoginPage() {
 
     const handleError = (errorObj: Error, msg?: string, note?: string, ...args: unknown[]) => {
         logAndSetFormattedError({
-            args: (args || []).concat([{ server, _app }]),
+            args: (args || []).concat([{ server, serverUsers }]),
             errorObj,
             logger,
             msg: msg || "Error occurred while trying to login",
