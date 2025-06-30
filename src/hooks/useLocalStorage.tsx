@@ -3,8 +3,9 @@
  */
 import { useState } from "react";
 
-import { App, User } from "../types";
+import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
+import { type App, type User } from "../types";
 
 const logger = getLogger("useLocalStorage");
 
@@ -42,5 +43,5 @@ export function useLocalStorage<T>(storageKey: string, defaultValue?: T): [T, (v
 
 
 export const useAppStorage = () => useLocalStorage<App | null>("app", null);
-export const useServerStorage = () => useLocalStorage<string | null>("server", null);
+export const useServerStorage = () => useLocalStorage<string | null>("server", config.app.defaultServer);
 export const useUserStorage = () => useLocalStorage<User | null>("user", null);
