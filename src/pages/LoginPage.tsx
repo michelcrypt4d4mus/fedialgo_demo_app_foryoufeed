@@ -7,7 +7,7 @@ import { FEDIALGO } from "fedialgo";
 import { stringifyQuery } from 'ufo';
 
 // import { App } from '../types';
-import { useAppStorage, useServerStorage } from "../hooks/useLocalStorage";
+import { useServerStorage, useServerUserStorage } from "../hooks/useLocalStorage";
 import { config } from '../config';
 import { getLogger } from '../helpers/log_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
@@ -18,8 +18,8 @@ const logger = getLogger("LoginPage");
 
 export default function LoginPage() {
     const { logAndSetFormattedError } = useError();
-    const [_app, setApp] = useAppStorage();
     const [server, setServer] = useServerStorage();
+    const [serverUsers, setServerUsers] = useServerUserStorage();
 
     const handleError = (errorObj: Error, msg?: string, note?: string, ...args: unknown[]) => {
         logAndSetFormattedError({
@@ -44,13 +44,14 @@ export default function LoginPage() {
         // OAuth won't allow HashRouter's "#" chars in redirectUris
         const redirectUri = `${window.location.origin}${window.location.pathname}`.replace(/\/+$/, '');
         const api = createRestAPIClient({url: sanitizedServer});
+        const _app = serverUsers[sanitizedServer]?.app;
         let registeredApp;  // TODO: using 'App' type causes a type error
 
         if (_app?.clientId) {
             logger.trace(`Found existing app creds to use for '${sanitizedServer}':`, _app);
             registeredApp = _app;
         } else {
-            logger.trace(`No existing app found, creating a new app for '${sanitizedServer}':`, _app);
+            logger.log(`No existing app found, registering a new app for '${sanitizedServer}'`);
 
             try {
                 // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
@@ -71,7 +72,15 @@ export default function LoginPage() {
             scope: config.app.createAppParams.scopes,
         });
 
-        setApp({...registeredApp, redirectUri });
+        const fedialgoApp = {...registeredApp, redirectUri };
+
+        if (serverUsers[sanitizedServer]) {
+            serverUsers[sanitizedServer].app = fedialgoApp;
+        } else {
+            serverUsers[sanitizedServer] = { app: fedialgoApp, user: null };
+        }
+
+        setServerUsers(serverUsers);
         const newUrl = `${sanitizedServer}/oauth/authorize?${query}`;
         logger.trace(`redirecting to "${newUrl}"...`);
         window.location.href = newUrl;

@@ -9,7 +9,7 @@ export const LOG_PREFIX = ("DEMO APP");
 
 // Make a Logger instance with a LOG_PREFIX
 export const getLogger = (...args: string[]) => new Logger(LOG_PREFIX, ...args);
-export const appLogger = getLogger();;
+export const appLogger = getLogger();
 
 
 // Log the browser's locale information to the console
