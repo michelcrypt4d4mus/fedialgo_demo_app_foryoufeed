@@ -54,7 +54,6 @@ interface TrendingObjsProps extends TrendingPropsBase {
 type TrendingProps = TrendingTagListProps | TrendingObjsProps;
 
 
-
 export default function TrendingSection(props: TrendingProps) {
     const { linkRenderer, objRenderer, tagList, trendingObjs } = props;
     const panelType = props.panelType ?? tagList?.source as TrendingPanelName;
@@ -71,7 +70,7 @@ export default function TrendingSection(props: TrendingProps) {
 
     const trendObjs = useMemo(
         () => trendingObjs ?? tagList.topObjs(),
-        [trendingObjs, tagList]
+        [tagList, trendingObjs]
     )
 
     const minTootsSliderDefaultValue: number = useMemo(
@@ -108,7 +107,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [minTootsState[0], numShown, panelType, trendObjs.length]
+        [minTootsState[0], numShown, panelType, tagList, trendObjs.length]
     );
 
     // Memoize because react profiler says trending panels are most expensive to render
@@ -177,7 +176,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [minTootsState[0], numShown, panelCfg, panelType, trendObjs, trendObjs.length]
+        [minTootsState[0], numShown, panelCfg, panelType, tagList, trendObjs, trendObjs.length]
     );
 
     const slider = useMemo(

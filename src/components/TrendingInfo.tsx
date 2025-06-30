@@ -30,36 +30,76 @@ export default function TrendingInfo() {
     const { algorithm } = useAlgorithm();
 
     // Memoize because trending panels are apparently our most expensive renders
-    const scrapedServersSection = useMemo(
-        () => {
-            const domains = Object.keys(algorithm.trendingData.servers).sort((a, b) => {
-                const aInfo = algorithm.trendingData.servers[a];
-                const bInfo = algorithm.trendingData.servers[b];
-                return bInfo.followedPctOfMAU - aInfo.followedPctOfMAU;
-            });
+    const scrapedServersSection = useMemo(() => {
+        const domains = Object.keys(algorithm.trendingData.servers).sort((a, b) => {
+            const aInfo = algorithm.trendingData.servers[a];
+            const bInfo = algorithm.trendingData.servers[b];
+            return bInfo.followedPctOfMAU - aInfo.followedPctOfMAU;
+        });
 
-            return (
-                <TrendingSection
-                    panelType={TrendingType.SERVERS}
-                    linkRenderer={{
-                        infoTxt: (domain: string) => {
-                            const serverInfo = algorithm.trendingData.servers[domain];
+        return (
+            <TrendingSection
+                panelType={TrendingType.SERVERS}
+                linkRenderer={{
+                    infoTxt: (domain: string) => {
+                        const serverInfo = algorithm.trendingData.servers[domain];
 
-                            return [
-                                `MAU: ${serverInfo.MAU.toLocaleString()}`,
-                                `followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`
-                            ].join(', ');
-                        },
-                        linkLabel: (domain: string) => domain,
-                        linkUrl: (domain: string) => sanitizeServerUrl(domain, true),
-                        onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain, true), e)
-                    }}
-                    trendingObjs={domains}
-                />
-            );
-        },
-        [algorithm.trendingData.servers]
-    );
+                        return [
+                            `MAU: ${serverInfo.MAU.toLocaleString()}`,
+                            `followed pct of MAU: ${serverInfo.followedPctOfMAU.toFixed(3)}%`
+                        ].join(', ');
+                    },
+                    linkLabel: (domain: string) => domain,
+                    linkUrl: (domain: string) => sanitizeServerUrl(domain, true),
+                    onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain, true), e)
+                }}
+                trendingObjs={domains}
+            />
+        );
+    }, [algorithm.trendingData.servers]);
+
+    // TODO: had to memoize these because they weren't updating properly at initial load time (???)
+    const tagSection = useMemo(() => {
+        return (
+            <TrendingSection
+                linkRenderer={{
+                    ...trendingObjLinkRenderer,
+                    linkLabel: tagNameMapper,
+                }}
+                tagList={algorithm.trendingData.tags}
+            />
+        );
+    }, [algorithm.trendingData.tags]);
+
+    const linksSection = useMemo(() => {
+        return (
+            <TrendingSection
+                linkRenderer={{
+                    ...trendingObjLinkRenderer,
+                    linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
+                }}
+                panelType={TrendingType.LINKS}
+                trendingObjs={algorithm.trendingData.links}
+            />
+        );
+    }, [algorithm.trendingData.links]);
+
+    const tootsSection = useMemo(() => {
+        return (
+            <TrendingSection
+                objRenderer={(toot: Toot) => (
+                    <StatusComponent
+                        fontColor="black"
+                        hideLinkPreviews={false}
+                        key={toot.uri}
+                        status={toot}
+                    />
+                )}
+                panelType={"toots"}
+                trendingObjs={algorithm.trendingData.toots}
+            />
+        );
+    }, [algorithm.trendingData.toots]);
 
     return (
         <TopLevelAccordion bodyStyle={noPadding} title="What's Trending">
@@ -71,36 +111,9 @@ export default function TrendingInfo() {
             </div>
 
             <Accordion>
-                <TrendingSection
-                    linkRenderer={{
-                        ...trendingObjLinkRenderer,
-                        linkLabel: tagNameMapper,
-                    }}
-                    tagList={algorithm.trendingData.tags}
-                />
-
-                <TrendingSection
-                    linkRenderer={{
-                        ...trendingObjLinkRenderer,
-                        linkLabel: (link: TrendingLink) => prefixedHtml(link.title, extractDomain(link.url)),
-                    }}
-                    panelType={TrendingType.LINKS}
-                    trendingObjs={algorithm.trendingData.links}
-                />
-
-                <TrendingSection
-                    objRenderer={(toot: Toot) => (
-                        <StatusComponent
-                            fontColor="black"
-                            hideLinkPreviews={false}
-                            key={toot.uri}
-                            status={toot}
-                        />
-                    )}
-                    panelType={"toots"}
-                    trendingObjs={algorithm.trendingData.toots}
-                />
-
+                {tagSection}
+                {linksSection}
+                {tootsSection}
                 {scrapedServersSection}
 
                 <TrendingSection
