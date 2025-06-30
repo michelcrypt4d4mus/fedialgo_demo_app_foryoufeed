@@ -51,8 +51,8 @@ export default function TrendingInfo() {
                             ].join(', ');
                         },
                         linkLabel: (domain: string) => domain,
-                        linkUrl: (domain: string) => sanitizeServerUrl(domain),
-                        onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain), e)
+                        linkUrl: (domain: string) => sanitizeServerUrl(domain, true),
+                        onClick: (domain: string, e) => followUri(sanitizeServerUrl(domain, true), e)
                     }}
                     trendingObjs={domains}
                 />

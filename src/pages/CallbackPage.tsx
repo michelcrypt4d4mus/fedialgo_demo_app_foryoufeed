@@ -9,11 +9,11 @@ import { useSearchParams } from 'react-router-dom';
 
 import { config } from "../config";
 import { getLogger } from '../helpers/log_helpers';
-import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
-import { useServerStorage, useServerUserStorage } from '../hooks/useLocalStorage';
+import { getApp, useServerStorage } from '../hooks/useLocalStorage';
 import { User } from '../types';
+import { sanitizeServerUrl } from '../helpers/string_helpers';
 
 const logger = getLogger("CallbackPage");
 // const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
@@ -38,10 +38,9 @@ export default function CallbackPage() {
     //     vapidKey: "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah",
     //     website: "https://mastodon.social",
     // }
-    const [server] = useServerStorage();
-    const [serverUsers, setServerUsers] = useServerUserStorage();
-    const sanitizedServer = sanitizeServerUrl(server);
-    const app = serverUsers[sanitizedServer]?.app;
+    const [serverDomain] = useServerStorage();
+    const server = sanitizeServerUrl(serverDomain, true);
+    const app = getApp();
 
     useEffect(() => {
         if (paramsCode !== null && !user) {
@@ -69,12 +68,12 @@ export default function CallbackPage() {
         body.append('scope', config.app.createAppParams.scopes);
 
         // TODO: access_token is retrieved manually via fetch() instead of using the masto.js library
-        const oauthTokenURI = `${sanitizedServer}/oauth/token`;
+        const oauthTokenURI = `${server}/oauth/token`;
         logger.trace(`oAuth() oauthTokenURI: "${oauthTokenURI}"\napp:`, app, `\nuser:`, user, `\ncode: "${code}`);
         const oAuthResult = await fetch(oauthTokenURI, {method: 'POST', body});
         const json = await oAuthResult.json()
         const accessToken = json["access_token"];
-        const api = createRestAPIClient({accessToken: accessToken, url: sanitizedServer});
+        const api = createRestAPIClient({accessToken: accessToken, url: server});
 
         // Authenticate the user
         api.v1.accounts.verifyCredentials()
@@ -85,7 +84,7 @@ export default function CallbackPage() {
                     access_token: accessToken,
                     id: verifiedUser.id,
                     profilePicture: verifiedUser.avatar,
-                    server: sanitizedServer,
+                    server: server,
                     username: verifiedUser.username,
                 };
 

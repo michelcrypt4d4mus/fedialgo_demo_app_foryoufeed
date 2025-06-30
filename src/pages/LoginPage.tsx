@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import Button from 'react-bootstrap/esm/Button';
 import Form from 'react-bootstrap/esm/Form';
 
@@ -7,7 +7,7 @@ import { FEDIALGO } from "fedialgo";
 import { stringifyQuery } from 'ufo';
 
 // import { App } from '../types';
-import { useServerStorage, useServerUserStorage } from "../hooks/useLocalStorage";
+import { getApp, useAppStorage, useServerStorage, useServerUserStorage } from "../hooks/useLocalStorage";
 import { config } from '../config';
 import { getLogger } from '../helpers/log_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
@@ -18,12 +18,18 @@ const logger = getLogger("LoginPage");
 
 export default function LoginPage() {
     const { logAndSetFormattedError } = useError();
-    const [server, setServer] = useServerStorage();
-    const [serverUsers, setServerUsers] = useServerUserStorage();
+
+    // Global state
+    const serverUserState = useServerUserStorage();
+    const [_app, setApp] = useAppStorage(serverUserState);
+    const [_serverDomain, setServer] = useServerStorage();
+    // Local state
+    const [serverInputText, setServerInputText] = useState(_serverDomain);
+    let serverDomain = _serverDomain;
 
     const handleError = (errorObj: Error, msg?: string, note?: string, ...args: unknown[]) => {
         logAndSetFormattedError({
-            args: (args || []).concat([{ server, serverUsers }]),
+            args: (args || []).concat([{ serverDomain, serverInputText, serverUserState: serverUserState[0] }]),
             errorObj,
             logger,
             msg: msg || "Error occurred while trying to login",
@@ -32,10 +38,8 @@ export default function LoginPage() {
     }
 
     const oAuthLogin = async (): Promise<void> => {
-        let sanitizedServer = server;
-
         try {
-            sanitizedServer = sanitizeServerUrl(server);
+            serverDomain = setServer(serverInputText);
         } catch (err) {
             handleError(err);
             return;
@@ -43,22 +47,23 @@ export default function LoginPage() {
 
         // OAuth won't allow HashRouter's "#" chars in redirectUris
         const redirectUri = `${window.location.origin}${window.location.pathname}`.replace(/\/+$/, '');
-        const api = createRestAPIClient({url: sanitizedServer});
-        const _app = serverUsers[sanitizedServer]?.app;
+        const serverUrl = sanitizeServerUrl(serverDomain, true);
+        const api = createRestAPIClient({url: serverUrl});
+        const app = getApp(serverDomain);
         let registeredApp;  // TODO: using 'App' type causes a type error
 
-        if (_app?.clientId) {
-            logger.trace(`Found existing app creds to use for '${sanitizedServer}':`, _app);
-            registeredApp = _app;
+        if (app?.clientId) {
+            logger.trace(`Found existing app creds to use for '${serverUrl}':`, app);
+            registeredApp = app;
         } else {
-            logger.log(`No existing app found, registering a new app for '${sanitizedServer}'`);
+            logger.log(`No existing app found, registering a new app for '${serverUrl}'`);
 
             try {
                 // Note that the redirectUris, once specified, cannot be changed without clearing cache and registering a new app.
                 registeredApp = await api.v1.apps.create({...config.app.createAppParams, redirectUris: redirectUri});
             } catch (error) {
                 const msg = `${FEDIALGO} failed to register itself as an app on your Mastodon server!`;
-                handleError(error, msg, "Check your server URL and try again.", { api, redirectUri, sanitizedServer });
+                handleError(error, msg, "Check your server URL and try again.", { api, redirectUri, serverUrl });
                 return;
             }
 
@@ -72,16 +77,8 @@ export default function LoginPage() {
             scope: config.app.createAppParams.scopes,
         });
 
-        const fedialgoApp = {...registeredApp, redirectUri };
-
-        if (serverUsers[sanitizedServer]) {
-            serverUsers[sanitizedServer].app = fedialgoApp;
-        } else {
-            serverUsers[sanitizedServer] = { app: fedialgoApp, user: null };
-        }
-
-        setServerUsers(serverUsers);
-        const newUrl = `${sanitizedServer}/oauth/authorize?${query}`;
+        setApp({...registeredApp, redirectUri });
+        const newUrl = `${serverUrl}/oauth/authorize?${query}`;
         logger.trace(`redirecting to "${newUrl}"...`);
         window.location.href = newUrl;
     };
@@ -108,10 +105,10 @@ export default function LoginPage() {
                 <Form.Group className="mb-0">
                     <Form.Control
                         id="mastodon_server"
-                        onChange={(e) => setServer(e.target.value)}
-                        placeholder={config.app.defaultServer}
+                        onChange={(e) => setServerInputText(e.target.value)}
+                        placeholder={serverDomain}
                         type="url"
-                        value={server}
+                        value={serverInputText}
                     />
                 </Form.Group>
 
