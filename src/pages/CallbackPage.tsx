@@ -12,7 +12,7 @@ import { getLogger } from '../helpers/log_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useAuthContext } from '../hooks/useAuth';
 import { useError } from '../components/helpers/ErrorHandler';
-import { useAppStorage, useServerStorage } from '../hooks/useLocalStorage';
+import { useServerStorage, useServerUserStorage } from '../hooks/useLocalStorage';
 import { User } from '../types';
 
 const logger = getLogger("CallbackPage");
@@ -38,8 +38,10 @@ export default function CallbackPage() {
     //     vapidKey: "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah",
     //     website: "https://mastodon.social",
     // }
-    const [app] = useAppStorage();
     const [server] = useServerStorage();
+    const [serverUsers, setServerUsers] = useServerUserStorage();
+    const sanitizedServer = sanitizeServerUrl(server);
+    const app = serverUsers[sanitizedServer]?.app;
 
     useEffect(() => {
         if (paramsCode !== null && !user) {
@@ -49,8 +51,6 @@ export default function CallbackPage() {
 
     // Get an OAuth token for our app using the code we received from the server
     const oAuthUserAndRegisterApp = async (code: string) => {
-        if (!server) throw new Error(`No Mastodon server found in browser storage!`);
-
         const handleAuthError = (msg: string, note: string, errorObj: Error) => {
             logAndSetFormattedError({
                 args: { app, code, searchParams, user },
@@ -60,7 +60,6 @@ export default function CallbackPage() {
             })
         }
 
-        const sanitizedServer = sanitizeServerUrl(server);
         const body = new FormData();
         body.append('grant_type', 'authorization_code');
         body.append('client_id', app.clientId)
@@ -90,10 +89,10 @@ export default function CallbackPage() {
                     username: verifiedUser.username,
                 };
 
-                setLoggedInUser(userData).then(() => logger.log(`Logged in '${userData.username}'! User object:`, userData));
+                setLoggedInUser(userData);  // TODO: the redirect should be here and not in setLoggedInUser()
             }).catch((errorObj) => {
                 handleAuthError(
-                    `Failed to login to Mastodon server!`,
+                    `${FEDIALGO} failed to login to Mastodon server!`,
                     `api.v1.accounts.verifyCredentials() failed. Try logging out and in again?`,
                     errorObj,
                 )

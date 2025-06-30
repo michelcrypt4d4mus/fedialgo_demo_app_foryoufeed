@@ -14,6 +14,10 @@ export interface App extends mastodon.v1.Client {
     [key: string]: unknown;
 };
 
+export type ServerUser = {
+    app: App;
+    user: User | null;
+};
 
 export type User = {
     access_token: string;
