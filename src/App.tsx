@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from "react";
+import React, { CSSProperties, useEffect } from "react";
 import { Buffer } from 'buffer'; // Required for class-transformer to work
 (window as any).Buffer = Buffer;
 
@@ -18,7 +18,6 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import { extractText } from "./helpers/react_helpers";
 import { getLogger, logLocaleInfo } from "./helpers/log_helpers";
 
 const logger = getLogger("App.tsx");

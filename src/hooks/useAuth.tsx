@@ -7,10 +7,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { getLogger } from "../helpers/log_helpers";
-import { sanitizeServerUrl } from "../helpers/string_helpers";
 import { useError } from "../components/helpers/ErrorHandler";
-import { useServerStorage, useServerUserStorage } from "./useLocalStorage";
-import { type App, type User } from "../types";
+import { useAppStorage, useServerStorage, useServerUserStorage, useUserStorage } from "./useLocalStorage";
+import { type User } from "../types";
 
 const logger = getLogger("AuthProvider");
 
@@ -27,12 +26,10 @@ export default function AuthProvider(props: PropsWithChildren) {
     const { resetErrors } = useError();
     const navigate = useNavigate();
 
+    const serverUserState = useServerUserStorage();
+    const [app, setApp] = useAppStorage(serverUserState);
+    const [user, setUser] = useUserStorage(serverUserState);
     const [server] = useServerStorage();
-    const [serverUsers, setServerUsers] = useServerUserStorage();
-    const sanitizedServer = sanitizeServerUrl(server);
-    const serverConfig = serverUsers[sanitizedServer];
-    const app = serverConfig?.app;
-    const user = serverConfig?.user;
 
     // User object looks like this:
     // {
@@ -43,36 +40,10 @@ export default function AuthProvider(props: PropsWithChildren) {
     //     username: "cryptadamus"
     // }
     const setLoggedInUser = async (user: User) => {
-        logger.trace(`setLoggedInUser() to "${sanitizeServerUrl}", app:`, app, `\nuser:`, user, `\nserverUsers:`, serverUsers);
-        serverUsers[sanitizedServer] = { app, user };  // TODO: prolly better to not mutate. should copy to new object
-        setServerUsers(serverUsers);
+        setUser(user);
         logger.debug(`Logged in user "${user.username}"`);
         navigate("/");
     };
-
-    const setApp = (app: App) => {
-        logger.trace(`setApp() for "${sanitizeServerUrl}", app:`, app, `\nuser:`, user, `\nserverUsers:`, serverUsers);
-
-        if (serverUsers[sanitizedServer]) {
-            serverUsers[sanitizedServer].app = app;
-        } else {
-            serverUsers[sanitizedServer] = { app, user: null };
-        }
-
-        setServerUsers(serverUsers);
-    }
-
-    const setUser = async (userArg: User | null) => {
-        logger.trace(`setUser() for "${sanitizeServerUrl}", app:`, app, `\nuser:`, user, `\nserverUsers:`, serverUsers);
-
-        if (serverUsers[sanitizedServer]) {
-            serverUsers[sanitizedServer].user = userArg;
-        } else {
-            serverUsers[sanitizedServer] = { app, user: userArg };
-        }
-
-        setServerUsers(serverUsers);
-    }
 
     // Call this function to sign out logged in user (revoke their OAuth token) and reset the app state.
     // If preserveAppErrors is true, which happens during forced logouts because of API errors,
@@ -95,8 +66,7 @@ export default function AuthProvider(props: PropsWithChildren) {
         }
 
         !preserveAppErrors && resetErrors();
-        serverUsers[sanitizedServer] = { app, user: null };  // TODO: prolly better to not mutate. should copy to new object
-        setServerUsers(serverUsers);
+        setUser(null);
         navigate("/#/login", {replace: true});
     };
 

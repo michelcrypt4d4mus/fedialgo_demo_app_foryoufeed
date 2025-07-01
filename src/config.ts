@@ -5,7 +5,7 @@ import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
 
 import { mastodon } from 'masto';
 import { capitalCase } from "change-case";
-import {
+import TheAlgorithm, {
     FEDIALGO,
     BooleanFilterName,
     ScoreName,
@@ -179,7 +179,7 @@ class Config implements ReadonlyConfig {
             scopes: OAUTH_SCOPES.join(" "),
             website: HOMEPAGE,
         },
-        defaultServer: "universeodon.com",
+        defaultServer: TheAlgorithm.isDebugMode ? "universeodon.com" : "mastodon.social",
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
         loadingSpinnerType: 'grow',         // Type of loading spinner to use

@@ -56,14 +56,14 @@ function ordinalSuffix(n: number): string {
 
 
 // Remove http:// or https:// from the server URL, Remove everything after slash
-export function sanitizeServerUrl(server: string): string {
+export function sanitizeServerUrl(server: string, withHttpPrefix: boolean = false): string {
     server = server.replace(/^https?:\/\//, '').split('/')[0];
 
-    if (!/^[a-zA-Z0-9.-]+$/.test(server)) {
+    if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/.test(server)) {
         throw new Error(`"${server}" does not appear to be a valid server URL.`);
     }
 
-    return `https://${server}`;
+    return withHttpPrefix ? `https://${server}` : server;
 };
 
 

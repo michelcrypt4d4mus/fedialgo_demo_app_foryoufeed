@@ -21,6 +21,7 @@ import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
 import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
+import { useAlgorithm } from "../hooks/useAlgorithm";
 
 export type TrendingListObj = TrendingObj | string;
 export type TrendingPanelName = TagTootsCategory | "toots" | TrendingType.LINKS | TrendingType.SERVERS;
@@ -54,11 +55,13 @@ interface TrendingObjsProps extends TrendingPropsBase {
 type TrendingProps = TrendingTagListProps | TrendingObjsProps;
 
 
-
 export default function TrendingSection(props: TrendingProps) {
     const { linkRenderer, objRenderer, tagList, trendingObjs } = props;
+    const { isLoading } = useAlgorithm();
+
     const panelType = props.panelType ?? tagList?.source as TrendingPanelName;
     const logger = useMemo(() => getLogger("TrendingSection", panelType), []);
+    logger.trace(`Rendering...`);
 
     if (!objRenderer && !linkRenderer) {
         logger.error("TrendingSection must have either objRenderer() or linkRenderer! props:", props);
@@ -68,10 +71,11 @@ export default function TrendingSection(props: TrendingProps) {
     const panelCfg = config.trending.panels[panelType];
     const objTypeLabel = panelCfg.objTypeLabel || panelType;
     const title = panelCfg.title || capitalCase(objTypeLabel);
+    // const trendObjs = trendingObjs ?? tagList.topObjs();
 
     const trendObjs = useMemo(
         () => trendingObjs ?? tagList.topObjs(),
-        [trendingObjs, tagList]
+        [tagList, trendingObjs]
     )
 
     const minTootsSliderDefaultValue: number = useMemo(
@@ -80,7 +84,7 @@ export default function TrendingSection(props: TrendingProps) {
     );
 
     const minTootsState = useState<number>(minTootsSliderDefaultValue);
-    const [numShown, setNumShown] = useState(Math.min(panelCfg.initialNumShown, trendObjs.length));
+    const [numShown, setNumShown] = useState(trendObjs.length ? Math.min(panelCfg.initialNumShown, trendObjs.length) : panelCfg.initialNumShown);
 
     // Memoize because react profiler says trending panels are most expensive to render
     const footer: React.ReactNode = useMemo(
@@ -108,13 +112,14 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [minTootsState[0], numShown, panelType, trendObjs.length]
+        [isLoading, minTootsState[0], numShown, panelType, tagList, trendObjs, trendObjs.length]
     );
 
     // Memoize because react profiler says trending panels are most expensive to render
     const trendingItemList = useMemo(
         () => {
             let objs: TrendingListObj[] = trendObjs;
+            logger.trace(`Rerendering list of ${objs.length} trending items...`);
 
             // TagList uses the MinTootsSlider; other displays have a link to show all vs. show initialNumShown
             if (tagList) {
@@ -177,7 +182,7 @@ export default function TrendingSection(props: TrendingProps) {
                 </div>
             );
         },
-        [minTootsState[0], numShown, panelCfg, panelType, trendObjs, trendObjs.length]
+        [isLoading, minTootsState[0], numShown, panelCfg, panelType, tagList, trendObjs, trendObjs.length]
     );
 
     const slider = useMemo(
