@@ -168,7 +168,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             });
 
             if (await algo.isGoToSocialUser()) {
-                logger.info(`User is on a GoToSocial instance, skipping call to api.v1.apps.verifyCredentials()...`);
+                logger.warn(`User is on a GoToSocial instance, skipping call to api.v1.apps.verifyCredentials()...`);
             } else {
                 // Verify the app crednentials
                 api.v1.apps.verifyCredentials()
