@@ -330,7 +330,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {/* Actions (retoot, favorite, show score, etc) that appear in bottom panel of toot */}
                     <div className="status__action-bar" ref={statusRef}>
                         {buildActionButton(TootAction.Reply, () => setShowReplyModal(true))}
-                        {buildActionButton(TootAction.Reblog)}
+                        {!toot.isDM && buildActionButton(TootAction.Reblog)}
                         {buildActionButton(TootAction.Favourite)}
                         {buildActionButton(TootAction.Bookmark)}
                         {buildActionButton(TootAction.Score, () => setShowScoreModal(true))}
