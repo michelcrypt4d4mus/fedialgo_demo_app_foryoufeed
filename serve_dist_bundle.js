@@ -30,7 +30,7 @@ const prepareFile = async (url) => {
     console.log(`* [prepareFile] url: ${url}, baseUrl: ${baseUrl}`);
     let paths = [STATIC_PATH, baseUrl];
 
-    if (url.endsWith("/")) {
+    if (baseUrl.endsWith("/")) {
         paths.push("index.html");
     } else if (baseUrl.endsWith("/callback")) {
         paths = [STATIC_PATH, "index.html"];
