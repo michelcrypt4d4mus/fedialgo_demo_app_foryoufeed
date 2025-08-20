@@ -14,12 +14,12 @@ import { config } from '../../config';
 
 interface PreviewCardProps {
     card: mastodon.v1.PreviewCard;
-    hideLinkPreviews: boolean;
+    showLinkPreviews: boolean;
 };
 
 
 export default function PreviewCard(props: PreviewCardProps): React.ReactElement {
-    const { card, hideLinkPreviews } = props;
+    const { card, showLinkPreviews } = props;
 
     const headline = <>
         <span style={providerName}>
@@ -29,7 +29,8 @@ export default function PreviewCard(props: PreviewCardProps): React.ReactElement
         </span>
     </>;
 
-    if (hideLinkPreviews) {
+    // If link previews are disabled just return a link with the headline
+    if (!showLinkPreviews) {
         return (
             <NewTabLink className="status-card compact" href={card.url} style={linkOnlyStyle}>
                 {headline}

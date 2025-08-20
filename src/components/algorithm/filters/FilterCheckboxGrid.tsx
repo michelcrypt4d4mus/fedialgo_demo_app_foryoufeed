@@ -3,7 +3,7 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { isEmpty, isFinite } from "lodash";
 import {
@@ -25,6 +25,7 @@ import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState, type TagHighlightSwitchState } from "../BooleanFilterAccordionSection";
+import { warn } from "console";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 
@@ -38,7 +39,7 @@ interface FilterCheckboxGridProps extends HeaderSwitchState {
 // TODO: maybe rename this BooleanFilterCheckboxGrid?
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightsOnly, minToots, sortByCount, tagSwitchState } = props;
-    const { algorithm, hideFilterHighlights } = useAlgorithm();
+    const { algorithm, allowMultiSelect, showFilterHighlights } = useAlgorithm();
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.propertyName), []);
 
     const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.propertyName];
@@ -101,7 +102,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         let color = gradientCfg.colors[Math.max(boostedValue, 1) - 1];  // Math.max() to avoid negative indices on 0
 
         if (!color) {
-            logger.warn(`No color found for option (dataSource="${dataSource}", gradient color array has ${gradientCfg.colors?.length} elements):`, option);
+            const warningMsg = `No color found for option (dataSource="${dataSource}", ` +
+                               `gradient color array has ${gradientCfg.colors?.length} elements):`;
+            logger.warn(warningMsg, option);
             color = gradientCfg.highlight.gradient.endpoints[1];  // Use the top color
         }
 
@@ -112,8 +115,9 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     };
 
     // Return a finalized CheckboxTooltipConfig with full text and color for the option
+    // if showFilterHighlights is enabled and the option has a non-zero value for the dataSource.
     const findTooltip = (option: BooleanFilterOption): CheckboxTooltipConfig | undefined => {
-        if (hideFilterHighlights) return undefined;
+        if (!showFilterHighlights) return undefined;
         let tooltip: CheckboxTooltipConfig | undefined;
 
         if (isTagFilter) {
@@ -140,10 +144,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
 
     const optionGrid = useMemo(
         () => {
-            logger.deep(`Rebuilding optionGrid for ${filter.options.length} options...`);
+            logger.deep(`Rebuilding optionGrid for ${filter.options.length} options (${filter.selectedOptions.length} selected)`);
             let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
 
-            if (highlightsOnly && !hideFilterHighlights) {
+            if (highlightsOnly && showFilterHighlights) {
                 options = options.filter(option => !!findTooltip(option));
             }
 
@@ -155,7 +159,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
                         isChecked={filter.isOptionEnabled(option.name)}
                         key={`${filter.propertyName}_${option.name}_${i}`}
                         label={optionsFormatCfg?.formatLabel ? optionsFormatCfg?.formatLabel(label) : label}
-                        onChange={(e) => filter.updateOption(option.name, e.target.checked)}
+                        onChange={(e) => filter.updateOption(option.name, e.target.checked, allowMultiSelect)}
                         option={option}
                         tooltip={findTooltip(option)}
                         url={isTagFilter && algorithm.tagUrl(option.name)}  // TODO: could add links for users too
@@ -168,9 +172,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [
             filter.options,
             filter.selectedOptions,
-            hideFilterHighlights,
+            allowMultiSelect,
             highlightsOnly,
             minToots,
+            showFilterHighlights,
             sortByCount,
             tagSwitchState,
             tooltipGradients,

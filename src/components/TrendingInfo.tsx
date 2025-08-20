@@ -113,8 +113,8 @@ export default function TrendingInfo() {
                 objRenderer={(toot: Toot) => (
                     <StatusComponent
                         fontColor="black"
-                        hideLinkPreviews={false}
                         key={toot.uri}
+                        showLinkPreviews={true}
                         status={toot}
                     />
                 )}

@@ -113,10 +113,11 @@ type TimelineConfig = {
     defaultLoadingMsg: string;
     defaultNumDisplayedToots: number;
     guiCheckboxLabels: {
+        readonly allowMultiSelect: Readonly<GuiCheckboxLabel>;
         readonly autoupdate: Readonly<GuiCheckboxLabel>;
-        readonly hideFilterHighlights: Readonly<GuiCheckboxLabel>;
-        readonly hideLinkPreviews: Readonly<GuiCheckboxLabel>;
         readonly hideSensitive: Readonly<GuiCheckboxLabel>;
+        readonly showFilterHighlights: Readonly<GuiCheckboxLabel>;
+        readonly showLinkPreviews: Readonly<GuiCheckboxLabel>;
         readonly stickToTop: Readonly<GuiCheckboxLabel>;
     };
     loadingErroMsg: string;
@@ -333,25 +334,29 @@ class Config implements ReadonlyConfig {
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
 
         guiCheckboxLabels: {
+            allowMultiSelect: {
+                label: `Filter Multiselect`,
+                tooltipText: "Allow selecting multiple filter options at once.",
+            },
             autoupdate: {
-                label: `Auto Load New Toots`,
-                tooltipText: "Automatically update the timeline when you focus this browser tab",
-            },
-            hideFilterHighlights: {
-                label: `Hide Filter Highlights`,
-                tooltipText: `Don't color the notable filter options`,
-            },
-            hideLinkPreviews: {
-                label: `Hide Link Previews`,
-                tooltipText: "Show only the headline and description for embedded links",
+                label: `Auto Update`,
+                tooltipText: "Automatically update the timeline when you focus this browser tab.",
             },
             hideSensitive: {
                 label: `Hide Sensitive`,
-                tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through",
+                tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through.",
+            },
+            showFilterHighlights: {
+                label: `Filter Highlights`,
+                tooltipText: `Show colored highlighting for notable filter options.`,
+            },
+            showLinkPreviews: {
+                label: `Link Previews`,
+                tooltipText: "Show the full preview card for embedded links.",
             },
             stickToTop: {
                 label: `Stick Control Panel To Top`,
-                tooltipText: `Keep control panel on screen while scrolling`,
+                tooltipText: `Keep control panel on screen while scrolling.`,
             }
         },
         loadingErroMsg: `Currently loading, please wait a moment and try again.`,  // Error message when busy

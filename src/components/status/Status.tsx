@@ -72,16 +72,16 @@ const INFO_ICONS: Record<InfoIconType, IconInfo> = {
 
 interface StatusComponentProps {
     fontColor?: CSSProperties["color"],
-    hideLinkPreviews?: boolean,
     isLoadingThread?: boolean,
     setIsLoadingThread?: (isLoading: boolean) => void,
     setThread?: (toots: Toot[]) => void,
+    showLinkPreviews?: boolean,
     status: Toot,
 };
 
 
 export default function StatusComponent(props: StatusComponentProps) {
-    const { fontColor, hideLinkPreviews, isLoadingThread, setIsLoadingThread, setThread, status } = props;
+    const { fontColor, isLoadingThread, setIsLoadingThread, setThread, showLinkPreviews, status } = props;
     const { isGoToSocialUser, isLoading } = useAlgorithm();
     const contentClass = fontColor ? "status__content__alt" : "status__content";
     const fontStyle = fontColor ? { color: fontColor } : {};
@@ -299,7 +299,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     </div>
 
                     {/* Preview card and attachment display (media attachments are preferred over preview cards) */}
-                    {toot.card && !hasAttachments && <PreviewCard card={toot.card} hideLinkPreviews={hideLinkPreviews} />}
+                    {toot.card && !hasAttachments && <PreviewCard card={toot.card} showLinkPreviews={showLinkPreviews} />}
                     {hasAttachments && <MultimediaNode toot={toot}/>}
                     {toot.poll && <Poll poll={toot.poll} />}
 
