@@ -3,7 +3,7 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { isEmpty, isFinite } from "lodash";
 import {
