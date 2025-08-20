@@ -190,7 +190,7 @@ export default function ReplyModal(props: ReplyModalProps) {
             <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
                 {toot &&
                     <div style={{backgroundColor: config.theme.feedBackgroundColor, borderRadius: "3px"}}>
-                        <StatusComponent hideLinkPreviews={true} status={toot}/>
+                        <StatusComponent showLinkPreviews={false} status={toot}/>
                     </div>}
 
                 <Form.Group className="mb-3" style={{cursor: cursor}}>

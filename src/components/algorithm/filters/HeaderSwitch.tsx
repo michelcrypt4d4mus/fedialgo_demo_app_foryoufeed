@@ -52,7 +52,7 @@ interface HeaderSwitchProps {
 
 export default function HeaderSwitch(props: HeaderSwitchProps) {
     let { isChecked, label, onChange, tooltip, tooltipText } = props;
-    const { hideFilterHighlights } = useAlgorithm();
+    const { showFilterHighlights } = useAlgorithm();
 
     if (tooltipText && tooltip) {
         logger.warn(`HeaderSwitch received both tooltipText and tooltip props, ignoring tooltipText: ${tooltipText}`);
@@ -66,7 +66,7 @@ export default function HeaderSwitch(props: HeaderSwitchProps) {
     return (
         <FilterCheckbox
             capitalize={true}
-            disabled={(label == SwitchType.HIGHLIGHTS_ONLY) && hideFilterHighlights}
+            disabled={(label == SwitchType.HIGHLIGHTS_ONLY) && !showFilterHighlights}
             isChecked={isChecked}
             label={TAG_HIGHLIGHT_LABELS[label] || label}
             onChange={onChange}

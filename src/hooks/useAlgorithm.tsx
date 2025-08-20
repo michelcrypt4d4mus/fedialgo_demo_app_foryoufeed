@@ -21,16 +21,18 @@ const loadLogger = logger.tempLogger("setLoadState");
 
 interface AlgoContext {
     algorithm?: TheAlgorithm,
+    allowMultiSelect?: boolean,
+    allowMultiSelectCheckbox?: ReactElement,
     api?: mastodon.rest.Client,
     isGoToSocialUser?: boolean, // Whether the user is on a GoToSocial instance
     isLoading?: boolean,
-    hideFilterHighlights?: boolean,
-    hideFilterHighlightsCheckbox?: ReactElement,
     hideSensitive?: boolean,
     hideSensitiveCheckbox?: ReactElement,
     lastLoadDurationSeconds?: number,
     resetAlgorithm?: () => Promise<void>,
     serverInfo?: MastodonServer,
+    showFilterHighlights?: boolean,
+    showFilterHighlightsCheckbox?: ReactElement,
     shouldAutoUpdateCheckbox?: ReactElement,
     timeline: Toot[],
     triggerFeedUpdate?: () => void,
@@ -60,8 +62,9 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const api = createRestAPIClient({accessToken: user.access_token, url: user.server});
 
     // Checkboxes with persistent storage that require somewhat global state
-    const [hideFilterHighlights, hideFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.hideFilterHighlights,
+    const [allowMultiSelect, allowMultiSelectCheckbox, _tooltip4] = persistentCheckbox({
+        isChecked: true,
+        labelAndTooltip: config.timeline.guiCheckboxLabels.allowMultiSelect,
     });
 
     const [hideSensitive, hideSensitiveCheckbox, _tooltip3] = persistentCheckbox({
@@ -70,7 +73,13 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     });
 
     const [shouldAutoUpdate, shouldAutoUpdateCheckbox, _tooltip2] = persistentCheckbox({
+        isChecked: false,
         labelAndTooltip: config.timeline.guiCheckboxLabels.autoupdate,
+    });
+
+    const [showFilterHighlights, showFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
+        isChecked: true,
+        labelAndTooltip: config.timeline.guiCheckboxLabels.showFilterHighlights,
     });
 
     // Pass startedLoadAt as an arg every time because managing the react state of the last load is tricky
@@ -235,9 +244,9 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     const algoContext: AlgoContext = {
         algorithm,
+        allowMultiSelect,
+        allowMultiSelectCheckbox,
         api,
-        hideFilterHighlights,
-        hideFilterHighlightsCheckbox,
         hideSensitive,
         hideSensitiveCheckbox,
         isGoToSocialUser,
@@ -245,6 +254,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         lastLoadDurationSeconds,
         resetAlgorithm,
         serverInfo,
+        showFilterHighlights,
+        showFilterHighlightsCheckbox,
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,

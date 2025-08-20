@@ -31,11 +31,12 @@ const logger = getLogger("Feed");
 export default function Feed() {
     const {
         algorithm,
-        hideFilterHighlightsCheckbox,
+        allowMultiSelectCheckbox,
         hideSensitiveCheckbox,
         isLoading,
         lastLoadDurationSeconds,
         resetAlgorithm,
+        showFilterHighlightsCheckbox,
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
@@ -53,8 +54,9 @@ export default function Feed() {
 
     // Checkboxes for persistent user settings state variables
     // TODO: the returned checkboxTooltip is shared by all tooltips which kind of sucks
-    const [hideLinkPreviews, hideLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.hideLinkPreviews,
+    const [showLinkPreviews, showLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
+        isChecked: true,
+        labelAndTooltip: config.timeline.guiCheckboxLabels.showLinkPreviews,
     });
 
     const [isControlPanelSticky, isControlPanelStickyCheckbox] = persistentCheckbox({
@@ -140,8 +142,9 @@ export default function Feed() {
                     <div className="sticky-top left-col-scroll" style={leftColStyle}>
                         <div style={stickySwitchContainer}>
                             {isControlPanelStickyCheckbox}
-                            {hideLinkPreviewsCheckbox}
-                            {hideFilterHighlightsCheckbox}
+                            {showLinkPreviewsCheckbox}
+                            {allowMultiSelectCheckbox}
+                            {showFilterHighlightsCheckbox}
                             {hideSensitiveCheckbox}
                             {shouldAutoUpdateCheckbox}
                         </div>
@@ -156,8 +159,8 @@ export default function Feed() {
                                 {thread.map((toot) => (
                                     <StatusComponent
                                         fontColor="black"
-                                        hideLinkPreviews={hideLinkPreviews}
                                         key={toot.uri}
+                                        showLinkPreviews={showLinkPreviews}
                                         status={toot}
                                     />
                                 ))}
@@ -234,11 +237,11 @@ export default function Feed() {
                     <div style={statusesColStyle}>
                         {timeline.slice(0, numShownToots).map((toot) => (
                             <StatusComponent
-                                hideLinkPreviews={hideLinkPreviews}
                                 isLoadingThread={isLoadingThread}
                                 key={toot.uri}
                                 setThread={setThread}
                                 setIsLoadingThread={setIsLoadingThread}
+                                showLinkPreviews={showLinkPreviews}
                                 status={toot}
                             />))}
 

@@ -42,7 +42,6 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
 
     const labelExtra = option?.numToots?.toLocaleString();
     const labelStyle: CSSProperties = {...defaultLabelStyle};
-    const [isCheckedState, setIsCheckedState] = useState(isChecked);
     let style: CSSProperties = {color: "black"};
     let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
 
@@ -74,13 +73,12 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     return (
         <a data-tooltip-id={tooltipAnchor} data-tooltip-content={tooltip?.text} key={label}>
             <Form.Switch
-                checked={isCheckedState}
+                checked={isChecked}
                 disabled={disabled}
                 id={label}
                 key={label + "_switch"}
                 label={<>{labelNode}{labelExtra && ` (${labelExtra})`}</>}
                 onChange={(e) => {
-                    setIsCheckedState(e.target.checked);
                     onChange(e);
                     !skipUpdateFilters && algorithm?.updateFilters(algorithm.filters);
                 }}
