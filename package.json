@@ -16,7 +16,7 @@
         "fedialgo": "github:michelcrypt4d4mus/fedialgo#v1.1.0",
         "html-react-parser": "^3.0.15",
         "lodash": "^4.17.21",
-        "masto": "^7.1.0",
+        "masto": "^7.2.0",
         "react": "^18.2.0",
         "react-bootstrap": "^2.10.10",
         "react-confirm": "^0.3.0",
