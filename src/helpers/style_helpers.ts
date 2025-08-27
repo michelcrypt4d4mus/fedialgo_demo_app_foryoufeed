@@ -223,3 +223,7 @@ export const titleStyle: CSSProperties = {
 export const tooltipZIndex: CSSProperties = {
     zIndex: 2000,
 };
+
+export const whiteFont: CSSProperties = {
+    color: "white",
+};

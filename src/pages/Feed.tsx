@@ -29,7 +29,8 @@ import {
     loadingMsgStyle,
     rawErrorContainer,
     tooltipZIndex,
-    waitOrDefaultCursor
+    waitOrDefaultCursor,
+    whiteFont
 } from "../helpers/style_helpers";
 
 const LOAD_BUTTON_SEPARATOR = ' ● ';
@@ -202,7 +203,7 @@ export default function Feed() {
 
                         {algorithm?.apiErrorMsgs && (algorithm.apiErrorMsgs.length > 0) &&
                             <div className="d-grid gap-2" style={rawErrorContainer}>
-                                <p style={{color: "white"}}>Non-fatal errors encountered while loading data:</p>
+                                <p style={whiteFont}>Non-fatal errors encountered while loading data:</p>
 
                                 <ul>
                                     {algorithm.apiErrorMsgs.map((msg, i) => (

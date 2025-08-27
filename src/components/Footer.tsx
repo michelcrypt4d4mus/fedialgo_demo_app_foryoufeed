@@ -7,16 +7,17 @@ import Navbar from "react-bootstrap/esm/Navbar";
 import Container from "react-bootstrap/Container";
 
 import { config } from "../config";
+import { whiteFont } from "../helpers/style_helpers";
 
 
 export default function Footer() {
     return (
         <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark" style={footerNav}>
             <Container>
-                <Navbar.Brand style={navLink}>FediAlgo</Navbar.Brand>
+                <Navbar.Brand style={whiteFont}>FediAlgo</Navbar.Brand>
 
                 <Nav className="me-auto">
-                    <Nav.Link href={config.app.repoUrl} style={navLink}>
+                    <Nav.Link href={config.app.repoUrl} style={whiteFont}>
                         <img
                             alt="Github Logo"
                             className="d-inline-block align-top"
@@ -27,7 +28,7 @@ export default function Footer() {
                         <span className="p-2"> Code on Github</span>
                     </Nav.Link>
 
-                    <Nav.Link href={config.app.developerMastodonUrl} style={navLink}>
+                    <Nav.Link href={config.app.developerMastodonUrl} style={whiteFont}>
                         <img
                             alt="Michel de Cryptadamus Logo"
                             className="d-inline-block align-top"
@@ -38,7 +39,7 @@ export default function Footer() {
                         <span className="p-2"> Follow me on Mastodon</span>
                     </Nav.Link>
 
-                    <Nav.Link href="https://chaos.social/@pkreissel" style={navLink}>
+                    <Nav.Link href="https://chaos.social/@pkreissel" style={whiteFont}>
                         <img
                             alt="Chaos.social Logo"
                             className="d-inline-block align-top"
@@ -63,8 +64,4 @@ const elementStyle: CSSProperties = {
 
 const footerNav: CSSProperties = {
     marginTop: '50px',
-};
-
-const navLink: CSSProperties = {
-    color: "white",
 };

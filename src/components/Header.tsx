@@ -6,6 +6,7 @@ import { CSSProperties } from 'react';
 
 import { config } from '../config';
 import { useAuthContext } from "../hooks/useAuth";
+import { whiteFont } from '../helpers/style_helpers';
 
 const XS_VALUE = 4;  // React Bootstrap Grid System
 
@@ -41,7 +42,7 @@ export default function Header() {
                     />
 
                     <span className='align-middle p-2 text-center' style={fedialgoContainer}>
-                        <a href={config.app.repoUrl} style={titleText} target="_blank">
+                        <a href={config.app.repoUrl} style={whiteFont} target="_blank">
                             Fedialgo Demo
                         </a>
 
@@ -79,10 +80,6 @@ const avatarStyle: CSSProperties = {
 const fedialgoContainer: CSSProperties = {
     fontSize: 16,
     whiteSpace: "nowrap",
-};
-
-const titleText: CSSProperties = {
-    color: "white",
 };
 
 const usernameStyle: CSSProperties = {
