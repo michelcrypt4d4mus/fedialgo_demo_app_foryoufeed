@@ -19,7 +19,7 @@ import Header from "./components/Header";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { getLogger, logLocaleInfo } from "./helpers/log_helpers";
-import { blackBackground } from "./helpers/style_helpers";
+import { blackBackground, centerAlignedFlexCol } from "./helpers/style_helpers";
 
 const logger = getLogger("App.tsx");
 
@@ -84,9 +84,7 @@ export default function App(): React.ReactElement {
 
 const containerStyle: CSSProperties = {
     ...blackBackground,
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "column",
+    ...centerAlignedFlexCol,
     height: "auto",
 };
 

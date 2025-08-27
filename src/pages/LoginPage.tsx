@@ -1,17 +1,17 @@
-import React, { CSSProperties, useState } from 'react';
-import Button from 'react-bootstrap/esm/Button';
-import Form from 'react-bootstrap/esm/Form';
+import React, { CSSProperties, useState } from "react";
+import Button from "react-bootstrap/esm/Button";
+import Form from "react-bootstrap/esm/Form";
 
-import { createRestAPIClient } from 'masto';
+import { createRestAPIClient } from "masto";
 import { FEDIALGO } from "fedialgo";
-import { stringifyQuery } from 'ufo';
+import { stringifyQuery } from "ufo";
 
+import { centerAlignedFlexCol, roundedCorners } from "../helpers/style_helpers";
+import { config } from "../config";
 import { getApp, useAppStorage, useServerStorage, useServerUserStorage } from "../hooks/useLocalStorage";
-import { config } from '../config';
-import { getLogger } from '../helpers/log_helpers';
-import { roundedCorners } from '../helpers/style_helpers';
-import { sanitizeServerUrl } from '../helpers/string_helpers';
-import { useError } from '../components/helpers/ErrorHandler';
+import { getLogger } from "../helpers/log_helpers";
+import { sanitizeServerUrl } from "../helpers/string_helpers";
+import { useError } from "../components/helpers/ErrorHandler";
 
 const logger = getLogger("LoginPage");
 
@@ -73,7 +73,7 @@ export default function LoginPage() {
         const query = stringifyQuery({
             client_id: registeredApp.clientId,
             redirect_uri: redirectUri,
-            response_type: 'code',
+            response_type: "code",
             scope: config.app.createAppParams.scopes,
         });
 
@@ -84,7 +84,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className='vh-100' style={loginContainer}>
+        <div className="vh-100" style={loginContainer}>
             <img src={config.app.showcaseImageUrl} alt="FediAlgo Showcase" style={previewImage} />
 
             <div>
@@ -129,16 +129,14 @@ const descriptionText: CSSProperties = {
 };
 
 const loginButtonStyle: CSSProperties = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginLeft: '10px'
+    display: "flex",
+    justifyContent: "center",
+    marginLeft: "10px"
 };
 
 const loginContainer: CSSProperties = {
-    alignItems: 'center',
-    display: 'flex',
+    ...centerAlignedFlexCol,
     flex: 1,
-    flexDirection: 'column',
     justifyContent: "center",
 };
 
@@ -157,8 +155,8 @@ const privacyText: CSSProperties = {
 };
 
 const serverContainer: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'row',
-    marginBottom: '5px',
-    marginTop: '5px'
+    display: "flex",
+    flexDirection: "row",
+    marginBottom: "5px",
+    marginTop: "5px"
 };

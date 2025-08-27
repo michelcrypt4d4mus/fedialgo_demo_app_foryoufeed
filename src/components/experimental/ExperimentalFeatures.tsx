@@ -10,7 +10,7 @@ import FindFollowers from "./FindFollowers";
 import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { accordionSubheader, roundedBox, TEXT_CENTER_P2 } from "../../helpers/style_helpers";
+import { accordionSubheader, centerAlignedFlexRow, roundedBox, TEXT_CENTER_P2 } from "../../helpers/style_helpers";
 import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
@@ -148,9 +148,7 @@ const buttonDescription: CSSProperties = {
 };
 
 const buttonListItem: CSSProperties = {
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
+    ...centerAlignedFlexRow,
     fontSize: 18,
     marginBottom: "2px",
 };

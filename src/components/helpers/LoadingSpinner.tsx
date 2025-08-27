@@ -6,6 +6,7 @@ import { CSSProperties } from 'react';
 
 import { READY_TO_LOAD_MSG } from "fedialgo";
 
+import { centerAlignedFlexRow } from '../../helpers/style_helpers';
 import { config } from '../../config';
 
 interface LoadingSpinnerProps {
@@ -34,9 +35,7 @@ export default function LoadingSpinner(props: LoadingSpinnerProps) {
 
 
 const centeredSpinner: CSSProperties = {
-    alignItems: "center",
-    display: 'flex',
-    flexDirection: "row",
+    ...centerAlignedFlexRow,
     justifyContent: "center",
     verticalAlign: "center",
 };

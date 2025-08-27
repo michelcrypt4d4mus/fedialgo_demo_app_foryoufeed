@@ -5,7 +5,7 @@ import React, { ChangeEvent, CSSProperties } from "react";
 import Form from "react-bootstrap/esm/Form";
 
 import { config } from "../../config";
-import { monoFont, mildlyRoundedCorners, whiteBackground } from "../../helpers/style_helpers";
+import { monoFont, mildlyRoundedCorners, whiteBackground, centerAlignedFlexRow } from "../../helpers/style_helpers";
 
 interface SliderProps {
     description?: string;
@@ -78,9 +78,7 @@ export default function Slider(props: SliderProps) {
 
 
 const labelContainer: CSSProperties = {
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
+    ...centerAlignedFlexRow,
     fontSize: 14,
     justifyContent: "space-between",
     textWrap: "nowrap",

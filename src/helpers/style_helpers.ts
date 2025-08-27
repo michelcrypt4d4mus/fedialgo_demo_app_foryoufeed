@@ -163,6 +163,21 @@ export const blackBoldFont: CSSProperties = {
     ...boldFont,
 };
 
+export const centerAlignedFlex: CSSProperties = {
+    alignItems: 'center',
+    display: 'flex',
+};
+
+export const centerAlignedFlexCol: CSSProperties = {
+    ...centerAlignedFlex,
+    flexDirection: "column",
+};
+
+export const centerAlignedFlexRow: CSSProperties = {
+    ...centerAlignedFlex,
+    flexDirection: "row",
+};
+
 export const flexSpaceAround: CSSProperties = {
     display: "flex",
     justifyContent: 'space-around',
