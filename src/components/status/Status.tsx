@@ -192,7 +192,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     displayArrayKey: true,
                     indentWidth: 8,
                     name: "toot",
-                    style: rawTootJSON,
+                    style: rawTootJson,
                     theme: "brewer",
                 }}
                 setShow={setShowTootModal}
@@ -239,7 +239,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 </time>
                             </NewTabLink>
 
-                            <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={openJSON}>
+                            <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={openRawJson}>
                                 {infoIcon(InfoIconType.ShowToot)}
                             </span>
                         </div>
@@ -350,12 +350,12 @@ const baseIconStyle: CSSProperties = {
     marginRight: "3px",
 };
 
-const openJSON: CSSProperties = {
+const openRawJson: CSSProperties = {
     cursor: "pointer",
     marginLeft: "10px"
 };
 
-const rawTootJSON: CSSProperties = {
+const rawTootJson: CSSProperties = {
     fontSize: 13,
 };
 
@@ -365,7 +365,7 @@ const scoreJsonStyle: CSSProperties = {
 
 // TODO: this probably doesn't do anything because the <a> tag overrides it
 const tagFontStyle: CSSProperties = {
-    ...rawTootJSON,
+    ...rawTootJson,
     color: "#636f7a",
 };
 

@@ -141,8 +141,8 @@ export const headerFont: CSSProperties = {
     ...globalFont,
     fontSize: 15,
     fontWeight: 800,
-    marginLeft: "15px",
     marginBottom: "0px",
+    marginLeft: "15px",
     marginTop: "0px",
 };
 

@@ -78,7 +78,7 @@ export default function ExperimentalFeatures() {
     };
 
     const makeLabeledButton = (label: keyof typeof BUTTON_TEXT, onClick: () => void, variant?: string) => (
-        <li key={label} style={listElement}>
+        <li key={label} style={buttonListItem}>
             <Button
                 className='p-2 text-center'
                 disabled={isLoading}
@@ -147,6 +147,14 @@ const buttonDescription: CSSProperties = {
     marginLeft: "10px",
 };
 
+const buttonListItem: CSSProperties = {
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+    fontSize: 18,
+    marginBottom: "2px",
+};
+
 const buttonStyle: CSSProperties = {
     flex: 2,
     marginBottom: "5px",
@@ -157,12 +165,4 @@ const container: CSSProperties = {
     ...roundedBox,
     paddingBottom: "20px",
     paddingLeft: "20px",
-};
-
-const listElement: CSSProperties = {
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
-    fontSize: 18,
-    marginBottom: "2px",
 };
