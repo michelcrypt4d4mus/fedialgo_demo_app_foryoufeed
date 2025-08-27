@@ -217,7 +217,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                     >
                         <input {...getInputProps()} />
 
-                        <p style={{fontSize: "16px", fontWeight: "bold"}}>
+                        <p style={{fontSize: 16, fontWeight: "bold"}}>
                             {isDragActive
                                 ? "Drag files here"
                                 : "Drag 'n' drop files on this colored area or click to select files to attach"}
@@ -258,7 +258,7 @@ const dropzoneStyle: CSSProperties = {
     backgroundColor: "grey",
     borderRadius: "15px",
     cursor: "pointer",
-    fontSize: "16px",
+    fontSize: 16,
     fontWeight: "bold",
     height: "60px",
     marginTop: "12px",
@@ -271,7 +271,7 @@ const formStyle: CSSProperties = {
     backgroundColor: "white",
     borderWidth: "5px",
     color: "black",
-    fontSize: "22px",
+    fontSize: 22,
     marginTop: "13px",
 };
 

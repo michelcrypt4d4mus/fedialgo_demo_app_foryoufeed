@@ -72,7 +72,7 @@ const textStyle: CSSProperties = {
 const headerFont: CSSProperties = {
     ...globalFont,
     ...textStyle,
-    fontSize: "14px",
+    fontSize: 14,
     fontWeight: 700,
     marginBottom: "5px",
 };

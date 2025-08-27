@@ -45,5 +45,5 @@ export default function TooltippedLink(props: TooltippedLinkProps) {
 
 const tooltipStyle: CSSProperties = {
     ...tooltipZIndex,
-    fontSize: "16px",
+    fontSize: 16,
 };

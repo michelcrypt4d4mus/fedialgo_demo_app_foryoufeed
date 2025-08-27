@@ -248,9 +248,7 @@ export default function Feed() {
                         {timeline.length == 0 && (
                             isLoading
                                 ? <LoadingSpinner isFullPage={true} message={config.timeline.defaultLoadingMsg} />
-                                : <div style={{...fullPageCenteredSpinner, fontSize: "20px"}}>
-                                      <p>{config.timeline.noTootsMsg}</p>
-                                  </div>
+                                : <div style={noTootsMsgStyle}><p>{config.timeline.noTootsMsg}</p></div>
                             )}
 
                         <div ref={bottomRef} style={{marginTop: "10px"}} />
@@ -274,22 +272,27 @@ const errorItem: CSSProperties = {
 
 // TODO: move to LoadingSpinner?
 export const loadingMsgStyle: CSSProperties = {
-    fontSize: "16px",
+    fontSize: 16,
     height: "auto",
     marginTop: "6px",
 };
 
 const loadNewTootsText: CSSProperties = {
     ...loadingMsgStyle,
-    fontSize: "13px",
+    fontSize: 13,
     marginTop: "8px",
     textAlign: "center",
+};
+
+const noTootsMsgStyle: CSSProperties = {
+    ...fullPageCenteredSpinner,
+    fontSize: 20,
 };
 
 const resetLinkStyle: CSSProperties = {
     color: "red",
     cursor: "pointer",
-    fontSize: "14px",
+    fontSize: 14,
     fontWeight: "bold",
     textDecoration: "underline",
 };

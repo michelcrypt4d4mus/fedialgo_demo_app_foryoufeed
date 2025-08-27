@@ -363,5 +363,5 @@ const tagFontStyle: CSSProperties = {
 
 const viewThreadStyle: CSSProperties = {
     color: "grey",
-    fontSize: "11px",
+    fontSize: 11,
 };
