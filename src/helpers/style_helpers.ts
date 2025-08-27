@@ -184,6 +184,10 @@ export const loadingMsgStyle: CSSProperties = {
     marginTop: "6px",
 };
 
+export const mildlyRoundedCorners: CSSProperties = {
+    borderRadius: 3,
+};
+
 export const monoFont: CSSProperties = {
     fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace",
 };
@@ -217,10 +221,6 @@ export const roundedBox: CSSProperties = {
 // TODO: could roundedBox use this borderRadius value?
 export const roundedCorners: CSSProperties = {
     borderRadius: 15,
-};
-
-export const roundedCornersMild: CSSProperties = {
-    borderRadius: 3,
 };
 
 export const titleStyle: CSSProperties = {

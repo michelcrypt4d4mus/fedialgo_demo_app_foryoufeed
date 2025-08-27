@@ -5,7 +5,7 @@ import React, { ChangeEvent, CSSProperties } from "react";
 import Form from "react-bootstrap/esm/Form";
 
 import { config } from "../../config";
-import { monoFont, roundedCornersMild, whiteBackground } from "../../helpers/style_helpers";
+import { monoFont, mildlyRoundedCorners, whiteBackground } from "../../helpers/style_helpers";
 
 interface SliderProps {
     description?: string;
@@ -98,7 +98,7 @@ const sliderFont: CSSProperties = {
 };
 
 const sliderValue: CSSProperties = {
-    ...roundedCornersMild,
+    ...mildlyRoundedCorners,
     ...whiteBackground,
     alignSelf: "end",
     border: "1px solid #000",

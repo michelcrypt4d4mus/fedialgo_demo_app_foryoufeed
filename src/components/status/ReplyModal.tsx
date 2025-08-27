@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { blackBoldFont, blackFont, boldFont, linkCursor, roundedCorners, roundedCornersMild, whiteBackground } from '../../helpers/style_helpers';
+import { blackBoldFont, blackFont, boldFont, linkCursor, roundedCorners, mildlyRoundedCorners, whiteBackground } from '../../helpers/style_helpers';
 import { config } from '../../config';
 import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
 import { getLogger } from '../../helpers/log_helpers';
@@ -288,6 +288,6 @@ const modalBody: CSSProperties = {
 };
 
 const repyingToTootContainer: CSSProperties = {
-    ...roundedCornersMild,
+    ...mildlyRoundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
 };
