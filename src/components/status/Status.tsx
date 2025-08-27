@@ -192,7 +192,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     displayArrayKey: true,
                     indentWidth: 8,
                     name: "toot",
-                    style: {fontSize: 13},
+                    style: rawTootJSON,
                     theme: "brewer",
                 }}
                 setShow={setShowTootModal}
@@ -355,14 +355,18 @@ const openJSON: CSSProperties = {
     marginLeft: "10px"
 };
 
+const rawTootJSON: CSSProperties = {
+    fontSize: 13,
+};
+
 const scoreJsonStyle: CSSProperties = {
     fontSize: 16,
 };
 
 // TODO: this probably doesn't do anything because the <a> tag overrides it
 const tagFontStyle: CSSProperties = {
+    ...rawTootJSON,
     color: "#636f7a",
-    fontSize: 13,
 };
 
 const viewThreadStyle: CSSProperties = {

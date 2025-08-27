@@ -151,6 +151,12 @@ export const linkesque: CSSProperties = {
     textDecoration: "underline",
 };
 
+export const loadingMsgStyle: CSSProperties = {
+    fontSize: 16,
+    height: "auto",
+    marginTop: "6px",
+};
+
 export const noPadding: CSSProperties = {
     padding: "0px",
 };

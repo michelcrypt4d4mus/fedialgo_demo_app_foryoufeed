@@ -27,7 +27,7 @@ export default function Header() {
                                     style={avatarStyle}
                                 />}
 
-                            <span style={{fontSize: 15, padding: 10}}>
+                            <span style={usernameStyle}>
                                 {user.username}
                             </span>
                         </div>}
@@ -41,12 +41,12 @@ export default function Header() {
                     />
 
                     <span className='align-middle p-2 text-center' style={fedialgoContainer}>
-                        <a href={config.app.repoUrl} style={{color: "white"}} target="_blank">
+                        <a href={config.app.repoUrl} style={titleText} target="_blank">
                             Fedialgo Demo
                         </a>
 
-                        {' '}<span style={versionStyle}>(
-                            <a href={config.app.changelogUrl} style={{color: "grey"}} target="_blank">
+                        {' '}<span style={versionParenthesesStyle}>(
+                            <a href={config.app.changelogUrl} style={versionStyle} target="_blank">
                                 v{process.env.FEDIALGO_VERSION}
                             </a>
                         )</span>
@@ -81,7 +81,20 @@ const fedialgoContainer: CSSProperties = {
     whiteSpace: "nowrap",
 };
 
+const titleText: CSSProperties = {
+    color: "white",
+};
+
+const usernameStyle: CSSProperties = {
+    fontSize: 15,
+    padding: 10
+};
+
 const versionStyle: CSSProperties = {
+    color: "grey",
+};
+
+const versionParenthesesStyle: CSSProperties = {
     fontSize: 13,
     color: "lightgrey",
 };

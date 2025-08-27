@@ -19,7 +19,7 @@ import TooltippedLink from '../components/helpers/TooltippedLink';
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
-import { boldFont, linkesque, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
+import { boldFont, linkesque, loadingMsgStyle, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
@@ -270,13 +270,6 @@ const errorItem: CSSProperties = {
     marginTop: "10px",
 };
 
-// TODO: move to LoadingSpinner?
-export const loadingMsgStyle: CSSProperties = {
-    fontSize: 16,
-    height: "auto",
-    marginTop: "6px",
-};
-
 const loadNewTootsText: CSSProperties = {
     ...loadingMsgStyle,
     fontSize: 13,
@@ -317,7 +310,6 @@ const stickySwitchContainer: CSSProperties = {
 };
 
 const newTootButton: CSSProperties = {
-    // justifyContent: "space-between",
     marginTop: "35px",
     marginLeft: "200px",
     marginRight: "200px",
