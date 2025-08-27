@@ -140,6 +140,10 @@ export const boldFont: CSSProperties = {
     fontWeight: "bold",
 };
 
+export const blackBackground: CSSProperties = {
+    backgroundColor: "black",
+};
+
 export const blackFont: CSSProperties = {
     color: "black",
 };
@@ -193,8 +197,8 @@ export const paddingBorder: CSSProperties = {
 };
 
 export const rawErrorContainer: CSSProperties = {
+    ...blackBackground,
     ...monoFont,
-    backgroundColor: "black",
     borderRadius: "10px",
     marginTop: "15px",
     minHeight: "120px",

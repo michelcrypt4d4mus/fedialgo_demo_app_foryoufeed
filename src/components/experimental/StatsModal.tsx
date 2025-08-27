@@ -13,7 +13,7 @@ import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
 import { config } from '../../config';
 import { formatScore } from '../../helpers/number_helpers';
 import { ModalProps } from '../../types';
-import { RECHARTS_COLORS, blackFont } from '../../helpers/style_helpers';
+import { RECHARTS_COLORS, blackBackground, blackFont } from '../../helpers/style_helpers';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
@@ -82,7 +82,7 @@ export default function StatsModal(props: ModalProps) {
 
                         <Tooltip
                             formatter={(value, name) => [formatScore(Number(value)), (name as string).split('_')[0]]}
-                            contentStyle={{backgroundColor: "black"}}
+                            contentStyle={blackBackground}
                             labelStyle={tooltipStyle}
                         />
 

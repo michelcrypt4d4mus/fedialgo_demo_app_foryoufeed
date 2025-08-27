@@ -10,7 +10,7 @@ import { isString } from "lodash";
 import { Logger } from "fedialgo";
 
 import BugReportLink from "./BugReportLink";
-import { blackBoldFont, blackFont, rawErrorContainer, whiteFont } from "../../helpers/style_helpers";
+import { blackBackground, blackBoldFont, blackFont, rawErrorContainer, whiteFont } from "../../helpers/style_helpers";
 import { config } from "../../config";
 import { extractText } from "../../helpers/react_helpers";
 import { getLogger } from "../../helpers/log_helpers";
@@ -173,8 +173,8 @@ export default function ErrorHandler(props: PropsWithChildren) {
 
 
 const errorContainer: CSSProperties = {
+    ...blackBackground,
     ...whiteFont,
-    backgroundColor: "black",
     fontSize: config.theme.errorFontSize,
     padding: "100px"
 };
@@ -202,7 +202,7 @@ const errorNoteStyle: CSSProperties = {
 };
 
 const rawErrorInPopup: CSSProperties = {
-    backgroundColor: "black",
+    ...blackBackground,
     color: "red",
     fontSize: config.theme.errorFontSize + 1,
     width: "100%",

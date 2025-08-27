@@ -10,6 +10,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mastodon } from 'masto';
 
 import AttachmentsModal from "./AttachmentsModal";
+import { blackBackground } from "../../helpers/style_helpers";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { isEmptyStr } from "../../helpers/string_helpers";
@@ -172,7 +173,7 @@ const fullSize: CSSProperties = {
 };
 
 const mediaItem: CSSProperties = {
-    backgroundColor: "black",
+    ...blackBackground,
     borderRadius: "15px",
 };
 
