@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { blackFont, boldFont } from '../../helpers/style_helpers';
+import { blackBoldFont, blackFont, boldFont } from '../../helpers/style_helpers';
 import { config } from '../../config';
 import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
 import { getLogger } from '../../helpers/log_helpers';
@@ -277,8 +277,7 @@ const formStyle: CSSProperties = {
 };
 
 const headerStyle: CSSProperties = {
-    ...blackFont,
-    ...boldFont,
+    ...blackBoldFont,
     backgroundColor: config.theme.feedBackgroundColorLite,
 };
 

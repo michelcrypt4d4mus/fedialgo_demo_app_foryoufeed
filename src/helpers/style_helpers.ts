@@ -135,6 +135,11 @@ export const blackFont: CSSProperties = {
     color: "black",
 };
 
+export const blackBoldFont: CSSProperties = {
+    ...blackFont,
+    ...boldFont,
+};
+
 /** Black Tahoma / Geneva / sans-serif. */
 export const globalFont: CSSProperties = {
     ...blackFont,
