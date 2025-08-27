@@ -6,10 +6,10 @@ import { createRestAPIClient } from 'masto';
 import { FEDIALGO } from "fedialgo";
 import { stringifyQuery } from 'ufo';
 
-// import { App } from '../types';
 import { getApp, useAppStorage, useServerStorage, useServerUserStorage } from "../hooks/useLocalStorage";
 import { config } from '../config';
 import { getLogger } from '../helpers/log_helpers';
+import { roundedCorners } from '../helpers/style_helpers';
 import { sanitizeServerUrl } from '../helpers/string_helpers';
 import { useError } from '../components/helpers/ErrorHandler';
 
@@ -143,8 +143,8 @@ const loginContainer: CSSProperties = {
 };
 
 const previewImage: CSSProperties = {
+    ...roundedCorners,
     border: "5px solid #DDD",
-    borderRadius: "12px",
     boxShadow: "3px 3px 5px black",
     maxHeight: "550px",
 };

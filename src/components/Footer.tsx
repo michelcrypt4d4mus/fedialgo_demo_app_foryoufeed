@@ -7,7 +7,7 @@ import Navbar from "react-bootstrap/esm/Navbar";
 import Container from "react-bootstrap/Container";
 
 import { config } from "../config";
-import { whiteFont } from "../helpers/style_helpers";
+import { roundedCornersMild, whiteFont } from "../helpers/style_helpers";
 
 
 export default function Footer() {
@@ -57,7 +57,7 @@ export default function Footer() {
 
 
 const elementStyle: CSSProperties = {
-    borderRadius: 5,
+    ...roundedCornersMild,
     height: 20,
     width: 20,
 };

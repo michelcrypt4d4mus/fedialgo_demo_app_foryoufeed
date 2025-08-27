@@ -28,6 +28,7 @@ import {
     linkesque,
     loadingMsgStyle,
     rawErrorContainer,
+    roundedCorners,
     tooltipZIndex,
     waitOrDefaultCursor,
     whiteFont
@@ -305,8 +306,8 @@ const scrollStatusMsg: CSSProperties = {
 };
 
 const statusesColStyle: CSSProperties = {
+    ...roundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
-    borderRadius: '10px',
     height: 'auto',
 };
 

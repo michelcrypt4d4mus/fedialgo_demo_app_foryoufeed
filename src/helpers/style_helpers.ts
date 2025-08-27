@@ -199,14 +199,14 @@ export const paddingBorder: CSSProperties = {
 export const rawErrorContainer: CSSProperties = {
     ...blackBackground,
     ...monoFont,
-    borderRadius: "10px",
+    borderRadius: 10,
     marginTop: "15px",
     minHeight: "120px",
     padding: "35px",
 };
 
 export const roundedBox: CSSProperties = {
-    borderRadius: "20px",
+    borderRadius: 20,
     background: "lightgrey",
     paddingLeft: "25px",
     paddingRight: "20px",
@@ -214,8 +214,13 @@ export const roundedBox: CSSProperties = {
     paddingTop: "15px",
 };
 
+// TODO: could roundedBox use this borderRadius value?
 export const roundedCorners: CSSProperties = {
-    borderRadius: "15px",
+    borderRadius: 15,
+};
+
+export const roundedCornersMild: CSSProperties = {
+    borderRadius: 3,
 };
 
 export const titleStyle: CSSProperties = {

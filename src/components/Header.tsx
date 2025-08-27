@@ -6,7 +6,7 @@ import { CSSProperties } from 'react';
 
 import { config } from '../config';
 import { useAuthContext } from "../hooks/useAuth";
-import { whiteFont } from '../helpers/style_helpers';
+import { roundedCornersMild, whiteFont } from '../helpers/style_helpers';
 
 const XS_VALUE = 4;  // React Bootstrap Grid System
 
@@ -72,7 +72,7 @@ export default function Header() {
 
 
 const avatarStyle: CSSProperties = {
-    borderRadius: 5,
+    ...roundedCornersMild,
     height: 30,
     width: 30,
 };
