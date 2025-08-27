@@ -80,14 +80,14 @@ const labelContainer: CSSProperties = {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    fontSize: '14px',
+    fontSize: 14,
     justifyContent: 'space-between',
     textWrap: 'nowrap',
 };
 
 const monoFont: CSSProperties = {
     fontFamily: "Courier New, monospace",
-    fontSize: "13px",
+    fontSize: 13,
     fontWeight: 'bold',
 };
 

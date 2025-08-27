@@ -30,8 +30,9 @@ interface ThemeConfigBase {
     readonly participatedTagGradient: GradientEndpoints;
     readonly trendingTagGradient: GradientEndpoints;
     // Fonts
-    readonly accountBioFontSize?: number;  // Font size for account bios
+    readonly accountBioFontSize?: number;
     readonly defaultFontSize: number;
+    readonly errorFontSize: number;
     readonly retooterFontSize: number;
     readonly trendingObjFontSize: number;
 };
@@ -60,6 +61,7 @@ const THEME_BASE: ThemeConfigBase = {
     // Fonts
     accountBioFontSize: 13,                        // Font size used in the account bio hover box
     defaultFontSize: DEFAULT_FONT_SIZE,            // Emoji font size for account display names
+    errorFontSize: 18,                             // Font size for error messages
     retooterFontSize: DEFAULT_FONT_SIZE,           // Emoji font size for retooters' display names
     trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Emoji font size for trending objects
 };

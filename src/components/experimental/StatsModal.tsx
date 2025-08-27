@@ -83,7 +83,7 @@ export default function StatsModal(props: ModalProps) {
                         <Tooltip
                             formatter={(value, name) => [formatScore(Number(value)), (name as string).split('_')[0]]}
                             contentStyle={{backgroundColor: "black"}}
-                            labelStyle={{fontSize: 20, fontWeight: "bold"}}
+                            labelStyle={tooltipStyle}
                         />
 
                         <Legend
@@ -126,4 +126,9 @@ const charStyle: CSSProperties = {
 
 const textStyle: CSSProperties = {
     color: "black",
+};
+
+const tooltipStyle: CSSProperties = {
+    fontSize: 20,
+    fontWeight: "bold"
 };

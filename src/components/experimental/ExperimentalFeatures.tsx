@@ -90,7 +90,7 @@ export default function ExperimentalFeatures() {
                 {isLoading || isLoadingState ? "Loading..." : label}
             </Button>
 
-            <div style={{flex: 4, marginLeft: "10px", fontSize: "14px"}}>
+            <div style={buttonDescription}>
                 {BUTTON_TEXT[label]}
             </div>
         </li>
@@ -141,6 +141,12 @@ export default function ExperimentalFeatures() {
 };
 
 
+const buttonDescription: CSSProperties = {
+    flex: 4,
+    fontSize: 14,
+    marginLeft: "10px",
+};
+
 const buttonStyle: CSSProperties = {
     flex: 2,
     marginBottom: "5px",
@@ -157,6 +163,6 @@ const listElement: CSSProperties = {
     alignItems: "center",
     display: "flex",
     flexDirection: "row",
-    fontSize: "18px",
+    fontSize: 18,
     marginBottom: "2px",
 };

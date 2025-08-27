@@ -57,7 +57,7 @@ const switchesContainer: CSSProperties = {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    fontSize: '16px',
+    fontSize: 16,
     fontWeight: "bold",
     height: "25px",
     justifyContent: 'space-around',
