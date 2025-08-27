@@ -5,6 +5,7 @@ import React, { ChangeEvent, CSSProperties } from 'react';
 import Form from 'react-bootstrap/esm/Form';
 
 import { config } from '../../config';
+import { boldFont, monoFont } from '../../helpers/style_helpers';
 
 interface SliderProps {
     description?: string;
@@ -38,7 +39,7 @@ export default function Slider(props: SliderProps) {
         <div key={`${label}_label`} style={labelContainer}>
             {!hideValueBox &&
                 <div style={sliderValue} id="innerest_doop">
-                    <span style={monoFont}>
+                    <span style={sliderValueFont}>
                         {value?.toFixed(decimals)}
                     </span>
                 </div>}
@@ -85,12 +86,6 @@ const labelContainer: CSSProperties = {
     textWrap: 'nowrap',
 };
 
-const monoFont: CSSProperties = {
-    fontFamily: "Courier New, monospace",
-    fontSize: 13,
-    fontWeight: 'bold',
-};
-
 const sliderContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'row',
@@ -110,8 +105,13 @@ const sliderValue: CSSProperties = {
     borderRadius: '3px',
     borderWidth: '1px',
     marginRight: '10px',
-    paddingBottom: '1px',
+    // paddingBottom: '1px',
     paddingLeft: '8px',
     paddingRight: '8px',
     paddingTop: '1px',
+};
+
+const sliderValueFont: CSSProperties = {
+    ...monoFont,
+    fontSize: 12,
 };

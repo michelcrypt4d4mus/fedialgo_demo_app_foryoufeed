@@ -166,6 +166,10 @@ export const loadingMsgStyle: CSSProperties = {
     marginTop: "6px",
 };
 
+export const monoFont: CSSProperties = {
+    fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace",
+};
+
 export const noPadding: CSSProperties = {
     padding: "0px",
 };
@@ -175,9 +179,9 @@ export const paddingBorder: CSSProperties = {
 };
 
 export const rawErrorContainer: CSSProperties = {
+    ...monoFont,
     backgroundColor: "black",
     borderRadius: "10px",
-    fontFamily: "monospace",
     marginTop: "15px",
     minHeight: "120px",
     padding: "35px",

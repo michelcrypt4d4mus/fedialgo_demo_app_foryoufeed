@@ -17,7 +17,7 @@ import FilterAccordionSection from "./algorithm/FilterAccordionSection";
 import MinTootsSlider, { computeDefaultValue } from "./helpers/MinTootsSlider";
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
-import { boldFont, globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
+import { boldFont, globalFont, linkesque, monoFont, roundedBox } from "../helpers/style_helpers";
 import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
@@ -250,9 +250,9 @@ const footerContainer: CSSProperties = {
 
 const footerLinkText: CSSProperties = {
     ...boldFont,
+    ...monoFont,
     ...linkesque,
     color: "#1b5b61",
-    fontFamily: "monospace",
     fontSize: config.theme.trendingObjFontSize - 1,
 };
 

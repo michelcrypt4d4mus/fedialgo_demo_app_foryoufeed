@@ -125,7 +125,7 @@ const descriptionText: CSSProperties = {
     lineHeight: 1.3,
     marginBottom: "10px",
     marginTop: "13px",
-    textAlign: "center"
+    textAlign: "center",
 };
 
 const loginButtonStyle: CSSProperties = {

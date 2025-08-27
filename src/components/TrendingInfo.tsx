@@ -17,7 +17,7 @@ import {
 import StatusComponent from "./status/Status";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection, { type LinkRenderer } from "./TrendingSection";
-import { accordionSubheader, boldFont, noPadding } from "../helpers/style_helpers";
+import { accordionSubheader, boldFont, monoFont, noPadding } from "../helpers/style_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
 import { getLogger } from "../helpers/log_helpers";
@@ -181,7 +181,7 @@ const simpleTagRenderer: LinkRenderer = {
 };
 
 const monospace: CSSProperties = {
-    fontFamily: "monospace",
+    ...monoFont,
     fontSize: config.theme.trendingObjFontSize - 3,
 };
 
