@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { boldFont } from '../../helpers/style_helpers';
+import { blackFont, boldFont } from '../../helpers/style_helpers';
 import { config } from '../../config';
 import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
 import { getLogger } from '../../helpers/log_helpers';
@@ -188,9 +188,9 @@ export default function ReplyModal(props: ReplyModalProps) {
                 <p>{toot ? `Reply to ${toot.account.description}` : `Create New Toot`}</p>
             </Modal.Header>
 
-            <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
+            <Modal.Body style={modalBody}>
                 {toot &&
-                    <div style={{backgroundColor: config.theme.feedBackgroundColor, borderRadius: "3px"}}>
+                    <div style={repyingToTootContainer}>
                         <StatusComponent showLinkPreviews={false} status={toot}/>
                     </div>}
 
@@ -269,15 +269,26 @@ const dropzoneStyle: CSSProperties = {
 };
 
 const formStyle: CSSProperties = {
+    ...blackFont,
     backgroundColor: "white",
     borderWidth: "5px",
-    color: "black",
     fontSize: 22,
     marginTop: "13px",
 };
 
 const headerStyle: CSSProperties = {
+    ...blackFont,
     ...boldFont,
     backgroundColor: config.theme.feedBackgroundColorLite,
-    color: "black",
+};
+
+const modalBody: CSSProperties = {
+    ...blackFont,
+    paddingLeft: "25px",
+    paddingRight: "25px",
+};
+
+const repyingToTootContainer: CSSProperties = {
+    backgroundColor: config.theme.feedBackgroundColor,
+    borderRadius: "3px"
 };

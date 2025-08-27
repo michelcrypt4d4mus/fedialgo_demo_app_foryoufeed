@@ -11,12 +11,11 @@ import { config } from "../config";
 
 export default function Footer() {
     return (
-        <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark" style={{marginTop: '50px'}}>
+        <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark" style={footerNav}>
             <Container>
                 <Navbar.Brand style={navLink}>FediAlgo</Navbar.Brand>
 
                 <Nav className="me-auto">
-                    {/* <Nav.Link href="/" style={navLink}>Home</Nav.Link> */}
                     <Nav.Link href={config.app.repoUrl} style={navLink}>
                         <img
                             alt="Github Logo"
@@ -60,6 +59,10 @@ const elementStyle: CSSProperties = {
     borderRadius: 5,
     height: 20,
     width: 20,
+};
+
+const footerNav: CSSProperties = {
+    marginTop: '50px',
 };
 
 const navLink: CSSProperties = {

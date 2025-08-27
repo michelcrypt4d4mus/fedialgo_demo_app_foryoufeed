@@ -251,7 +251,7 @@ export default function Feed() {
                                 : <div style={noTootsMsgStyle}><p>{config.timeline.noTootsMsg}</p></div>
                             )}
 
-                        <div ref={bottomRef} style={{marginTop: "10px"}} />
+                        <div ref={bottomRef} style={bottomRefSpacer} />
                     </div>
                 </Col>
             </Row>
@@ -265,9 +265,13 @@ const accountTooltipStyle: CSSProperties = {
     width: "500px",
 };
 
-const errorItem: CSSProperties = {
-    color: "#9e0d12",
+const bottomRefSpacer: CSSProperties = {
     marginTop: "10px",
+};
+
+const errorItem: CSSProperties = {
+    ...bottomRefSpacer,
+    color: "#9e0d12",
 };
 
 const loadNewTootsText: CSSProperties = {

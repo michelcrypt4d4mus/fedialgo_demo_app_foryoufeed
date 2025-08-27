@@ -8,7 +8,7 @@ import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 import { type BooleanFilterOption } from "fedialgo";
 
-import { boldFont, linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
+import { blackFont, boldFont, linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
 import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { followUri } from "../../../helpers/react_helpers";
@@ -41,7 +41,7 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
 
     const labelExtra = option?.numToots?.toLocaleString();
     const labelStyle: CSSProperties = {...boldFont};
-    let style: CSSProperties = {color: "black"};
+    let style: CSSProperties = {...blackFont};
     let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
 
     if (tooltip?.highlight?.color) {
@@ -89,8 +89,8 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
 
 
 const hashtagLink: CSSProperties = {
+    ...blackFont,
     ...linkesque,
-    color: "black",
 };
 
 const highlightedCheckboxStyle: CSSProperties = {

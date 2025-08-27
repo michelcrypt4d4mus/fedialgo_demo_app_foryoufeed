@@ -10,7 +10,7 @@ import { isString } from "lodash";
 import { Logger } from "fedialgo";
 
 import BugReportLink from "./BugReportLink";
-import { boldFont, rawErrorContainer } from "../../helpers/style_helpers";
+import { blackFont, boldFont, rawErrorContainer } from "../../helpers/style_helpers";
 import { config } from "../../config";
 import { extractText } from "../../helpers/react_helpers";
 import { getLogger } from "../../helpers/log_helpers";
@@ -66,7 +66,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
                     <BugReportLink />
                 </p>
 
-                <div style={{marginTop: "50px"}}>
+                <div style={tryAgainContainer}>
                     <button
                         className="btn btn-primary"
                         onClick={() => {
@@ -135,7 +135,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
                 dialogClassName="modal-lg"
                 onHide={resetErrors}
                 show={!!errorMsg || !!errorObj}
-                style={{color: "black"}}
+                style={blackFont}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Error</Modal.Title>
@@ -180,8 +180,8 @@ const errorContainer: CSSProperties = {
 };
 
 const errorHeadline: CSSProperties = {
+    ...blackFont,
     ...boldFont,
-    color: "black",
     fontSize: config.theme.errorFontSize,
     marginBottom: "10px",
     width: "100%",
@@ -198,7 +198,7 @@ const errorModalBody: CSSProperties = {
 };
 
 const errorNoteStyle: CSSProperties = {
-    color: "black",
+    ...blackFont,
     fontSize: config.theme.errorFontSize - 4,
 };
 
@@ -207,4 +207,8 @@ const rawErrorInPopup: CSSProperties = {
     color: "red",
     fontSize: config.theme.errorFontSize + 1,
     width: "100%",
+};
+
+const tryAgainContainer: CSSProperties = {
+    marginTop: "50px",
 };
