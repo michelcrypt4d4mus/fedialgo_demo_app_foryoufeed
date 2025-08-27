@@ -123,6 +123,14 @@ export function waitOrDefaultCursor(
 };
 
 
+//////////////////////////////////////
+// React Boostrap Layout classNames //
+//////////////////////////////////////
+
+export const TEXT_CENTER = "text-center";
+export const TEXT_CENTER_P2 = `${TEXT_CENTER} p-2`;
+
+
 ///////////////////////////////
 // CSS Properties Below Here //
 ///////////////////////////////

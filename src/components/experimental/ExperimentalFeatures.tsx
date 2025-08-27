@@ -10,7 +10,7 @@ import FindFollowers from "./FindFollowers";
 import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
+import { accordionSubheader, roundedBox, TEXT_CENTER_P2 } from "../../helpers/style_helpers";
 import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
@@ -80,7 +80,7 @@ export default function ExperimentalFeatures() {
     const makeLabeledButton = (label: keyof typeof BUTTON_TEXT, onClick: () => void, variant?: string) => (
         <li key={label} style={buttonListItem}>
             <Button
-                className='p-2 text-center'
+                className={TEXT_CENTER_P2}
                 disabled={isLoading}
                 onClick={onClick}
                 size="sm"

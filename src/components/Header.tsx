@@ -5,15 +5,13 @@ import React, { Button, Col, Container, Row } from 'react-bootstrap';
 import { CSSProperties } from 'react';
 
 import { config } from '../config';
+import { TEXT_CENTER, TEXT_CENTER_P2, mildlyRoundedCorners, whiteFont } from '../helpers/style_helpers';
 import { useAuthContext } from "../hooks/useAuth";
-import { mildlyRoundedCorners, whiteFont } from '../helpers/style_helpers';
 
 // React bootstrap classnames etc.
 const ALIGN_MIDDLE = "align-middle";
 const ALIGN_MIDDLE_D_INLINE = `${ALIGN_MIDDLE} d-inline`;
 const ALIGN_MIDDLE_D_INLINE_BLOCK = `${ALIGN_MIDDLE_D_INLINE}-block`;
-const TEXT_CENTER = "text-center";
-const TEXT_CENTER_P2 = `${TEXT_CENTER} p-2`;
 const TITLE_FONT_SIZE = 16;
 const XS_VALUE = 4;  // React Bootstrap Grid System
 
