@@ -30,6 +30,7 @@ interface ThemeConfigBase {
     readonly participatedTagGradient: GradientEndpoints;
     readonly trendingTagGradient: GradientEndpoints;
     // Fonts
+    readonly accountBioFontSize?: number;  // Font size for account bios
     readonly defaultFontSize: number;
     readonly retooterFontSize: number;
     readonly trendingObjFontSize: number;
@@ -57,9 +58,10 @@ const THEME_BASE: ThemeConfigBase = {
     participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Gradient for participated tags
     trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')],      // Gradient for trending tags
     // Fonts
+    accountBioFontSize: 13,                       // Emoji font size for account bios
     defaultFontSize: DEFAULT_FONT_SIZE,            // Base emoji font size for account display names
     retooterFontSize: DEFAULT_FONT_SIZE,           // Emoji font size for retooters
-    trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Font size for trending objects
+    trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Emoji Font size for trending objects
 };
 
 // Fill in a few extra colors that are the last color in the gradients as a convenience

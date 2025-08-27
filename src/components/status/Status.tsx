@@ -249,7 +249,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div title={toot.account.webfingerURI} className="status__display-name">
                             <a
                                 data-tooltip-id={TOOLTIP_ACCOUNT_ANCHOR}
-                                data-tooltip-html={toot.account.noteWithAccountInfo}
+                                data-tooltip-html={toot.account.noteWithAccountInfo(config.theme.accountBioFontSize)}
                             >
                                 <div className="status__avatar">
                                     <div className="account__avatar" style={{height: "46px", width: "46px"}}>
