@@ -214,6 +214,10 @@ export const roundedBox: CSSProperties = {
     paddingTop: "15px",
 };
 
+export const roundedCorners: CSSProperties = {
+    borderRadius: "15px",
+};
+
 export const titleStyle: CSSProperties = {
     ...boldFont,
     ...globalFont,

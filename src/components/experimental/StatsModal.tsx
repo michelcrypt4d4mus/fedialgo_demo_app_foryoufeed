@@ -13,7 +13,7 @@ import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
 import { config } from '../../config';
 import { formatScore } from '../../helpers/number_helpers';
 import { ModalProps } from '../../types';
-import { RECHARTS_COLORS, blackBackground, blackFont } from '../../helpers/style_helpers';
+import { RECHARTS_COLORS, blackBackground, blackFont, roundedCorners } from '../../helpers/style_helpers';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
@@ -120,8 +120,8 @@ const buttonStyle: CSSProperties = {
 };
 
 const charStyle: CSSProperties = {
+    ...roundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
-    borderRadius: "15px",
 };
 
 const tooltipStyle: CSSProperties = {

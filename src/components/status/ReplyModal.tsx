@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { blackBoldFont, blackFont, boldFont, linkCursor, whiteBackground } from '../../helpers/style_helpers';
+import { blackBoldFont, blackFont, boldFont, linkCursor, roundedCorners, whiteBackground } from '../../helpers/style_helpers';
 import { config } from '../../config';
 import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
 import { getLogger } from '../../helpers/log_helpers';
@@ -258,8 +258,8 @@ const buttonContainer: CSSProperties = {
 const dropzoneStyle: CSSProperties = {
     ...boldFont,
     ...linkCursor,
+    ...roundedCorners,
     backgroundColor: "grey",
-    borderRadius: "15px",
     fontSize: 16,
     height: "60px",
     marginTop: "12px",

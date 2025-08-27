@@ -7,7 +7,7 @@ import { Modal } from 'react-bootstrap';
 
 import ReactJsonView from '@microlink/react-json-view';
 
-import { blackFont, globalFont } from '../../helpers/style_helpers';
+import { blackFont, globalFont, roundedCorners } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 
 type ReactJsonViewProps = typeof ReactJsonView.defaultProps;
@@ -73,6 +73,6 @@ const headerFont: CSSProperties = {
 };
 
 const jsonViewStyle: CSSProperties = {
-    borderRadius: "15px",
+    ...roundedCorners,
     padding: "20px",
 };
