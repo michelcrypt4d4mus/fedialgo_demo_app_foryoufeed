@@ -120,7 +120,7 @@ type TimelineConfig = {
         readonly showLinkPreviews: Readonly<GuiCheckboxLabel>;
         readonly stickToTop: Readonly<GuiCheckboxLabel>;
     };
-    loadTootsButtons: {
+    loadTootsButtonLabels: {
         readonly loadNewToots: Readonly<LinkWithTooltipCfg>;
         readonly loadOldToots: Readonly<LinkWithTooltipCfg>;
         readonly loadUserDataForAlgorithm: Readonly<LinkWithTooltipCfg>;
@@ -365,7 +365,7 @@ class Config implements ReadonlyConfig {
             }
         },
 
-        loadTootsButtons: {
+        loadTootsButtonLabels: {
             loadNewToots: {
                 label: "(load new toots)",
                 tooltipText: "Load toots created since the last time you loaded toots.",

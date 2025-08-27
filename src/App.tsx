@@ -1,23 +1,23 @@
 import React, { CSSProperties, useEffect } from "react";
-import { Buffer } from 'buffer'; // Required for class-transformer to work
+import { Buffer } from "buffer"; // Required for class-transformer to work
 (window as any).Buffer = Buffer;
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
-// import { inject } from '@vercel/analytics';
+// import { inject } from "@vercel/analytics";
 
 import "./birdUI.css";
 import "./default.css";
 import AlgorithmProvider from "./hooks/useAlgorithm";
-import AuthProvider from './hooks/useAuth';
-import CallbackPage from './pages/CallbackPage';
+import AuthProvider from "./hooks/useAuth";
+import CallbackPage from "./pages/CallbackPage";
 import ErrorHandler from "./components/helpers/ErrorHandler";
-import Feed from './pages/Feed';
-import Footer from './components/Footer';
-import Header from './components/Header';
-import LoginPage from './pages/LoginPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import Feed from "./pages/Feed";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { getLogger, logLocaleInfo } from "./helpers/log_helpers";
 
 const logger = getLogger("App.tsx");
@@ -32,28 +32,28 @@ export default function App(): React.ReactElement {
     //       otherwise this: http://localhost:3000/?code=abcdafwgwdgw
     //    is routed to this: http://localhost:3000/?code=abcdafwgwdgw#/login
     // From: https://github.com/auth0/auth0-spa-js/issues/407
-    if (window.location.href.includes('?code=')){
+    if (window.location.href.includes("?code=")){
         const newUrl = window.location.href.replace(/\/(\?code=.*)/, '/#/callback$1')
         logger.trace(`<App.tsx> OAuth callback to "${window.location.href}", redirecting to "${newUrl}"`);
         window.location.href = newUrl;
     }
 
-    if ('serviceWorker' in navigator) {
-        logger.log('Service Worker is supported, registering...');
+    if ("serviceWorker" in navigator) {
+        logger.log("Service Worker is supported, registering...");
 
         // Service worker for github pages: https://gist.github.com/kosamari/7c5d1e8449b2fbc97d372675f16b566e
         try {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js');
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./service-worker.js");
             });
         } catch (error) {
-            logger.error('Error registering service worker:', error);
+            logger.error("Error registering service worker:", error);
         }
     }
 
     return (
         <HashRouter>
-            <div className='container-fluid min-vh-100' style={containerStyle}>
+            <div className="container-fluid min-vh-100" style={containerStyle}>
                 <ErrorHandler>
                     <AuthProvider>
                         <Header />
@@ -82,11 +82,11 @@ export default function App(): React.ReactElement {
 
 
 const containerStyle: CSSProperties = {
-    alignItems: 'center',
-    backgroundColor: 'black',
-    display: 'flex',
-    flexDirection: 'column',
-    height: 'auto',
+    alignItems: "center",
+    backgroundColor: "black",
+    display: "flex",
+    flexDirection: "column",
+    height: "auto",
 };
 
 
@@ -96,6 +96,6 @@ function NotFoundPage() {
     const currentPath = location.pathname;
 
     logger.log(`<NotFoundPage> You shouldn't be here! currentPath: "${currentPath}", location:`, location);
-    useEffect(() => {navigate('/')}, [navigate]);
+    useEffect(() => {navigate("/")}, [navigate]);
     return <div>Redirecting...</div>;
 };

@@ -220,21 +220,21 @@ export default function Feed() {
                     {algorithm && !isLoading &&
                         <div style={loadNewTootsText}>
                             <TooltippedLink
-                                labelAndTooltip={config.timeline.loadTootsButtons.loadNewToots}
+                                labelAndTooltip={config.timeline.loadTootsButtonLabels.loadNewToots}
                                 onClick={triggerFeedUpdate}
                             />
 
                            {LOAD_BUTTON_SEPARATOR}
 
                             <TooltippedLink
-                                labelAndTooltip={config.timeline.loadTootsButtons.loadOldToots}
+                                labelAndTooltip={config.timeline.loadTootsButtonLabels.loadOldToots}
                                 onClick={triggerHomeTimelineBackFill}
                             />
 
                            {LOAD_BUTTON_SEPARATOR}
 
                             <TooltippedLink
-                                labelAndTooltip={config.timeline.loadTootsButtons.loadUserDataForAlgorithm}
+                                labelAndTooltip={config.timeline.loadTootsButtonLabels.loadUserDataForAlgorithm}
                                 onClick={triggerMoarData}
                             />
                         </div>}
