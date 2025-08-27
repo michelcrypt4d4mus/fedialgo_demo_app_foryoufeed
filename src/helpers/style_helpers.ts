@@ -104,13 +104,22 @@ export const RECHARTS_COLORS: CSSProperties["color"][] = [
 ];
 
 
-// Wrap middleColors in endpoints and generate a tinygradient (see docs for details)
+/** Wrap middleColors in endpoints and generate a tinygradient (see docs for details) */
 export function buildGradient(
     endpoints: [tinycolor.Instance, tinycolor.Instance],
     middleColors?: tinycolor.Instance[]
 ): tinygradient.Instance {
     const gradientPoints = [endpoints[0], ...(middleColors || []), endpoints[1]];
     return tinygradient(...gradientPoints);
+};
+
+
+/** If isWaiting is true, cursor is 'wait', otherwise 'defaultCursor' arg's value if provided or 'default' if not. */
+export function waitOrDefaultCursor(
+    isWaiting: boolean,
+    defaultCursor: CSSProperties['cursor'] = 'default'
+): CSSProperties {
+    return { cursor: isWaiting ? 'wait' : defaultCursor };
 };
 
 

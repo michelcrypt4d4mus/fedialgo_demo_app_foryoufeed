@@ -36,7 +36,7 @@ import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
-import { linkCursor } from "../../helpers/style_helpers";
+import { linkCursor, waitOrDefaultCursor } from "../../helpers/style_helpers";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
 const logger = getLogger("StatusComponent");
@@ -321,7 +321,8 @@ export default function StatusComponent(props: StatusComponentProps) {
                                         .then(toots => setThread(toots))
                                         .finally(() => setIsLoadingThread(false));
                                 }}
-                                style={{...viewThreadStyle, cursor: isLoadingThread ? 'wait' : 'pointer'}}
+
+                                style={{...viewThreadStyle, ...waitOrDefaultCursor(isLoadingThread, 'pointer')}}
                             >
                                 ⇇ View the Thread
                             </a>

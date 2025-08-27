@@ -19,11 +19,18 @@ import TooltippedLink from '../components/helpers/TooltippedLink';
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
-import { boldFont, linkesque, loadingMsgStyle, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
+import {
+    boldFont,
+    linkesque,
+    loadingMsgStyle,
+    rawErrorContainer,
+    tooltipZIndex,
+    waitOrDefaultCursor
+} from "../helpers/style_helpers";
 
 const LOAD_BUTTON_SEPARATOR = ' ● ';
 const logger = getLogger("Feed");
@@ -123,7 +130,7 @@ export default function Feed() {
         <Container fluid style={{height: "auto"}}>
             <ReplyModal setShow={setShowNewTootModal} show={showNewTootModal}/>
 
-            <Row style={{cursor: isLoadingThread ? 'wait' : 'default'}}>
+            <Row style={waitOrDefaultCursor(isLoadingThread)}>
                 {/* Tooltip options: https://react-tooltip.com/docs/options */}
                 <Tooltip
                     border={"solid"}
