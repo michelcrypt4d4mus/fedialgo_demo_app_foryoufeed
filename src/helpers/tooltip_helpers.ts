@@ -42,3 +42,10 @@ export type GuiCheckboxLabel = {
     readonly label: string;
     readonly tooltipText: string;
 };
+
+
+export type LinkWithTooltipCfg = {
+    readonly label: string;
+    readonly labelStyle?: React.CSSProperties;
+    readonly tooltipText: string;
+};

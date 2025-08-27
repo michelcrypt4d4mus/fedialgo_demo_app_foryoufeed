@@ -250,8 +250,8 @@ const footerContainer: CSSProperties = {
 
 const footerLinkText: CSSProperties = {
     ...boldFont,
-    ...monoFont,
     ...linkesque,
+    ...monoFont,
     color: "#1b5b61",
     fontSize: config.theme.trendingObjFontSize - 1,
 };

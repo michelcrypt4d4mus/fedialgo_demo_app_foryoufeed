@@ -1,29 +1,29 @@
 /*
  * A text link with a tooltip.
  */
-import { CSSProperties } from "react";
+import React, { CSSProperties } from "react";
 
 import { Tooltip } from "react-tooltip";
 
 import { config } from "../../config";
-import { getLogger } from "../../helpers/log_helpers";
-import { tooltipZIndex } from "../../helpers/style_helpers";
+import { linkesque, tooltipZIndex } from "../../helpers/style_helpers";
+import { type LinkWithTooltipCfg } from "../../helpers/tooltip_helpers";
 
 const TOOLTIPPED_LINK_ANCHOR = "tooltipped-link-anchor";
 
 interface TooltippedLinkProps {
     anchor?: string;
-    label: string;
+    labelAndTooltip: LinkWithTooltipCfg;
     onClick: () => void;
-    labelStyle: React.CSSProperties;
-    tooltipText?: string;
 };
 
 
 export default function TooltippedLink(props: TooltippedLinkProps) {
-    let { anchor, onClick, label, labelStyle, tooltipText } = props;
+    const { anchor, onClick, labelAndTooltip: { label, labelStyle, tooltipText } } = props;
+    // const { label, labelStyle, tooltipText } = labelAndTooltip;
 
     return (<>
+        {/* Make sure there's a <Tooltip> to anchor to. */}
         <Tooltip
             border={"solid"}
             delayShow={config.timeline.tooltips.defaultTooltipDelayMS}
@@ -35,7 +35,7 @@ export default function TooltippedLink(props: TooltippedLinkProps) {
         />
 
         <a data-tooltip-content={tooltipText} data-tooltip-id={anchor || TOOLTIPPED_LINK_ANCHOR}>
-            <span onClick={onClick} style={labelStyle}>
+            <span onClick={onClick} style={labelStyle || linkesque}>
                 {label}
             </span>
         </a>

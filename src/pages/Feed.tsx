@@ -25,6 +25,7 @@ import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
+const LOAD_BUTTON_SEPARATOR = ' ● ';
 const logger = getLogger("Feed");
 
 
@@ -211,26 +212,23 @@ export default function Feed() {
                 <Col xs={12} md={6}>
                     {algorithm && !isLoading &&
                         <div style={loadNewTootsText}>
-                            <a onClick={triggerFeedUpdate} style={linkesque}>
-                                (load new toots)
-                            </a>
-
-                           {' ● '}
-
                             <TooltippedLink
-                                label={"(load old toots)"}
-                                onClick={triggerHomeTimelineBackFill}
-                                labelStyle={linkesque}
-                                tooltipText={"Load more toots but starting from the oldest toot in your feed and working backwards"}
+                                labelAndTooltip={config.timeline.loadTootsButtons.loadNewToots}
+                                onClick={triggerFeedUpdate}
                             />
 
-                           {' ● '}
+                           {LOAD_BUTTON_SEPARATOR}
 
                             <TooltippedLink
-                                label={"(load more algorithm data)"}
+                                labelAndTooltip={config.timeline.loadTootsButtons.loadOldToots}
+                                onClick={triggerHomeTimelineBackFill}
+                            />
+
+                           {LOAD_BUTTON_SEPARATOR}
+
+                            <TooltippedLink
+                                labelAndTooltip={config.timeline.loadTootsButtons.loadUserDataForAlgorithm}
                                 onClick={triggerMoarData}
-                                labelStyle={linkesque}
-                                tooltipText={"Use more of your Mastodon activity to refine the algorithm"}
                             />
                         </div>}
 
