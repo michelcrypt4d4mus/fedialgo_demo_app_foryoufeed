@@ -1,13 +1,16 @@
 /*
  * Reusable CSS.
  * CSS color keywords:https://www.w3.org/wiki/CSS/Properties/color/keywords
+ * Color blender tool: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
  */
 import { CSSProperties } from "react";
 
 import tinycolor from "tinycolor2";
 import tinygradient from "tinygradient";
 
-// Can't live in FilterCheckbox.tsx because of circular dependency
+import { DEFAULT_FONT_SIZE } from "fedialgo";
+
+// TODO: Can't live in FilterCheckbox.tsx because of circular dependency
 export enum SwitchType {
     HIGHLIGHTS_ONLY = "highlightsOnly",
     INVERT_SELECTION = "invertSelection",
@@ -17,14 +20,19 @@ export enum SwitchType {
 export type GradientEndpoints = [tinycolor.Instance, tinycolor.Instance];
 
 interface ThemeConfigBase {
+    // Colors
     readonly accordionOpenBlue: CSSProperties['color'];
+    readonly followedTagColor: CSSProperties['color'];
+    // Gradients
     readonly favouritedTagGradient: GradientEndpoints;
     readonly feedBackgrounGradient: GradientEndpoints;
-    readonly followedTagColor: CSSProperties['color'];
     readonly followedUserGradient: GradientEndpoints,
     readonly participatedTagGradient: GradientEndpoints;
-    readonly trendingObjFontSize: number;
     readonly trendingTagGradient: GradientEndpoints;
+    // Fonts
+    readonly defaultFontSize: number;
+    readonly retooterFontSize: number;
+    readonly trendingObjFontSize: number;
 };
 
 export interface ThemeConfig extends ThemeConfigBase {
@@ -37,16 +45,21 @@ export interface ThemeConfig extends ThemeConfigBase {
 }
 
 
-// Color blender: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
+// Color blender tool: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
 const THEME_BASE: ThemeConfigBase = {
-    accordionOpenBlue: "#7ac5cc", // Open accordion header color. NOTE THIS WILL NOT CHANGE THE CSS, it's at .accordion-button:not(.collapsed){
-    favouritedTagGradient: [tinycolor("#C4DABE"), tinycolor("#fdff83")],
-    feedBackgrounGradient: [tinycolor('#bcddfd'), tinycolor('#15202b')], // Gradient for the feed background
+    // Colors
+    accordionOpenBlue: "#7ac5cc",  // Open accordion header color. THIS DOESN'T CHANGE THE CSS which is at '.accordion-button:not(.collapsed)'
     followedTagColor: 'cyan',
-    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')],
-    participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],
-    trendingObjFontSize: 16,    // Font size for trending objects
-    trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')],
+    // Gradients
+    favouritedTagGradient: [tinycolor("#C4DABE"), tinycolor("#fdff83")],    // Gradient for favourited tags
+    feedBackgrounGradient: [tinycolor('#bcddfd'), tinycolor('#15202b')],    // Gradient for the feed background
+    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')],          // Gradient for followed users
+    participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Gradient for participated tags
+    trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')],      // Gradient for trending tags
+    // Fonts
+    defaultFontSize: DEFAULT_FONT_SIZE,            // Base emoji font size for account display names
+    retooterFontSize: DEFAULT_FONT_SIZE,           // Emoji font size for retooters
+    trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Font size for trending objects
 };
 
 // Fill in a few extra colors that are the last color in the gradients as a convenience
@@ -60,10 +73,12 @@ export const THEME: ThemeConfig = {
     trendingTagColor: THEME_BASE.trendingTagGradient.slice(-1)[0].toHexString(),
 };
 
+
+// Colors used for the 'recharts' package's animated charts - cycle through these for multiple lines/pies/etc.
+// "yellow" is too light to see well on white background. "navy" also sucks.
 export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "red",
     "orange",
-    // "yellow",
     "green",
     "blue",
     "purple",
@@ -74,7 +89,6 @@ export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "lime",
     "cyan",
     "bisque",
-    // "navy",
     "orangered",
     "skyblue",
     "rosybrown",
@@ -105,7 +119,6 @@ export const accordionBody: CSSProperties = {
 };
 
 export const accordionSubheader: CSSProperties = {
-    // marginBottom: "7px",
     marginLeft: "7px",
     padding: "7px",
 };
