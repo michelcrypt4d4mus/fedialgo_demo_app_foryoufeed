@@ -228,6 +228,10 @@ export const tooltipZIndex: CSSProperties = {
     zIndex: 2000,
 };
 
+export const whiteBackground: CSSProperties = {
+    backgroundColor: "white",
+};
+
 export const whiteFont: CSSProperties = {
     color: "white",
 };

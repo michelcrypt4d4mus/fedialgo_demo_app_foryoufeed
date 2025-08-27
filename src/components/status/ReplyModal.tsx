@@ -12,7 +12,7 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { blackBoldFont, blackFont, boldFont, linkCursor } from '../../helpers/style_helpers';
+import { blackBoldFont, blackFont, boldFont, linkCursor, whiteBackground } from '../../helpers/style_helpers';
 import { config } from '../../config';
 import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
 import { getLogger } from '../../helpers/log_helpers';
@@ -270,7 +270,7 @@ const dropzoneStyle: CSSProperties = {
 
 const formStyle: CSSProperties = {
     ...blackFont,
-    backgroundColor: "white",
+    ...whiteBackground,
     borderWidth: "5px",
     fontSize: 22,
     marginTop: "13px",
