@@ -286,10 +286,9 @@ const noTootsMsgStyle: CSSProperties = {
 
 const resetLinkStyle: CSSProperties = {
     ...boldFont,
+    ...linkesque,
     color: "red",
-    cursor: "pointer",
     fontSize: 14,
-    textDecoration: "underline",
 };
 
 const scrollStatusMsg: CSSProperties = {

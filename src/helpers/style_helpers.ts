@@ -155,8 +155,13 @@ export const headerFont: CSSProperties = {
     marginTop: "0px",
 };
 
-export const linkesque: CSSProperties = {
+export const linkCursor: CSSProperties = {
     cursor: "pointer",
+};
+
+/** Make normal text look like a link by underlining it and changing the cursor on hover **/
+export const linkesque: CSSProperties = {
+    ...linkCursor,
     textDecoration: "underline",
 };
 

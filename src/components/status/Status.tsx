@@ -36,6 +36,7 @@ import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { linkCursor } from "../../helpers/style_helpers";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
 const logger = getLogger("StatusComponent");
@@ -351,7 +352,7 @@ const baseIconStyle: CSSProperties = {
 };
 
 const openRawJson: CSSProperties = {
-    cursor: "pointer",
+    ...linkCursor,
     marginLeft: "10px"
 };
 
