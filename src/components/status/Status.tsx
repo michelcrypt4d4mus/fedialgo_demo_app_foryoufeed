@@ -365,9 +365,8 @@ const scoreJsonStyle: CSSProperties = {
     fontSize: 16,
 };
 
-// TODO: this probably doesn't do anything because the <a> tag overrides it
 const tagFontStyle: CSSProperties = {
-    ...rawTootJson,
+    fontSize: config.theme.footerHashtagsFontSize,
     color: "#636f7a",
 };
 

@@ -33,6 +33,7 @@ interface ThemeConfigBase {
     readonly accountBioFontSize?: number;
     readonly defaultFontSize: number;
     readonly errorFontSize: number;
+    readonly footerHashtagsFontSize: number;
     readonly retooterFontSize: number;
     readonly trendingObjFontSize: number;
 };
@@ -62,6 +63,7 @@ const THEME_BASE: ThemeConfigBase = {
     accountBioFontSize: 13,                        // Font size used in the account bio hover box
     defaultFontSize: DEFAULT_FONT_SIZE,            // Emoji font size for account display names
     errorFontSize: 18,                             // Font size for error messages
+    footerHashtagsFontSize: 13,                    // Font size for hashtags at bottom of a Toot, under any images
     retooterFontSize: DEFAULT_FONT_SIZE,           // Emoji font size for retooters' display names
     trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Emoji font size for trending objects
 };
