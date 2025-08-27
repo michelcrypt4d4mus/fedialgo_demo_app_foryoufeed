@@ -27,6 +27,7 @@ import {
     boldFont,
     linkesque,
     loadingMsgStyle,
+    mildlyRoundedCorners,
     rawErrorContainer,
     roundedCorners,
     TEXT_CENTER_P2,
@@ -307,7 +308,7 @@ const scrollStatusMsg: CSSProperties = {
 };
 
 const statusesColStyle: CSSProperties = {
-    ...roundedCorners,
+    ...mildlyRoundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
     height: 'auto',
 };
