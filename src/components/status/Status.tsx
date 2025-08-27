@@ -273,7 +273,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                             <span
                                                 className="verified-badge"
                                                 key={`${f.name}_${i}`}
-                                                style={{color: "lightblue", padding: "0px 5px"}}
+                                                style={verifiedBadgeStyle}
                                                 title={f.value.replace(/<[^>]*>?/gm, '')}
                                             >
                                                 <FontAwesomeIcon aria-hidden="true" icon={faCheckCircle} />
@@ -369,6 +369,11 @@ const scoreJsonStyle: CSSProperties = {
 const tagFontStyle: CSSProperties = {
     ...rawTootJson,
     color: "#636f7a",
+};
+
+const verifiedBadgeStyle: CSSProperties = {
+    color: "lightblue",
+    padding: "0px 5px",
 };
 
 const viewThreadStyle: CSSProperties = {
