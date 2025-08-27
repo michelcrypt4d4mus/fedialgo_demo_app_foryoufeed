@@ -127,6 +127,11 @@ export const accordionSubheader: CSSProperties = {
     padding: "7px",
 };
 
+export const boldFont: CSSProperties = {
+    fontWeight: "bold",
+};
+
+/** Black Tahoma / Geneva / sans-serif. */
 export const globalFont: CSSProperties = {
     color: "black",
     fontFamily: "Tahoma, Geneva, sans-serif",
@@ -173,9 +178,9 @@ export const roundedBox: CSSProperties = {
 };
 
 export const titleStyle: CSSProperties = {
+    ...boldFont,
     ...globalFont,
     fontSize: 17,
-    fontWeight: "bold",
     marginBottom: "5px",
     marginLeft: "5px",
     marginTop: "0px",

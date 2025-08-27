@@ -17,9 +17,9 @@ import FilterAccordionSection from "./algorithm/FilterAccordionSection";
 import MinTootsSlider, { computeDefaultValue } from "./helpers/MinTootsSlider";
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
+import { boldFont, globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
-import { globalFont, linkesque, roundedBox } from "../helpers/style_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
@@ -224,9 +224,9 @@ export default function TrendingSection(props: TrendingProps) {
 
 
 const boldTagLinkStyle: CSSProperties = {
+    ...boldFont,
     ...globalFont,
     fontSize: config.theme.trendingObjFontSize - 2,
-    fontWeight: "bold",
 };
 
 const colStyle: CSSProperties = {
@@ -249,11 +249,11 @@ const footerContainer: CSSProperties = {
 };
 
 const footerLinkText: CSSProperties = {
+    ...boldFont,
     ...linkesque,
     color: "#1b5b61",
     fontFamily: "monospace",
     fontSize: config.theme.trendingObjFontSize - 1,
-    fontWeight: "bold",
 };
 
 const infoTxtStyle: CSSProperties = {

@@ -10,11 +10,11 @@ import { isString } from "lodash";
 import { Logger } from "fedialgo";
 
 import BugReportLink from "./BugReportLink";
+import { boldFont, rawErrorContainer } from "../../helpers/style_helpers";
 import { config } from "../../config";
 import { extractText } from "../../helpers/react_helpers";
 import { getLogger } from "../../helpers/log_helpers";
 import { isEmptyStr } from "../../helpers/string_helpers";
-import { rawErrorContainer } from "../../helpers/style_helpers";
 
 const errorLogger = getLogger("ErrorHandler");
 
@@ -180,9 +180,9 @@ const errorContainer: CSSProperties = {
 };
 
 const errorHeadline: CSSProperties = {
+    ...boldFont,
     color: "black",
     fontSize: config.theme.errorFontSize,
-    fontWeight: "bold",
     marginBottom: "10px",
     width: "100%",
 };

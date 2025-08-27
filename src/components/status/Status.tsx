@@ -173,7 +173,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                 jsonViewProps={{
                     collapsed: 3,
                     name: "toot.scoreInfo",
-                    style: {fontSize: 16},
+                    style: scoreJsonStyle,
                 }}
                 setShow={setShowScoreModal}
                 show={showScoreModal}
@@ -353,6 +353,10 @@ const baseIconStyle: CSSProperties = {
 const openJSON: CSSProperties = {
     cursor: "pointer",
     marginLeft: "10px"
+};
+
+const scoreJsonStyle: CSSProperties = {
+    fontSize: 16,
 };
 
 // TODO: this probably doesn't do anything because the <a> tag overrides it

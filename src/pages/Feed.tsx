@@ -19,10 +19,10 @@ import TooltippedLink from '../components/helpers/TooltippedLink';
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
+import { boldFont, linkesque, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
-import { linkesque, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 
 const logger = getLogger("Feed");
@@ -290,10 +290,10 @@ const noTootsMsgStyle: CSSProperties = {
 };
 
 const resetLinkStyle: CSSProperties = {
+    ...boldFont,
     color: "red",
     cursor: "pointer",
     fontSize: 14,
-    fontWeight: "bold",
     textDecoration: "underline",
 };
 

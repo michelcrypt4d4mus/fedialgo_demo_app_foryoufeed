@@ -5,8 +5,8 @@ import Form from 'react-bootstrap/esm/Form';
 import { CSSProperties, ReactElement } from "react";
 
 import SubAccordion, { SubAccordionProps } from "../helpers/SubAccordion";
+import { boldFont, roundedBox } from "../../helpers/style_helpers";
 import { horizontalSpacer } from '../../helpers/react_helpers';
-import { roundedBox } from "../../helpers/style_helpers";
 
 interface FilterAccordionSectionProps extends SubAccordionProps {
     footerSwitches?: ReactElement[] | null,
@@ -54,11 +54,11 @@ const filterSwitchContainer: CSSProperties = {
 };
 
 const switchesContainer: CSSProperties = {
+    ...boldFont,
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
     fontSize: 16,
-    fontWeight: "bold",
     height: "25px",
     justifyContent: 'space-around',
     marginBottom: '3px',
