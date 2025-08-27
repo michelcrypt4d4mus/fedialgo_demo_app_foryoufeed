@@ -1,10 +1,9 @@
 /*
  * Render a Status, also known as a Toot.
  */
-import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef } from "react";
 
 import parse from 'html-react-parser';
-// import Toast from 'react-bootstrap/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Toot } from "fedialgo";
@@ -95,6 +94,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
     const hasAttachments = (toot.mediaAttachments?.length || 0) > 0;
     const isReblog = toot.reblogsBy.length > 0;
+    const authorNameHTML = toot.account.displayNameFullHTML(config.theme.defaultFontSize);
     const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
 
     // idx of the mediaAttachment to show in the media inspection modal (-1 means no modal)
@@ -123,7 +123,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     const rebloggerLink = (
                         <NewTabLink className="status__display-name muted" href={account.localServerUrl} key={i}>
                             <bdi><strong>
-                                {parse(account.displayNameWithEmojis())}
+                                {parse(account.displayNameWithEmojis(config.theme.retooterFontSize))}
                             </strong></bdi>
                         </NewTabLink>
                     );
@@ -178,7 +178,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                 setShow={setShowScoreModal}
                 show={showScoreModal}
                 subtitle={<ul>
-                    <li>{'Poster:'} <span style={{fontWeight: 500}}>{parse(toot.account.displayNameFullHTML())}</span></li>
+                    <li>{'Poster:'} <span style={{fontWeight: 500}}>{parse(authorNameHTML)}</span></li>
                     <li>{'Final Score:'} <code>{formatScore(toot.scoreInfo.score)}</code></li>
                 </ul>}
                 title="This Toot's Score"
@@ -265,7 +265,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                             href={toot.account.localServerUrl}
                                             style={{...accountLink, ...fontStyle}}
                                         >
-                                            {parse(toot.account.displayNameWithEmojis())}
+                                            {parse(toot.account.displayNameWithEmojis(config.theme.defaultFontSize))}
                                         </NewTabLink>
 
                                         {toot.account.fields.filter(f => f.verifiedAt).map((f, i) => (
@@ -294,7 +294,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {/* Text content of the toot */}
                     <div className={contentClass} style={fontStyle}>
                         <div className="status__content__text status__content__text--visible translate" lang={toot.language}>
-                            {parse(toot.contentNonTagsParagraphs())}
+                            {parse(toot.contentNonTagsParagraphs(config.theme.defaultFontSize))}
                         </div>
                     </div>
 
@@ -314,12 +314,11 @@ export default function StatusComponent(props: StatusComponentProps) {
                             <a
                                 onClick={() => {
                                     logger.debug(`setIsLoadingThread for toot: ${toot.description}`);
-                                    // TODO; just use global isLoading?
-                                    setIsLoadingThread(true);
+                                    setIsLoadingThread(true);  // TODO: maybe just use global isLoading?
 
                                     toot.getConversation()
-                                            .then(toots => setThread(toots))
-                                            .finally(() => setIsLoadingThread(false));
+                                        .then(toots => setThread(toots))
+                                        .finally(() => setIsLoadingThread(false));
                                 }}
                                 style={{...viewThreadStyle, cursor: isLoadingThread ? 'wait' : 'pointer'}}
                             >

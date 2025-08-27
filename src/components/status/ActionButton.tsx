@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { getLogger } from "../../helpers/log_helpers";
+import { config } from "../../config";
 import { confirm } from "../helpers/Confirmation";
 import { NETWORK_ERROR } from "../../helpers/string_helpers";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
@@ -234,7 +235,7 @@ export default function ActionButton(props: ActionButtonProps) {
         let note = error?.message.includes(NETWORK_ERROR) ? undefined : OAUTH_ERROR_MSG;
 
         if (isAccountAction(action)) {
-            msg += toot.account.displayNameFullHTML();
+            msg += toot.account.displayNameFullHTML(config.theme.defaultFontSize);
         } else {
             msg = msg + "toot";
         }
