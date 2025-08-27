@@ -2,7 +2,6 @@
  * React component to display polls, mostly ripped from poll.tsx in Mastodon repo
  */
 import React, { KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
-import { Button } from 'react-bootstrap';
 
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -59,6 +58,7 @@ export default function Poll(props: PollProps) {
         }
     };
 
+    /** Submit a vote. */
     const vote = async () => {
         const choiceIndexes = Object.keys(selected).filter((k) => selected[k]).map((n) => parseInt(n));
         logger.debug('Vote clicked, selected is:', selected, '\nchoiceIndexes is:', choiceIndexes);
@@ -86,6 +86,7 @@ export default function Poll(props: PollProps) {
         }
     }
 
+    /** Deal with any errors that arise when attempting to vote in a poll. */
     const handleError = (msg: string, errorObj?: Error) => {
         logAndSetFormattedError({
             args: { poll, hasVoted, selected, choices: Object.keys(selected).filter((k) => selected[k]) },
@@ -124,7 +125,6 @@ export default function Poll(props: PollProps) {
 
                 {!disabled &&
                     <>
-                        {/* TODO: should this be a Button, not a button? */}
                         <button className='poll__link' onClick={() => {
                             logger.debug('See results clicked, current selected:', selected);
                             setRevealed(!revealed);

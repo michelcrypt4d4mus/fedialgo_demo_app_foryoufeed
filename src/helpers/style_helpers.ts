@@ -45,7 +45,7 @@ export interface ThemeConfig extends ThemeConfigBase {
     readonly trendingTagColor: CSSProperties["color"];
     readonly participatedTagColor: CSSProperties["color"];
     readonly followedUserColor: CSSProperties["color"];
-}
+};
 
 
 // Color blender tool: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
@@ -93,7 +93,7 @@ export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "grey",
     "fuchsia",
     "lime",
-    "cyan",
+    THEME.followedTagColor,  // "cyan"
     "bisque",
     "orangered",
     "skyblue",
@@ -161,6 +161,11 @@ export const blackFont: CSSProperties = {
 export const blackBoldFont: CSSProperties = {
     ...blackFont,
     ...boldFont,
+};
+
+export const flexSpaceAround: CSSProperties = {
+    display: "flex",
+    justifyContent: 'space-around',
 };
 
 /** Black Tahoma / Geneva / sans-serif. */

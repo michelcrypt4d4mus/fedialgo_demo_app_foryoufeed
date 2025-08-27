@@ -12,7 +12,6 @@ import { useDropzone } from 'react-dropzone'
 
 import MultimediaNode from './MultimediaNode';
 import StatusComponent from './Status';
-import { blackBoldFont, blackFont, boldFont, linkCursor, roundedCorners, mildlyRoundedCorners, whiteBackground } from '../../helpers/style_helpers';
 import { config } from '../../config';
 import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
 import { getLogger } from '../../helpers/log_helpers';
@@ -20,6 +19,16 @@ import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
+import {
+    blackBoldFont,
+    blackFont,
+    boldFont,
+    flexSpaceAround,
+    linkCursor,
+    roundedCorners,
+    mildlyRoundedCorners,
+    whiteBackground,
+} from '../../helpers/style_helpers';
 
 const replyLogger = getLogger('ReplyModal');
 
@@ -225,7 +234,7 @@ export default function ReplyModal(props: ReplyModalProps) {
                         </p>
                     </div>
 
-                    <div style={buttonContainer}>
+                    <div style={flexSpaceAround}>
                         <Button
                             className="btn-lg"
                             disabled={!isSubmitEnabled}
@@ -248,11 +257,6 @@ export default function ReplyModal(props: ReplyModalProps) {
 
 const buttonStyle: CSSProperties = {
     marginTop: "20px",
-};
-
-const buttonContainer: CSSProperties = {
-    display: "flex",
-    justifyContent: "space-around",
 };
 
 const dropzoneStyle: CSSProperties = {

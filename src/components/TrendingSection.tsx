@@ -17,7 +17,7 @@ import FilterAccordionSection from "./algorithm/FilterAccordionSection";
 import MinTootsSlider, { computeDefaultValue } from "./helpers/MinTootsSlider";
 import NewTabLink from "./helpers/NewTabLink";
 import SubAccordion from "./helpers/SubAccordion";
-import { boldFont, globalFont, linkesque, monoFont, roundedBox } from "../helpers/style_helpers";
+import { boldFont, flexSpaceAround, globalFont, linkesque, monoFont, roundedBox } from "../helpers/style_helpers";
 import { config } from "../config";
 import { getLogger } from "../helpers/log_helpers";
 import { gridify, verticalSpacer } from "../helpers/react_helpers";
@@ -242,8 +242,7 @@ const descriptionStyle: CSSProperties = {
 };
 
 const footerContainer: CSSProperties = {
-    display: "flex",
-    justifyContent: 'space-around',
+    ...flexSpaceAround,
     marginBottom: "5px",
     width: "100%"
 };

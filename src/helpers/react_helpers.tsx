@@ -101,13 +101,13 @@ export function gridify(elements: ReactElement[], numCols?: number, colStyle?: C
 };
 
 
-// create a horizontal spacer of a given width
+/** Create a horizontal spacer of a given width. **/
 export function horizontalSpacer(width: number, key?: string): ReactElement {
-    // return <span style={{display: "inline-block", width: `${width}px`}} />;
     return <div key={key || ''} style={{width: `${width}px`}} />
 };
 
 
+/** Create a vertical spacer of a given height. **/
 export function verticalSpacer(height: number, key?: string): ReactElement {
     return <div key={key || ''} style={{height: `${height}px`, width: "100%"}} />
 };

@@ -8,7 +8,7 @@ import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 import { type BooleanFilterOption } from "fedialgo";
 
-import { blackFont, boldFont, linkesque, roundedCorners, tooltipZIndex } from "../../../helpers/style_helpers";
+import { blackFont, boldFont, linkesque, roundedCorners, THEME, tooltipZIndex } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
 import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { followUri } from "../../../helpers/react_helpers";
@@ -95,5 +95,5 @@ const hashtagLink: CSSProperties = {
 
 const highlightedCheckboxStyle: CSSProperties = {
     ...roundedCorners,
-    backgroundColor: "cyan",
+    backgroundColor: THEME.followedTagColor,
 };
