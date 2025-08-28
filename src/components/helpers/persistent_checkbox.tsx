@@ -44,7 +44,7 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
         <Form.Check
             checked={value}
             className={className || ''}
-            label={labelAndTooltip.label.replace(/ /g, '')}
+            label={labelAndTooltip.label}
             onChange={(e) => {
                 setValue(e.target.checked);
             }}

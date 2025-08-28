@@ -360,8 +360,8 @@ class Config implements ReadonlyConfig {
                 tooltipText: "Show the full preview card for embedded links.",
             },
             stickToTop: {
-                label: `Stick Control Panel To Top`,
-                tooltipText: `Keep control panel on screen while scrolling.`,
+                label: `Stick To Top`,
+                tooltipText: `Keep tbe Fedialgo control panel on screen while scrolling.`,
             }
         },
 
