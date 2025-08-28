@@ -21,8 +21,8 @@ export type GradientEndpoints = [tinycolor.Instance, tinycolor.Instance];
 
 interface ThemeConfigBase {
     // Colors
-    readonly accordionOpenBlue: CSSProperties['color'];
-    readonly followedTagColor: CSSProperties['color'];
+    readonly accordionOpenBlue: CSSProperties["color"];
+    readonly followedTagColor: CSSProperties["color"];
     // Gradients
     readonly favouritedTagGradient: GradientEndpoints;
     readonly feedBackgrounGradient: GradientEndpoints;
@@ -52,13 +52,13 @@ export interface ThemeConfig extends ThemeConfigBase {
 const THEME_BASE: ThemeConfigBase = {
     // Colors
     accordionOpenBlue: "#7ac5cc",  // Open accordion header color. THIS DOESN'T CHANGE THE CSS which is at '.accordion-button:not(.collapsed)'
-    followedTagColor: 'cyan',
+    followedTagColor: "cyan",
     // Gradients
     favouritedTagGradient: [tinycolor("#C4DABE"), tinycolor("#fdff83")],    // Gradient for favourited tags
-    feedBackgrounGradient: [tinycolor('#bcddfd'), tinycolor('#15202b')],    // Gradient for the feed background
-    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor('cyan')],          // Gradient for followed users
-    participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Gradient for participated tags
-    trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')],      // Gradient for trending tags
+    feedBackgrounGradient: [tinycolor("#bcddfd"), tinycolor("#15202b")],    // Gradient for the feed background
+    followedUserGradient: [tinycolor("#BCD8D8"), tinycolor("cyan")],          // Gradient for followed users
+    participatedTagGradient: [tinycolor("#d8deb9"), tinycolor("#92a14a")],  // Gradient for participated tags
+    trendingTagGradient: [tinycolor("#C89898"), tinycolor("#B84040")],      // Gradient for trending tags
     // Fonts
     accountBioFontSize: 13,                        // Font size used in the account bio hover box
     defaultFontSize: DEFAULT_FONT_SIZE,            // Emoji font size for account display names
@@ -119,9 +119,9 @@ export function buildGradient(
 /** If isWaiting is true, cursor is 'wait', otherwise 'defaultCursor' arg's value if provided or 'default' if not. */
 export function waitOrDefaultCursor(
     isWaiting: boolean,
-    defaultCursor: CSSProperties['cursor'] = 'default'
+    defaultCursor: CSSProperties["cursor"] = "default"
 ): CSSProperties {
-    return { cursor: isWaiting ? 'wait' : defaultCursor };
+    return { cursor: isWaiting ? "wait" : defaultCursor };
 };
 
 
@@ -138,7 +138,7 @@ export const TEXT_CENTER_P2 = `${TEXT_CENTER} p-2`;
 ///////////////////////////////
 
 export const accordionBody: CSSProperties = {
-    backgroundColor: '#b2bfd4',
+    backgroundColor: "#b2bfd4",
 };
 
 export const accordionSubheader: CSSProperties = {
@@ -164,8 +164,8 @@ export const blackBoldFont: CSSProperties = {
 };
 
 export const centerAlignedFlex: CSSProperties = {
-    alignItems: 'center',
-    display: 'flex',
+    alignItems: "center",
+    display: "flex",
 };
 
 export const centerAlignedFlexCol: CSSProperties = {
@@ -180,7 +180,7 @@ export const centerAlignedFlexRow: CSSProperties = {
 
 export const flexSpaceAround: CSSProperties = {
     display: "flex",
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
 };
 
 /** Black Tahoma / Geneva / sans-serif. */
