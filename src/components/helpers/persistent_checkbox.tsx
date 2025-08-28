@@ -48,6 +48,7 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
             onChange={(e) => {
                 setValue(e.target.checked);
             }}
+            style={{fontSize: 14}}
             type="checkbox"
         />
     );
