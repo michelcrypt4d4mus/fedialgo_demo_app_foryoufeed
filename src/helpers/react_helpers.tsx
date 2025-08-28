@@ -130,3 +130,18 @@ function nodeToString(child?: ReactNode): string | null {
 const hasChildren = (elem: ReactNode,): elem is ReactElement<{ children: ReactNode | ReactNode[] }> => (
     isValidElement<{ children?: ReactNode[] }>(elem) && Boolean(elem.props.children)
 );
+
+
+///////////////////////
+//   Style Helpers   //
+///////////////////////
+
+/**
+ * Returns a red or green <span> for a given boolean value.
+ * @param {boolean} value The boolean value to represent.
+ * @param {boolean} includeString Whether to include the string "true" or "false" with the icon.
+ */
+export function booleanIcon(value: boolean | null | undefined, includeString: boolean = true): ReactElement {
+    const style: CSSProperties = {color: value ? "green" : "red"};
+    return <span style={style}>{includeString ? `${value.toString()} ` : ''}{value ? '✔' : '✘'}</span>;
+};
