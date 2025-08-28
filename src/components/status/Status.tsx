@@ -97,13 +97,14 @@ export default function StatusComponent(props: StatusComponentProps) {
     const isReblog = toot.reblogsBy.length > 0;
     const authorNameHTML = toot.account.displayNameFullHTML(config.theme.defaultFontSize);
     const ariaLabel = `${toot.account.displayName}, ${toot.account.note} ${toot.account.webfingerURI}`;
+    const style = toot.isDM ? {backgroundColor: config.timeline.dmBackgroundColor} : {};
+    // Ref for detecting if the status is on screen
+    const statusRef = useRef<HTMLDivElement>(null);
+    const isOnScreen = useOnScreen(statusRef);
 
-    // idx of the mediaAttachment to show in the media inspection modal (-1 means no modal)
     const [showReplyModal, setShowReplyModal] = React.useState<boolean>(false);
     const [showScoreModal, setShowScoreModal] = React.useState<boolean>(false);
     const [showTootModal, setShowTootModal] = React.useState<boolean>(false);
-    const statusRef = useRef<HTMLDivElement>(null);
-    const isOnScreen = useOnScreen(statusRef);
 
     // useEffect to handle things we want to do when the toot makes its first appearnace on screen
     useEffect(() => {
@@ -167,7 +168,7 @@ export default function StatusComponent(props: StatusComponentProps) {
     };
 
     return (
-        <div>
+        <div style={style}>
             <JsonModal
                 infoTxt="Scoring categories where the unweighted score is zero are not shown."
                 json={toot.scoreInfo ? formatScores(toot.scoreInfo) as object : {}}
