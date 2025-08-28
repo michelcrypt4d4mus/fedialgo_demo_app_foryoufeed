@@ -19,6 +19,16 @@ import { ModalProps } from '../../types';
 import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useError } from '../helpers/ErrorHandler';
+import {
+    blackBoldFont,
+    blackFont,
+    boldFont,
+    flexSpaceAround,
+    linkCursor,
+    roundedCorners,
+    mildlyRoundedCorners,
+    whiteBackground,
+} from '../../helpers/style_helpers';
 
 const replyLogger = getLogger('ReplyModal');
 
@@ -187,9 +197,9 @@ export default function ReplyModal(props: ReplyModalProps) {
                 <p>{toot ? `Reply to ${toot.account.description}` : `Create New Toot`}</p>
             </Modal.Header>
 
-            <Modal.Body style={{color: "black", paddingLeft: "25px", paddingRight: "25px"}}>
+            <Modal.Body style={modalBody}>
                 {toot &&
-                    <div style={{backgroundColor: config.theme.feedBackgroundColor, borderRadius: "3px"}}>
+                    <div style={repyingToTootContainer}>
                         <StatusComponent showLinkPreviews={false} status={toot}/>
                     </div>}
 
@@ -217,14 +227,14 @@ export default function ReplyModal(props: ReplyModalProps) {
                     >
                         <input {...getInputProps()} />
 
-                        <p style={{fontSize: "16px", fontWeight: "bold"}}>
+                        <p>
                             {isDragActive
                                 ? "Drag files here"
                                 : "Drag 'n' drop files on this colored area or click to select files to attach"}
                         </p>
                     </div>
 
-                    <div style={buttonContainer}>
+                    <div style={flexSpaceAround}>
                         <Button
                             className="btn-lg"
                             disabled={!isSubmitEnabled}
@@ -249,17 +259,12 @@ const buttonStyle: CSSProperties = {
     marginTop: "20px",
 };
 
-const buttonContainer: CSSProperties = {
-    display: "flex",
-    justifyContent: "space-around",
-};
-
 const dropzoneStyle: CSSProperties = {
+    ...boldFont,
+    ...linkCursor,
+    ...roundedCorners,
     backgroundColor: "grey",
-    borderRadius: "15px",
-    cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: "bold",
+    fontSize: 16,
     height: "60px",
     marginTop: "12px",
     padding: "20px",
@@ -268,15 +273,25 @@ const dropzoneStyle: CSSProperties = {
 };
 
 const formStyle: CSSProperties = {
-    backgroundColor: "white",
+    ...blackFont,
+    ...whiteBackground,
     borderWidth: "5px",
-    color: "black",
-    fontSize: "22px",
+    fontSize: 22,
     marginTop: "13px",
 };
 
 const headerStyle: CSSProperties = {
+    ...blackBoldFont,
     backgroundColor: config.theme.feedBackgroundColorLite,
-    color: "black",
-    fontWeight: "bold",
+};
+
+const modalBody: CSSProperties = {
+    ...blackFont,
+    paddingLeft: "25px",
+    paddingRight: "25px",
+};
+
+const repyingToTootContainer: CSSProperties = {
+    ...mildlyRoundedCorners,
+    backgroundColor: config.theme.feedBackgroundColor,
 };

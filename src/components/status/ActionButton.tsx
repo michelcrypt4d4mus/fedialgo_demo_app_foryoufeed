@@ -274,7 +274,7 @@ const accountActionButtonStyle: CSSProperties = {
 };
 
 const tootActionButtonStyle: CSSProperties = {
-    fontSize: "18px",
+    fontSize: 18,
     height: "23.142857px",
     lineHeight: "18px",
     width: "auto",

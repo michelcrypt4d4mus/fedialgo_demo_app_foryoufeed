@@ -22,11 +22,8 @@ export default function PreviewCard(props: PreviewCardProps): React.ReactElement
     const { card, showLinkPreviews } = props;
 
     const headline = <>
-        <span style={providerName}>
-            [{card.providerName || extractDomain(card.url)}]
-        </span> <span style={headlineStyle}>
-            {parse(card.title)}
-        </span>
+        <span style={providerName}>[{card.providerName || extractDomain(card.url)}]</span>{' '}
+        <span>{parse(card.title)}</span>
     </>;
 
     // If link previews are disabled just return a link with the headline
@@ -76,11 +73,6 @@ const cardImage: CSSProperties = {
 
 const providerName: CSSProperties = {
     color: "#4b427a",
-};
-
-const headlineStyle: CSSProperties = {
-    // fontSize: "16px",
-    // fontWeight: "bold",
 };
 
 const linkOnlyStyle: CSSProperties = {

@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
 
 import { getLogger } from '../../helpers/log_helpers';
+import { blackFont } from '../../helpers/style_helpers';
 
 const logger = getLogger("AttachmentsModal");
 
@@ -71,7 +72,7 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
             size={'lg'}
         >
             <Modal.Header closeButton>
-                <Modal.Title style={{color: "black"}}>
+                <Modal.Title style={blackFont}>
                     {toot.contentShortened()}
                 </Modal.Title>
             </Modal.Header>

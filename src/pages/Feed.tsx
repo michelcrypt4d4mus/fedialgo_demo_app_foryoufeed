@@ -22,9 +22,21 @@ import WeightSetter from "../components/algorithm/WeightSetter";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
-import { linkesque, rawErrorContainer, tooltipZIndex } from "../helpers/style_helpers";
 import { useAlgorithm } from "../hooks/useAlgorithm";
+import {
+    boldFont,
+    linkesque,
+    loadingMsgStyle,
+    mildlyRoundedCorners,
+    rawErrorContainer,
+    roundedCorners,
+    TEXT_CENTER_P2,
+    tooltipZIndex,
+    waitOrDefaultCursor,
+    whiteFont
+} from "../helpers/style_helpers";
 
+const LOAD_BUTTON_SEPARATOR = ' ● ';
 const logger = getLogger("Feed");
 
 
@@ -122,7 +134,7 @@ export default function Feed() {
         <Container fluid style={{height: "auto"}}>
             <ReplyModal setShow={setShowNewTootModal} show={showNewTootModal}/>
 
-            <Row style={{cursor: isLoadingThread ? 'wait' : 'default'}}>
+            <Row style={waitOrDefaultCursor(isLoadingThread)}>
                 {/* Tooltip options: https://react-tooltip.com/docs/options */}
                 <Tooltip
                     border={"solid"}
@@ -184,7 +196,7 @@ export default function Feed() {
 
                         <div className="d-grid gap-2" style={newTootButton}>
                             <Button
-                                className='p-2 text-center'
+                                className={TEXT_CENTER_P2}
                                 onClick={() => setShowNewTootModal(true)}
                                 variant="outline-secondary"
                             >
@@ -194,7 +206,7 @@ export default function Feed() {
 
                         {algorithm?.apiErrorMsgs && (algorithm.apiErrorMsgs.length > 0) &&
                             <div className="d-grid gap-2" style={rawErrorContainer}>
-                                <p style={{color: "white"}}>Non-fatal errors encountered while loading data:</p>
+                                <p style={whiteFont}>Non-fatal errors encountered while loading data:</p>
 
                                 <ul>
                                     {algorithm.apiErrorMsgs.map((msg, i) => (
@@ -211,26 +223,23 @@ export default function Feed() {
                 <Col xs={12} md={6}>
                     {algorithm && !isLoading &&
                         <div style={loadNewTootsText}>
-                            <a onClick={triggerFeedUpdate} style={linkesque}>
-                                (load new toots)
-                            </a>
-
-                           {' ● '}
-
                             <TooltippedLink
-                                label={"(load old toots)"}
-                                onClick={triggerHomeTimelineBackFill}
-                                labelStyle={linkesque}
-                                tooltipText={"Load more toots but starting from the oldest toot in your feed and working backwards"}
+                                labelAndTooltip={config.timeline.loadTootsButtonLabels.loadNewToots}
+                                onClick={triggerFeedUpdate}
                             />
 
-                           {' ● '}
+                           {LOAD_BUTTON_SEPARATOR}
 
                             <TooltippedLink
-                                label={"(load more algorithm data)"}
+                                labelAndTooltip={config.timeline.loadTootsButtonLabels.loadOldToots}
+                                onClick={triggerHomeTimelineBackFill}
+                            />
+
+                           {LOAD_BUTTON_SEPARATOR}
+
+                            <TooltippedLink
+                                labelAndTooltip={config.timeline.loadTootsButtonLabels.loadUserDataForAlgorithm}
                                 onClick={triggerMoarData}
-                                labelStyle={linkesque}
-                                tooltipText={"Use more of your Mastodon activity to refine the algorithm"}
                             />
                         </div>}
 
@@ -248,12 +257,10 @@ export default function Feed() {
                         {timeline.length == 0 && (
                             isLoading
                                 ? <LoadingSpinner isFullPage={true} message={config.timeline.defaultLoadingMsg} />
-                                : <div style={{...fullPageCenteredSpinner, fontSize: "20px"}}>
-                                      <p>{config.timeline.noTootsMsg}</p>
-                                  </div>
+                                : <div style={noTootsMsgStyle}><p>{config.timeline.noTootsMsg}</p></div>
                             )}
 
-                        <div ref={bottomRef} style={{marginTop: "10px"}} />
+                        <div ref={bottomRef} style={bottomRefSpacer} />
                     </div>
                 </Col>
             </Row>
@@ -267,31 +274,32 @@ const accountTooltipStyle: CSSProperties = {
     width: "500px",
 };
 
-const errorItem: CSSProperties = {
-    color: "#9e0d12",
+const bottomRefSpacer: CSSProperties = {
     marginTop: "10px",
 };
 
-// TODO: move to LoadingSpinner?
-export const loadingMsgStyle: CSSProperties = {
-    fontSize: "16px",
-    height: "auto",
-    marginTop: "6px",
+const errorItem: CSSProperties = {
+    ...bottomRefSpacer,
+    color: "#9e0d12",
 };
 
 const loadNewTootsText: CSSProperties = {
     ...loadingMsgStyle,
-    fontSize: "13px",
+    fontSize: 13,
     marginTop: "8px",
     textAlign: "center",
 };
 
+const noTootsMsgStyle: CSSProperties = {
+    ...fullPageCenteredSpinner,
+    fontSize: 20,
+};
+
 const resetLinkStyle: CSSProperties = {
+    ...boldFont,
+    ...linkesque,
     color: "red",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "bold",
-    textDecoration: "underline",
+    fontSize: 14,
 };
 
 const scrollStatusMsg: CSSProperties = {
@@ -300,8 +308,8 @@ const scrollStatusMsg: CSSProperties = {
 };
 
 const statusesColStyle: CSSProperties = {
+    ...mildlyRoundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
-    borderRadius: '10px',
     height: 'auto',
 };
 
@@ -314,7 +322,6 @@ const stickySwitchContainer: CSSProperties = {
 };
 
 const newTootButton: CSSProperties = {
-    // justifyContent: "space-between",
     marginTop: "35px",
     marginLeft: "200px",
     marginRight: "200px",

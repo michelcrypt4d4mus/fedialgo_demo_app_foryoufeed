@@ -6,7 +6,7 @@ import { mastodon } from 'masto';
 
 import LoadingSpinner from '../helpers/LoadingSpinner';
 import { getLogger } from '../../helpers/log_helpers';
-import { loadingMsgStyle } from '../../pages/Feed';
+import { loadingMsgStyle } from '../../helpers/style_helpers';
 import { titleStyle } from "../../helpers/style_helpers";
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 import { useAuthContext } from '../../hooks/useAuth';

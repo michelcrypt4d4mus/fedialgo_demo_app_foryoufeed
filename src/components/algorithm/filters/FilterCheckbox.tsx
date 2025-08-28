@@ -8,11 +8,10 @@ import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 import { type BooleanFilterOption } from "fedialgo";
 
+import { blackFont, boldFont, linkesque, roundedCorners, THEME, tooltipZIndex } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
 import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { followUri } from "../../../helpers/react_helpers";
-import { getLogger } from "../../../helpers/log_helpers";
-import { linkesque, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const HASHTAG_ANCHOR = "user-hashtag-anchor";
@@ -41,8 +40,8 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
     const { algorithm } = useAlgorithm();
 
     const labelExtra = option?.numToots?.toLocaleString();
-    const labelStyle: CSSProperties = {...defaultLabelStyle};
-    let style: CSSProperties = {color: "black"};
+    const labelStyle: CSSProperties = {...boldFont};
+    let style: CSSProperties = {...blackFont};
     let tooltipAnchor = tooltip?.anchor || HASHTAG_ANCHOR;
 
     if (tooltip?.highlight?.color) {
@@ -90,15 +89,11 @@ export default function FilterCheckbox(props: FilterCheckboxProps) {
 
 
 const hashtagLink: CSSProperties = {
+    ...blackFont,
     ...linkesque,
-    color: "black",
 };
 
 const highlightedCheckboxStyle: CSSProperties = {
-    backgroundColor: "cyan",
-    borderRadius: "12px"
-};
-
-const defaultLabelStyle: CSSProperties = {
-    fontWeight: "bold",
+    ...roundedCorners,
+    backgroundColor: THEME.followedTagColor,
 };

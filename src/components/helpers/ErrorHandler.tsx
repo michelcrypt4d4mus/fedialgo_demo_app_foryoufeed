@@ -10,12 +10,12 @@ import { isString } from "lodash";
 import { Logger } from "fedialgo";
 
 import BugReportLink from "./BugReportLink";
+import { blackBackground, blackBoldFont, blackFont, rawErrorContainer, whiteFont } from "../../helpers/style_helpers";
+import { config } from "../../config";
 import { extractText } from "../../helpers/react_helpers";
 import { getLogger } from "../../helpers/log_helpers";
 import { isEmptyStr } from "../../helpers/string_helpers";
-import { rawErrorContainer } from "../../helpers/style_helpers";
 
-const ERROR_FONT_SIZE = 18;
 const errorLogger = getLogger("ErrorHandler");
 
 type ErrorLogProps = {
@@ -55,18 +55,18 @@ export default function ErrorHandler(props: PropsWithChildren) {
         errorLogger.error(`ErrorHandler: errorPage() called with error: ${error}`);
 
         return (
-            <div style={{backgroundColor: "black", color: "white", fontSize: ERROR_FONT_SIZE, padding: "100px"}}>
+            <div style={errorContainer}>
                 <h1>Something went wrong!</h1>
 
                 <p style={{...rawErrorInPopup, margin: "50px"}}>
                     Error: {error.message}
                 </p>
 
-                <p style={{...errorParagraph}}>
+                <p>
                     <BugReportLink />
                 </p>
 
-                <div style={{marginTop: "50px"}}>
+                <div style={tryAgainContainer}>
                     <button
                         className="btn btn-primary"
                         onClick={() => {
@@ -135,7 +135,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
                 dialogClassName="modal-lg"
                 onHide={resetErrors}
                 show={!!errorMsg || !!errorObj}
-                style={{color: "black"}}
+                style={blackFont}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Error</Modal.Title>
@@ -171,6 +171,21 @@ export default function ErrorHandler(props: PropsWithChildren) {
     );
 };
 
+
+const errorContainer: CSSProperties = {
+    ...blackBackground,
+    ...whiteFont,
+    fontSize: config.theme.errorFontSize,
+    padding: "100px"
+};
+
+const errorHeadline: CSSProperties = {
+    ...blackBoldFont,
+    fontSize: config.theme.errorFontSize,
+    marginBottom: "10px",
+    width: "100%",
+};
+
 const errorModalBody: CSSProperties = {
     backgroundColor: "pink",
     display: "flex",
@@ -182,24 +197,17 @@ const errorModalBody: CSSProperties = {
 };
 
 const errorNoteStyle: CSSProperties = {
-    color: "black",
-    fontSize: ERROR_FONT_SIZE - 4,
-};
-
-const errorParagraph: CSSProperties = {
-};
-
-const errorHeadline: CSSProperties = {
-    color: "black",
-    fontSize: ERROR_FONT_SIZE,
-    fontWeight: "bold",
-    marginBottom: "10px",
-    width: "100%",
+    ...blackFont,
+    fontSize: config.theme.errorFontSize - 4,
 };
 
 const rawErrorInPopup: CSSProperties = {
-    backgroundColor: "black",
+    ...blackBackground,
     color: "red",
-    fontSize: ERROR_FONT_SIZE + 1,
+    fontSize: config.theme.errorFontSize + 1,
     width: "100%",
+};
+
+const tryAgainContainer: CSSProperties = {
+    marginTop: "50px",
 };

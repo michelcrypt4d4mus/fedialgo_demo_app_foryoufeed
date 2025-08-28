@@ -7,7 +7,7 @@ import { Modal } from 'react-bootstrap';
 
 import ReactJsonView from '@microlink/react-json-view';
 
-import { globalFont } from '../../helpers/style_helpers';
+import { blackFont, globalFont, roundedCorners } from '../../helpers/style_helpers';
 import { ModalProps } from '../../types';
 
 type ReactJsonViewProps = typeof ReactJsonView.defaultProps;
@@ -44,13 +44,13 @@ export default function JsonModal(props: JsonModalProps) {
             onHide={() => setShow(false)}
             show={show}
         >
-            <Modal.Header closeButton style={textStyle}>
+            <Modal.Header closeButton style={blackFont}>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body >
                 {(subtitle || infoTxt) &&
-                    <div style={{...textStyle, marginBottom: "5px"}}>
+                    <div style={{...blackFont, marginBottom: "5px"}}>
                         {subtitle && <div style={headerFont}>{subtitle}</div>}
                         {infoTxt && <div>{infoTxt}</div>}
                     </div>}
@@ -65,19 +65,14 @@ export default function JsonModal(props: JsonModalProps) {
 };
 
 
-const textStyle: CSSProperties = {
-    color: "black",
-};
-
 const headerFont: CSSProperties = {
     ...globalFont,
-    ...textStyle,
-    fontSize: "14px",
+    fontSize: 14,
     fontWeight: 700,
     marginBottom: "5px",
 };
 
 const jsonViewStyle: CSSProperties = {
-    borderRadius: "15px",
+    ...roundedCorners,
     padding: "20px",
 };

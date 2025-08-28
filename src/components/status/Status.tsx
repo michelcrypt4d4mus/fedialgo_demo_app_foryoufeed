@@ -36,6 +36,7 @@ import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { timestampString } from '../../helpers/string_helpers';
 import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { linkCursor, waitOrDefaultCursor, whiteFont } from "../../helpers/style_helpers";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
 const logger = getLogger("StatusComponent");
@@ -173,7 +174,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                 jsonViewProps={{
                     collapsed: 3,
                     name: "toot.scoreInfo",
-                    style: {fontSize: 16},
+                    style: scoreJsonStyle,
                 }}
                 setShow={setShowScoreModal}
                 show={showScoreModal}
@@ -192,7 +193,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     displayArrayKey: true,
                     indentWidth: 8,
                     name: "toot",
-                    style: {fontSize: 13},
+                    style: rawTootJson,
                     theme: "brewer",
                 }}
                 setShow={setShowTootModal}
@@ -239,7 +240,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                 </time>
                             </NewTabLink>
 
-                            <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={openJSON}>
+                            <span onClick={(e) => {e.preventDefault(); setShowTootModal(true)}} style={openRawJson}>
                                 {infoIcon(InfoIconType.ShowToot)}
                             </span>
                         </div>
@@ -249,7 +250,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                         <div title={toot.account.webfingerURI} className="status__display-name">
                             <a
                                 data-tooltip-id={TOOLTIP_ACCOUNT_ANCHOR}
-                                data-tooltip-html={toot.account.noteWithAccountInfo}
+                                data-tooltip-html={toot.account.noteWithAccountInfo(config.theme.accountBioFontSize)}
                             >
                                 <div className="status__avatar">
                                     <div className="account__avatar" style={{height: "46px", width: "46px"}}>
@@ -272,7 +273,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                             <span
                                                 className="verified-badge"
                                                 key={`${f.name}_${i}`}
-                                                style={{color: "lightblue", padding: "0px 5px"}}
+                                                style={verifiedBadgeStyle}
                                                 title={f.value.replace(/<[^>]*>?/gm, '')}
                                             >
                                                 <FontAwesomeIcon aria-hidden="true" icon={faCheckCircle} />
@@ -320,7 +321,8 @@ export default function StatusComponent(props: StatusComponentProps) {
                                         .then(toots => setThread(toots))
                                         .finally(() => setIsLoadingThread(false));
                                 }}
-                                style={{...viewThreadStyle, cursor: isLoadingThread ? 'wait' : 'pointer'}}
+
+                                style={{...viewThreadStyle, ...waitOrDefaultCursor(isLoadingThread, 'pointer')}}
                             >
                                 ⇇ View the Thread
                             </a>
@@ -342,7 +344,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
 
 const accountLink: CSSProperties = {
-    color: "white",
+    ...whiteFont,
     textDecoration: "none"
 };
 
@@ -350,18 +352,30 @@ const baseIconStyle: CSSProperties = {
     marginRight: "3px",
 };
 
-const openJSON: CSSProperties = {
-    cursor: "pointer",
+const openRawJson: CSSProperties = {
+    ...linkCursor,
     marginLeft: "10px"
 };
 
-// TODO: this probably doesn't do anything because the <a> tag overrides it
-const tagFontStyle: CSSProperties = {
-    color: "#636f7a",
+const rawTootJson: CSSProperties = {
     fontSize: 13,
+};
+
+const scoreJsonStyle: CSSProperties = {
+    fontSize: 16,
+};
+
+const tagFontStyle: CSSProperties = {
+    fontSize: config.theme.footerHashtagsFontSize,
+    color: "#636f7a",
+};
+
+const verifiedBadgeStyle: CSSProperties = {
+    color: "lightblue",
+    padding: "0px 5px",
 };
 
 const viewThreadStyle: CSSProperties = {
     color: "grey",
-    fontSize: "11px",
+    fontSize: 11,
 };

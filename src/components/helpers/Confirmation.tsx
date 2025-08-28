@@ -5,6 +5,8 @@ import Button from 'react-bootstrap/Button'
 
 import { ConfirmDialog, confirmable, createConfirmation } from 'react-confirm';
 
+import { blackFont } from '../../helpers/style_helpers';
+
 interface ConfirmationProps {
     okLabel?: string,
     cancelLabel?: string,
@@ -35,7 +37,7 @@ const Confirmation = (props: ConfirmationProps) => {
                 keyboard={enableEscape}
                 onHide={() => proceed(false)}
                 show={show}
-                style={{ color: "black" }}
+                style={blackFont}
             >
                 <Modal.Header>
                     <Modal.Title>{title}</Modal.Title>

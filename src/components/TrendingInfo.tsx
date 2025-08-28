@@ -17,7 +17,7 @@ import {
 import StatusComponent from "./status/Status";
 import TopLevelAccordion from "./helpers/TopLevelAccordion";
 import TrendingSection, { type LinkRenderer } from "./TrendingSection";
-import { accordionSubheader, noPadding } from "../helpers/style_helpers";
+import { accordionSubheader, boldFont, monoFont, noPadding } from "../helpers/style_helpers";
 import { config } from "../config";
 import { followUri, openTrendingLink } from "../helpers/react_helpers";
 import { getLogger } from "../helpers/log_helpers";
@@ -165,7 +165,7 @@ const trendingObjInfoTxt = (obj: TrendingWithHistory) => {
 const prefixedHtml = (text: string, prefix?: string): React.ReactElement => {
     return (<>
         {prefix?.length ? <span style={monospace}>{`[${prefix}]`}</span> : ''}
-        <span style={bold}>{prefix?.length ? ' ' : ''}{text}</span>
+        <span style={boldFont}>{prefix?.length ? ' ' : ''}{text}</span>
     </>);
 };
 
@@ -180,12 +180,8 @@ const simpleTagRenderer: LinkRenderer = {
     linkLabel: tagNameMapper,
 };
 
-const bold: CSSProperties = {
-    fontWeight: "bold",
-};
-
 const monospace: CSSProperties = {
-    fontFamily: "monospace",
+    ...monoFont,
     fontSize: config.theme.trendingObjFontSize - 3,
 };
 

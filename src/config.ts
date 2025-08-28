@@ -19,7 +19,7 @@ import TheAlgorithm, {
 import { MB } from "./helpers/number_helpers";
 import { nTimes } from './helpers/string_helpers';
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
-import { type CheckboxTooltipConfig, type GuiCheckboxLabel } from './helpers/tooltip_helpers';
+import { type CheckboxTooltipConfig, type GuiCheckboxLabel, type LinkWithTooltipCfg } from './helpers/tooltip_helpers';
 import { type TrendingPanelName } from "./components/TrendingSection";
 
 
@@ -120,6 +120,11 @@ type TimelineConfig = {
         readonly showLinkPreviews: Readonly<GuiCheckboxLabel>;
         readonly stickToTop: Readonly<GuiCheckboxLabel>;
     };
+    loadTootsButtonLabels: {
+        readonly loadNewToots: Readonly<LinkWithTooltipCfg>;
+        readonly loadOldToots: Readonly<LinkWithTooltipCfg>;
+        readonly loadUserDataForAlgorithm: Readonly<LinkWithTooltipCfg>;
+    },
     loadingErroMsg: string;
     noTootsMsg: string;
     numTootsToLoadOnScroll: number;
@@ -359,6 +364,22 @@ class Config implements ReadonlyConfig {
                 tooltipText: `Keep control panel on screen while scrolling.`,
             }
         },
+
+        loadTootsButtonLabels: {
+            loadNewToots: {
+                label: "(load new toots)",
+                tooltipText: "Load toots created since the last time you loaded toots.",
+            },
+            loadOldToots: {
+                label: "(load old toots)",
+                tooltipText: "Load more toots but starting from the oldest toot in your feed and working backwards",
+            },
+            loadUserDataForAlgorithm: {
+                label: "(load more algorithm data)",
+                tooltipText: "Use more of your Mastodon activity to refine the algorithm",
+            },
+        },
+
         loadingErroMsg: `Currently loading, please wait a moment and try again.`,  // Error message when busy
         noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
         numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll

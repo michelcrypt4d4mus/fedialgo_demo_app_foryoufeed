@@ -30,7 +30,10 @@ interface ThemeConfigBase {
     readonly participatedTagGradient: GradientEndpoints;
     readonly trendingTagGradient: GradientEndpoints;
     // Fonts
+    readonly accountBioFontSize?: number;
     readonly defaultFontSize: number;
+    readonly errorFontSize: number;
+    readonly footerHashtagsFontSize: number;
     readonly retooterFontSize: number;
     readonly trendingObjFontSize: number;
 };
@@ -42,7 +45,7 @@ export interface ThemeConfig extends ThemeConfigBase {
     readonly trendingTagColor: CSSProperties["color"];
     readonly participatedTagColor: CSSProperties["color"];
     readonly followedUserColor: CSSProperties["color"];
-}
+};
 
 
 // Color blender tool: https://meyerweb.com/eric/tools/color-blend/#D3D3D3:FCBA03:5:hex
@@ -57,9 +60,12 @@ const THEME_BASE: ThemeConfigBase = {
     participatedTagGradient: [tinycolor('#d8deb9'), tinycolor('#92a14a')],  // Gradient for participated tags
     trendingTagGradient: [tinycolor('#C89898'), tinycolor('#B84040')],      // Gradient for trending tags
     // Fonts
-    defaultFontSize: DEFAULT_FONT_SIZE,            // Base emoji font size for account display names
-    retooterFontSize: DEFAULT_FONT_SIZE,           // Emoji font size for retooters
-    trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Font size for trending objects
+    accountBioFontSize: 13,                        // Font size used in the account bio hover box
+    defaultFontSize: DEFAULT_FONT_SIZE,            // Emoji font size for account display names
+    errorFontSize: 18,                             // Font size for error messages
+    footerHashtagsFontSize: 13,                    // Font size for hashtags at bottom of a Toot, under any images
+    retooterFontSize: DEFAULT_FONT_SIZE,           // Emoji font size for retooters' display names
+    trendingObjFontSize: DEFAULT_FONT_SIZE + 1,    // Emoji font size for trending objects
 };
 
 // Fill in a few extra colors that are the last color in the gradients as a convenience
@@ -87,7 +93,7 @@ export const RECHARTS_COLORS: CSSProperties["color"][] = [
     "grey",
     "fuchsia",
     "lime",
-    "cyan",
+    THEME.followedTagColor,  // "cyan"
     "bisque",
     "orangered",
     "skyblue",
@@ -100,7 +106,7 @@ export const RECHARTS_COLORS: CSSProperties["color"][] = [
 ];
 
 
-// Wrap middleColors in endpoints and generate a tinygradient (see docs for details)
+/** Wrap middleColors in endpoints and generate a tinygradient (see docs for details) */
 export function buildGradient(
     endpoints: [tinycolor.Instance, tinycolor.Instance],
     middleColors?: tinycolor.Instance[]
@@ -108,6 +114,23 @@ export function buildGradient(
     const gradientPoints = [endpoints[0], ...(middleColors || []), endpoints[1]];
     return tinygradient(...gradientPoints);
 };
+
+
+/** If isWaiting is true, cursor is 'wait', otherwise 'defaultCursor' arg's value if provided or 'default' if not. */
+export function waitOrDefaultCursor(
+    isWaiting: boolean,
+    defaultCursor: CSSProperties['cursor'] = 'default'
+): CSSProperties {
+    return { cursor: isWaiting ? 'wait' : defaultCursor };
+};
+
+
+//////////////////////////////////////
+// React Boostrap Layout classNames //
+//////////////////////////////////////
+
+export const TEXT_CENTER = "text-center";
+export const TEXT_CENTER_P2 = `${TEXT_CENTER} p-2`;
 
 
 ///////////////////////////////
@@ -123,8 +146,46 @@ export const accordionSubheader: CSSProperties = {
     padding: "7px",
 };
 
-export const globalFont: CSSProperties = {
+export const boldFont: CSSProperties = {
+    fontWeight: "bold",
+};
+
+export const blackBackground: CSSProperties = {
+    backgroundColor: "black",
+};
+
+export const blackFont: CSSProperties = {
     color: "black",
+};
+
+export const blackBoldFont: CSSProperties = {
+    ...blackFont,
+    ...boldFont,
+};
+
+export const centerAlignedFlex: CSSProperties = {
+    alignItems: 'center',
+    display: 'flex',
+};
+
+export const centerAlignedFlexCol: CSSProperties = {
+    ...centerAlignedFlex,
+    flexDirection: "column",
+};
+
+export const centerAlignedFlexRow: CSSProperties = {
+    ...centerAlignedFlex,
+    flexDirection: "row",
+};
+
+export const flexSpaceAround: CSSProperties = {
+    display: "flex",
+    justifyContent: 'space-around',
+};
+
+/** Black Tahoma / Geneva / sans-serif. */
+export const globalFont: CSSProperties = {
+    ...blackFont,
     fontFamily: "Tahoma, Geneva, sans-serif",
 };
 
@@ -132,14 +193,33 @@ export const headerFont: CSSProperties = {
     ...globalFont,
     fontSize: 15,
     fontWeight: 800,
-    marginLeft: "15px",
     marginBottom: "0px",
+    marginLeft: "15px",
     marginTop: "0px",
 };
 
-export const linkesque: CSSProperties = {
+export const linkCursor: CSSProperties = {
     cursor: "pointer",
+};
+
+/** Make normal text look like a link by underlining it and changing the cursor on hover **/
+export const linkesque: CSSProperties = {
+    ...linkCursor,
     textDecoration: "underline",
+};
+
+export const loadingMsgStyle: CSSProperties = {
+    fontSize: 16,
+    height: "auto",
+    marginTop: "6px",
+};
+
+export const mildlyRoundedCorners: CSSProperties = {
+    borderRadius: 3,
+};
+
+export const monoFont: CSSProperties = {
+    fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace",
 };
 
 export const noPadding: CSSProperties = {
@@ -151,16 +231,16 @@ export const paddingBorder: CSSProperties = {
 };
 
 export const rawErrorContainer: CSSProperties = {
-    backgroundColor: "black",
-    borderRadius: "10px",
-    fontFamily: "monospace",
+    ...blackBackground,
+    ...monoFont,
+    borderRadius: 10,
     marginTop: "15px",
     minHeight: "120px",
     padding: "35px",
 };
 
 export const roundedBox: CSSProperties = {
-    borderRadius: "20px",
+    borderRadius: 20,
     background: "lightgrey",
     paddingLeft: "25px",
     paddingRight: "20px",
@@ -168,10 +248,15 @@ export const roundedBox: CSSProperties = {
     paddingTop: "15px",
 };
 
+// TODO: could roundedBox use this borderRadius value?
+export const roundedCorners: CSSProperties = {
+    borderRadius: 15,
+};
+
 export const titleStyle: CSSProperties = {
+    ...boldFont,
     ...globalFont,
     fontSize: 17,
-    fontWeight: "bold",
     marginBottom: "5px",
     marginLeft: "5px",
     marginTop: "0px",
@@ -180,4 +265,12 @@ export const titleStyle: CSSProperties = {
 
 export const tooltipZIndex: CSSProperties = {
     zIndex: 2000,
+};
+
+export const whiteBackground: CSSProperties = {
+    backgroundColor: "white",
+};
+
+export const whiteFont: CSSProperties = {
+    color: "white",
 };

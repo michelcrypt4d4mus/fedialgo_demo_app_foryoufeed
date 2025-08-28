@@ -10,7 +10,7 @@ import FindFollowers from "./FindFollowers";
 import JsonModal from "../helpers/JsonModal";
 import StatsModal from "./StatsModal";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { accordionSubheader, roundedBox } from "../../helpers/style_helpers";
+import { accordionSubheader, centerAlignedFlexRow, roundedBox, TEXT_CENTER_P2 } from "../../helpers/style_helpers";
 import { getLogger } from "../../helpers/log_helpers";
 import { confirm } from "../helpers/Confirmation";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
@@ -78,9 +78,9 @@ export default function ExperimentalFeatures() {
     };
 
     const makeLabeledButton = (label: keyof typeof BUTTON_TEXT, onClick: () => void, variant?: string) => (
-        <li key={label} style={listElement}>
+        <li key={label} style={buttonListItem}>
             <Button
-                className='p-2 text-center'
+                className={TEXT_CENTER_P2}
                 disabled={isLoading}
                 onClick={onClick}
                 size="sm"
@@ -90,7 +90,7 @@ export default function ExperimentalFeatures() {
                 {isLoading || isLoadingState ? "Loading..." : label}
             </Button>
 
-            <div style={{flex: 4, marginLeft: "10px", fontSize: "14px"}}>
+            <div style={buttonDescription}>
                 {BUTTON_TEXT[label]}
             </div>
         </li>
@@ -141,6 +141,18 @@ export default function ExperimentalFeatures() {
 };
 
 
+const buttonDescription: CSSProperties = {
+    flex: 4,
+    fontSize: 14,
+    marginLeft: "10px",
+};
+
+const buttonListItem: CSSProperties = {
+    ...centerAlignedFlexRow,
+    fontSize: 18,
+    marginBottom: "2px",
+};
+
 const buttonStyle: CSSProperties = {
     flex: 2,
     marginBottom: "5px",
@@ -151,12 +163,4 @@ const container: CSSProperties = {
     ...roundedBox,
     paddingBottom: "20px",
     paddingLeft: "20px",
-};
-
-const listElement: CSSProperties = {
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
-    fontSize: "18px",
-    marginBottom: "2px",
 };

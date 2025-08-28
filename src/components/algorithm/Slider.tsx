@@ -1,10 +1,11 @@
 /*
  * Slider that sets a weight for the algorithm.
  */
-import React, { ChangeEvent, CSSProperties } from 'react';
-import Form from 'react-bootstrap/esm/Form';
+import React, { ChangeEvent, CSSProperties } from "react";
+import Form from "react-bootstrap/esm/Form";
 
-import { config } from '../../config';
+import { config } from "../../config";
+import { monoFont, mildlyRoundedCorners, whiteBackground, centerAlignedFlexRow } from "../../helpers/style_helpers";
 
 interface SliderProps {
     description?: string;
@@ -38,14 +39,14 @@ export default function Slider(props: SliderProps) {
         <div key={`${label}_label`} style={labelContainer}>
             {!hideValueBox &&
                 <div style={sliderValue} id="innerest_doop">
-                    <span style={monoFont}>
+                    <span style={sliderValueFont}>
                         {value?.toFixed(decimals)}
                     </span>
                 </div>}
 
             <span>
                 <span style={sliderFont}>
-                    {`${label}` + (hideValueBox ? '' : ':')}
+                    {`${label}` + (hideValueBox ? "" : ":")}
                 </span>
 
                 {description && <span>{description}</span>}
@@ -60,7 +61,7 @@ export default function Slider(props: SliderProps) {
                 max={maxValue}
                 onChange={onChange}
                 step={step}
-                style={{width: width || '100%'}}
+                style={{width: width || "100%"}}
                 value={value}
             />
         </div>,
@@ -77,41 +78,38 @@ export default function Slider(props: SliderProps) {
 
 
 const labelContainer: CSSProperties = {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    fontSize: '14px',
-    justifyContent: 'space-between',
-    textWrap: 'nowrap',
-};
-
-const monoFont: CSSProperties = {
-    fontFamily: "Courier New, monospace",
-    fontSize: "13px",
-    fontWeight: 'bold',
+    ...centerAlignedFlexRow,
+    fontSize: 14,
+    justifyContent: "space-between",
+    textWrap: "nowrap",
 };
 
 const sliderContainer: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'end',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "end",
 };
 
 const sliderFont: CSSProperties = {
-    fontWeight: 'bold',
-    marginRight: '3px',
+    fontWeight: "bold",
+    marginRight: "3px",
 };
 
 const sliderValue: CSSProperties = {
-    alignSelf: 'end',
-    backgroundColor: 'white',
+    ...mildlyRoundedCorners,
+    ...whiteBackground,
+    alignSelf: "end",
     border: "1px solid #000",
-    borderColor: 'black',
-    borderRadius: '3px',
-    borderWidth: '1px',
-    marginRight: '10px',
-    paddingBottom: '1px',
-    paddingLeft: '8px',
-    paddingRight: '8px',
-    paddingTop: '1px',
+    borderColor: "black",
+    borderWidth: 1,
+    marginRight: 10,
+    // paddingBottom: "1px",
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingTop: 1,
+};
+
+const sliderValueFont: CSSProperties = {
+    ...monoFont,
+    fontSize: 12,
 };

@@ -13,7 +13,7 @@ import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
 import { config } from '../../config';
 import { formatScore } from '../../helpers/number_helpers';
 import { ModalProps } from '../../types';
-import { RECHARTS_COLORS } from '../../helpers/style_helpers';
+import { RECHARTS_COLORS, blackBackground, blackFont, roundedCorners } from '../../helpers/style_helpers';
 import { useAlgorithm } from '../../hooks/useAlgorithm';
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
@@ -44,7 +44,7 @@ export default function StatsModal(props: ModalProps) {
             onHide={() => setShow(false)}
             show={show}
         >
-            <Modal.Header closeButton style={textStyle}>
+            <Modal.Header closeButton style={blackFont}>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
 
@@ -82,8 +82,8 @@ export default function StatsModal(props: ModalProps) {
 
                         <Tooltip
                             formatter={(value, name) => [formatScore(Number(value)), (name as string).split('_')[0]]}
-                            contentStyle={{backgroundColor: "black"}}
-                            labelStyle={{fontSize: 20, fontWeight: "bold"}}
+                            contentStyle={blackBackground}
+                            labelStyle={tooltipStyle}
                         />
 
                         <Legend
@@ -116,14 +116,15 @@ export default function StatsModal(props: ModalProps) {
 const buttonStyle: CSSProperties = {
     marginBottom: "5px",
     marginRight: "10px",
-    marginTop: "-10px",
+    marginTop: "-10px",  // TODO: this sucks
 };
 
 const charStyle: CSSProperties = {
+    ...roundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
-    borderRadius: "15px",
-}
+};
 
-const textStyle: CSSProperties = {
-    color: "black",
+const tooltipStyle: CSSProperties = {
+    fontSize: 20,
+    fontWeight: "bold"
 };
