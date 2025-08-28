@@ -4,8 +4,8 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from "react-bootstrap/esm/Spinner";
 
-import { mastodon } from "masto";
 import { capitalCase } from "change-case";
+import { mastodon } from "masto";
 import TheAlgorithm, {
     FEDIALGO,
     BooleanFilterName,
