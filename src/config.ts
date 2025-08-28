@@ -1,9 +1,10 @@
 /*
  * Configuration variables for the application.
  */
-import { SpinnerProps } from 'react-bootstrap/esm/Spinner';
+import { CSSProperties } from "react";
+import { SpinnerProps } from "react-bootstrap/esm/Spinner";
 
-import { mastodon } from 'masto';
+import { mastodon } from "masto";
 import { capitalCase } from "change-case";
 import TheAlgorithm, {
     FEDIALGO,
@@ -17,9 +18,9 @@ import TheAlgorithm, {
 } from "fedialgo";
 
 import { MB } from "./helpers/number_helpers";
-import { nTimes } from './helpers/string_helpers';
+import { nTimes } from "./helpers/string_helpers";
 import { THEME, SwitchType, ThemeConfig } from "./helpers/style_helpers";
-import { type CheckboxTooltipConfig, type GuiCheckboxLabel, type LinkWithTooltipCfg } from './helpers/tooltip_helpers';
+import { type CheckboxTooltipConfig, type GuiCheckboxLabel, type LinkWithTooltipCfg } from "./helpers/tooltip_helpers";
 import { type TrendingPanelName } from "./components/TrendingSection";
 
 
@@ -47,7 +48,7 @@ type AppConfig = {
     defaultServer: string;
     developerMastodonUrl: string;
     headerIconUrl: string;
-    loadingSpinnerType: SpinnerProps['animation'];
+    loadingSpinnerType: SpinnerProps["animation"];
     repoName: string | null;
     repoUrl: string;
     showcaseImageUrl: string;
@@ -112,6 +113,7 @@ type TimelineConfig = {
     autoloadOnFocusAfterMinutes: number;
     defaultLoadingMsg: string;
     defaultNumDisplayedToots: number;
+    dmBackgroundColor: CSSProperties["backgroundColor"];
     guiCheckboxLabels: {
         readonly allowMultiSelect: Readonly<GuiCheckboxLabel>;
         readonly autoupdate: Readonly<GuiCheckboxLabel>;
@@ -188,8 +190,8 @@ class Config implements ReadonlyConfig {
         defaultServer: TheAlgorithm.isDebugMode ? "universeodon.com" : "mastodon.social",
         developerMastodonUrl: "https://universeodon.com/@cryptadamist",
         headerIconUrl: "https://media.universeodon.com/accounts/avatars/109/363/179/904/598/380/original/eecdc2393e75e8bf.jpg",
-        loadingSpinnerType: 'grow',         // Type of loading spinner to use
-        repoName: HOMEPAGE ? HOMEPAGE.split('/').pop() : null,
+        loadingSpinnerType: "grow",
+        repoName: HOMEPAGE ? HOMEPAGE.split("/").pop() : null,
         repoUrl: HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE,
         showcaseImageUrl: "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.png",
     }
@@ -335,8 +337,9 @@ class Config implements ReadonlyConfig {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
-        defaultLoadingMsg: "Loading (first time can take up to a minute or so)",   // Message when first loading toots
+        defaultLoadingMsg: "Loading (first time can take up to a minute or so)",  // Message when first loading toots
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
+        dmBackgroundColor: "rgb(28, 27, 58)",     // Background color for DMs
 
         guiCheckboxLabels: {
             allowMultiSelect: {
