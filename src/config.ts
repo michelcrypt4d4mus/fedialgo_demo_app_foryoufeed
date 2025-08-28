@@ -4,8 +4,6 @@
 import { CSSProperties } from "react";
 import { SpinnerProps } from "react-bootstrap/esm/Spinner";
 
-import { capitalCase } from "change-case";
-import { mastodon } from "masto";
 import TheAlgorithm, {
     FEDIALGO,
     BooleanFilterName,
@@ -16,6 +14,8 @@ import TheAlgorithm, {
     optionalSuffix,
     type FilterOptionDataSource
 } from "fedialgo";
+import { capitalCase } from "change-case";
+import { mastodon } from "masto";
 
 import { MB } from "./helpers/number_helpers";
 import { nTimes } from "./helpers/string_helpers";

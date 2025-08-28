@@ -19,6 +19,7 @@ import TooltippedLink from '../components/helpers/TooltippedLink';
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
+import { booleanIcon } from "../helpers/react_helpers";
 import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
@@ -28,6 +29,7 @@ import {
     linkesque,
     loadingMsgStyle,
     mildlyRoundedCorners,
+    monoFont,
     rawErrorContainer,
     roundedCorners,
     TEXT_CENTER_P2,
@@ -216,6 +218,16 @@ export default function Feed() {
                                     ))}
                                 </ul>
                             </div>}
+
+                        {TheAlgorithm.isDebugMode &&
+                            <div style={envVarDebugPanel}>
+                                <ul>
+                                    <li><strong>Debug Mode:</strong> {booleanIcon(TheAlgorithm.isDebugMode)}</li>
+                                    <li><strong>Deep Debug:</strong> {booleanIcon(TheAlgorithm.isDeepDebug)}</li>
+                                    <li><strong>Load Test:</strong> {booleanIcon(TheAlgorithm.isLoadTest)}</li>
+                                    <li><strong>Quick Mode:</strong> {booleanIcon(TheAlgorithm.isQuickMode)}</li>
+                                </ul>
+                            </div>}
                     </div>
                 </Col>
 
@@ -277,6 +289,15 @@ const accountTooltipStyle: CSSProperties = {
 const bottomRefSpacer: CSSProperties = {
     marginTop: "10px",
 };
+
+const envVarDebugPanel: CSSProperties = {
+    ...monoFont,
+    ...roundedCorners,
+    color: "white",
+    fontSize: 16,
+    marginTop: "40px",
+    paddingLeft: "60px",
+}
 
 const errorItem: CSSProperties = {
     ...bottomRefSpacer,
