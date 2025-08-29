@@ -1,7 +1,8 @@
-import * as React from "react";  // TODO: what?
-
-import Modal from "react-bootstrap/Modal"
-import Button from "react-bootstrap/Button"
+/*
+ * A reusable confirmation dialog.
+ */
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 import { ConfirmDialog, confirmable, createConfirmation } from "react-confirm";
 
