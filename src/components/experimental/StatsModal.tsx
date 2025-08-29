@@ -2,19 +2,19 @@
  * Modal to display JSON data.
  * React Bootstrap Modal: https://getbootstrap.com/docs/5.0/components/modal/
  */
-import React, { CSSProperties } from 'react';
-import { Modal } from 'react-bootstrap';
+import React, { CSSProperties } from "react";
+import { Modal } from "react-bootstrap";
 
-import { DataKey } from 'recharts/types/util/types';
-import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { MinMaxAvgScore, ScoreName, ScoreStats } from 'fedialgo';
+import { DataKey } from "recharts/types/util/types";
+import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { MinMaxAvgScore, ScoreName, ScoreStats } from "fedialgo";
 
-import LabeledDropdownButton from '../helpers/LabeledDropdownButton';
-import { config } from '../../config';
-import { formatScore } from '../../helpers/number_helpers';
-import { ModalProps } from '../../types';
-import { RECHARTS_COLORS, blackBackground, blackFont, roundedCorners } from '../../helpers/style_helpers';
-import { useAlgorithm } from '../../hooks/useAlgorithm';
+import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
+import { config } from "../../config";
+import { formatScore } from "../../helpers/number_helpers";
+import { ModalProps } from "../../types";
+import { RECHARTS_COLORS, blackBackground, blackFont, roundedCorners } from "../../helpers/style_helpers";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 const SCORE_TYPES: (keyof ScoreStats)[] = ["raw", "weighted"];
 const VALUE_TYPES: (keyof MinMaxAvgScore)[] = ["average", "averageFinalScore", "min", "max"];
@@ -81,13 +81,13 @@ export default function StatsModal(props: ModalProps) {
                         <YAxis />
 
                         <Tooltip
-                            formatter={(value, name) => [formatScore(Number(value)), (name as string).split('_')[0]]}
+                            formatter={(value, name) => [formatScore(Number(value)), (name as string).split("_")[0]]}
                             contentStyle={blackBackground}
                             labelStyle={tooltipStyle}
                         />
 
                         <Legend
-                            formatter={(value, entry, i) => value.split('_')[0]}
+                            formatter={(value, entry, i) => value.split("_")[0]}
                             onClick={props => handleLegendClick(props.dataKey)}
                         />
 
@@ -100,7 +100,7 @@ export default function StatsModal(props: ModalProps) {
                                     dataKey={key}
                                     hide={hiddenLines.includes(key)}
                                     key={key}
-                                    legendType='line'
+                                    legendType="line"
                                     stroke={RECHARTS_COLORS[i]}
                                     strokeWidth={2}
                                 />

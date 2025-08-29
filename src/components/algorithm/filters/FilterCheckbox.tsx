@@ -8,10 +8,10 @@ import { capitalCase } from "change-case";
 import { Tooltip } from 'react-tooltip';
 import { type BooleanFilterOption } from "fedialgo";
 
-import { blackFont, boldFont, linkesque, roundedCorners, THEME, tooltipZIndex } from "../../../helpers/style_helpers";
 import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
+import { THEME, blackFont, boldFont, linkesque, roundedCorners, tooltipZIndex } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 
 const HASHTAG_ANCHOR = "user-hashtag-anchor";

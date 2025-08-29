@@ -1,9 +1,9 @@
 /*
  * Drop down button that starts with a default but updates to take a value.
  */
-import React, { CSSProperties } from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import React, { CSSProperties } from "react";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 
 interface LabeledDropdownButton {
     id?: string;
@@ -19,7 +19,7 @@ interface LabeledDropdownButton {
 export default function LabeledDropdownButton(props: LabeledDropdownButton) {
     const { initialLabel, onClick, options, optionStyle, style } = props;
     let { id, variant } = props;
-    id ||= initialLabel.replace(/\s+/g, '-');
+    id ||= initialLabel.replace(/\s+/g, "-");
     variant ||= "info";
 
     const [currentLabel, setCurrentLabel] = React.useState(initialLabel);

@@ -2,15 +2,15 @@
  * React component to display preview cards for links.
  * https://docs.joinmastodon.org/entities/PreviewCard/
  */
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties } from "react";
 
-import NewTabLink from '../helpers/NewTabLink';
-import parse from 'html-react-parser';
-import { extractDomain } from 'fedialgo';
+import NewTabLink from "../helpers/NewTabLink";
+import parse from "html-react-parser";
+import { extractDomain } from "fedialgo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { mastodon } from 'masto';
+import { mastodon } from "masto";
 
-import { config } from '../../config';
+import { config } from "../../config";
 
 interface PreviewCardProps {
     card: mastodon.v1.PreviewCard;

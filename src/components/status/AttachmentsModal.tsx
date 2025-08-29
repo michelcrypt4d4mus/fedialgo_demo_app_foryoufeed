@@ -1,13 +1,13 @@
 /*
  * Modal that allows for inspection of tooted images etc upon clicking.
  */
-import { Modal } from 'react-bootstrap';
-import { useEffect } from 'react';
+import { Modal } from "react-bootstrap";
+import { useEffect } from "react";
 
 import { MediaCategory, Toot, VIDEO_TYPES } from "fedialgo";
 
-import { blackFont } from '../../helpers/style_helpers';
-import { getLogger } from '../../helpers/log_helpers';
+import { blackFont } from "../../helpers/style_helpers";
+import { getLogger } from "../../helpers/log_helpers";
 
 const logger = getLogger("AttachmentsModal");
 
@@ -60,16 +60,16 @@ export default function AttachmentsModal(props: AttachmentsModalProps) {
             setMediaInspectionIdx(newIndex % toot.mediaAttachments.length);
         };
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
     }, [mediaInspectionIdx, toot.imageAttachments])
 
     return (
         <Modal
-            fullscreen={'xxl-down'}
+            fullscreen={"xxl-down"}
             onHide={() => setMediaInspectionIdx(-1)}
             show={shouldShowModal}
-            size={'lg'}
+            size={"lg"}
         >
             <Modal.Header closeButton>
                 <Modal.Title style={blackFont}>

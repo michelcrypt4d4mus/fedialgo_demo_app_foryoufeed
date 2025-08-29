@@ -3,8 +3,8 @@
  */
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef } from "react";
 
-import parse from 'html-react-parser';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import parse from "html-react-parser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Toot } from "fedialgo";
 import {
@@ -23,9 +23,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import ActionButton, { AccountAction, ButtonAction, TootAction } from "./ActionButton";
-import JsonModal from '../helpers/JsonModal';
+import JsonModal from "../helpers/JsonModal";
 import MultimediaNode from "./MultimediaNode";
-import NewTabLink from '../helpers/NewTabLink';
+import NewTabLink from "../helpers/NewTabLink";
 import Poll from "./Poll";
 import PreviewCard from "./PreviewCard";
 import ReplyModal from "./ReplyModal";
@@ -34,7 +34,7 @@ import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
 import { openToot } from "../../helpers/react_helpers";
-import { timestampString } from '../../helpers/string_helpers';
+import { timestampString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { linkCursor, waitOrDefaultCursor, whiteFont } from "../../helpers/style_helpers";
 

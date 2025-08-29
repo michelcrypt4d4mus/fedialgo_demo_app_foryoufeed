@@ -1,8 +1,8 @@
 /*
  * Generic omponent to display a set of filter options with a switchbar at the top.
  */
+import React, { CSSProperties, ReactElement } from "react";
 import Form from "react-bootstrap/esm/Form";
-import { CSSProperties, ReactElement } from "react";
 
 import SubAccordion, { SubAccordionProps } from "../helpers/SubAccordion";
 import { boldFont, centerAlignedFlexRow, flexSpaceAround, roundedBox } from "../../helpers/style_helpers";

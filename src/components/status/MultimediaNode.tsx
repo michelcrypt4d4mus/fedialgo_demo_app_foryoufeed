@@ -2,12 +2,12 @@
  * Component to display multimedia content (images, videos, audios) in a single pane.
  */
 import React, { CSSProperties, useCallback, useState } from "react";
-import CloseButton from 'react-bootstrap/CloseButton';
+import CloseButton from "react-bootstrap/CloseButton";
 
-import 'react-lazy-load-image-component/src/effects/blur.css';  // For blur effect
+import "react-lazy-load-image-component/src/effects/blur.css";  // For blur effect
 import { GIFV, MediaCategory, Toot } from "fedialgo";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { mastodon } from 'masto';
+import { mastodon } from "masto";
 
 import AttachmentsModal from "./AttachmentsModal";
 import { blackBackground, roundedCorners } from "../../helpers/style_helpers";

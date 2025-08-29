@@ -1,11 +1,11 @@
-import * as React from 'react';
+import * as React from "react";  // TODO: what?
 
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
+import Modal from "react-bootstrap/Modal"
+import Button from "react-bootstrap/Button"
 
-import { ConfirmDialog, confirmable, createConfirmation } from 'react-confirm';
+import { ConfirmDialog, confirmable, createConfirmation } from "react-confirm";
 
-import { blackFont } from '../../helpers/style_helpers';
+import { blackFont } from "../../helpers/style_helpers";
 
 interface ConfirmationProps {
     okLabel?: string,

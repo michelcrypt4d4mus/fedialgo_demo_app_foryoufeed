@@ -1,21 +1,21 @@
 /*
  * Class for retrieving and sorting the user's feed based on their chosen weighting values.
  */
-import React, { Button, Col, Container, Row } from 'react-bootstrap';
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 
 import TheAlgorithm, { Toot, optionalSuffix } from "fedialgo";
-import { Tooltip } from 'react-tooltip';
+import { Tooltip } from "react-tooltip";
 
 import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
 import FilterSetter from "../components/algorithm/FilterSetter";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
-import persistentCheckbox from '../components/helpers/persistent_checkbox';
-import ReplyModal from '../components/status/ReplyModal';
+import persistentCheckbox from "../components/helpers/persistent_checkbox";
+import ReplyModal from "../components/status/ReplyModal";
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
 import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
-import TooltippedLink from '../components/helpers/TooltippedLink';
+import TooltippedLink from "../components/helpers/TooltippedLink";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
@@ -311,6 +311,12 @@ const loadNewTootsText: CSSProperties = {
     textAlign: "center",
 };
 
+const newTootButton: CSSProperties = {
+    marginTop: "35px",
+    marginLeft: "200px",
+    marginRight: "200px",
+};
+
 const noTootsMsgStyle: CSSProperties = {
     ...fullPageCenteredSpinner,
     fontSize: 20,
@@ -340,10 +346,4 @@ const stickySwitchContainer: CSSProperties = {
     height: "auto",
     paddingLeft: "2px",
     paddingRight: "2px",
-};
-
-const newTootButton: CSSProperties = {
-    marginTop: "35px",
-    marginLeft: "200px",
-    marginRight: "200px",
 };
