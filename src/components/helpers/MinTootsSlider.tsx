@@ -22,7 +22,7 @@ interface MinTootsSliderProps {
 
 
 export default function MinTootsSlider(props: MinTootsSliderProps) {
-    let { minTootsState, panelTitle, objList, pluralizedPanelTitle, showLongTitle } = props;
+    let { minTootsState, objList, panelTitle, pluralizedPanelTitle, showLongTitle } = props;
     pluralizedPanelTitle = (pluralizedPanelTitle || `${panelTitle}s`).toLowerCase();
 
     const logger = getMinTootsLogger(panelTitle);
@@ -44,11 +44,12 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
             let maxValue = maxValueOption?.numToots;
 
             if (!maxValue) {
-                logger.warn(`No max value found at maxValueOptionIdx ${maxValueOptionIdx} in list of ${topTags.length} objs, using maxValueInTags: ${maxValueInTags}. Obj:`, maxValueOption);
+                const msg = `No max found at maxValueOptionIdx ${maxValueOptionIdx} in ${topTags.length} objs,`;
+                logger.warn(`${msg} using maxValueInTags: ${maxValueInTags}. Obj:`, maxValueOption);
                 maxValue = maxValueInTags;
             }
 
-            logger.trace(`Computed maxValue ${maxValue} (maxValueInTags: ${maxValueInTags}, maxValueOptionIdx: ${maxValueOptionIdx})`);
+            logger.trace(`Got maxValue ${maxValue} (maxValueInTags=${maxValueInTags}, maxValueOptionIdx=${maxValueOptionIdx})`);
             return maxValue;
         },
         [objList, objList.objs]
@@ -60,7 +61,7 @@ export default function MinTootsSlider(props: MinTootsSliderProps) {
             id={tooltipAnchor}
             key={'minTootsTooltipAnchor-slider'}
             place="bottom"
-            style={{...tooltipZIndex, fontWeight: "normal", }}
+            style={{...tooltipZIndex, fontWeight: "normal"}}
         />
 
         <div key={`${panelTitle}-minTootsSlider`} style={{width: "23%"}}>
