@@ -30,8 +30,7 @@ export default function SubAccordion(props: SubAccordionProps) {
                         {hasAnyCapitalLetters(title) ? title : capitalCase(title)}
                     </span>
 
-                    {description &&
-                        <span style={descriptionStyle} key={2}>{'  '}({description})</span>}
+                    {description && <span style={descriptionStyle} key={2}>{'  '}({description})</span>}
                 </Form.Label>
             </Accordion.Header>
 
