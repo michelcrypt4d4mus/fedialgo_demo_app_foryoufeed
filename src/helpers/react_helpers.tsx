@@ -1,9 +1,9 @@
 /*
  * Navigation helpers for React components.
  */
+import React, { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode } from "react";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import React, { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode } from "react";
 
 import { Toot, makeChunks, type TrendingWithHistory } from 'fedialgo';
 
