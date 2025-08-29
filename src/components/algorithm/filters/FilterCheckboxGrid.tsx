@@ -25,7 +25,6 @@ import { gridify } from '../../../helpers/react_helpers';
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
 import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
 import { type HeaderSwitchState, type TagHighlightSwitchState } from "../BooleanFilterAccordionSection";
-import { warn } from "console";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 

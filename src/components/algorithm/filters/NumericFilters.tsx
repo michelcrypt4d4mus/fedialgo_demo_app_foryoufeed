@@ -9,11 +9,8 @@ import FilterAccordionSection from "../FilterAccordionSection";
 import HeaderSwitch from "./HeaderSwitch";
 import Slider from "./../Slider";
 import { config } from "../../../config";
-import { getLogger } from '../../../helpers/log_helpers';
 import { SwitchType } from "../../../helpers/style_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-
-const logger = getLogger("NumericFilter");
 
 
 export default function NumericFilters(props: { isActive: boolean }) {

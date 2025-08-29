@@ -21,7 +21,7 @@ export default function NewTabLink(props: NewTabLinkProps): ReactElement {
             href={href}
             onClick={(e) => {
                 if (onClick) {
-                    e.preventDefault(); // Prevent default action if onClick is provided
+                    e.preventDefault();  // Prevent default action if onClick is provided
                     onClick(e);
                 }
             }}
