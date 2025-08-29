@@ -108,7 +108,7 @@ export const computeDefaultValue = (objList: ObjList, title: string, idealNumOpt
         }
 
         // TODO: if the objList gets refreshed while the filter is set to a high value, the slider will disappear :(
-        logger.debug(`Adjusted minToots slider default to ${sliderDefault} (${objList.length} tags)`);
+        logger.trace(`Adjusted minToots slider default to ${sliderDefault} (${objList.length} tags)`);
         return sliderDefault;
     }
 };
