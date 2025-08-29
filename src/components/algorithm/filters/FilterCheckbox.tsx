@@ -2,13 +2,13 @@
  * Component for checkboxes that drive the user's filter settings.
  */
 import React, { CSSProperties } from "react";
-import Form from 'react-bootstrap/esm/Form';
+import Form from "react-bootstrap/esm/Form";
 
 import { capitalCase } from "change-case";
-import { Tooltip } from 'react-tooltip';
+import { Tooltip } from "react-tooltip";
 import { type BooleanFilterOption } from "fedialgo";
 
-import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
+import { CheckboxTooltipConfig } from "../../../helpers/tooltip_helpers";
 import { config } from "../../../config";
 import { followUri } from "../../../helpers/react_helpers";
 import { THEME, blackFont, boldFont, linkesque, roundedCorners, tooltipZIndex } from "../../../helpers/style_helpers";

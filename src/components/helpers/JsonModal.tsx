@@ -2,13 +2,13 @@
  * Modal to display JSON data.
  * React Bootstrap Modal: https://getbootstrap.com/docs/5.0/components/modal/
  */
-import React, { CSSProperties, ReactNode } from 'react';
-import { Modal } from 'react-bootstrap';
+import React, { CSSProperties, ReactNode } from "react";
+import { Modal } from "react-bootstrap";
 
-import ReactJsonView from '@microlink/react-json-view';
+import ReactJsonView from "@microlink/react-json-view";
 
-import { blackFont, globalFont, roundedCorners } from '../../helpers/style_helpers';
-import { ModalProps } from '../../types';
+import { blackFont, globalFont, roundedCorners } from "../../helpers/style_helpers";
+import { ModalProps } from "../../types";
 
 type ReactJsonViewProps = typeof ReactJsonView.defaultProps;
 

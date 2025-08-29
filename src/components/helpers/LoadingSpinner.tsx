@@ -1,13 +1,13 @@
 /*
  * Loading spinner.
  */
-import Spinner from 'react-bootstrap/esm/Spinner';
-import { CSSProperties } from 'react';
+import Spinner from "react-bootstrap/esm/Spinner";
+import { CSSProperties } from "react";
 
 import { READY_TO_LOAD_MSG } from "fedialgo";
 
-import { centerAlignedFlexRow } from '../../helpers/style_helpers';
-import { config } from '../../config';
+import { centerAlignedFlexRow } from "../../helpers/style_helpers";
+import { config } from "../../config";
 
 interface LoadingSpinnerProps {
     isFullPage?: boolean,

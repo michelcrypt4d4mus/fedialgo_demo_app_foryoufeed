@@ -3,8 +3,8 @@
  */
 import React, { CSSProperties, PropsWithChildren } from "react";
 
-import Accordion from 'react-bootstrap/esm/Accordion';
-import Form from 'react-bootstrap/esm/Form';
+import Accordion from "react-bootstrap/esm/Accordion";
+import Form from "react-bootstrap/esm/Form";
 import { capitalCase } from "change-case";
 
 import { accordionBody, globalFont } from "../../helpers/style_helpers";

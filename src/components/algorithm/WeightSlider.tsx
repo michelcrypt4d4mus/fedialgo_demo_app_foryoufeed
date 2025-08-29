@@ -4,9 +4,9 @@
 import isFinite from "lodash/isFinite";
 import { type StringNumberDict, type WeightName } from "fedialgo";
 
-import Slider from './Slider';
-import { config } from '../../config';
-import { useAlgorithm } from '../../hooks/useAlgorithm';
+import Slider from "./Slider";
+import { config } from "../../config";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 interface WeightSliderProps {
     updateWeights: (newWeights: StringNumberDict) => Promise<void>;
