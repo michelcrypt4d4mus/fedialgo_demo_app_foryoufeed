@@ -22,9 +22,8 @@ import {
 import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
 import { confirm } from "../helpers/Confirmation";
-import { NETWORK_ERROR } from "../../helpers/string_helpers";
+import { NETWORK_ERROR, scoreString } from "../../helpers/string_helpers";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
-import { scoreString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../helpers/ErrorHandler";
 
