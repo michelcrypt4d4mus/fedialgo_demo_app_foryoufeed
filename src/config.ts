@@ -355,7 +355,7 @@ class Config implements ReadonlyConfig {
                 tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through.",
             },
             showFilterHighlights: {
-                label: `Filter Highlights`,
+                label: `Colored Filter Highlights`,
                 tooltipText: `Show colored highlighting for notable filter options.`,
             },
             showLinkPreviews: {
