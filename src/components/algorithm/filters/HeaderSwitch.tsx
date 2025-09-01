@@ -5,10 +5,10 @@
 import { ChangeEvent } from "react";
 
 import { TagTootsCategory } from "fedialgo";
-import { Tooltip } from 'react-tooltip';
+import { Tooltip } from "react-tooltip";
 
 import FilterCheckbox from "./FilterCheckbox";
-import { CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
+import { CheckboxTooltipConfig } from "../../../helpers/tooltip_helpers";
 import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
 import { SwitchType, tooltipZIndex } from "../../../helpers/style_helpers";

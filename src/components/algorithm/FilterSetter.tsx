@@ -3,19 +3,16 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import Accordion from 'react-bootstrap/esm/Accordion';
+import Accordion from "react-bootstrap/esm/Accordion";
 
 import BooleanFilterAccordionSection from "./BooleanFilterAccordionSection";
 import NumericFilters from "./filters/NumericFilters";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import { getLogger } from '../../helpers/log_helpers';
 import { config } from "../../config";
 import { HEADER_SWITCH_TOOLTIP } from "./filters/HeaderSwitch";
 import { HIGHLIGHTED_TOOLTIP } from "./filters/FilterCheckbox";
 import { noPadding } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
-
-const logger = getLogger("FilterSetter");
 
 
 export default function FilterSetter() {

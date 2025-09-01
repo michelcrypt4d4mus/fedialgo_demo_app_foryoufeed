@@ -3,8 +3,8 @@
  */
 import React, { CSSProperties, PropsWithChildren } from "react";
 
-import Accordion from 'react-bootstrap/esm/Accordion';
-import Form from 'react-bootstrap/esm/Form';
+import Accordion from "react-bootstrap/esm/Accordion";
+import Form from "react-bootstrap/esm/Form";
 import { capitalCase } from "change-case";
 
 import { accordionBody, globalFont } from "../../helpers/style_helpers";
@@ -30,8 +30,7 @@ export default function SubAccordion(props: SubAccordionProps) {
                         {hasAnyCapitalLetters(title) ? title : capitalCase(title)}
                     </span>
 
-                    {description &&
-                        <span style={descriptionStyle} key={2}>{'  '}({description})</span>}
+                    {description && <span style={descriptionStyle} key={2}>{'  '}({description})</span>}
                 </Form.Label>
             </Accordion.Header>
 

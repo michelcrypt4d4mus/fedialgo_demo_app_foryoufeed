@@ -1,24 +1,21 @@
 /*
  * Handles the incoming call that is part of OAuth 2.0 authorization code flow.
  */
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import { createRestAPIClient } from "masto"
-import { FEDIALGO } from 'fedialgo';
-import { useSearchParams } from 'react-router-dom';
+import { createRestAPIClient } from "masto";
+import { FEDIALGO } from "fedialgo";
+import { useSearchParams } from "react-router-dom";
 
 import { config } from "../config";
-import { getLogger } from '../helpers/log_helpers';
-import { useAuthContext } from '../hooks/useAuth';
-import { useError } from '../components/helpers/ErrorHandler';
-import { getApp, useServerStorage } from '../hooks/useLocalStorage';
-import { User } from '../types';
-import { sanitizeServerUrl } from '../helpers/string_helpers';
+import { getApp, useServerStorage } from "../hooks/useLocalStorage";
+import { getLogger } from "../helpers/log_helpers";
+import { sanitizeServerUrl } from "../helpers/string_helpers";
+import { useAuthContext } from "../hooks/useAuth";
+import { useError } from "../components/helpers/ErrorHandler";
+import { User } from "../types";
 
 const logger = getLogger("CallbackPage");
-// const GRANT_TYPE = "password";  // TODO: this is not used anywhere/doesn't workon universeodon.com
-// const GRANT_TYPE = "authorization_code";
-// const GRANT_TYPE = "client_credentials";
 
 
 export default function CallbackPage() {
@@ -26,7 +23,7 @@ export default function CallbackPage() {
     const { setLoggedInUser, user } = useAuthContext();
     const [searchParams] = useSearchParams();
     logger.trace(`searchParams:`, searchParams);
-    const paramsCode = searchParams.get('code');
+    const paramsCode = searchParams.get("code");
 
     // Example of 'app' object
     // {

@@ -1,15 +1,15 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from "react";
 
-import parse from 'html-react-parser';
-import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
-import { mastodon } from 'masto';
+import parse from "html-react-parser";
+import { Accordion, Button, Card, Col, Row } from "react-bootstrap";
+import { mastodon } from "masto";
 
-import LoadingSpinner from '../helpers/LoadingSpinner';
-import { getLogger } from '../../helpers/log_helpers';
-import { loadingMsgStyle } from '../../helpers/style_helpers';
+import LoadingSpinner from "../helpers/LoadingSpinner";
+import { getLogger } from "../../helpers/log_helpers";
+import { loadingMsgStyle } from "../../helpers/style_helpers";
 import { titleStyle } from "../../helpers/style_helpers";
-import { useAlgorithm } from '../../hooks/useAlgorithm';
-import { useAuthContext } from '../../hooks/useAuth';
+import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { useAuthContext } from "../../hooks/useAuth";
 
 const NUM_SUGGESTIONS = 4;
 
@@ -85,7 +85,7 @@ export default function FindFollowers(): React.ReactElement {
                                             <a
                                                 href={`${user.server}/@${suggestion.account.acct}`}
                                                 rel="noreferrer"
-                                                style={{ textDecoration: 'none' }}
+                                                style={{textDecoration: "none"}}
                                                 target="_blank"
                                             >
                                                 <div className="d-flex align-items-center mb-3">
@@ -93,7 +93,7 @@ export default function FindFollowers(): React.ReactElement {
                                                         alt="Avatar"
                                                         className="rounded-circle me-3"
                                                         src={suggestion.account.avatar}
-                                                        style={{ height: '60px', width: '60px' }}
+                                                        style={{height: "60px", width: "60px"}}
                                                     />
 
                                                     <div>

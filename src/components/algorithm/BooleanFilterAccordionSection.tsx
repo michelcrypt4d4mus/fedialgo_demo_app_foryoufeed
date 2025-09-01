@@ -42,6 +42,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
     const { filter } = props;
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.propertyName);
+
     const [switchState, setSwitchState] = useLocalStorage(`${filter.propertyName}-switchState`, DEFAULT_SWITCH_STATE);
     const [tagSwitchState, setTagSwitchState] = useLocalStorage(`${filter.propertyName}-tagSwitch`, DEFAULT_TAG_SWITCH_STATE);
     let footerSwitches: ReactElement[] | null = null;

@@ -2,7 +2,7 @@
  * Used to determine if an element is in the viewport. Currently sets the isBottom variable
  * which triggers the loading of infinite scroll content.
  */
-import { useEffect, useMemo, useState, RefObject } from 'react';
+import { RefObject, useEffect, useMemo, useState } from "react";
 
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {

@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { getLogger } from "../helpers/log_helpers";
-import { useError } from "../components/helpers/ErrorHandler";
 import { useAppStorage, useServerStorage, useServerUserStorage, useUserStorage } from "./useLocalStorage";
+import { useError } from "../components/helpers/ErrorHandler";
 import { type User } from "../types";
 
 const logger = getLogger("AuthProvider");

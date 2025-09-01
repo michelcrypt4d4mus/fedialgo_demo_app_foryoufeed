@@ -2,16 +2,16 @@
  * Checkbox that persists its state in local storage.
  * Requires there be a Checkbox somewhere in the component tree w/the same anchor!
  */
-import Form from 'react-bootstrap/Form';
+import Form from "react-bootstrap/Form";
 import { ReactElement } from "react";
 
-import { Tooltip } from 'react-tooltip';
+import { Tooltip } from "react-tooltip";
 
-import { config } from '../../config';
-import { tooltipZIndex } from '../../helpers/style_helpers';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { type BooleanState } from '../../types';
-import { type GuiCheckboxLabel } from '../../helpers/tooltip_helpers';
+import { config } from "../../config";
+import { tooltipZIndex } from "../../helpers/style_helpers";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { type BooleanState } from "../../types";
+import { type GuiCheckboxLabel } from "../../helpers/tooltip_helpers";
 
 export const CHECKBOX_TOOLTIP_ANCHOR = "checkbox-tooltip-anchor";
 
@@ -43,7 +43,7 @@ export default function persistentCheckbox(props: PersistentCheckboxProps): Stat
     checkbox = (
         <Form.Check
             checked={value}
-            className={className || ''}
+            className={className || ""}
             label={labelAndTooltip.label}
             onChange={(e) => {
                 setValue(e.target.checked);

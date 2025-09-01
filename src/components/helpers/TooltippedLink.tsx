@@ -20,7 +20,6 @@ interface TooltippedLinkProps {
 
 export default function TooltippedLink(props: TooltippedLinkProps) {
     const { anchor, onClick, labelAndTooltip: { label, labelStyle, tooltipText } } = props;
-    // const { label, labelStyle, tooltipText } = labelAndTooltip;
 
     return (<>
         {/* Make sure there's a <Tooltip> to anchor to. */}

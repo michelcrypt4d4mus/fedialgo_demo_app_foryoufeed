@@ -3,13 +3,13 @@
  * Things like how much to prefer people you favorite a lot or how much to posts that
  * are trending in the Fedivers.
  */
-import { CSSProperties, useState, useCallback, useEffect } from "react";
+import React, { CSSProperties, useState, useCallback, useEffect } from "react";
 
 import TheAlgorithm, { NonScoreWeightName, ScoreName, type WeightName, type Weights } from "fedialgo";
 
 import LabeledDropdownButton from "../helpers/LabeledDropdownButton";
 import TopLevelAccordion from "../helpers/TopLevelAccordion";
-import WeightSlider from './WeightSlider';
+import WeightSlider from "./WeightSlider";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { roundedBox, titleStyle } from "../../helpers/style_helpers";
@@ -73,7 +73,7 @@ export default function WeightSetter() {
             />
 
             {Object.values(NonScoreWeightName).map((weight) => makeWeightSlider(weight))}
-            <div style={{height: '12px'}} />
+            <div style={{height: "12px"}} />
 
             <div style={roundedBox}>
                 <p style={weightingsStyle}>

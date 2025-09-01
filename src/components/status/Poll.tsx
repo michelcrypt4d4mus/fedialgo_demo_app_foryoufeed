@@ -1,19 +1,19 @@
 /*
  * React component to display polls, mostly ripped from poll.tsx in Mastodon repo
  */
-import React, { KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
+import React, { KeyboardEventHandler, useCallback, useMemo, useState } from "react";
 
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { mastodon } from 'masto';
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { mastodon } from "masto";
 
-import { getLogger } from '../../helpers/log_helpers';
-import { isAccessTokenRevokedError, timeString } from 'fedialgo';
-import { useAlgorithm } from '../../hooks/useAlgorithm';
+import { getLogger } from "../../helpers/log_helpers";
+import { isAccessTokenRevokedError, timeString } from "fedialgo";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../../components/helpers/ErrorHandler";
 
 const ALREADY_VOTED_MSG = `You have already voted`;
-const logger = getLogger('Poll');
+const logger = getLogger("Poll");
 
 interface PollProps {
     poll: mastodon.v1.Poll,

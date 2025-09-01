@@ -1,11 +1,11 @@
 /*
  * Header component on the feed page.
  */
-import React, { Button, Col, Container, Row } from 'react-bootstrap';
-import { CSSProperties } from 'react';
+import React, { Button, Col, Container, Row } from "react-bootstrap";
+import { CSSProperties } from "react";
 
-import { config } from '../config';
-import { TEXT_CENTER, TEXT_CENTER_P2, mildlyRoundedCorners, whiteFont } from '../helpers/style_helpers';
+import { config } from "../config";
+import { TEXT_CENTER, TEXT_CENTER_P2, mildlyRoundedCorners, whiteFont } from "../helpers/style_helpers";
 import { useAuthContext } from "../hooks/useAuth";
 
 // React bootstrap classnames etc.
@@ -20,8 +20,8 @@ export default function Header() {
     const { logout, user } = useAuthContext();
 
     return (
-        <Container className='w-100 m-1'>
-            <Row className='w-100 m-1'>
+        <Container className="w-100 m-1">
+            <Row className="w-100 m-1">
                 <Col xs={XS_VALUE} className="p-0">
                     {user &&
                         <div className={`${ALIGN_MIDDLE_D_INLINE} ${TEXT_CENTER}`}>
@@ -51,7 +51,7 @@ export default function Header() {
                             Fedialgo Demo
                         </a>
 
-                        {' '}<span style={versionParenthesesStyle}>(
+                        {" "}<span style={versionParenthesesStyle}>(
                             <a href={config.app.changelogUrl} style={versionStyle} target="_blank">
                                 v{process.env.FEDIALGO_VERSION}
                             </a>
@@ -59,7 +59,7 @@ export default function Header() {
                     </span>
                 </Col>
 
-                <Col xs={XS_VALUE} className='text-end p-0'>
+                <Col xs={XS_VALUE} className="text-end p-0">
                     {user &&
                         <Button
                             className={TEXT_CENTER_P2}

@@ -1,10 +1,10 @@
 /*
  * WIP: Component for displaying the trending hashtags in the Fediverse.
  */
-import { Button } from 'react-bootstrap';
+import { Button } from "react-bootstrap";
 import { CSSProperties, useState } from "react";
 
-import { FEDIALGO } from 'fedialgo';
+import { FEDIALGO } from "fedialgo";
 
 import FindFollowers from "./FindFollowers";
 import JsonModal from "../helpers/JsonModal";

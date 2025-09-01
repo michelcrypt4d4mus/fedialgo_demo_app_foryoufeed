@@ -21,11 +21,10 @@ import FilterCheckbox from "./FilterCheckbox";
 import { buildGradient } from "../../../helpers/style_helpers";
 import { config } from "../../../config";
 import { getLogger } from "../../../helpers/log_helpers";
-import { gridify } from '../../../helpers/react_helpers';
+import { gridify } from "../../../helpers/react_helpers";
 import { useAlgorithm } from "../../../hooks/useAlgorithm";
-import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from '../../../helpers/tooltip_helpers';
+import { type CheckboxGradientTooltipConfig, type CheckboxTooltipConfig } from "../../../helpers/tooltip_helpers";
 import { type HeaderSwitchState, type TagHighlightSwitchState } from "../BooleanFilterAccordionSection";
-import { warn } from "console";
 
 type DataSourceGradients = Record<FilterOptionDataSource, CheckboxGradientTooltipConfig>;
 

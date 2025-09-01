@@ -2,23 +2,23 @@
  * Modal to display JSON data.
  * React Bootstrap Modal: https://getbootstrap.com/docs/5.0/components/modal/
  */
-import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { Modal } from 'react-bootstrap';
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import { Modal } from "react-bootstrap";
 
-import { Toot, optionalSuffix } from 'fedialgo';
-import { useDropzone } from 'react-dropzone'
+import { Toot, optionalSuffix } from "fedialgo";
+import { useDropzone } from "react-dropzone"
 
-import MultimediaNode from './MultimediaNode';
-import StatusComponent from './Status';
-import { config } from '../../config';
-import { fileInfo, isEmptyStr } from '../../helpers/string_helpers';
-import { getLogger } from '../../helpers/log_helpers';
-import { ModalProps } from '../../types';
-import { OAUTH_ERROR_MSG } from '../experimental/ExperimentalFeatures';
-import { useAlgorithm } from '../../hooks/useAlgorithm';
-import { useError } from '../helpers/ErrorHandler';
+import MultimediaNode from "./MultimediaNode";
+import StatusComponent from "./Status";
+import { config } from "../../config";
+import { fileInfo, isEmptyStr } from "../../helpers/string_helpers";
+import { getLogger } from "../../helpers/log_helpers";
+import { ModalProps } from "../../types";
+import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
+import { useError } from "../helpers/ErrorHandler";
 import {
     blackBoldFont,
     blackFont,
@@ -28,9 +28,9 @@ import {
     roundedCorners,
     mildlyRoundedCorners,
     whiteBackground,
-} from '../../helpers/style_helpers';
+} from "../../helpers/style_helpers";
 
-const replyLogger = getLogger('ReplyModal');
+const replyLogger = getLogger("ReplyModal");
 
 interface ReplyModalProps extends ModalProps {
     toot?: Toot;
