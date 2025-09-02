@@ -16,8 +16,7 @@ import { noPadding, stickySwitchContainer } from "../../helpers/style_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
 
-// TODO: rename FeedFiltersAccordionSection
-export default function FilterSetter() {
+export default function FeedFiltersAccordionSection() {
     const { algorithm, allowMultiSelectCheckbox, showFilterHighlightsCheckbox } = useAlgorithm();
 
     const booleanFiltersCfg = config.filters.boolean.optionsFormatting;

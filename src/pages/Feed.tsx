@@ -9,13 +9,13 @@ import { Tooltip } from "react-tooltip";
 
 import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
-import FilterSetter from "../components/algorithm/FilterSetter";
+import FeedFiltersAccordionSection from "../components/algorithm/FeedFiltersAccordionSection";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
 import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import ReplyModal from "../components/status/ReplyModal";
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
-import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TooltippedLink from "../components/helpers/TooltippedLink";
+import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
@@ -162,7 +162,7 @@ export default function Feed() {
                         </div>
 
                         {algorithm && <WeightSetter />}
-                        {algorithm && <FilterSetter />}
+                        {algorithm && <FeedFiltersAccordionSection />}
                         {algorithm && <TrendingInfo />}
                         {algorithm && <ExperimentalFeatures />}
 
