@@ -351,7 +351,7 @@ class Config implements ReadonlyConfig {
                 tooltipText: "Automatically update the timeline when you focus this browser tab.",
             },
             hideSensitive: {
-                label: `Hide Sensitive`,
+                label: `Hide Sensitive Images`,
                 tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through.",
             },
             showFilterHighlights: {
@@ -359,7 +359,7 @@ class Config implements ReadonlyConfig {
                 tooltipText: `Show colored highlighting for notable filter options.`,
             },
             showLinkPreviews: {
-                label: `Link Previews`,
+                label: `Show Link Previews`,
                 tooltipText: "Show the full preview card for embedded links.",
             },
             stickToTop: {
