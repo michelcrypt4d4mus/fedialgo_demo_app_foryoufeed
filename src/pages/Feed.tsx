@@ -14,8 +14,8 @@ import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/L
 import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import ReplyModal from "../components/status/ReplyModal";
 import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Status";
-import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TooltippedLink from "../components/helpers/TooltippedLink";
+import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
