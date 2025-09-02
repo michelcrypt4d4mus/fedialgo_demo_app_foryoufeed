@@ -60,5 +60,5 @@ const filterSwitchContainer: CSSProperties = {
     fontSize: 16,
     fontWeight: "bold",
     justifyContent: "space-around",
-    paddingTop: "3px",
+    paddingTop: "4.5px",
 };
