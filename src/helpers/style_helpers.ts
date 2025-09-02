@@ -253,6 +253,14 @@ export const roundedCorners: CSSProperties = {
     borderRadius: 15,
 };
 
+export const stickySwitchContainer: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    height: "auto",
+    paddingLeft: "2px",
+    paddingRight: "2px",
+};
+
 export const titleStyle: CSSProperties = {
     ...boldFont,
     ...globalFont,

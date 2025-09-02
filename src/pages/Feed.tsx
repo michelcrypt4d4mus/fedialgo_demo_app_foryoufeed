@@ -32,6 +32,7 @@ import {
     monoFont,
     rawErrorContainer,
     roundedCorners,
+    stickySwitchContainer,
     TEXT_CENTER_P2,
     tooltipZIndex,
     waitOrDefaultCursor,
@@ -157,8 +158,6 @@ export default function Feed() {
                         <div style={stickySwitchContainer}>
                             {isControlPanelStickyCheckbox}
                             {showLinkPreviewsCheckbox}
-                            {allowMultiSelectCheckbox}
-                            {showFilterHighlightsCheckbox}
                             {hideSensitiveCheckbox}
                             {shouldAutoUpdateCheckbox}
                         </div>
@@ -338,12 +337,4 @@ const statusesColStyle: CSSProperties = {
     ...mildlyRoundedCorners,
     backgroundColor: config.theme.feedBackgroundColor,
     height: 'auto',
-};
-
-const stickySwitchContainer: CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    height: "auto",
-    paddingLeft: "2px",
-    paddingRight: "2px",
 };

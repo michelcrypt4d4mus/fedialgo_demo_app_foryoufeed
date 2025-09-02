@@ -343,11 +343,11 @@ class Config implements ReadonlyConfig {
 
         guiCheckboxLabels: {
             allowMultiSelect: {
-                label: `Filter Multiselect`,
-                tooltipText: "Allow selecting multiple filter options at once.",
+                label: `Allow Multiselect`,
+                tooltipText: "Allow selecting multiple filter options at the same time for a filter type.",
             },
             autoupdate: {
-                label: `Auto Update`,
+                label: `Auto Update On Focus`,
                 tooltipText: "Automatically update the timeline when you focus this browser tab.",
             },
             hideSensitive: {
@@ -355,7 +355,7 @@ class Config implements ReadonlyConfig {
                 tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through.",
             },
             showFilterHighlights: {
-                label: `Colored Filter Highlights`,
+                label: `Color Highlights`,
                 tooltipText: `Show colored highlighting for notable filter options.`,
             },
             showLinkPreviews: {
@@ -363,9 +363,9 @@ class Config implements ReadonlyConfig {
                 tooltipText: "Show the full preview card for embedded links.",
             },
             stickToTop: {
-                label: `Stick To Top`,
+                label: `Stick Control Panel To Top`,
                 tooltipText: `Keep tbe Fedialgo control panel on screen while scrolling.`,
-            }
+            },
         },
 
         loadTootsButtonLabels: {
