@@ -42,16 +42,16 @@ const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.git
 type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
 
 type AppConfig = {
-    accessTokenRevokedMsg: string;
-    changelogUrl: string;
-    createAppParams: Readonly<Omit<CreateAppParams, "redirectUris">>;
-    defaultServer: string;
-    developerMastodonUrl: string;
-    headerIconUrl: string;
-    loadingSpinnerType: SpinnerProps["animation"];
-    repoName: string | null;
-    repoUrl: string;
-    showcaseImageUrl: string;
+    readonly accessTokenRevokedMsg: string;
+    readonly changelogUrl: string;
+    readonly createAppParams: Readonly<Omit<CreateAppParams, "redirectUris">>;
+    readonly defaultServer: string;
+    readonly developerMastodonUrl: string;
+    readonly headerIconUrl: string;
+    readonly loadingSpinnerType: SpinnerProps["animation"];
+    readonly repoName: string | null;
+    readonly repoUrl: string;
+    readonly showcaseImageUrl: string;
 };
 
 type FilterTooltipConfigKey = (
@@ -61,16 +61,16 @@ type FilterTooltipConfigKey = (
 );
 
 type FilterOptionFormatCfg = {
-    formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
-    hidden?: boolean;                        // If true hide this option from the UI
-    position: number;                        // Position of this filter in the filters section, used for ordering
-    tooltips?: {                             // Color highlight config for filter options
+    readonly formatLabel?: (name: string) => string;  // Fxn to transform the option name to a displayed label
+    readonly hidden?: boolean;                        // If true hide this option from the UI
+    readonly position: number;                        // Position of this filter in the filters section, used for ordering
+    readonly tooltips?: {                             // Color highlight config for filter options
         readonly [key in FilterTooltipConfigKey]?: Readonly<CheckboxTooltipConfig>
     };
 };
 
 type FilterConfig = {
-    boolean: {
+    readonly boolean: {
         readonly maxLabelLength: number;
         readonly minTootsSlider: {
             readonly idealNumOptions: number,
@@ -79,11 +79,11 @@ type FilterConfig = {
         },
         readonly optionsFormatting: Readonly<Record<BooleanFilterName, Readonly<FilterOptionFormatCfg>>>,
     };
-    headerSwitches: {
+    readonly headerSwitches: {
         readonly tooltipHoverDelay: number;
         readonly tooltipText: Readonly<Record<SwitchType, string>>;
     };
-    numeric: {
+    readonly numeric: {
         readonly description: string;
         readonly invertSelectionTooltipTxt: string;
         readonly maxValue: number;
@@ -93,28 +93,28 @@ type FilterConfig = {
 };
 
 type LocaleConfig = {
-    defaultLocale: string;
+    readonly defaultLocale: string;
 };
 
 type ReplyConfig = {
-    defaultAcceptedAttachments: Readonly<Record<string, string[]>>;
-    defaultMaxCharacters: number;
-    defaultMaxAttachments: number;
-    defaultMaxImageSize: number;
-    defaultMaxVideoSize: number;
+    readonly defaultAcceptedAttachments: Readonly<Record<string, string[]>>;
+    readonly defaultMaxCharacters: number;
+    readonly defaultMaxAttachments: number;
+    readonly defaultMaxImageSize: number;
+    readonly defaultMaxVideoSize: number;
 };
 
 type StatsConfig = {
-    animationDuration: number;
-    numPercentiles: number;
+    readonly animationDuration: number;
+    readonly numPercentiles: number;
 };
 
 type TimelineConfig = {
-    autoloadOnFocusAfterMinutes: number;
-    defaultLoadingMsg: string;
-    defaultNumDisplayedToots: number;
-    dmBackgroundColor: CSSProperties["backgroundColor"];
-    guiCheckboxLabels: {
+    readonly autoloadOnFocusAfterMinutes: number;
+    readonly defaultLoadingMsg: string;
+    readonly defaultNumDisplayedToots: number;
+    readonly dmBackgroundColor: CSSProperties["backgroundColor"];
+    readonly guiCheckboxLabels: {
         readonly allowMultiSelect: Readonly<GuiCheckboxLabel>;
         readonly autoupdate: Readonly<GuiCheckboxLabel>;
         readonly hideSensitive: Readonly<GuiCheckboxLabel>;
@@ -122,56 +122,56 @@ type TimelineConfig = {
         readonly showLinkPreviews: Readonly<GuiCheckboxLabel>;
         readonly stickToTop: Readonly<GuiCheckboxLabel>;
     };
-    loadTootsButtonLabels: {
+    readonly loadingErroMsg: string;
+    readonly loadTootsButtonLabels: {
         readonly loadNewToots: Readonly<LinkWithTooltipCfg>;
         readonly loadOldToots: Readonly<LinkWithTooltipCfg>;
         readonly loadUserDataForAlgorithm: Readonly<LinkWithTooltipCfg>;
     },
-    loadingErroMsg: string;
-    noTootsMsg: string;
-    numTootsToLoadOnScroll: number;
-    tooltips: {
+    readonly noTootsMsg: string;
+    readonly numTootsToLoadOnScroll: number;
+    readonly tooltips: {
         readonly accountTooltipDelayMS: number;
         readonly defaultTooltipDelayMS: number;
     }
 };
 
 type TootConfig = {
-    imageHeight: number;
-    maxPreviewCardLength: number;
-    scoreDigits: number;
+    readonly imageHeight: number;
+    readonly maxPreviewCardLength: number;
+    readonly scoreDigits: number;
 };
 
 type TrendingConfig = {
-    maxLengthForMulticolumn: number;
-    panels: Readonly<Record<TrendingPanelName, Readonly<TrendingPanelCfg>>>;
+    readonly maxLengthForMulticolumn: number;
+    readonly panels: Readonly<Record<TrendingPanelName, Readonly<TrendingPanelCfg>>>;
 };
 
 type TrendingPanelCfg = {
-    description?: string;
-    hasCustomStyle?: boolean;
-    initialNumShown: number;
-    objTypeLabel?: string;
-    prependTrending?: boolean;
-    title?: string;
+    readonly description?: string;
+    readonly hasCustomStyle?: boolean;
+    readonly initialNumShown: number;
+    readonly objTypeLabel?: string;
+    readonly prependTrending?: boolean;
+    readonly title?: string;
 };
 
 type WeightsConfig = {
-    defaultStepSize: number;
-    presetMenuLabel: string;
-    scalingMultiplier: number;
+    readonly defaultStepSize: number;
+    readonly presetMenuLabel: string;
+    readonly scalingMultiplier: number;
 };
 
 interface ConfigType {
-    filters: FilterConfig;
-    locale: LocaleConfig;
-    replies: ReplyConfig;
-    stats: StatsConfig;
-    theme: ThemeConfig;
-    timeline: TimelineConfig;
-    toots: TootConfig;
-    trending: TrendingConfig;
-    weights: WeightsConfig;
+    readonly filters: FilterConfig;
+    readonly locale: LocaleConfig;
+    readonly replies: ReplyConfig;
+    readonly stats: StatsConfig;
+    readonly theme: ThemeConfig;
+    readonly timeline: TimelineConfig;
+    readonly toots: TootConfig;
+    readonly trending: TrendingConfig;
+    readonly weights: WeightsConfig;
 };
 
 interface ReadonlyConfig extends Readonly<ConfigType> {};
