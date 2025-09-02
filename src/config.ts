@@ -25,7 +25,7 @@ import { type TrendingPanelName } from "./components/TrendingSection";
 
 
 // Mastodon OAuth scopes required for this app to work. Details: https://docs.joinmastodon.org/api/oauth-scopes/
-const OAUTH_SCOPES = [
+const REQUIRED_OAUTH_SCOPES = [
     "read",
     "write:bookmarks",
     "write:favourites",
@@ -38,7 +38,7 @@ const OAUTH_SCOPES = [
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed";
 
 
-// Subconfig types
+// Subconfig section type definitions
 type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
 
 type AppConfig = {
@@ -184,7 +184,7 @@ class Config implements ReadonlyConfig {
         changelogUrl: `https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases`,
         createAppParams: {
             clientName: `${FEDIALGO}Demo`,
-            scopes: OAUTH_SCOPES.join(" "),
+            scopes: REQUIRED_OAUTH_SCOPES.join(" "),
             website: HOMEPAGE,
         },
         defaultServer: TheAlgorithm.isDebugMode ? "universeodon.com" : "mastodon.social",
