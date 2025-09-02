@@ -46,29 +46,28 @@ const logger = getLogger("Feed");
 export default function Feed() {
     const {
         algorithm,
-        allowMultiSelectCheckbox,
         hideSensitiveCheckbox,
         isLoading,
         lastLoadDurationSeconds,
         resetAlgorithm,
-        showFilterHighlightsCheckbox,
         shouldAutoUpdateCheckbox,
         timeline,
         triggerFeedUpdate,
         triggerHomeTimelineBackFill,
-        triggerMoarData
+        triggerMoarData,
     } = useAlgorithm();
 
     // State variables
     const [isLoadingThread, setIsLoadingThread] = useState(false);
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(config.timeline.defaultNumDisplayedToots);
     const [prevScrollY, setPrevScrollY] = useState(0);
-    const [showNewTootModal, setShowNewTootModal] = useState(false);
     const [scrollPercentage, setScrollPercentage] = useState(0);
+    const [showNewTootModal, setShowNewTootModal] = useState(false);
     const [thread, setThread] = useState<Toot[]>([]);
 
     // Checkboxes for persistent user settings state variables
     // TODO: the returned checkboxTooltip is shared by all tooltips which kind of sucks
+    // TODO: kind of sucks that these checkboxes are instantiated here and the others are in useAlgorithm
     const [showLinkPreviews, showLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
         isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.showLinkPreviews,
