@@ -9,7 +9,7 @@ import { Tooltip } from "react-tooltip";
 
 import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
-import FeedFiltersAccordionSection from "../components/algorithm/FilterSetter";
+import FeedFiltersAccordionSection from "../components/algorithm/FeedFiltersAccordionSection";
 import LoadingSpinner, { fullPageCenteredSpinner } from "../components/helpers/LoadingSpinner";
 import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import ReplyModal from "../components/status/ReplyModal";
