@@ -3,13 +3,12 @@
  */
 import React, { PropsWithChildren, ReactElement, createContext, useContext, useEffect, useState } from "react";
 
-import TheAlgorithm, { GET_FEED_BUSY_MSG, Toot, isAccessTokenRevokedError } from "fedialgo";
+import TheAlgorithm, { GET_FEED_BUSY_MSG, AgeIn, Toot, isAccessTokenRevokedError } from "fedialgo";
 import { createRestAPIClient, mastodon } from "masto";
 import { useError } from "../components/helpers/ErrorHandler";
 
 import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { addMimeExtensionsToServer, type MastodonServer } from "../helpers/mastodon_helpers";
-import { ageInSeconds } from "fedialgo/dist/helpers/time_helpers";
 import { config } from "../config";
 import { Events } from "../helpers/string_helpers";
 import { getLogger } from "../helpers/log_helpers";
@@ -92,7 +91,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         if (newIsLoading) {
             setLastLoadStartedAt(startedLoadAt);
         } else {
-            const lastLoadDuration = ageInSeconds(startedLoadAt).toFixed(1);
+            const lastLoadDuration = AgeIn.seconds(startedLoadAt).toFixed(1);
             loadLogger.log(`Load finished in ${lastLoadDuration} seconds (lastLoadStartedAt: "${loadStartedAtStr}")`);
             setLastLoadDurationSeconds(Number(lastLoadDuration));
         }
