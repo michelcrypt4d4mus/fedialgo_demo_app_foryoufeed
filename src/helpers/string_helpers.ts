@@ -1,6 +1,7 @@
 /*
  * String manipulation helpers.
  */
+import { AgeIn } from "fedialgo";
 import { isEmpty, isNil } from "lodash";
 
 import { appLogger } from "./log_helpers";
@@ -96,7 +97,7 @@ export const scoreString = (score: number | null): string => {
 // Format a timestamp.
 export const timestampString = (_timestamp: string): string => {
     const timestamp = new Date(_timestamp);
-    const ageInSeconds = (Date.now() - timestamp.getTime()) / 1000;
+    const ageInSeconds = AgeIn.seconds(timestamp);
     const isToday = timestamp.getDate() == new Date().getDate();
     let str: string;
 
