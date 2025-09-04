@@ -30,6 +30,16 @@ envMsgs.push(`* Building to outputDir: ${outputDir} (BUILD_GITHUB_PAGES=${proces
 const envMsgBar = '*'.repeat(Math.max(...envMsgs.map(msg => msg.length)));
 console.log('\n' + [envMsgBar, ...envMsgs, envMsgBar].join('\n') + '\n');
 
+const BOOTSTRAP_BUTTON_CSS_CLASSNAME_SUFFIXES = [
+    'primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark', 'link',
+];
+
+const BOOTSTRAP_BUTTON_CSS_CLASSNAMES = [
+    'btn', 'btn-sm', 'btn-group',
+    ...BOOTSTRAP_BUTTON_CSS_CLASSNAME_SUFFIXES.map(suffix => `btn-${suffix}`),
+    ...BOOTSTRAP_BUTTON_CSS_CLASSNAME_SUFFIXES.map(suffix => `btn-outline-${suffix}`),
+];
+
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -88,7 +98,10 @@ module.exports = {
             paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
             safelist: [
                 'accordion', 'accordion-body', 'accordion-button', 'accordion-item', 'accordion-header', 'accordion-collapse',
-                'collapse', 'show', 'collapsing', 'dropdown', // Essential Bootstrap collapse classes
+                'collapse', 'collapsed', 'collapsing', 'dropdown', 'show', // Essential Bootstrap collapse classes
+                'dropdown-toggle', 'dropdown-menu', 'dropdown-item', 'dropdown-item-text', // Essential Bootstrap dropdown classes
+                'd-grid', 'gap-2',
+                ...BOOTSTRAP_BUTTON_CSS_CLASSNAMES,
             ],
         }),
         new WorkboxWebpackPlugin.GenerateSW({
