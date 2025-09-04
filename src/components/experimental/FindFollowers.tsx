@@ -90,7 +90,7 @@ export default function FindFollowers(): React.ReactElement {
                                             >
                                                 <div className="d-flex align-items-center mb-3">
                                                     <img
-                                                        alt="Avatar"
+                                                        alt={`${suggestion.account.acct} User Avatar`}
                                                         className="rounded-circle me-3"
                                                         src={suggestion.account.avatar}
                                                         style={{height: "60px", width: "60px"}}

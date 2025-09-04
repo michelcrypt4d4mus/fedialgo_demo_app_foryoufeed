@@ -4,6 +4,8 @@
 import React, { Button, Col, Container, Row } from "react-bootstrap";
 import { CSSProperties } from "react";
 
+import { FEDIALGO } from "fedialgo";
+
 import { config } from "../config";
 import { TEXT_CENTER, TEXT_CENTER_P2, mildlyRoundedCorners, whiteFont } from "../helpers/style_helpers";
 import { useAuthContext } from "../hooks/useAuth";
@@ -27,7 +29,7 @@ export default function Header() {
                         <div className={`${ALIGN_MIDDLE_D_INLINE} ${TEXT_CENTER}`}>
                             {user?.profilePicture &&
                                 <img
-                                    alt="FediAlgo User Avatar"
+                                    alt={`${FEDIALGO} User Avatar`}
                                     className={ALIGN_MIDDLE_D_INLINE_BLOCK}
                                     src={user.profilePicture}
                                     style={avatarStyle}
