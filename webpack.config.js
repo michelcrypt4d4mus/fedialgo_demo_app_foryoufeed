@@ -2,16 +2,23 @@
  * Webpack configuration for the FediAlgo Demo App.
  */
 require('dotenv-flow').config();
+const glob = require("glob");
 const path = require("path");
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ReactRefreshTypeScript = require('react-refresh-typescript');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
+const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
+
+const PATHS = {
+    src: path.join(__dirname, "src"),
+};
 
 // Github pages only lets you deploy from docs/ folder
 const outputDir = process.env.BUILD_GITHUB_PAGES == 'true' ? 'docs' : 'dist';
@@ -56,7 +63,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ["style-loader", "css-loader"],
+                use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
         ],
     },
@@ -73,6 +80,12 @@ module.exports = {
         new Dotenv(),
         new HtmlWebpackPlugin({
             template: "./src/index.html",
+        }),
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+        }),
+        new PurgeCSSPlugin({
+            paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
         }),
         new WorkboxWebpackPlugin.GenerateSW({
             // WorkboxWebpackPlugin docs: https://developer.chrome.com/docs/workbox/modules/workbox-webpack-plugin/
