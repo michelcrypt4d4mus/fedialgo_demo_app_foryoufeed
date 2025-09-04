@@ -92,7 +92,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
             setLastLoadStartedAt(startedLoadAt);
         } else {
             const lastLoadDuration = AgeIn.seconds(startedLoadAt).toFixed(1);
-            loadLogger.log(`Load finished in ${lastLoadDuration} seconds (lastLoadStartedAt: "${loadStartedAtStr}")`);
+            loadLogger.log(`Load finished in ${lastLoadDuration} seconds (loadStartedAtStr: "${loadStartedAtStr}")`);
             setLastLoadDurationSeconds(Number(lastLoadDuration));
         }
     };
@@ -113,10 +113,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         setLoadState(true, startedAt);
 
         loadFxn()
-            .then(() => {
-                loadLogger.log(`triggerLoadFxn finished`);
-                setLoadState(false, startedAt);
-            })
+            .then(() => setLoadState(false, startedAt))
             .catch((err) => {
                 // Don't flip the isLoading state if the feed is just busy loading
                 if (err.message.includes(GET_FEED_BUSY_MSG)) {
