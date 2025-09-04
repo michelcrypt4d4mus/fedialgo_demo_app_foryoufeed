@@ -220,6 +220,7 @@ export default function Feed() {
                         {TheAlgorithm.isDebugMode &&
                             <div style={envVarDebugPanel}>
                                 <ul>
+                                    <li><strong>NODE_ENV:</strong> {process.env.NODE_ENV}</li>
                                     <li><strong>Debug Mode:</strong> {booleanIcon(TheAlgorithm.isDebugMode)}</li>
                                     <li><strong>Deep Debug:</strong> {booleanIcon(TheAlgorithm.isDeepDebug)}</li>
                                     <li><strong>Load Test:</strong> {booleanIcon(TheAlgorithm.isLoadTest)}</li>
