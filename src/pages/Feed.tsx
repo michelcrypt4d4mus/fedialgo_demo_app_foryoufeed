@@ -206,9 +206,9 @@ export default function Feed() {
 
                         {algorithm?.apiErrorMsgs && (algorithm.apiErrorMsgs.length > 0) &&
                             <div className="d-grid gap-2" style={rawErrorContainer}>
-                                <p style={whiteFont}>Non-fatal errors encountered while loading data:</p>
+                                <p style={whiteFont}>Non-fatal warnings encountered while loading data:</p>
 
-                                <ul>
+                                <ul style={errorList}>
                                     {algorithm.apiErrorMsgs.map((msg, i) => (
                                         <li key={`${msg}_${i}`} style={errorItem}>
                                             {msg}
@@ -293,13 +293,20 @@ const envVarDebugPanel: CSSProperties = {
     ...roundedCorners,
     color: "white",
     fontSize: 16,
-    marginTop: "40px",
+    marginTop: "28px",
     paddingLeft: "60px",
 }
 
 const errorItem: CSSProperties = {
     ...bottomRefSpacer,
-    color: "#9e0d12",
+    color: "#c6d000ff",
+    fontSize: 12,
+    marginTop: "2px",
+};
+
+const errorList: CSSProperties = {
+    listStyle: "numeric",
+    paddingLeft: "25px",
 };
 
 const loadNewTootsText: CSSProperties = {

@@ -3,9 +3,8 @@ import { Buffer } from "buffer"; // Required for class-transformer to work
 (window as any).Buffer = Buffer;
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Routes, Route, HashRouter } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
-// import { inject } from "@vercel/analytics";
 
 import "./birdUI.css";
 import "./default.css";
@@ -18,8 +17,8 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { getLogger, logLocaleInfo } from "./helpers/log_helpers";
 import { blackBackground, centerAlignedFlexCol } from "./helpers/style_helpers";
+import { getLogger, logLocaleInfo } from "./helpers/log_helpers";
 
 const logger = getLogger("App.tsx");
 

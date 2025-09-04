@@ -1,7 +1,7 @@
 /*
  * Navigation helpers for React components.
  */
-import React, { Children, isValidElement, CSSProperties, MouseEvent, ReactElement, ReactNode } from "react";
+import React, { Children, CSSProperties, MouseEvent, ReactElement, ReactNode, isValidElement } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
@@ -9,9 +9,6 @@ import { Toot, makeChunks, type TrendingWithHistory } from "fedialgo";
 
 import { appLogger } from "./log_helpers";
 import { isEmptyStr } from "./string_helpers";
-
-// TODO: this shouldn't be here...
-export const isProduction = process.env.NODE_ENV === 'production';
 
 
 ////////////////////////
