@@ -80,7 +80,7 @@ export default function ExperimentalFeatures() {
     const makeLabeledButton = (label: keyof typeof BUTTON_TEXT, onClick: () => void, variant?: string) => (
         <li key={label} style={buttonListItem}>
             <Button
-                className={TEXT_CENTER_P2}
+                className="text-center p-2"
                 disabled={isLoading}
                 onClick={onClick}
                 size="sm"

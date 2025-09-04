@@ -55,7 +55,7 @@ export default function Slider(props: SliderProps) {
 
         <div key={`${label}_slider`} style={sliderContainer}>
             <Form.Range
-                className={"custom-slider"}
+                className="custom-slider"
                 id={label}
                 min={minValue}
                 max={maxValue}

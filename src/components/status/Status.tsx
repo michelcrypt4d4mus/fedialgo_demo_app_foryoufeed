@@ -294,7 +294,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     </div>
 
                     {/* Text content of the toot */}
-                    <div className={contentClass} style={fontStyle}>
+                    <div className={fontColor ? "status__content__alt" : "status__content"} style={fontStyle}>
                         <div className="status__content__text status__content__text--visible translate" lang={toot.language}>
                             {parse(toot.contentNonTagsParagraphs(config.theme.defaultFontSize))}
                         </div>
@@ -307,7 +307,7 @@ export default function StatusComponent(props: StatusComponentProps) {
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
                     {toot.contentTagsParagraph &&
-                        <div className={contentClass} style={{paddingTop: "12px"}}>
+                        <div className={fontColor ? "status__content__alt" : "status__content"} style={{paddingTop: "12px"}}>
                             <span style={tagFontStyle}>{parse(toot.contentTagsParagraph)}</span>
                         </div>}
 

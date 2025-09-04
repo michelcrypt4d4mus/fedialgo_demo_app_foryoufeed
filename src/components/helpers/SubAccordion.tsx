@@ -25,7 +25,7 @@ export default function SubAccordion(props: SubAccordionProps) {
         <Accordion.Item eventKey={title} key={title}>
             <Accordion.Header>
                 <Form.Label style={subHeaderLabel}>
-                    <span className={headerClass} key={1}>
+                    <span className={`filterHeader ${isActive ? "filterHeader--active" : ""}`} key={1}>
                         {/* // TODO janky workaround bc capitalCase() turns apostrophes into spaces */}
                         {hasAnyCapitalLetters(title) ? title : capitalCase(title)}
                     </span>

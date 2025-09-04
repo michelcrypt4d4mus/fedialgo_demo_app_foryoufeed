@@ -196,7 +196,7 @@ export default function Feed() {
 
                         <div className="d-grid gap-2" style={newTootButton}>
                             <Button
-                                className={TEXT_CENTER_P2}
+                                className="text-center p-2"
                                 onClick={() => setShowNewTootModal(true)}
                                 variant="outline-secondary"
                             >

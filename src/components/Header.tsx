@@ -26,11 +26,11 @@ export default function Header() {
             <Row className="w-100 m-1">
                 <Col xs={XS_VALUE} className="p-0">
                     {user &&
-                        <div className={`${ALIGN_MIDDLE_D_INLINE} ${TEXT_CENTER}`}>
+                        <div className="align-middle d-inline text-center">
                             {user?.profilePicture &&
                                 <img
                                     alt={`${FEDIALGO} User Avatar`}
-                                    className={ALIGN_MIDDLE_D_INLINE_BLOCK}
+                                    className="align-middle d-inline-block"
                                     src={user.profilePicture}
                                     style={avatarStyle}
                                 />}
@@ -41,14 +41,14 @@ export default function Header() {
                         </div>}
                 </Col>
 
-                <Col xs={XS_VALUE} className={`${TEXT_CENTER} p-0`}>
+                <Col xs={XS_VALUE} className="text-center p-0">
                     <img
-                        className={ALIGN_MIDDLE_D_INLINE_BLOCK}
+                        className="align-middle d-inline-block"
                         src={config.app.headerIconUrl}
                         style={avatarStyle}
                     />
 
-                    <span className={`${ALIGN_MIDDLE} ${TEXT_CENTER_P2}`} style={fedialgoContainer}>
+                    <span className="align-middle text-center p-2" style={fedialgoContainer}>
                         <a href={config.app.repoUrl} style={whiteFont} target="_blank">
                             Fedialgo Demo
                         </a>
@@ -64,7 +64,7 @@ export default function Header() {
                 <Col xs={XS_VALUE} className="text-end p-0">
                     {user &&
                         <Button
-                            className={TEXT_CENTER_P2}
+                            className="text-center p-2"
                             onClick={() => logout()}
                             size="sm"
                             variant="outline-danger"

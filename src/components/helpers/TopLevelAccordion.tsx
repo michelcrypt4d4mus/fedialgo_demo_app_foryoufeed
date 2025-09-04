@@ -28,7 +28,7 @@ export default function TopLevelAccordion(props: TopLevelAccordionProps) {
         <Accordion defaultActiveKey={startOpen ? title : null}>
             <Accordion.Item eventKey={title}>
                 <Accordion.Header style={noPadding}>
-                    <span className={className} style={style}>
+                    <span className={`isActive ? "filterHeader--rounded" : ""`} style={style}>
                         {title}
                     </span>
                 </Accordion.Header>
