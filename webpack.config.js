@@ -86,6 +86,10 @@ module.exports = {
         }),
         new PurgeCSSPlugin({
             paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+            safelist: [
+                'accordion', 'accordion-body', 'accordion-button', 'accordion-item', 'accordion-header', 'accordion-collapse',
+                'collapse', 'show', 'collapsing', 'dropdown', // Essential Bootstrap collapse classes
+            ],
         }),
         new WorkboxWebpackPlugin.GenerateSW({
             // WorkboxWebpackPlugin docs: https://developer.chrome.com/docs/workbox/modules/workbox-webpack-plugin/
