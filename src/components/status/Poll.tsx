@@ -5,14 +5,15 @@ import React, { KeyboardEventHandler, useCallback, useMemo, useState } from "rea
 
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { isAccessTokenRevokedError, timeString } from "fedialgo";
 import { mastodon } from "masto";
 
 import { getLogger } from "../../helpers/log_helpers";
-import { isAccessTokenRevokedError, timeString } from "fedialgo";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useError } from "../../components/helpers/ErrorHandler";
 
 const ALREADY_VOTED_MSG = `You have already voted`;
+
 const logger = getLogger("Poll");
 
 interface PollProps {
@@ -96,7 +97,6 @@ export default function Poll(props: PollProps) {
             note: errorObj && isAccessTokenRevokedError(errorObj) ? 'Please logout and back in again.' : null,
         });
     }
-
 
     return (
         <div className='poll'>
