@@ -27,7 +27,7 @@ export default function Header() {
                         <div className={`${ALIGN_MIDDLE_D_INLINE} ${TEXT_CENTER}`}>
                             {user?.profilePicture &&
                                 <img
-                                    alt="Avatar"
+                                    alt="FediAlgo User Avatar"
                                     className={ALIGN_MIDDLE_D_INLINE_BLOCK}
                                     src={user.profilePicture}
                                     style={avatarStyle}
