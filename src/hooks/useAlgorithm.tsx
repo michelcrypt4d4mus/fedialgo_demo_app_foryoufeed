@@ -114,7 +114,6 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
         loadFxn()
             .then(() => {
-                loadLogger.log(`triggerLoadFxn finished`);
                 setLoadState(false, startedAt);
             })
             .catch((err) => {
