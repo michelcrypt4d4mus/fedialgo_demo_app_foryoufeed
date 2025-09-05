@@ -6,6 +6,7 @@ const glob = require("glob");
 const path = require("path");
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const chalk = require('chalk');
 const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -16,16 +17,28 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
+const WEBPACK_LOG_PREFIX = '* [WEBPACK]';
+
+
+// Environment variables
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outputDir = path.join(__dirname, process.env.BUILD_DIR);
 const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
 
-const envMsgs = [`* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV}`];
-envMsgs.push(`* [WEBPACK] process.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}`);
-envMsgs.push(`* [WEBPACK] shouldAnalyzeBundle: ${shouldAnalyzeBundle}`);
-envMsgs.push(`* [WEBPACK] Building to outputDir: "${outputDir}"`);
-const envMsgBar = '*'.repeat(Math.max(...envMsgs.map(msg => msg.length)));
-console.log('\n' + [envMsgBar, ...envMsgs, envMsgBar].join('\n') + '\n');
+const envVars = {
+    NODE_ENV: process.env.NODE_ENV,
+    FEDIALGO_DEBUG: process.env.FEDIALGO_DEBUG,
+    isDevelopment,
+    outputDir,
+    shouldAnalyzeBundle,
+};
+
+const envMsgLines = Object.entries(envVars).map(([k, v]) => {
+    return `${chalk.dim(WEBPACK_LOG_PREFIX)} ${chalk.bold(k)}: ${chalk.cyan(v)}`
+});
+
+const envMsgsBar = chalk.dim('*'.repeat(Math.max(...envMsgLines.map(msg => msg.length))));
+console.log([envMsgsBar, ...envMsgLines, envMsgsBar].join('\n') + '\n');
 
 
 module.exports = {
