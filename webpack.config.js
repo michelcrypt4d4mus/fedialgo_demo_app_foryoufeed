@@ -16,13 +16,12 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
-// Github pages only lets you deploy from docs/ folder
-const outputDir = process.env.BUILD_GITHUB_PAGES == 'true' ? 'docs' : 'dist';
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const outputDir = path.join(__dirname, process.env.BUILD_DIR);
 
 const envMsgs = [`* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV}`];
 envMsgs.push(`* [WEBPACK] process.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}`);
-envMsgs.push(`* Building to outputDir: ${outputDir} (BUILD_GITHUB_PAGES=${process.env.BUILD_GITHUB_PAGES})`);
+envMsgs.push(`* [WEBPACK] Building to outputDir: "${outputDir}"`);
 const envMsgBar = '*'.repeat(Math.max(...envMsgs.map(msg => msg.length)));
 console.log('\n' + [envMsgBar, ...envMsgs, envMsgBar].join('\n') + '\n');
 
