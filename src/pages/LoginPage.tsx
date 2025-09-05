@@ -89,7 +89,7 @@ export default function LoginPage() {
 
             <div>
                 <p style={descriptionText}>
-                    Fedi-Feed features a customizable algorithm for sorting your feed.<br />
+                    {FEDIALGO} features a customizable algorithm for sorting your feed.<br />
                     You can choose which factors influence the sorting of your timeline.<br />
 
                     <span style={privacyText}>
