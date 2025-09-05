@@ -1,6 +1,6 @@
 {
     "name": "fedialgo-demo-app-foryoufeed",
-    "version": "1.1.29",
+    "version": "1.1.30",
     "private": false,
     "homepage": "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed",
     "dependencies": {
@@ -13,7 +13,7 @@
         "buffer": "^6.0.3",
         "change-case": "^5.4.4",
         "dotenv-flow": "^4.1.0",
-        "fedialgo": "github:michelcrypt4d4mus/fedialgo#v1.1.29",
+        "fedialgo": "github:michelcrypt4d4mus/fedialgo#v1.1.30",
         "html-react-parser": "^3.0.15",
         "lodash": "^4.17.21",
         "masto": "^7.2.0",
@@ -31,6 +31,7 @@
         "ufo": "^1.1.1"
     },
     "scripts": {
+        "analyze_bundle": "ANALYZE_BUNDLE=true npm run build",
         "build": "NODE_ENV=production webpack --mode production",
         "bad_deploy": "gh-pages --dist dist --branch github_pagez --nojekyll",
         "lint": "eslint src/**/*.ts src/**/*.tsx",
@@ -74,6 +75,7 @@
         "@types/react": "^18.0.35",
         "@types/react-dom": "^18.0.11",
         "@types/tinycolor2": "^1.4.6",
+        "chalk": "^4.1.2",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.3",
         "dotenv-webpack": "^8.1.0",
