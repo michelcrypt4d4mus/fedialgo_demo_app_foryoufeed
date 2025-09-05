@@ -17,9 +17,8 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
-
 // Handle and log environment variables
-const ENV_VARS_TO_LOG = ['NODE_ENV', 'FEDIALGO_DEBUG', 'QUICK_MODE'];
+const ENV_VARS_TO_LOG = ['NODE_ENV', 'BUILD_DIR', 'FEDIALGO_DEBUG', 'QUICK_MODE'];
 const ENV_VAR_LOG_PREFIX = '* [WEBPACK]';
 
 const getEnvVars = (varNames) => {
@@ -97,8 +96,8 @@ module.exports = {
         envVars.shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
         new CopyPlugin({
             patterns: [
-                { from: 'assets', to: '' }, // copies all files from assets to dist/
-                { from: 'public', to: '' }, // copies all files from public to dist/
+                { from: 'assets', to: '' }, // copies all files from assets to envVars.outputDir
+                { from: 'public', to: '' }, // copies all files from public to envVars.outputDir
             ],
         }),
         new Dotenv(),

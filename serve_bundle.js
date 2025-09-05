@@ -1,5 +1,5 @@
 /*
- * Janky way to serve dist/bundle.js locally based on:
+ * Janky way to serve docs/bundle.js locally based on:
  * https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Node_server_without_framework
  */
 require('dotenv-flow').config();
