@@ -1,19 +1,19 @@
 /*
  * Webpack configuration for the FediAlgo Demo App.
  */
-require('dotenv-flow').config();
+require("dotenv-flow").config();
 const glob = require("glob");
 const path = require("path");
 
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const chalk = require('chalk');
-const CopyPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const chalk = require("chalk");
+const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ReactRefreshTypeScript = require('react-refresh-typescript');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const ReactRefreshTypeScript = require("react-refresh-typescript");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
