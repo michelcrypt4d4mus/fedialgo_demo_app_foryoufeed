@@ -17,7 +17,7 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
-const ENV_VARS_TO_LOG = ['NODE_ENV', 'FEDIALGO_DEBUG', 'BUMM'];
+const ENV_VARS_TO_LOG = ['NODE_ENV', 'FEDIALGO_DEBUG', 'QUICK_MODE'];
 const ENV_VAR_LOG_PREFIX = '* [WEBPACK]';
 
 
@@ -28,6 +28,8 @@ const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
 const getEnvVars = (varNames) => varNames.reduce((dict, v) => ({...dict, [v]: process.env[v]}), {});
 
 const coloredValue = (v) => {
+    v = ['true', 'false'].includes(v) ? (v == 'true') : v;
+
     if (typeof v == 'boolean') {
         return v ? chalk.green(v) : chalk.red(v);
     } else if (typeof v == 'number') {
@@ -53,7 +55,6 @@ const envMsgLines = Object.entries(envVars).map(([k, v]) => (
 const envMsgsBar = chalk.dim('*'.repeat(Math.max(...envMsgLines.map(msg => msg.length))));
 console.log([envMsgsBar, ...envMsgLines, envMsgsBar].join('\n') + '\n');
 
-console.log(process.env);
 
 module.exports = {
     entry: "./src/index.tsx",
