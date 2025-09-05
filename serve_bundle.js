@@ -26,7 +26,7 @@ const toBool = [() => true, () => false];
 
 
 const prepareFile = async (url) => {
-    const [baseUrl, args] = url.split("?");
+    const [baseUrl, _args] = url.split("?");
     console.log(`* [prepareFile] url: ${url}, baseUrl: ${baseUrl}`);
     let paths = [STATIC_PATH, baseUrl];
 
