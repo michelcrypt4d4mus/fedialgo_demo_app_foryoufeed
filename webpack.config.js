@@ -18,9 +18,11 @@ const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outputDir = path.join(__dirname, process.env.BUILD_DIR);
+const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
 
 const envMsgs = [`* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV}`];
 envMsgs.push(`* [WEBPACK] process.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}`);
+envMsgs.push(`* [WEBPACK] shouldAnalyzeBundle: ${shouldAnalyzeBundle}`);
 envMsgs.push(`* [WEBPACK] Building to outputDir: "${outputDir}"`);
 const envMsgBar = '*'.repeat(Math.max(...envMsgs.map(msg => msg.length)));
 console.log('\n' + [envMsgBar, ...envMsgs, envMsgBar].join('\n') + '\n');
@@ -65,7 +67,7 @@ module.exports = {
 
     plugins: [
         isDevelopment && new ReactRefreshWebpackPlugin(),
-        // new BundleAnalyzerPlugin(),  // Generates an analysis of the bundle whenever webpack is run
+        shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
         new CopyPlugin({
             patterns: [
                 { from: 'assets', to: '' }, // copies all files from assets to dist/
