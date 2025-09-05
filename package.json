@@ -31,6 +31,7 @@
         "ufo": "^1.1.1"
     },
     "scripts": {
+        "analyze_bundle": "ANALYZE_BUNDLE=true npm run build",
         "build": "NODE_ENV=production webpack --mode production",
         "lint": "eslint src/**/*.ts src/**/*.tsx",
         "predeploy": "npm run build",

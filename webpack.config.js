@@ -19,9 +19,11 @@ const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 // Github pages only lets you deploy from docs/ folder
 const outputDir = process.env.BUILD_GITHUB_PAGES == 'true' ? 'docs' : 'dist';
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
 
 const envMsgs = [`* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV}`];
 envMsgs.push(`* [WEBPACK] process.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}`);
+envMsgs.push(`* [WEBPACK] shouldAnalyzeBundle: ${shouldAnalyzeBundle}`);
 envMsgs.push(`* Building to outputDir: ${outputDir} (BUILD_GITHUB_PAGES=${process.env.BUILD_GITHUB_PAGES})`);
 const envMsgBar = '*'.repeat(Math.max(...envMsgs.map(msg => msg.length)));
 console.log('\n' + [envMsgBar, ...envMsgs, envMsgBar].join('\n') + '\n');
@@ -66,7 +68,7 @@ module.exports = {
 
     plugins: [
         isDevelopment && new ReactRefreshWebpackPlugin(),
-        // new BundleAnalyzerPlugin(),  // Generates an analysis of the bundle whenever webpack is run
+        shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
         new CopyPlugin({
             patterns: [
                 { from: 'assets', to: '' }, // copies all files from assets to dist/
