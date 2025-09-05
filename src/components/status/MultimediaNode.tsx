@@ -16,9 +16,9 @@ import { getLogger } from "../../helpers/log_helpers";
 import { isEmptyStr } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
 
-// TODO: what is this for? It came from pkreissel's original implementation
+// TODO: what is this <canvas> element for? It came from pkreissel's original implementation
 const GALLERY_CLASS = `media-gallery__preview`;
-const HIDDEN_CANVAS = <canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
+const HIDDEN_CANVAS =<canvas className={`${GALLERY_CLASS} ${GALLERY_CLASS}--hidden`} height="32" width="32"/>;
 const VIDEO_HEIGHT = Math.floor(config.toots.imageHeight * 1.7);
 
 const logger = getLogger("MultimediaNode");
