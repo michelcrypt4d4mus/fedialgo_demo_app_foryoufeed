@@ -6,6 +6,7 @@ const glob = require("glob");
 const path = require("path");
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const chalk = require('chalk');
 const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -16,17 +17,41 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
-// Github pages only lets you deploy from docs/ folder
-const outputDir = process.env.BUILD_GITHUB_PAGES == 'true' ? 'docs' : 'dist';
-const isDevelopment = process.env.NODE_ENV !== 'production';
-const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
+// Handle and log environment variables
+const ENV_VARS_TO_LOG = ['NODE_ENV', 'BUILD_DIR', 'FEDIALGO_DEBUG', 'QUICK_MODE'];
+const ENV_VAR_LOG_PREFIX = '* [WEBPACK]';
 
-const envMsgs = [`* [WEBPACK] process.env.NODE_ENV: ${process.env.NODE_ENV}`];
-envMsgs.push(`* [WEBPACK] process.env.FEDIALGO_DEBUG: ${process.env.FEDIALGO_DEBUG}`);
-envMsgs.push(`* [WEBPACK] shouldAnalyzeBundle: ${shouldAnalyzeBundle}`);
-envMsgs.push(`* Building to outputDir: ${outputDir} (BUILD_GITHUB_PAGES=${process.env.BUILD_GITHUB_PAGES})`);
-const envMsgBar = '*'.repeat(Math.max(...envMsgs.map(msg => msg.length)));
-console.log('\n' + [envMsgBar, ...envMsgs, envMsgBar].join('\n') + '\n');
+const getEnvVars = (varNames) => {
+    return varNames.reduce((dict, v) => ({...dict, [v]: process.env[v]}), {});
+};
+
+const coloredValue = (v) => {
+    v = ['true', 'false'].includes(v) ? (v == 'true') : v;
+
+    if (typeof v == 'boolean') {
+        return v ? chalk.green(v) : chalk.red(v);
+    } else if (typeof v == 'number') {
+        return chalk.cyan(v);
+    } else if (typeof v == 'undefined') {
+        return chalk.dim(v);
+    } else {
+        return chalk.magenta(`"${v}"`);
+    }
+};
+
+const envVars = {
+    ...getEnvVars(ENV_VARS_TO_LOG),
+    isDevelopment: process.env.NODE_ENV !== 'production',
+    outputDir: path.resolve(__dirname, process.env.BUILD_DIR),
+    shouldAnalyzeBundle: process.env.ANALYZE_BUNDLE === 'true',
+};
+
+const envMsgLines = Object.entries(envVars).map(([k, v]) => (
+    `${chalk.dim(ENV_VAR_LOG_PREFIX)} ${chalk.bold(k)}: ${coloredValue(v)}`
+));
+
+const envMsgsBar = chalk.dim('*'.repeat(Math.max(...envMsgLines.map(msg => msg.length))));
+console.log([envMsgsBar, ...envMsgLines, envMsgsBar].join('\n') + '\n');
 
 
 module.exports = {
@@ -34,13 +59,13 @@ module.exports = {
     output: {
         clean: true,  // Clean the cache each time we build
         filename: "bundle.js",
-        path: path.resolve(__dirname, outputDir),
+        path: envVars.outputDir,
     },
     resolve: {
         extensions: [".js", ".json", ".tsx", ".ts"],
     },
     devtool: "inline-source-map",
-    mode: isDevelopment ? 'development' : 'production',
+    mode: envVars.isDevelopment ? 'development' : 'production',
 
     module: {
         rules: [
@@ -52,9 +77,9 @@ module.exports = {
                         loader: require.resolve('ts-loader'),
                         options: {
                             getCustomTransformers: () => ({
-                                before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
+                                before: [envVars.isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
                             }),
-                            transpileOnly: isDevelopment,
+                            transpileOnly: envVars.isDevelopment,
                         },
                     },
                 ],
@@ -67,12 +92,12 @@ module.exports = {
     },
 
     plugins: [
-        isDevelopment && new ReactRefreshWebpackPlugin(),
-        shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
+        envVars.isDevelopment && new ReactRefreshWebpackPlugin(),
+        envVars.shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
         new CopyPlugin({
             patterns: [
-                { from: 'assets', to: '' }, // copies all files from assets to dist/
-                { from: 'public', to: '' }, // copies all files from public to dist/
+                { from: 'assets', to: '' }, // copies all files from assets to envVars.outputDir
+                { from: 'public', to: '' }, // copies all files from public to envVars.outputDir
             ],
         }),
         new Dotenv(),
