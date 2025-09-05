@@ -23,7 +23,7 @@ interface AlgoContext {
     allowMultiSelect?: boolean,
     allowMultiSelectCheckbox?: ReactElement,
     api?: mastodon.rest.Client,
-    isGoToSocialUser?: boolean, // Whether the user is on a GoToSocial instance
+    isGoToSocialUser?: boolean,  // Whether the user is on a GoToSocial instance
     isLoading?: boolean,
     hideSensitive?: boolean,
     hideSensitiveCheckbox?: ReactElement,

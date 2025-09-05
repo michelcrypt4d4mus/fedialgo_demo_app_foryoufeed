@@ -193,7 +193,7 @@ class Config implements ReadonlyConfig {
         loadingSpinnerType: "grow",
         repoName: HOMEPAGE ? HOMEPAGE.split("/").pop() : null,
         repoUrl: HOMEPAGE ? HOMEPAGE.replace(/(\w+)\.github\.io/, `github.com/$1`) : HOMEPAGE,
-        showcaseImageUrl: "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.png",
+        showcaseImageUrl: "https://raw.githubusercontent.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/refs/heads/master/public/assets/Showcase.jpg",
     }
 
     filters: FilterConfig = {

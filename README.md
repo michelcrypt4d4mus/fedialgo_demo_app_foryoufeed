@@ -9,7 +9,7 @@ This repo contains a simple demo React application (a website, basically) for th
 Each incoming toot in your recent timeline will be scored based on a variety of factors and resorted top to bottom based on what toots have the highest scores instead of just reverse chronological order. You can adjust in a very fine grained way how much weight you want to give to each of those factors in determining each toot's scores. There are also some easy to use presets, including reverting to the standard reverse chronological order.
 
 <p align="center">
-    <img src="public/assets/Showcase.png" alt="Algorithm Weighting Sliders" width="600">
+    <img src="public/assets/Showcase.jpg" alt="Algorithm Weighting Sliders" width="600">
 </p>
 
 Both this repo and the `fedialgo` package linked above were forked from [pkreissel's original implementations](https://github.com/pkreissel/fedialgo).
@@ -113,6 +113,14 @@ There's [a script](./quick_install.sh) in this repo that will do all the steps f
 You can install the local `fedialgo` package by running `npm link` in the `fedialgo` project dir and then `npm link fedialgo` in this project's dir _or_ you can do that kind of thing manually by running `npm install path/to/local/fedialgo` in this repo's dir but either way in order to pick up any code changes from `fedialgo` you will have to run `npm run build` in the `fedialgo` package dir.
 
 Assuming you check both `fedialgo` and this repo out to the same directory there's a helper script to link the local repo in [`link_local_fedialgo.sh`](./link_local_fedialgo.sh).
+
+### Running In `production` Mode
+There's [a script](./serve_dist_bundle.js) you can use to launch a "production" mode webserver after building the project locally. If you want do that kind of thing use these steps:
+
+```bash
+npm run build
+node serve_dist_bundle.js
+```
 
 ### Debugging
 If you set the environment variable `FEDIALGO_DEBUG=true` a _lot_ more debugging info will be printed to the browser console. See [`.env.development`](./.env.development) for other environment variables you can play with.

@@ -20,6 +20,7 @@ interface PreviewCardProps {
 
 export default function PreviewCard(props: PreviewCardProps): React.ReactElement {
     const { card, showLinkPreviews } = props;
+    const altText = card.title || card.description;
 
     const headline = <>
         <span style={providerName}>[{card.providerName || extractDomain(card.url)}]</span>{' '}
@@ -46,11 +47,11 @@ export default function PreviewCard(props: PreviewCardProps): React.ReactElement
                 />
 
                 <LazyLoadImage
-                    alt={card.title || card.description}
+                    alt={altText}
                     className="status-card__image-image"
                     src={card.image}
                     style={cardImage}
-                    title={card.title || card.description}
+                    title={altText}
                 />
             </div>
 

@@ -85,7 +85,7 @@ export default function LoginPage() {
 
     return (
         <div className="vh-100" style={loginContainer}>
-            <img src={config.app.showcaseImageUrl} alt="FediAlgo Showcase" style={previewImage} />
+            <img src={config.app.showcaseImageUrl} alt={`${FEDIALGO} Showcase`} style={previewImage} />
 
             <div>
                 <p style={descriptionText}>

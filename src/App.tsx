@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect } from "react";
-import { Buffer } from "buffer"; // Required for class-transformer to work
+import { Buffer } from "buffer";  // Required for class-transformer to work (maybe???)
 (window as any).Buffer = Buffer;
 
 import "bootstrap/dist/css/bootstrap.min.css";
