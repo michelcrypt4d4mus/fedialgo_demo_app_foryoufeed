@@ -17,29 +17,43 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
-const WEBPACK_LOG_PREFIX = '* [WEBPACK]';
+const ENV_VARS_TO_LOG = ['NODE_ENV', 'FEDIALGO_DEBUG', 'BUMM'];
+const ENV_VAR_LOG_PREFIX = '* [WEBPACK]';
 
 
 // Environment variables
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outputDir = path.join(__dirname, process.env.BUILD_DIR);
 const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
+const getEnvVars = (varNames) => varNames.reduce((dict, v) => ({...dict, [v]: process.env[v]}), {});
+
+const coloredValue = (v) => {
+    if (typeof v == 'boolean') {
+        return v ? chalk.green(v) : chalk.red(v);
+    } else if (typeof v == 'number') {
+        return chalk.cyan(v);
+    } else if (typeof v == 'undefined') {
+        return chalk.dim(v);
+    } else {
+        return chalk.magenta(`"${v}"`);
+    }
+};
 
 const envVars = {
-    NODE_ENV: process.env.NODE_ENV,
-    FEDIALGO_DEBUG: process.env.FEDIALGO_DEBUG,
+    ...getEnvVars(ENV_VARS_TO_LOG),
     isDevelopment,
     outputDir,
     shouldAnalyzeBundle,
 };
 
-const envMsgLines = Object.entries(envVars).map(([k, v]) => {
-    return `${chalk.dim(WEBPACK_LOG_PREFIX)} ${chalk.bold(k)}: ${chalk.cyan(v)}`
-});
+const envMsgLines = Object.entries(envVars).map(([k, v]) => (
+    `${chalk.dim(ENV_VAR_LOG_PREFIX)} ${chalk.bold(k)}: ${coloredValue(v)}`
+));
 
 const envMsgsBar = chalk.dim('*'.repeat(Math.max(...envMsgLines.map(msg => msg.length))));
 console.log([envMsgsBar, ...envMsgLines, envMsgsBar].join('\n') + '\n');
 
+console.log(process.env);
 
 module.exports = {
     entry: "./src/index.tsx",
