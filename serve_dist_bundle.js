@@ -7,7 +7,7 @@ const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 
-const STATIC_PATH = path.join(process.cwd(), "./docs");
+const STATIC_PATH = path.join(process.cwd(), "./dist");
 const PORT = 9090;
 
 const MIME_TYPES = {
