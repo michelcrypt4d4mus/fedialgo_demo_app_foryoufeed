@@ -114,6 +114,14 @@ You can install the local `fedialgo` package by running `npm link` in the `fedia
 
 Assuming you check both `fedialgo` and this repo out to the same directory there's a helper script to link the local repo in [`link_local_fedialgo.sh`](./link_local_fedialgo.sh).
 
+### Running In `production` Mode
+There's [a script](./serve_dist_bundle.js) you can use to launch a "production" mode webserver after building the project locally. If you want do that kind of thing use these steps:
+
+```bash
+npm run build
+node serve_dist_bundle.js
+```
+
 ### Debugging
 If you set the environment variable `FEDIALGO_DEBUG=true` a _lot_ more debugging info will be printed to the browser console. See [`.env.development`](./.env.development) for other environment variables you can play with.
 
