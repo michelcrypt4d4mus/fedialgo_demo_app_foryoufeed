@@ -16,10 +16,6 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
-const BOOTSTRAP_BUTTON_CSS_CLASSNAME_SUFFIXES = [
-    'primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark', 'link',
-];
-
 // Github pages only lets you deploy from docs/ folder
 const outputDir = process.env.BUILD_GITHUB_PAGES == 'true' ? 'docs' : 'dist';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -86,16 +82,6 @@ module.exports = {
         }),
         new PurgeCSSPlugin({
             paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
-            safelist: [
-                'accordion',
-                ...['body', 'button', 'collapse', 'header', 'item'].map(suffix => `accordion-${suffix}`),
-                'collapse', 'collapsed', 'collapsing', 'dropdown', 'show',  // Essential Bootstrap collapse classes
-                'dropdown-toggle', 'dropdown-menu', 'dropdown-item', 'dropdown-item-text',  // Essential Bootstrap dropdown classes
-                'd-grid', 'gap-2',
-                'btn', 'btn-sm', 'btn-group',
-                ...BOOTSTRAP_BUTTON_CSS_CLASSNAME_SUFFIXES.map(suffix => `btn-${suffix}`),
-                ...BOOTSTRAP_BUTTON_CSS_CLASSNAME_SUFFIXES.map(suffix => `btn-outline-${suffix}`),
-            ],
         }),
         new WorkboxWebpackPlugin.GenerateSW({
             // WorkboxWebpackPlugin docs: https://developer.chrome.com/docs/workbox/modules/workbox-webpack-plugin/

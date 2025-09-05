@@ -2,7 +2,7 @@ import React, { CSSProperties, useEffect } from "react";
 import { Buffer } from "buffer";  // Required for class-transformer to work (maybe???)
 (window as any).Buffer = Buffer;
 
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 
