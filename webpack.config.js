@@ -17,15 +17,14 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const webpack = require("webpack");
 const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
 
+
+// Handle and log environment variables
 const ENV_VARS_TO_LOG = ['NODE_ENV', 'FEDIALGO_DEBUG', 'QUICK_MODE'];
 const ENV_VAR_LOG_PREFIX = '* [WEBPACK]';
 
-
-// Environment variables
-const isDevelopment = process.env.NODE_ENV !== 'production';
-const outputDir = path.join(__dirname, process.env.BUILD_DIR);
-const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
-const getEnvVars = (varNames) => varNames.reduce((dict, v) => ({...dict, [v]: process.env[v]}), {});
+const getEnvVars = (varNames) => {
+    return varNames.reduce((dict, v) => ({...dict, [v]: process.env[v]}), {});
+};
 
 const coloredValue = (v) => {
     v = ['true', 'false'].includes(v) ? (v == 'true') : v;
@@ -43,9 +42,9 @@ const coloredValue = (v) => {
 
 const envVars = {
     ...getEnvVars(ENV_VARS_TO_LOG),
-    isDevelopment,
-    outputDir,
-    shouldAnalyzeBundle,
+    isDevelopment: process.env.NODE_ENV !== 'production',
+    outputDir: path.resolve(__dirname, process.env.BUILD_DIR),
+    shouldAnalyzeBundle: process.env.ANALYZE_BUNDLE === 'true',
 };
 
 const envMsgLines = Object.entries(envVars).map(([k, v]) => (
@@ -61,13 +60,13 @@ module.exports = {
     output: {
         clean: true,  // Clean the cache each time we build
         filename: "bundle.js",
-        path: path.resolve(__dirname, outputDir),
+        path: envVars.outputDir,
     },
     resolve: {
         extensions: [".js", ".json", ".tsx", ".ts"],
     },
     devtool: "inline-source-map",
-    mode: isDevelopment ? 'development' : 'production',
+    mode: envVars.isDevelopment ? 'development' : 'production',
 
     module: {
         rules: [
@@ -79,9 +78,9 @@ module.exports = {
                         loader: require.resolve('ts-loader'),
                         options: {
                             getCustomTransformers: () => ({
-                                before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
+                                before: [envVars.isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
                             }),
-                            transpileOnly: isDevelopment,
+                            transpileOnly: envVars.isDevelopment,
                         },
                     },
                 ],
@@ -94,8 +93,8 @@ module.exports = {
     },
 
     plugins: [
-        isDevelopment && new ReactRefreshWebpackPlugin(),
-        shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
+        envVars.isDevelopment && new ReactRefreshWebpackPlugin(),
+        envVars.shouldAnalyzeBundle && new BundleAnalyzerPlugin(),
         new CopyPlugin({
             patterns: [
                 { from: 'assets', to: '' }, // copies all files from assets to dist/
