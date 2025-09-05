@@ -43,7 +43,7 @@ export default function Header() {
 
                 <Col xs={XS_VALUE} className={`${TEXT_CENTER} p-0`}>
                     <img
-                        className="align-middle d-inline-block"
+                        className={ALIGN_MIDDLE_D_INLINE_BLOCK}
                         src={config.app.headerIconUrl}
                         style={avatarStyle}
                     />
