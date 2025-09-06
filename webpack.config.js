@@ -111,9 +111,9 @@ module.exports = {
         // new PurgeCSSPlugin({
         //     paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
         //     safelist: [
-        //         "media-gallery",
-        //         'media-gallery__preview', 'media-gallery__preview--hidden', 'media-gallery__preview--video',
-        //         "media-gallery__item", "media-gallery__item--hidden", "media-gallery__item--video",
+        //         "invisible",
+        //         /^form/,
+        //         /^media/,
         //     ]
         // }),
         new WorkboxWebpackPlugin.GenerateSW({
