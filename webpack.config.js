@@ -86,7 +86,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"],
+                use: ["style-loader", "css-loader"],
+                // use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
         ],
     },
@@ -104,17 +105,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./src/index.html",
         }),
-        new MiniCssExtractPlugin({
-            filename: "[name].css",
-        }),
-        new PurgeCSSPlugin({
-            paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
-            safelist: [
-                "media-gallery",
-                'media-gallery__preview', 'media-gallery__preview--hidden', 'media-gallery__preview--video',
-                "media-gallery__item", "media-gallery__item--hidden", "media-gallery__item--video",
-            ]
-        }),
+        // new MiniCssExtractPlugin({
+        //     filename: "[name].css",
+        // }),
+        // new PurgeCSSPlugin({
+        //     paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
+        //     safelist: [
+        //         "media-gallery",
+        //         'media-gallery__preview', 'media-gallery__preview--hidden', 'media-gallery__preview--video',
+        //         "media-gallery__item", "media-gallery__item--hidden", "media-gallery__item--video",
+        //     ]
+        // }),
         new WorkboxWebpackPlugin.GenerateSW({
             // WorkboxWebpackPlugin docs: https://developer.chrome.com/docs/workbox/modules/workbox-webpack-plugin/
             clientsClaim: true,

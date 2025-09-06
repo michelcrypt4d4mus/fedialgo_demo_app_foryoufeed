@@ -81,9 +81,14 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         [filter.options]
     );
 
-    // Get the color & text for the tooltip based on the number stored in the option prop w/name same as dataSource param
-    // Returns null if the option doesn't have a number for that dataSource.
-    //   - 'boostValue' can be used to boost the color farther down the gradient, e.g. for followed accounts
+    /**
+     * Get the color & text for the tooltip based on the number stored in the option prop w/name same
+     * as dataSource param. Returns null if the option doesn't have a number for that dataSource.
+     * @param {BooleanFilterOption} option - The filter option to get the tooltip for
+     * @param {FilterOptionDataSource} dataSource - The property of the option to use for the gradient value
+     * @param {boolean} [boostValue] If true and the option is followed, boost the value half way up the gradient
+     * @returns {CheckboxTooltipConfig | undefined} A CheckboxTooltipConfig (or undefined if none should be shown)
+     */
     const getGradientTooltip = (
         option: BooleanFilterOption,
         dataSource: FilterOptionDataSource,
@@ -113,8 +118,12 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
         }
     };
 
-    // Return a finalized CheckboxTooltipConfig with full text and color for the option
-    // if showFilterHighlights is enabled and the option has a non-zero value for the dataSource.
+    /**
+     * Return a finalized CheckboxTooltipConfig with full text and color for the option
+     * if showFilterHighlights is enabled and the option has a non-zero value for the dataSource.
+     * @param {BooleanFilterOption} option The filter option to get the tooltip for
+     * @returns {CheckboxTooltipConfig} A CheckboxTooltipConfig or undefined if no tooltip should be shown
+     */
     const findTooltip = (option: BooleanFilterOption): CheckboxTooltipConfig | undefined => {
         if (!showFilterHighlights) return undefined;
         let tooltip: CheckboxTooltipConfig | undefined;
