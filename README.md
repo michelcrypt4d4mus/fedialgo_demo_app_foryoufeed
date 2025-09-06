@@ -123,6 +123,8 @@ node serve_dist_bundle.js
 ```
 
 ### Debugging
+You can overload a few environment variables by creating a `.env.development.local` file and adding your overrides to it.
+
 If you set the environment variable `FEDIALGO_DEBUG=true` a _lot_ more debugging info will be printed to the browser console. See [`.env.development`](./.env.development) for other environment variables you can play with.
 
 There's also an arrow icon at the top right of ecah toot that will open a display showing the raw JSON of the underlying toot.

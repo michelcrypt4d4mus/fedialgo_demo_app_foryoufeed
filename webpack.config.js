@@ -64,7 +64,7 @@ module.exports = {
     resolve: {
         extensions: [".js", ".json", ".tsx", ".ts"],
     },
-    devtool: "inline-source-map",
+    devtool: envVars.isDevelopment ? "inline-source-map" : undefined,
     mode: envVars.isDevelopment ? 'development' : 'production',
 
     module: {
@@ -86,8 +86,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ["style-loader", "css-loader"],
-                // use: [MiniCssExtractPlugin.loader, "css-loader"],
+                // use: ["style-loader", "css-loader"],
+                use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
         ],
     },
@@ -105,17 +105,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./src/index.html",
         }),
-        // new MiniCssExtractPlugin({
-        //     filename: "[name].css",
-        // }),
-        // new PurgeCSSPlugin({
-        //     paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
-        //     safelist: [
-        //         "invisible",
-        //         /^form/,
-        //         /^media/,
-        //     ]
-        // }),
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+        }),
+        new PurgeCSSPlugin({
+            paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
+            safelist: [
+                /^invisible/,
+                /^form/,
+                /^media/,
+            ]
+        }),
         new WorkboxWebpackPlugin.GenerateSW({
             // WorkboxWebpackPlugin docs: https://developer.chrome.com/docs/workbox/modules/workbox-webpack-plugin/
             clientsClaim: true,
