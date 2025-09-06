@@ -275,6 +275,10 @@ export const tooltipZIndex: CSSProperties = {
     zIndex: 2000,
 };
 
+export const verticalContainer: CSSProperties = {
+    marginTop: "35px",
+};
+
 export const whiteBackground: CSSProperties = {
     backgroundColor: "white",
 };

@@ -7,6 +7,7 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import TheAlgorithm, { Toot, optionalSuffix } from "fedialgo";
 import { Tooltip } from "react-tooltip";
 
+import ApiErrorsPanel from "../components/ApiErrorsPanel";
 import BugReportLink from "../components/helpers/BugReportLink";
 import ExperimentalFeatures from "../components/experimental/ExperimentalFeatures";
 import FeedFiltersAccordionSection from "../components/algorithm/FeedFiltersAccordionSection";
@@ -30,13 +31,12 @@ import {
     loadingMsgStyle,
     mildlyRoundedCorners,
     monoFont,
-    rawErrorContainer,
     roundedCorners,
     stickySwitchContainer,
     TEXT_CENTER_P2,
     tooltipZIndex,
+    verticalContainer,
     waitOrDefaultCursor,
-    whiteFont
 } from "../helpers/style_helpers";
 
 const LOAD_BUTTON_SEPARATOR = ' ● ';
@@ -204,18 +204,7 @@ export default function Feed() {
                             </Button>
                         </div>
 
-                        {algorithm?.apiErrorMsgs && (algorithm.apiErrorMsgs.length > 0) &&
-                            <div className="d-grid gap-2" style={rawErrorContainer}>
-                                <p style={whiteFont}>Non-fatal warnings encountered while loading data:</p>
-
-                                <ul style={errorList}>
-                                    {algorithm.apiErrorMsgs.map((msg, i) => (
-                                        <li key={`${msg}_${i}`} style={errorItem}>
-                                            {msg}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>}
+                        {algorithm && <ApiErrorsPanel />}
 
                         {TheAlgorithm.isDebugMode &&
                             <div style={envVarDebugPanel}>
@@ -296,18 +285,6 @@ const envVarDebugPanel: CSSProperties = {
     fontSize: 16,
     marginTop: "28px",
     paddingLeft: "60px",
-}
-
-const errorItem: CSSProperties = {
-    ...bottomRefSpacer,
-    color: "#c6d000ff",
-    fontSize: 12,
-    marginTop: "2px",
-};
-
-const errorList: CSSProperties = {
-    listStyle: "numeric",
-    paddingLeft: "25px",
 };
 
 const loadNewTootsText: CSSProperties = {
@@ -318,6 +295,7 @@ const loadNewTootsText: CSSProperties = {
 };
 
 const newTootButton: CSSProperties = {
+    ...verticalContainer,
     marginTop: "35px",
     marginLeft: "200px",
     marginRight: "200px",

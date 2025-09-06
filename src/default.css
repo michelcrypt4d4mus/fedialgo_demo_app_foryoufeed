@@ -13946,10 +13946,6 @@ input[type="range"]::-ms-thumb {
     width: 12px;
 }
 
-.accordion-button:not(.collapsed) {
-    background-color: #7ac5cc;
-}
-
 .accordion-button.collapsed {
     /* color: red; */
     /* padding: 1px; */
@@ -13980,7 +13976,20 @@ input[type="range"]::-ms-thumb {
 } */
 
 .accordion-button:not(.collapsed) {
+    background-color: #7ac5cc;
     color: #212529;
+}
+
+.error-accordion-header {
+    background-color: #000000;
+    border-radius: 2px;
+    color: white;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-weight: 600;
+}
+
+.error-accordion-header.collapsed {
+    background-color: #000000;
 }
 
 .filterHeader {
