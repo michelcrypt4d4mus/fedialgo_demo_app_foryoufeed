@@ -1,11 +1,17 @@
 /*
- * The footer that appears on the login screen.
+ * The footer that appears on the login screen when API errors and warnings were encountered
+ * while retrieving Mastodon data.
  */
 import React, { CSSProperties } from "react";
-import Accordion from "react-bootstrap/esm/Accordion";
+import Accordion from "react-bootstrap/Accordion";
+import Card from 'react-bootstrap/Card';
+import { useAccordionButton } from 'react-bootstrap';
 
-import { verticalContainer } from "../helpers/style_helpers";
+import { config } from "../config";
 import { useAlgorithm } from "../hooks/useAlgorithm";
+import { verticalContainer } from "../helpers/style_helpers";
+
+const ACCORDION_ITEM_KEY = "0";
 
 
 export default function ApiErrorsPanel() {
@@ -17,38 +23,63 @@ export default function ApiErrorsPanel() {
 
     return (
         <Accordion style={accordionStyle}>
-            <Accordion.Item eventKey="0">
-                <Accordion.Header className="error-accordion-header">
-                    {algorithm.apiErrorMsgs.length} non-fatal warnings encountered while loading data
-                </Accordion.Header>
+            <Card style={accordionStyle}>
+                <Card.Header>
+                    <CustomToggle eventKey={ACCORDION_ITEM_KEY}>
+                        {algorithm.apiErrorMsgs.length} {config.timeline.apiErrorsUserMsgSuffix} (click to inspect)
+                    </CustomToggle>
+                </Card.Header>
 
-                <Accordion.Body className="error-accordion-header">
-                    <ul style={errorList}>
-                        {algorithm.apiErrorMsgs.map((msg, i) => (
-                            <li key={`${msg}_${i}`} style={errorItem}>
-                                {msg}
-                            </li>
-                        ))}
-                    </ul>
-                </Accordion.Body>
-            </Accordion.Item>
+                <Accordion.Collapse eventKey={ACCORDION_ITEM_KEY}>
+                    <Card.Body className="error-accordion-header">
+                        <ul style={errorList}>
+                            {algorithm.apiErrorMsgs.map((msg, i) => (
+                                <li key={`${msg}_${i}`} style={errorItem}>
+                                    {msg}
+                                </li>
+                            ))}
+                        </ul>
+                    </Card.Body>
+                </Accordion.Collapse>
+            </Card>
         </Accordion>
     )
 };
 
 
-const accordionStyle: CSSProperties = {
-    ...verticalContainer,
-    backgroundColor: "#3a3b3aff",
-    marginRight: "100px",
+/**
+ * Custom toggle for the accordion header. For some reason it doesn't work to directly inline the useAccordionButton.
+ */
+function CustomToggle({ children, eventKey }) {
+    const decoratedOnClick = useAccordionButton(eventKey, () => console.debug('expand eventKey:', eventKey));
+
+    return (
+        <button type="button" style={buttonStyle} onClick={decoratedOnClick}>
+            {children}
+        </button>
+    );
 };
 
-const bottomRefSpacer: CSSProperties = {
-    marginTop: "10px",
+
+const accordionHeaderStyle: CSSProperties = {
+    backgroundColor: "#4f4f42ff",
+};
+
+const accordionStyle: CSSProperties = {
+    ...accordionHeaderStyle,
+    ...verticalContainer,
+    fontFamily: "Tahoma, Geneva, sans-serif",
+    marginBottom: verticalContainer.marginTop,
+};
+
+const buttonStyle: CSSProperties = {
+    ...accordionHeaderStyle,
+    borderWidth: "0px",
+    color: "#a4a477ff",
+    width: '100%'
 };
 
 const errorItem: CSSProperties = {
-    ...bottomRefSpacer,
     color: "#c6d000ff",
     fontSize: 12,
     marginTop: "2px",
