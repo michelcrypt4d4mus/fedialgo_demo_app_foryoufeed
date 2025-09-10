@@ -111,6 +111,7 @@ type StatsConfig = {
 
 type TimelineConfig = {
     readonly autoloadOnFocusAfterMinutes: number;
+    readonly apiErrorsUserMsgSuffix: string;
     readonly defaultLoadingMsg: string;
     readonly defaultNumDisplayedToots: number;
     readonly dmBackgroundColor: CSSProperties["backgroundColor"];
@@ -337,6 +338,7 @@ class Config implements ReadonlyConfig {
 
     timeline: TimelineConfig = {
         autoloadOnFocusAfterMinutes: 5,       // Autoload new toots if timeline is this old (and feature is enabled)
+        apiErrorsUserMsgSuffix: `warnings while retrieving Mastodon data`,
         defaultLoadingMsg: "Loading (first time can take up to a minute or so)",  // Message when first loading toots
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
         dmBackgroundColor: "rgb(28, 27, 58)",     // Background color for DMs
