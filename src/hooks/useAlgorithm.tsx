@@ -9,9 +9,9 @@ import { useError } from "../components/helpers/ErrorHandler";
 
 import persistentCheckbox from "../components/helpers/persistent_checkbox";
 import { addMimeExtensionsToServer, type MastodonServer } from "../helpers/mastodon_helpers";
-import { config } from "../config";
 import { Events } from "../helpers/string_helpers";
 import { getLogger } from "../helpers/log_helpers";
+import { GuiCheckboxName, config } from "../config";
 import { useAuthContext } from "./useAuth";
 import { type ErrorHandler } from "../types";
 
@@ -61,21 +61,10 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
     const api = createRestAPIClient({accessToken: user.access_token, url: user.server});
 
     // Checkboxes with persistent storage that require somewhat global state
-    const [allowMultiSelect, allowMultiSelectCheckbox, _tooltip4] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.allowMultiSelect,
-    });
-
-    const [hideSensitive, hideSensitiveCheckbox, _tooltip3] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.hideSensitive,
-    });
-
-    const [shouldAutoUpdate, shouldAutoUpdateCheckbox, _tooltip2] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.autoupdate,
-    });
-
-    const [showFilterHighlights, showFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.showFilterHighlights,
-    });
+    const [allowMultiSelect, allowMultiSelectCheckbox] = persistentCheckbox(GuiCheckboxName.allowMultiSelect);
+    const [hideSensitive, hideSensitiveCheckbox] = persistentCheckbox(GuiCheckboxName.hideSensitive);
+    const [shouldAutoUpdate, shouldAutoUpdateCheckbox] = persistentCheckbox(GuiCheckboxName.autoupdate);
+    const [showFilterHighlights, showFilterHighlightsCheckbox] = persistentCheckbox(GuiCheckboxName.showFilterHighlights);
 
     // Pass startedLoadAt as an arg every time because managing the react state of the last load is tricky
     const setLoadState = (newIsLoading: boolean, startedLoadAt: Date) => {

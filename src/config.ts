@@ -38,6 +38,16 @@ const REQUIRED_OAUTH_SCOPES = [
 const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed";
 
 
+export enum GuiCheckboxName {
+    allowMultiSelect = 'allowMultiSelect',
+    autoupdate = 'autoupdate',
+    hideSensitive = 'hideSensitive',
+    showFilterHighlights = 'showFilterHighlights',
+    showLinkPreviews = 'showLinkPreviews',
+    stickToTop = 'stickToTop',
+};
+
+
 // Subconfig section type definitions
 type CreateAppParams = Parameters<mastodon.rest.v1.AppRepository["create"]>[0];
 
@@ -115,14 +125,7 @@ type TimelineConfig = {
     readonly defaultLoadingMsg: string;
     readonly defaultNumDisplayedToots: number;
     readonly dmBackgroundColor: CSSProperties["backgroundColor"];
-    readonly guiCheckboxLabels: {
-        readonly allowMultiSelect: Readonly<GuiCheckboxLabel>;
-        readonly autoupdate: Readonly<GuiCheckboxLabel>;
-        readonly hideSensitive: Readonly<GuiCheckboxLabel>;
-        readonly showFilterHighlights: Readonly<GuiCheckboxLabel>;
-        readonly showLinkPreviews: Readonly<GuiCheckboxLabel>;
-        readonly stickToTop: Readonly<GuiCheckboxLabel>;
-    };
+    readonly guiCheckboxLabels: Record<GuiCheckboxName, Readonly<GuiCheckboxLabel>>;
     readonly loadingErroMsg: string;
     readonly loadTootsButtonLabels: {
         readonly loadNewToots: Readonly<LinkWithTooltipCfg>;
