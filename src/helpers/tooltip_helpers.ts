@@ -38,7 +38,8 @@ export interface CheckboxGradientTooltipConfig extends CheckboxTooltipConfig {
 
 
 export type GuiCheckboxLabel = {
-    readonly anchor?: string; // Optional anchor for the tooltip
+    readonly anchor?: string;  // Optional anchor for the tooltip
+    readonly defaultValue: boolean;
     readonly label: string;
     readonly tooltipText: string;
 };

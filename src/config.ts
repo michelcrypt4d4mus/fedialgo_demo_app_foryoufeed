@@ -345,26 +345,32 @@ class Config implements ReadonlyConfig {
 
         guiCheckboxLabels: {
             allowMultiSelect: {
+                defaultValue: false,
                 label: `Allow Multiselect`,
                 tooltipText: "Allow selecting multiple filter options at the same time for a filter type.",
             },
             autoupdate: {
+                defaultValue: false,
                 label: `Auto Update On Focus`,
                 tooltipText: "Automatically update the timeline when you focus this browser tab.",
             },
             hideSensitive: {
+                defaultValue: true,
                 label: `Hide Sensitive Images`,
                 tooltipText: "Hide images marked as sensitive (NSFW etc.) behind a click through.",
             },
             showFilterHighlights: {
+                defaultValue: true,
                 label: `Color Highlights`,
                 tooltipText: `Show colored highlighting for notable filter options.`,
             },
             showLinkPreviews: {
+                defaultValue: true,
                 label: `Show Link Previews`,
                 tooltipText: "Show the full preview card for embedded links.",
             },
             stickToTop: {
+                defaultValue: true,
                 label: `Stick Control Panel To Top`,
                 tooltipText: `Keep tbe Fedialgo control panel on screen while scrolling.`,
             },

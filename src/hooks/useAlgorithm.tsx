@@ -62,22 +62,18 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // Checkboxes with persistent storage that require somewhat global state
     const [allowMultiSelect, allowMultiSelectCheckbox, _tooltip4] = persistentCheckbox({
-        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.allowMultiSelect,
     });
 
     const [hideSensitive, hideSensitiveCheckbox, _tooltip3] = persistentCheckbox({
-        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.hideSensitive,
     });
 
     const [shouldAutoUpdate, shouldAutoUpdateCheckbox, _tooltip2] = persistentCheckbox({
-        isChecked: false,
         labelAndTooltip: config.timeline.guiCheckboxLabels.autoupdate,
     });
 
     const [showFilterHighlights, showFilterHighlightsCheckbox, _tooltip] = persistentCheckbox({
-        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.showFilterHighlights,
     });
 

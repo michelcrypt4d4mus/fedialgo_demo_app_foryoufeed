@@ -20,7 +20,6 @@ type StateWithComponent = [boolean, ReactElement, ReturnType<typeof Tooltip>];
 
 interface PersistentCheckboxProps {
     className?: string,
-    isChecked?: boolean,
     labelAndTooltip: GuiCheckboxLabel,
     state?: BooleanState,  // Optional if you want to manage state outside this component
 };
@@ -28,9 +27,9 @@ interface PersistentCheckboxProps {
 
 // Note this returns an array!
 export default function persistentCheckbox(props: PersistentCheckboxProps): StateWithComponent {
-    const { className, isChecked, labelAndTooltip, state } = props;
-    const tooltipAnchor = labelAndTooltip?.anchor || CHECKBOX_TOOLTIP_ANCHOR;
-    const [value, setValue] = state || useLocalStorage(labelAndTooltip.label, isChecked || false);
+    const { className, labelAndTooltip, state } = props;
+    const tooltipAnchor = labelAndTooltip.anchor || CHECKBOX_TOOLTIP_ANCHOR;
+    const [value, setValue] = state || useLocalStorage(labelAndTooltip.label, labelAndTooltip.defaultValue);
     let checkbox: ReactElement;
 
     const tooltip = <Tooltip

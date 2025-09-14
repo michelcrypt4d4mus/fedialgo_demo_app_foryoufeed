@@ -69,13 +69,11 @@ export default function Feed() {
     // TODO: the returned checkboxTooltip is shared by all tooltips which kind of sucks
     // TODO: kind of sucks that these checkboxes are instantiated here and the others are in useAlgorithm
     const [showLinkPreviews, showLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
-        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.showLinkPreviews,
     });
 
     const [isControlPanelSticky, isControlPanelStickyCheckbox] = persistentCheckbox({
         className: 'd-none d-sm-block',
-        isChecked: true,
         labelAndTooltip: config.timeline.guiCheckboxLabels.stickToTop,
     });
 
