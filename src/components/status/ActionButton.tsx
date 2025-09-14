@@ -38,7 +38,7 @@ export enum TootAction {
     Reblog = 'reblog',
     Reply = 'reply',
     Score = 'score',
-}
+};
 
 export type ButtonAction = AccountAction | TootAction;
 const isAccountAction = (value: string | ButtonAction) => isValueInStringEnum(AccountAction)(value);

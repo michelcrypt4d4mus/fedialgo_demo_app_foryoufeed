@@ -21,9 +21,9 @@ import TrendingInfo from "../components/TrendingInfo";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { booleanIcon } from "../helpers/react_helpers";
-import { config } from "../config";
 import { confirm } from "../components/helpers/Confirmation";
 import { getLogger } from "../helpers/log_helpers";
+import { GuiCheckboxName, config } from "../config";
 import { useAlgorithm } from "../hooks/useAlgorithm";
 import {
     boldFont,
@@ -68,14 +68,8 @@ export default function Feed() {
     // Checkboxes for persistent user settings state variables
     // TODO: the returned checkboxTooltip is shared by all tooltips which kind of sucks
     // TODO: kind of sucks that these checkboxes are instantiated here and the others are in useAlgorithm
-    const [showLinkPreviews, showLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox({
-        labelAndTooltip: config.timeline.guiCheckboxLabels.showLinkPreviews,
-    });
-
-    const [isControlPanelSticky, isControlPanelStickyCheckbox] = persistentCheckbox({
-        className: 'd-none d-sm-block',
-        labelAndTooltip: config.timeline.guiCheckboxLabels.stickToTop,
-    });
+    const [showLinkPreviews, showLinkPreviewsCheckbox, checkboxTooltip] = persistentCheckbox(GuiCheckboxName.showLinkPreviews);
+    const [isControlPanelSticky, isControlPanelStickyCheckbox] = persistentCheckbox(GuiCheckboxName.stickToTop);
 
     // Computed variables etc.
     const bottomRef = useRef<HTMLDivElement>(null);
