@@ -24,8 +24,9 @@ export default function CallbackPage() {
     const { logAndSetFormattedError } = useError();
     const { setLoggedInUser, user } = useAuthContext();
     const [searchParams] = useSearchParams();
-    logger.trace(`searchParams:`, searchParams);
+
     const paramsCode = searchParams.get("code");
+    logger.trace(`paramsCode: "${paramsCode}", searchParams:`, searchParams);
 
     // Example of 'app' object
     // {
