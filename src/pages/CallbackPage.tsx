@@ -1,5 +1,5 @@
-/*
- * Handles the incoming call that is part of OAuth 2.0 authorization code flow.
+/**
+ * @fileoverview Handles the incoming call that is part of OAuth 2.0 authorization code flow.
  */
 import React, { useEffect } from "react";
 
@@ -15,6 +15,8 @@ import { useAuthContext } from "../hooks/useAuth";
 import { useError } from "../components/helpers/ErrorHandler";
 import { User } from "../types";
 
+const VERIFY_CREDENTIALS = 'api.v1.accounts.verifyCredentials()';
+
 const logger = getLogger("CallbackPage");
 
 
@@ -22,8 +24,9 @@ export default function CallbackPage() {
     const { logAndSetFormattedError } = useError();
     const { setLoggedInUser, user } = useAuthContext();
     const [searchParams] = useSearchParams();
-    logger.trace(`searchParams:`, searchParams);
+
     const paramsCode = searchParams.get("code");
+    logger.trace(`paramsCode: "${paramsCode}", searchParams:`, searchParams);
 
     // Example of 'app' object
     // {
@@ -66,7 +69,7 @@ export default function CallbackPage() {
 
         // TODO: access_token is retrieved manually via fetch() instead of using the masto.js library
         const oauthTokenURI = `${server}/oauth/token`;
-        logger.trace(`oAuth() oauthTokenURI: "${oauthTokenURI}"\napp:`, app, `\nuser:`, user, `\ncode: "${code}`);
+        logger.trace(`oauthTokenURI: "${oauthTokenURI}"\napp:`, app, `\nuser:`, user, `\ncode: "${code}`);
         const oAuthResult = await fetch(oauthTokenURI, {method: 'POST', body});
         const json = await oAuthResult.json()
         const accessToken = json["access_token"];
@@ -75,7 +78,7 @@ export default function CallbackPage() {
         // Authenticate the user
         api.v1.accounts.verifyCredentials()
             .then((verifiedUser) => {
-                logger.trace(`oAuth() api.v1.accounts.verifyCredentials() succeeded:`, verifiedUser);
+                logger.trace(`${VERIFY_CREDENTIALS} succeeded:`, verifiedUser);
 
                 const userData: User = {
                     access_token: accessToken,
@@ -89,7 +92,7 @@ export default function CallbackPage() {
             }).catch((errorObj) => {
                 handleAuthError(
                     `${FEDIALGO} failed to login to Mastodon server!`,
-                    `api.v1.accounts.verifyCredentials() failed. Try logging out and in again?`,
+                    `${VERIFY_CREDENTIALS} failed. Try logging out and in again?`,
                     errorObj,
                 )
             });

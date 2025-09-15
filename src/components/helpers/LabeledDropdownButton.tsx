@@ -19,8 +19,8 @@ interface LabeledDropdownButton {
 export default function LabeledDropdownButton(props: LabeledDropdownButton) {
     const { initialLabel, onClick, options, optionStyle, style } = props;
     let { id, variant } = props;
-    id ||= initialLabel.replace(/\s+/g, "-");
-    variant ||= "info";
+    id ??= initialLabel.replace(/\s+/g, "-");
+    variant ??= "info";
 
     const [currentLabel, setCurrentLabel] = React.useState(initialLabel);
 

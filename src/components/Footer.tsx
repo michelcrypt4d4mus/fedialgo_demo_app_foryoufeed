@@ -1,6 +1,3 @@
-/*
- * The footer that appears on the login screen.
- */
 import React, { CSSProperties } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -10,7 +7,8 @@ import { config } from "../config";
 import { mildlyRoundedCorners, whiteFont } from "../helpers/style_helpers";
 
 
-export default function Footer() {
+/** The footer that appears on the login screen. */
+export default function Footer(): JSX.Element {
     return (
         <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark" style={footerNav}>
             <Container>

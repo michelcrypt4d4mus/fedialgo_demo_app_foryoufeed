@@ -1,5 +1,6 @@
-/*
- * Class for retrieving and sorting the user's feed based on their chosen weighting values.
+/**
+ * @fileoverview Class for retrieving and sorting the user's feed based on their chosen
+ * weighting values.
  */
 import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
@@ -43,6 +44,7 @@ const LOAD_BUTTON_SEPARATOR = ' ● ';
 const logger = getLogger("Feed");
 
 
+/** Component to display the FediAlgo user's timeline. */
 export default function Feed() {
     const {
         algorithm,

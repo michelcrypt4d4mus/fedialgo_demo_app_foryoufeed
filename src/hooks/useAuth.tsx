@@ -1,5 +1,5 @@
-/*
- * Authorization context for the app.
+/**
+ * @fileoverview Authorization context for the app.
  */
 import React, { PropsWithChildren, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";

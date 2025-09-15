@@ -1,8 +1,8 @@
 import React, { CSSProperties, useEffect } from "react";
 import { Buffer } from "buffer";  // Required for class-transformer to work (maybe???)
 (window as any).Buffer = Buffer;
+// NOTE: Using CDN to get boostrap instead of importing bootstrap.min.css (see index.html)
 
-// Using CDN to get boostrap instead of importing bootstrap.min.css (see index.html)
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 
