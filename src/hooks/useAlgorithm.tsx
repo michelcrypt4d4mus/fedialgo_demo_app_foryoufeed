@@ -1,5 +1,5 @@
-/*
- * Context to hold the TheAlgorithm variable
+/**
+ * @fileoverview Context to hold the TheAlgorithm variable
  */
 import React, { PropsWithChildren, ReactElement, createContext, useContext, useEffect, useState } from "react";
 
@@ -44,6 +44,7 @@ const AlgorithmContext = createContext<AlgoContext>({timeline: []});
 export const useAlgorithm = () => useContext(AlgorithmContext);
 
 
+/** Manage FediAlgo algorithm state. */
 export default function AlgorithmProvider(props: PropsWithChildren) {
     const { logout, user } = useAuthContext();
     const { logAndSetFormattedError, resetErrors } = useError();

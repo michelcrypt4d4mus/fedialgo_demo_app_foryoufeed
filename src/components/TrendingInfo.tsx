@@ -1,6 +1,3 @@
-/*
- * WIP: Component for displaying the trending hashtags in the Fediverse.
- */
 import React, { CSSProperties, useEffect, useMemo, useState } from "react";
 
 import Accordion from "react-bootstrap/esm/Accordion";
@@ -29,7 +26,8 @@ const SLEEP_SECONDS = 5;
 const logger = getLogger("TrendingInfo");
 
 
-export default function TrendingInfo() {
+/** Component for displaying the trending hashtags, links, or toots in the Fediverse. */
+export default function TrendingInfo(): JSX.Element {
     const { algorithm, isLoading } = useAlgorithm();
     const [trendingData, setTrendingData] = useState(algorithm.trendingData);
 

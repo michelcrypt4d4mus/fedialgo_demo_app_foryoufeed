@@ -1,6 +1,3 @@
-/*
- * Header component on the feed page.
- */
 import React, { Button, Col, Container, Row } from "react-bootstrap";
 import { CSSProperties } from "react";
 
@@ -18,7 +15,8 @@ const TITLE_FONT_SIZE = 16;
 const XS_VALUE = 4;  // React Bootstrap Grid System
 
 
-export default function Header() {
+/** Header component on the feed page. */
+export default function Header(): JSX.Element {
     const { logout, user } = useAuthContext();
 
     return (

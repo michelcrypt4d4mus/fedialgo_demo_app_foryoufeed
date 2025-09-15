@@ -1,7 +1,3 @@
-/*
- * The footer that appears on the login screen when API errors and warnings were encountered
- * while retrieving Mastodon data.
- */
 import React, { CSSProperties } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Card from 'react-bootstrap/Card';
@@ -14,7 +10,11 @@ import { verticalContainer } from "../helpers/style_helpers";
 const ACCORDION_ITEM_KEY = "0";
 
 
-export default function ApiErrorsPanel() {
+/**
+ * The footer that appears on the login screen when API errors and warnings were encountered
+ * while retrieving Mastodon data.
+ */
+export default function ApiErrorsPanel(): JSX.Element {
     const { algorithm } = useAlgorithm();
 
     if (!algorithm?.apiErrorMsgs || (algorithm.apiErrorMsgs.length === 0)) {

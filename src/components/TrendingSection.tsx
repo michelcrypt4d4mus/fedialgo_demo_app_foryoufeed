@@ -1,6 +1,3 @@
-/*
- * Component for displaying a list of trending links, toots, or hashtags.
- */
 import React, { CSSProperties, useMemo, useState } from "react";
 
 import { capitalCase } from "change-case";
@@ -55,6 +52,7 @@ interface TrendingObjsProps extends TrendingPropsBase {
 type TrendingProps = TrendingTagListProps | TrendingObjsProps;
 
 
+/** Component for displaying a list of trending links, toots, or hashtags. */
 export default function TrendingSection(props: TrendingProps) {
     const { linkRenderer, objRenderer, tagList, trendingObjs } = props;
     const { isLoading } = useAlgorithm();

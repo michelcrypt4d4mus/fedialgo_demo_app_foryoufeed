@@ -1,5 +1,5 @@
-/*
- * Read & write to the browser's localStorage to preserve app state between page reloads
+/**
+ * @fileoverview Read & write to browser's localStorage to preserve app state between page reloads.
  */
 import { useState } from "react";
 
