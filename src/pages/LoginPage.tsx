@@ -16,6 +16,7 @@ import { useError } from "../components/helpers/ErrorHandler";
 const logger = getLogger("LoginPage");
 
 
+/** Landing / login page. */
 export default function LoginPage() {
     const { logAndSetFormattedError } = useError();
 

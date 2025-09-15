@@ -1,5 +1,5 @@
-/*
- * Handles the incoming call that is part of OAuth 2.0 authorization code flow.
+/**
+ * @fileoverview Handles the incoming call that is part of OAuth 2.0 authorization code flow.
  */
 import React, { useEffect } from "react";
 
