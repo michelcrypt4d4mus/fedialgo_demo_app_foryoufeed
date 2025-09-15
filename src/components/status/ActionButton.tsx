@@ -14,14 +14,14 @@ import {
     faReply,
     faRetweet,
     faStar,
-    faUserPlus,
     faUserMinus,
-    faVolumeMute
+    faUserPlus,
+    faVolumeMute,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { getLogger } from "../../helpers/log_helpers";
 import { config } from "../../config";
 import { confirm } from "../helpers/Confirmation";
+import { getLogger } from "../../helpers/log_helpers";
 import { NETWORK_ERROR, scoreString } from "../../helpers/string_helpers";
 import { OAUTH_ERROR_MSG } from "../experimental/ExperimentalFeatures";
 import { useAlgorithm } from "../../hooks/useAlgorithm";

@@ -1,5 +1,5 @@
-/*
- * Render a Status, also known as a Toot.
+/**
+ * @fileoverview Render a Status, also known as a Toot.
  */
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef } from "react";
 
