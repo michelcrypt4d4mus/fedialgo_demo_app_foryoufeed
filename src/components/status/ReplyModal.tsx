@@ -60,6 +60,7 @@ export default function ReplyModal(props: ReplyModalProps) {
     const [replyText, setReplyText] = React.useState<string>(mentionsStr.length ? mentionsStr + '\n\n' : '');
     // null means we don't need a resolved ID, undefined means we are waiting for it to resolve
     const [resolvedID, setResolvedID] = React.useState<string | null | undefined>(toot ? undefined : null);
+    const [resolveError, setResolveError] = useState<Error | null>(null);
 
     // Variables
     const currentReplyLen = replyText.replace(mentionsStr, '').trim().length;
@@ -76,13 +77,16 @@ export default function ReplyModal(props: ReplyModalProps) {
 
     // Resolve the toot ID if we are replying to an existing toot
     useEffect(() => {
-        if (!show || isResolved) return;
+        if (!show || isResolved || resolveError) return;
         logger.log(`Resolving toot ID for`, toot);
 
         toot.resolveID()
             .then(id => setResolvedID(id))
-            .catch(err => handleError(`Resolve toot failed on ${serverInfo?.title}!`, `Can't reply right now.`, err));
-    }, [api, show, toot])
+            .catch(err => {
+                setResolveError(err);
+                handleError(`Resolve toot failed on ${serverInfo?.title}!`, `Can't reply right now.`, err);
+            });
+    }, [api, isResolved, resolveError, show, toot])
 
     // Place the initial cursor at the end of the textarea
     useEffect(() => {
