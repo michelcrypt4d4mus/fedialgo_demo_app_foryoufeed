@@ -43,6 +43,8 @@ export function openTrendingLink(obj: TrendingWithHistory, e: MouseEvent): boole
 // Returns array of strings extracted from component hierarchy
 // Inspired by https://github.com/fernandopasik/react-children-utilities/blob/main/src/lib/onlyText.ts
 export function extractText(children: ReactNode | ReactNode[]): string[] {
+    appLogger.debug("extractText() called with children:", children);
+
     if (!Array.isArray(children) && !isValidElement(children)) {
         const str = nodeToString(children);
         return isEmptyStr(str) ? [] : [str];
