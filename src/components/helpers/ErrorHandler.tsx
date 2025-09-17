@@ -124,7 +124,7 @@ export default function ErrorHandler(props: PropsWithChildren) {
         // Handle writing to console log, which means putting errorObj first for Logger
         args = Array.isArray(args) ? args : [args];
         args = errorObj ? [errorObj, ...args] : args;
-        let logMsg: string = isString(msg) ? msg : (extractText(msg) as string[]).join(' '); // TODO: WTF with extractText() here?
+        let logMsg = isString(msg) ? msg : (extractText(msg) as string[]).join(' ');  // TODO: why use extractText() here?
         logMsg += isEmptyStr(note) ? '' : `\n(note: ${note})`;
         (logger || errorLogger).error(logMsg, ...args);
     }
