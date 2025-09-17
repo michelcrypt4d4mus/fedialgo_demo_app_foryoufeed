@@ -75,7 +75,7 @@ export default function Poll(props: PollProps) {
             setRevealed(true);
             setHasVoted(true);
         } catch (error) {
-            logger.error('Error voting:', error);
+            console.error('Error voting:', error);
 
             if (isAccessTokenRevokedError(error)) {
                 handleError('Your access token was revoked.', error);
