@@ -1382,7 +1382,7 @@ code {
     position:absolute
 }
 
-.invisible img {
+.invisible img, .invisible svg {
     margin: 0 !important;
     border: 0 !important;
     padding: 0 !important;
