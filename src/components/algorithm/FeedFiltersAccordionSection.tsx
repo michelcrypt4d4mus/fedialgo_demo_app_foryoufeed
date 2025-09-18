@@ -21,7 +21,8 @@ export default function FeedFiltersAccordionSection() {
 
     const booleanFiltersCfg = config.filters.boolean.optionsFormatting;
     // Filter for 'visible' because the APP filters are currently hidden
-    const booleanFilters = Object.values(algorithm.filters.booleanFilters).filter(f => !booleanFiltersCfg[f.propertyName].hidden);
+    const booleanFilters = Object.values(algorithm.filters.booleanFilters)
+                                 .filter(f => !booleanFiltersCfg[f.propertyName].hidden);
     const numericFilters = Object.values(algorithm.filters.numericFilters);
     const hasActiveBooleanFilter = booleanFilters.some(f => f.selectedOptions.length);
     const hasActiveNumericFilter = numericFilters.some(f => f.value > 0);
