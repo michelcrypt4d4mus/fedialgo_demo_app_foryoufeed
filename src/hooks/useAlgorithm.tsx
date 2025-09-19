@@ -22,6 +22,8 @@ interface AlgoContext {
     algorithm?: TheAlgorithm,
     allowMultiSelect?: boolean,
     allowMultiSelectCheckbox?: ReactElement,
+    alwaysShowFollowed?: boolean,
+    alwaysShowFollowedCheckbox?: ReactElement,
     api?: mastodon.rest.Client,
     isGoToSocialUser?: boolean,  // Whether the user is on a GoToSocial instance
     isLoading?: boolean,
@@ -63,6 +65,7 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
 
     // Checkboxes with persistent storage that require somewhat global state
     const [allowMultiSelect, allowMultiSelectCheckbox] = persistentCheckbox(GuiCheckboxName.allowMultiSelect);
+    const [alwaysShowFollowed, alwaysShowFollowedCheckbox] = persistentCheckbox(GuiCheckboxName.alwaysShowFollowed);
     const [hideSensitive, hideSensitiveCheckbox] = persistentCheckbox(GuiCheckboxName.hideSensitive);
     const [shouldAutoUpdate, shouldAutoUpdateCheckbox] = persistentCheckbox(GuiCheckboxName.autoupdate);
     const [showFilterHighlights, showFilterHighlightsCheckbox] = persistentCheckbox(GuiCheckboxName.showFilterHighlights);
@@ -228,6 +231,8 @@ export default function AlgorithmProvider(props: PropsWithChildren) {
         algorithm,
         allowMultiSelect,
         allowMultiSelectCheckbox,
+        alwaysShowFollowed,
+        alwaysShowFollowedCheckbox,
         api,
         hideSensitive,
         hideSensitiveCheckbox,

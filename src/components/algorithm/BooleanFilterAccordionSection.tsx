@@ -13,6 +13,7 @@ import MinTootsSlider, { computeDefaultValue } from "../helpers/MinTootsSlider";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
+import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export type TagHighlightSwitchState = Record<TagTootsCategory, boolean>;
@@ -40,6 +41,7 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
+    const { alwaysShowFollowed} = useAlgorithm();
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.propertyName);
 
@@ -56,7 +58,7 @@ export default function BooleanFilterAccordionSection(props: BooleanFilterAccord
 
     if (minTootsState[0] == 0 && minTootsSliderDefaultValue > 0) {
         logger.trace(`Updating minToots from default of 0 to ${minTootsSliderDefaultValue}`);
-        minTootsState[1](minTootsSliderDefaultValue);
+        minTootsState[1](minTootsSliderDefaultValue);  // equivalent of setMinToots() if setMinToots was a variable
     }
 
     const makeHeaderSwitch = (switchType: SwitchType) => (
