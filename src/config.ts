@@ -40,6 +40,7 @@ const HOMEPAGE = process.env.FEDIALGO_HOMEPAGE || "https://michelcrypt4d4mus.git
 
 export enum GuiCheckboxName {
     allowMultiSelect = 'allowMultiSelect',
+    alwaysShowFollowed = 'alwaysShowFollowed',
     autoupdate = 'autoupdate',
     hideSensitive = 'hideSensitive',
     showFilterHighlights = 'showFilterHighlights',
@@ -351,6 +352,11 @@ class Config implements ReadonlyConfig {
                 defaultValue: false,
                 label: `Allow Multiselect`,
                 tooltipText: "Allow selecting multiple filter options at the same time for a filter type.",
+            },
+            alwaysShowFollowed: {
+                defaultValue: false,
+                label: `Always Show Followed`,
+                tooltipText: "Always show filter options for followed users and hashtags even if they have below the minimum toots threshold.",
             },
             autoupdate: {
                 defaultValue: false,

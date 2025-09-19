@@ -38,7 +38,7 @@ interface FilterCheckboxGridProps extends HeaderSwitchState {
 // TODO: maybe rename this BooleanFilterCheckboxGrid?
 export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const { filter, highlightsOnly, minToots, sortByCount, tagSwitchState } = props;
-    const { algorithm, allowMultiSelect, showFilterHighlights } = useAlgorithm();
+    const { algorithm, allowMultiSelect, alwaysShowFollowed, showFilterHighlights } = useAlgorithm();
     const logger = useMemo(() => getLogger("FilterCheckboxGrid", filter.propertyName), []);
 
     const optionsFormatCfg = config.filters.boolean.optionsFormatting[filter.propertyName];

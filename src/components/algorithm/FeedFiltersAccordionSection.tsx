@@ -17,7 +17,12 @@ import { useAlgorithm } from "../../hooks/useAlgorithm";
  * are trending in the Fediverse.
  */
 export default function FeedFiltersAccordionSection() {
-    const { algorithm, allowMultiSelectCheckbox, showFilterHighlightsCheckbox } = useAlgorithm();
+    const {
+        algorithm,
+        allowMultiSelectCheckbox,
+        alwaysShowFollowedCheckbox,
+        showFilterHighlightsCheckbox,
+    } = useAlgorithm();
 
     const booleanFiltersCfg = config.filters.boolean.optionsFormatting;
     // Filter for 'visible' because the APP filters are currently hidden
@@ -47,6 +52,7 @@ export default function FeedFiltersAccordionSection() {
                 <div style={filterSwitchContainer}>
                     {allowMultiSelectCheckbox}
                     {showFilterHighlightsCheckbox}
+                    {alwaysShowFollowedCheckbox}
                 </div>
 
                 {Object.keys(filterPositions).sort().map((position) => filterPositions[position])}
