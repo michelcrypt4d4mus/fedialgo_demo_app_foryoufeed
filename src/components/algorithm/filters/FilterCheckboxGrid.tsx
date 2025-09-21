@@ -153,7 +153,10 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
     const optionGrid = useMemo(
         () => {
             logger.deep(`Rebuilding optionGrid for ${filter.options.length} options (${filter.selectedOptions.length} selected)`);
-            let options = sortByCount ? filter.optionsSortedByValue(minToots) : filter.optionsSortedByName(minToots);
+
+            let options = sortByCount
+                            ? filter.optionsSortedByValue(minToots, alwaysShowFollowed)
+                            : filter.optionsSortedByName(minToots, alwaysShowFollowed);
 
             if (highlightsOnly && showFilterHighlights) {
                 options = options.filter(option => !!findTooltip(option));
@@ -181,6 +184,7 @@ export default function FilterCheckboxGrid(props: FilterCheckboxGridProps) {
             filter.options,
             filter.selectedOptions,
             allowMultiSelect,
+            alwaysShowFollowed,
             highlightsOnly,
             minToots,
             showFilterHighlights,
