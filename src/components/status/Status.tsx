@@ -33,10 +33,11 @@ import useOnScreen from "../../hooks/useOnScreen";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { formatScore, formatScores } from "../../helpers/number_helpers";
+import { linkCursor, waitOrDefaultCursor, whiteFont } from "../../helpers/style_helpers";
 import { openToot } from "../../helpers/react_helpers";
 import { timestampString } from "../../helpers/string_helpers";
 import { useAlgorithm } from "../../hooks/useAlgorithm";
-import { linkCursor, waitOrDefaultCursor, whiteFont } from "../../helpers/style_helpers";
+import { useError } from "../helpers/ErrorHandler";
 
 export const TOOLTIP_ACCOUNT_ANCHOR = "user-account-anchor";
 const logger = getLogger("StatusComponent");
@@ -83,6 +84,7 @@ interface StatusComponentProps {
 export default function StatusComponent(props: StatusComponentProps) {
     const { fontColor, isLoadingThread, setIsLoadingThread, setThread, showLinkPreviews, status } = props;
     const { isGoToSocialUser, isLoading } = useAlgorithm();
+    const { logAndSetFormattedError } = useError();
     const contentClass = fontColor ? "status__content__alt" : "status__content";
     const fontStyle = fontColor ? { color: fontColor } : {};
 
@@ -223,7 +225,16 @@ export default function StatusComponent(props: StatusComponentProps) {
                             <NewTabLink
                                 className="status__relative-time-icons"
                                 href={toot.realURL}
-                                onClick={(e) => openToot(toot, e, isGoToSocialUser)}
+                                onClick={(e) => {
+                                    openToot(toot, e, isGoToSocialUser)
+                                        .catch(err => {
+                                            logAndSetFormattedError({
+                                                errorObj: err,
+                                                msg: "Failed to resolve toot ID!",
+                                                note: "Could be connectivity issues or a deleted/suspended toot",
+                                            });
+                                        })
+                                }}
                             >
                                 <span className="status__visibility-icon">
                                     {toot.editedAt && infoIcon(InfoIconType.Edited)}
