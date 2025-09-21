@@ -41,7 +41,7 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
-    const { alwaysShowFollowed} = useAlgorithm();
+    const { alwaysShowFollowed } = useAlgorithm();
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.propertyName);
 

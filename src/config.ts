@@ -354,7 +354,7 @@ class Config implements ReadonlyConfig {
                 tooltipText: "Allow selecting multiple filter options at the same time for a filter type.",
             },
             alwaysShowFollowed: {
-                defaultValue: false,
+                defaultValue: true,
                 label: `Always Show Followed`,
                 tooltipText: "Always show filter options for followed users and hashtags even if they have below the minimum toots threshold.",
             },
