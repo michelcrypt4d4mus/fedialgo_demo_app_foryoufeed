@@ -1,7 +1,3 @@
-/*
- * Generic omponent to display a set of filter options with a switchbar at the top.
- * Note this doesn't handle errors from event handlers: https://kentcdodds.com/blog/use-react-error-boundary-to-handle-errors-in-react
- */
 import { CSSProperties, PropsWithChildren, ReactNode, createContext, useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
 
@@ -38,6 +34,10 @@ const ErrorContext = createContext<ErrorContextProps>({});
 export const useError = () => useContext(ErrorContext);
 
 
+/**
+ * Generic component to display a set of filter options with a switchbar at the top.
+ * Note this doesn't handle errors from event handlers: https://kentcdodds.com/blog/use-react-error-boundary-to-handle-errors-in-react
+ */
 export default function ErrorHandler(props: PropsWithChildren) {
     // If there's a non empty string in errorMsg, the error modal will be shown
     const [errorMsg, setErrorMsg] = useState<string | null>(null);

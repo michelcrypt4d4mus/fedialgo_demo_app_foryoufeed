@@ -178,8 +178,8 @@ export default function ReplyModal(props: ReplyModalProps) {
             }).finally(() => {
                 setIsSubmitting(false);
                 setReplyText(mentionsStr);  // Reset the reply text
-                setMediaAttachments([]);  // Clear media attachments
-                setResolvedID(null);  // Reset resolved ID
+                setMediaAttachments([]);    // Clear media attachments
+                setResolvedID(null);        // Reset resolved ID
             });
     };
 
