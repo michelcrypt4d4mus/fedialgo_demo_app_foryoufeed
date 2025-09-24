@@ -1,6 +1,3 @@
-/*
- * Component to display multimedia content (images, videos, audios) in a single pane.
- */
 import React, { CSSProperties, useCallback, useState } from "react";
 import CloseButton from "react-bootstrap/CloseButton";
 
@@ -23,8 +20,6 @@ const VIDEO_HEIGHT = Math.floor(config.toots.imageHeight * 1.7);
 
 const logger = getLogger("MultimediaNode");
 
-// Either toot or mediaAttachments must be given
-// If toot is not given the image is not clickable to display the modal
 interface MultimediaNodeProps {
     mediaAttachments?: mastodon.v1.MediaAttachment[];
     removeMediaAttachment?: (mediaID: string) => void;
@@ -32,6 +27,14 @@ interface MultimediaNodeProps {
 };
 
 
+/**
+ * Component to display multimedia content (images, videos, audios) in a single pane.
+ * Either toot or mediaAttachments must be given. If toot is not provided the image will not be clickable.
+ * @param {MultimediaNodeProps} props
+ * @param {Toot} [props.toot] - Optional Toot object whose images / video / audio will be displayed
+ * @param {mastodon.v1.MediaAttachment[]} [props.mediaAttachments] - Images or videos. Used in ReplyModal.
+ * @param {string} [props.removeMediaAttachment] - Used by ReplyModal to delete attachments.
+ */
 export default function MultimediaNode(props: MultimediaNodeProps): React.ReactElement {
     const { mediaAttachments, removeMediaAttachment, toot } = props;
     const { hideSensitive } = useAlgorithm();
@@ -46,6 +49,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
     let videos: mastodon.v1.MediaAttachment[];
     let imageHeight = config.toots.imageHeight;
 
+    // If there's a `toot` argument use its mediaAttachments
     if (toot) {
         audios = toot.audioAttachments;
         images = toot.imageAttachments;
@@ -117,7 +121,10 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     toot={toot}
                 />}
 
-            <div className="media-gallery" style={{height: images.length > 1 ? '100%' : `${imageHeight}px`, ...style}}>
+            <div
+                className="media-gallery"
+                style={{height: (images.length > 1 || imageHeight < 200) ? '100%' : `${imageHeight}px`, ...style}}
+            >
                 {images.map((image, i) => makeImage(image, i))}
             </div>
         </>);

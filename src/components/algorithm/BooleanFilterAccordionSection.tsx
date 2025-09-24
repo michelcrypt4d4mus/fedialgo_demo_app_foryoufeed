@@ -13,7 +13,6 @@ import MinTootsSlider, { computeDefaultValue } from "../helpers/MinTootsSlider";
 import { config } from "../../config";
 import { getLogger } from "../../helpers/log_helpers";
 import { SwitchType } from "../../helpers/style_helpers";
-import { useAlgorithm } from "../../hooks/useAlgorithm";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export type TagHighlightSwitchState = Record<TagTootsCategory, boolean>;
@@ -41,7 +40,6 @@ interface BooleanFilterAccordionProps {
 
 export default function BooleanFilterAccordionSection(props: BooleanFilterAccordionProps) {
     const { filter } = props;
-    const { alwaysShowFollowed } = useAlgorithm();
     const booleanFiltersConfig = config.filters.boolean;
     const logger = getLogger("BooleanFilterAccordionSection", filter.propertyName);
 

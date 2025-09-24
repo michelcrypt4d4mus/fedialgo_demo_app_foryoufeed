@@ -65,6 +65,6 @@ const switchesContainer: CSSProperties = {
 const footerContainer: CSSProperties = {
     ...switchesContainer,
     justifyContent: "space-around",
-    marginBottom: "0px",
+    marginBottom: "-10px",
     marginTop: "7px",
 };
