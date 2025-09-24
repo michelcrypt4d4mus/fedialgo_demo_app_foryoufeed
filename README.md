@@ -87,11 +87,6 @@ Here's an example of what you might see:
     <img src="doc/brower_console_debug_logs.png" alt="brower_console_debug_logs.png" width="800">
 </p>
 
-### Known Issues
-* If you get an error about `GenerateSW() was called more than once` or whatever just ignore it.
-* Sometimes (always?) when starting the app after the first time you will find your Mastodon login has expired in which case you will be kicked back to the login screen for reauthorization.
-* Infinite scroll isn't _really_ infinite (yet). If you scroll far enough you will run out of toots to peruse.
-
 
 # Contributing
 ### Prerequisites
@@ -140,3 +135,7 @@ Someone reported they were unable to build with `npm run build` but using `NODE_
 * The interesting stuff that actually handles the feed is in the [`Feed.tsx`](src/pages/Feed.tsx) file.
 * The UI of this app is based on @ronilaukkarinen's [`mastodon-bird-ui` repo](https://github.com/ronilaukkarinen/mastodon-bird-ui)
 * Deploying to GitHub pages: https://gist.github.com/promto-c/e46ca197f324a2148af919e18c18b5e6
+
+#### Known Issues
+* If you get an error about `GenerateSW() was called more than once` or whatever just ignore it.
+* Infinite scroll isn't _really_ infinite (yet). If you scroll far enough you will run out of toots to peruse.
