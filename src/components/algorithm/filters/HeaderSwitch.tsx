@@ -17,9 +17,9 @@ import { useAlgorithm } from "../../../hooks/useAlgorithm";
 const HEADER_SWITCH_TOOLTIP_ANCHOR = `header-switch-tooltip-anchor`;
 
 const TAG_HIGHLIGHT_LABELS: Record<TagTootsCategory, string> = {
-    [TagTootsCategory.FAVOURITED]: "Color Favourites",
-    [TagTootsCategory.PARTICIPATED]: "Color Participated",
-    [TagTootsCategory.TRENDING]: "Color Trending",
+    [TagTootsCategory.FAVOURITED]: "Colour Favourites",
+    [TagTootsCategory.PARTICIPATED]: "Colour Participated",
+    [TagTootsCategory.TRENDING]: "Colour Trending",
 };
 
 // Only invert selection requires a call to fedialgo's updateFilters() method
