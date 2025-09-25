@@ -345,7 +345,7 @@ class Config implements ReadonlyConfig {
         apiErrorsUserMsgSuffix: `warnings while retrieving Mastodon data`,
         defaultLoadingMsg: "Loading (first time can take up to a minute or so)",  // Message when first loading toots
         defaultNumDisplayedToots: 20,         // Default number of toots displayed in the timeline
-        dmBackgroundColor: "rgb(28, 27, 58)",     // Background color for DMs
+        dmBackgroundColor: "rgb(28, 27, 58)",  // Background color for DMs
 
         guiCheckboxLabels: {
             allowMultiSelect: {
@@ -401,8 +401,8 @@ class Config implements ReadonlyConfig {
         },
 
         loadingErroMsg: `Currently loading, please wait a moment and try again.`,  // Error message when busy
-        noTootsMsg: "No toots in feed! Maybe check your filters settings?", // Message when no toots are available
-        numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll
+        noTootsMsg: "No toots in feed! Maybe check your filters settings?",  // Message when no toots are available
+        numTootsToLoadOnScroll: 10,           // Number of toots to load on scroll to bottom of page
         tooltips: {
             accountTooltipDelayMS: 100,       // Delay for account tooltips in milliseconds
             defaultTooltipDelayMS: 800,       // Default delay for tooltips in milliseconds;
@@ -424,7 +424,7 @@ class Config implements ReadonlyConfig {
                 title: "Hashtags You Often Favourite",
             },
             [TrendingType.LINKS]: {
-                hasCustomStyle: true,        // TODO: this sucks
+                hasCustomStyle: true,  // TODO: this sucks
                 initialNumShown: 30,
                 objTypeLabel: `trending ${TrendingType.LINKS}`,
             },
@@ -435,7 +435,7 @@ class Config implements ReadonlyConfig {
             },
             [TrendingType.SERVERS]: {
                 description: "The Mastodon servers all these trending links, toots, and hashtags came from, sorted by the percentage of that server's monthly active users you follow:",
-                initialNumShown: 40,        // TODO: unused
+                initialNumShown: 40,   // TODO: unused
                 title: "Servers Telling Us What's Trending In The Fediverse",
             },
             [TagTootsCategory.TRENDING]: {
