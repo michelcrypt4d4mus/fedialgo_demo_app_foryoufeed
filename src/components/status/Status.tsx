@@ -231,7 +231,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                                             logAndSetFormattedError({
                                                 errorObj: err,
                                                 msg: "Failed to resolve toot ID!",
-                                                note: "Could be connectivity issues or a deleted/suspended toot",
+                                                note: "Could be connectivity issues or a deleted/suspended toot.",
                                             });
                                         })
                                 }}
