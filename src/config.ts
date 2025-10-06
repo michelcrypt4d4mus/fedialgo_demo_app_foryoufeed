@@ -361,7 +361,7 @@ class Config implements ReadonlyConfig {
             autoupdate: {
                 defaultValue: false,
                 label: `Auto Update On Focus`,
-                tooltipText: "Automatically update the timeline when you focus this browser tab.",
+                tooltipText: "Automatically fetch new toots whenever you view this browser tab.",
             },
             hideSensitive: {
                 defaultValue: true,
