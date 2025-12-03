@@ -5,7 +5,7 @@ This repo contains a simple demo React application (a website, basically) for th
 * Try the demo [here](https://michelcrypt4d4mus.github.io/fedialgo_demo_app_foryoufeed/) (**None of your data ever leaves your browser.** All computations and timeline reorderings are done in client side javascript.)
 * Watch a demo of most of the features [on YouTube](https://www.youtube.com/watch?v=tR35bUHzJdk)
 * [Explainer video](https://video.fedihost.co/w/a1522517-704e-44a3-aa0e-5c4e7d49e7d1) as to why FediAlgo is great for the Fediverse from one very satisfied FediAlgo user. FediAlgo team had no input on this.
-* Check out [the release notes](https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases) or the even more granular [`CHANGELOG`](https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md)
+* Check out [the release notes](https://github.com/michelcrypt4d4mus/fedialgo_demo_app_foryoufeed/releases) or the even more granular [`CHANGELOG`](https://github.com/michelcrypt4d4mus/fedialgo/blob/master/CHANGELOG.md).
 
 Each incoming toot in your recent timeline will be scored based on a variety of factors and resorted top to bottom based on what toots have the highest scores instead of just reverse chronological order. You can adjust in a very fine grained way how much weight you want to give to each of those factors in determining each toot's scores. There are also some easy to use presets, including reverting to the standard reverse chronological order.
 
