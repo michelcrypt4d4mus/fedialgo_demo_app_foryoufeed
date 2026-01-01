@@ -96,5 +96,6 @@
         "webpack-cli": "^5.0.1",
         "webpack-dev-server": "^5.2.2",
         "workbox-webpack-plugin": "^6.5.4"
-    }
+    },
+    "license": "GPL-3.0-only"
 }
