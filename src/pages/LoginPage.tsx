@@ -40,7 +40,7 @@ export default function LoginPage() {
 
     const oAuthLogin = async (): Promise<void> => {
         try {
-            serverDomain = setServer(serverInputText);
+            serverDomain = setServer(serverInputText) as string;
         } catch (err) {
             handleError(err);
             return;
