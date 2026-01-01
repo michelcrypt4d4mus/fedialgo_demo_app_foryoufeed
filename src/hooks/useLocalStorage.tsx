@@ -24,8 +24,8 @@ const logger = getLogger("useLocalStorage");
 
 /**
  * Retrieve value at 'storageKey' from browser storage (if one exists) and create a function to
- * update the value at 'storageKey' that can be called when needed.
- * Revamp of pkreissel's original implementation.
+ * update the value at 'storageKey' that can be called later.
+ * Revamp of @pkreissel's original implementation.
  * @template T
  * @param {string} storageKey - Retrieve the data storage at this key. Returned fxn will write data here.
  * @param {T} [defaultValue] - Initial value to write to storage if there's nothing there to retrieve.
