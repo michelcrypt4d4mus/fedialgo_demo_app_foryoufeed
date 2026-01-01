@@ -8,16 +8,30 @@ import { getLogger } from "../helpers/log_helpers";
 import { sanitizeServerUrl } from "../helpers/string_helpers";
 import { type App, type ServerUser, type User } from "../types";
 
+type UseStorageTuple<T> = [T, ((value: T) => void) | ((value: T) => T)];
+type UseNullableStorage<T> = [T | null, (value: T) => void];
+
+type ServerUserState = [
+    Record<string, ServerUser>,
+    (value: Record<string, ServerUser>) => void
+];
+
 const SERVER = "server";
 const SERVER_USERS = "serverUsers";
-
-type ServerUserState = [Record<string, ServerUser>, (value: Record<string, ServerUser>) => void];
 
 const logger = getLogger("useLocalStorage");
 
 
-// Revamp of pkreissel's original implementation
-export function useLocalStorage<T>(storageKey: string, defaultValue?: T): [T, (value: T) => void] {
+/**
+ * Retrieve value at 'storageKey' from browser storage (if one exists) and create a function to
+ * update the value at 'storageKey' that can be called later.
+ * Revamp of @pkreissel's original implementation.
+ * @template T
+ * @param {string} storageKey - Retrieve the data storage at this key. Returned fxn will write data here.
+ * @param {T} [defaultValue] - Initial value to write to storage if there's nothing there to retrieve.
+ * @returns {UseStorageTuple} 2-tuple with the current storage value and a fxn to store a new value.
+ */
+export function useLocalStorage<T>(storageKey: string, defaultValue?: T): UseStorageTuple<T> {
     const [storedValue, setStoredValue] = useState<T>(() => {
         try {
             const value = window.localStorage.getItem(storageKey);
@@ -48,7 +62,11 @@ export function useLocalStorage<T>(storageKey: string, defaultValue?: T): [T, (v
 };
 
 
-/** Get the registered app properties for 'server' from local storage (if they exist). */
+/**
+ * Get the registered Fedialgo app properties for a Mastodon server from local storage (if they exist).
+ * @param {string} [server] - Mastodon server to get app properties for (defaults to getServer() value)
+ * @returns {App | null}
+ */
 export function getApp(server?: string): App | null {
     const serverUsers = getValue<ServerUser>(SERVER_USERS) || {};
     return serverUsers[server || getServer()]?.app || null;
@@ -56,10 +74,10 @@ export function getApp(server?: string): App | null {
 
 
 /**
- * Wrap useLocalStorage to store the server URL in sanitized form.
+ * Wrap useLocalStorage() to store the server URL in sanitized form.
  * @returns
  */
-export function useServerStorage(): [string, (value: string) => string] {
+export function useServerStorage(): UseStorageTuple<string> {
     const [server, setRawServer] = useLocalStorage<string>(SERVER, config.app.defaultServer);
 
     const setServer = (server: string): string => {
@@ -70,38 +88,42 @@ export function useServerStorage(): [string, (value: string) => string] {
     };
 
     return [server, setServer];
-};
+}
 
 
 /**
  * Manage a dict keyed by sanitized server URLs, where each value is a ServerUser object.
  * @returns {ServerUserState}
  */
-export const useServerUserStorage = (): ServerUserState => useLocalStorage<Record<string, ServerUser>>(SERVER_USERS, {});
+export function useServerUserStorage(): ServerUserState {
+    return useLocalStorage<Record<string, ServerUser>>(SERVER_USERS, {});
+}
 
 
 /**
- * Helper method for getting and setting the user in localStorage.
+ * Helper method for getting and setting the App in localStorage.
  * @returns {[App | null, (app: App) => void]}
  */
-export function useAppStorage(serverUserState: ServerUserState): [App | null, (app: App) => void] {
+export function useAppStorage(serverUserState: ServerUserState): UseNullableStorage<App> {
     const setApp = (app: App) => setServerProperties(serverUserState, app, undefined);
     return [serverUserState[0][getServer()]?.app || null, setApp];
-};
+}
 
 
 /**
- * Helper method for getting and setting the user in localStorage.
+ * Helper method for getting and setting the User in localStorage.
  * @returns {[User | null, (user: User) => void]}
  */
-export function useUserStorage(serverUserState: ServerUserState): [User | null, (user: User) => void] {
+export function useUserStorage(serverUserState: ServerUserState): UseNullableStorage<User> {
     const setUser = (user: User) => setServerProperties(serverUserState, undefined, user);
     return [serverUserState[0][getServer()]?.user || null, setUser];
-};
+}
 
 
 /**
- * If either param is undefined don't overwrite existing values but if either are null then do overwrite.
+ * If either 'app' or 'user' arg is undefined don't overwrite existing values in localStorage
+ * but if either is 'null' then *DO* overwrite them.
+ * @param {ServerUserState} serverUserState
  * @param {App | null | undefined} app
  * @param {User | null | undefined} user
  */
@@ -124,9 +146,16 @@ function setServerProperties(
 
     logger.trace(`setServerProperties() for "${server}", app:`, app, `\nuser:`, user, `\nserverUsers:`, serverUsers);
     setServerUsers(serverUsers);
-};
+}
 
 
+/**
+ * Read and deserialize JSON data from browser storage.
+ * @private
+ * @param {string} storageKey - Key to read data from.
+ * @returns {T} - Deserialized data.
+ * @throws {Error} If no data exists in browser storage at 'storageKey'.
+ */
 function getValue<T>(storageKey: string): T {
     const value = window.localStorage.getItem(storageKey);
 
@@ -135,9 +164,15 @@ function getValue<T>(storageKey: string): T {
     } else {
         throw new Error(`No value found for key "${storageKey}" in localStorage.`);
     }
-};
+}
 
 
+/**
+ * Retrieve the Mastodon server URL from browser storage if it exists, otherwise
+ * defaults to returning configured value at 'config.app.defaultServer'.
+ * @private
+ * @returns {string} Mastodon server URL.
+ */
 function getServer(): string {
     const server = window.localStorage.getItem(SERVER);
 
