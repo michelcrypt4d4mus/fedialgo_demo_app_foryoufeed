@@ -140,3 +140,4 @@ Someone reported they were unable to build with `npm run build` but using `NODE_
 #### Known Issues
 * If you get an error about `GenerateSW() was called more than once` or whatever just ignore it.
 * Infinite scroll isn't _really_ infinite (yet). If you scroll far enough you will run out of toots to peruse.
+* Unclear if this works with ActivityPub servers other than `Mastodon` and `GoToSocial`
