@@ -82,7 +82,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                 className="media-gallery__item"
                 key={image.previewUrl}
                 style={{
-                    height: "100%",
+                    height: "auto",
                     inset: "auto",
                     width: 1 / images.length * 100 + "%"
                 }}
@@ -103,6 +103,7 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                         ...filterStyle,
                         ...imageStyle,
                         cursor: removeMediaAttachment ? "default" : "pointer",
+                        maxHeight: `${imageHeight}px`,
                     }}
                     title={showContent ? image.description : spoilerText}
                     wrapperProps={{style: {position: "static"}}}  // Required to center properly with blur
@@ -123,14 +124,14 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
 
             <div
                 className="media-gallery"
-                style={{height: (images.length > 1 || imageHeight < 200) ? '100%' : `${imageHeight}px`, ...style}}
+                style={{maxHeight: `${imageHeight}px`, ...style}}
             >
                 {images.map((image, i) => makeImage(image, i))}
             </div>
         </>);
     } else if (videos.length > 0) {
         return (
-            <div className="media-gallery" style={{height: `${VIDEO_HEIGHT}px`, ...style}}>
+            <div className="media-gallery" style={{maxHeight: `${VIDEO_HEIGHT}px`, ...style}}>
                 {videos.map((video, i) => {
                     const sourceTag = <source src={video?.remoteUrl || video?.url} type="video/mp4" />;
                     const videoStyle = {...filterStyle, ...videoEmbedStyle};
@@ -139,13 +140,13 @@ export default function MultimediaNode(props: MultimediaNodeProps): React.ReactE
                     // GIFs autoplay play in a loop; mp4s are controlled by the user.
                     if (video.type == GIFV) {
                         videoTag = (
-                            <video autoPlay height={"100%"} loop playsInline style={videoStyle}>
+                            <video autoPlay loop playsInline style={videoStyle}>
                                 {sourceTag}
                             </video>
                         );
                     } else {
                         videoTag = (
-                            <video controls height={"100%"} playsInline style={videoStyle}>
+                            <video controls playsInline style={videoStyle}>
                                 {sourceTag}
                             </video>
                         );
@@ -185,12 +186,12 @@ const mediaItem: CSSProperties = {
 };
 
 const imageStyle: CSSProperties = {
-    ...fullSize,
     ...mediaItem,
-    // failed attempt at fake border
-    // filter: "drop-shadow(0 -5px 0 gray) drop-shadow(0 5px 0 gray) drop-shadow(-5px 0 0 gray) drop-shadow(5px 0 0 gray)",
+    height: "auto",
+    maxWidth: "100%",
     objectFit: "contain",
     objectPosition: "top",
+    width: "100%",
 };
 
 const style: CSSProperties = {
@@ -198,14 +199,18 @@ const style: CSSProperties = {
 };
 
 const videoContainer: CSSProperties = {
-    ...fullSize,
     ...mediaItem,
     inset: "auto",
+    width: "100%",
 };
 
 const videoEmbedStyle: CSSProperties = {
     display: "block",
+    height: "auto",
     margin: "auto",
     marginLeft: "auto",
     marginRight: "auto",
+    maxHeight: `${VIDEO_HEIGHT}px`,
+    maxWidth: "100%",
+    width: "100%",
 };

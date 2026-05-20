@@ -10,3 +10,76 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+@media (max-width: 767.98px) {
+  .container,
+  .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .container.app-header {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .container-fluid > .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .container-fluid > .row > [class*="col"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .accordion-body,
+  .accordion-body * {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .accordion-body img,
+  .accordion-body video {
+    height: auto;
+  }
+
+  .slider-row {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .slider-row > * {
+    width: 100%;
+  }
+
+  .slider-value-box {
+    display: none !important;
+  }
+
+  .offcanvas-body {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  .offcanvas-body .accordion-body {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  .offcanvas-body .accordion .accordion .accordion-body {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  .offcanvas-body .status {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .offcanvas-body .row > .col {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

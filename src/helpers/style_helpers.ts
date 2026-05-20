@@ -254,11 +254,14 @@ export const roundedCorners: CSSProperties = {
 };
 
 export const stickySwitchContainer: CSSProperties = {
+    columnGap: "12px",
     display: "flex",
-    justifyContent: "space-between",
+    flexWrap: "wrap",
     height: "auto",
+    justifyContent: "space-between",
     paddingLeft: "2px",
     paddingRight: "2px",
+    rowGap: "4px",
 };
 
 export const titleStyle: CSSProperties = {

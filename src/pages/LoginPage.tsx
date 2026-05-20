@@ -103,7 +103,7 @@ export default function LoginPage() {
             </div>
 
             <div style={serverContainer}>
-                <Form.Group className="mb-0">
+                <Form.Group className="mb-0" style={serverInputGroup}>
                     <Form.Control
                         id="mastodon_server"
                         onChange={(e) => setServerInputText(e.target.value)}
@@ -132,13 +132,13 @@ const descriptionText: CSSProperties = {
 const loginButtonStyle: CSSProperties = {
     display: "flex",
     justifyContent: "center",
-    marginLeft: "10px"
 };
 
 const loginContainer: CSSProperties = {
     ...centerAlignedFlexCol,
     flex: 1,
     justifyContent: "center",
+    paddingInline: "16px",
 };
 
 const previewImage: CSSProperties = {
@@ -146,6 +146,8 @@ const previewImage: CSSProperties = {
     border: "5px solid #DDD",
     boxShadow: "3px 3px 5px black",
     maxHeight: "550px",
+    maxWidth: "100%",
+    height: "auto",
 };
 
 const privacyText: CSSProperties = {
@@ -155,9 +157,19 @@ const privacyText: CSSProperties = {
     marginBottom: "20px",
 };
 
+const serverInputGroup: CSSProperties = {
+    flex: "1 1 240px",
+    maxWidth: "400px",
+    minWidth: 0,
+};
+
 const serverContainer: CSSProperties = {
+    columnGap: "10px",
     display: "flex",
-    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
     marginBottom: "5px",
-    marginTop: "5px"
+    marginTop: "5px",
+    rowGap: "10px",
+    width: "100%",
 };

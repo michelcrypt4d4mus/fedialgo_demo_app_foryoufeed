@@ -114,6 +114,11 @@ module.exports = {
                 /^invisible/,
                 /^form/,
                 /^media/,
+                /^offcanvas/,
+                /^accordion/,
+                /^status/,
+                /^row$/,
+                /^col$/,
             ]
         }),
         new WorkboxWebpackPlugin.GenerateSW({

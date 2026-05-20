@@ -38,7 +38,7 @@ export default function Slider(props: SliderProps) {
     let divs = [
         <div key={`${label}_label`} style={labelContainer}>
             {!hideValueBox &&
-                <div style={sliderValue} id="innerest_doop">
+                <div className="slider-value-box" style={sliderValue} id="innerest_doop">
                     <span style={sliderValueFont}>
                         {value?.toFixed(decimals)}
                     </span>
@@ -69,7 +69,7 @@ export default function Slider(props: SliderProps) {
 
     return (
         <Form.Group className="me-2" key={`${label}_sliderForm`}>
-            <div style={{...labelContainer}}>
+            <div className="slider-row" style={{...labelContainer}}>
                 {hideValueBox ? divs.reverse() : divs}
             </div>
         </Form.Group>
@@ -80,8 +80,8 @@ export default function Slider(props: SliderProps) {
 const labelContainer: CSSProperties = {
     ...centerAlignedFlexRow,
     fontSize: 14,
+    flexWrap: "wrap",
     justifyContent: "space-between",
-    textWrap: "nowrap",
 };
 
 const sliderContainer: CSSProperties = {

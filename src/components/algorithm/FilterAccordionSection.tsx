@@ -57,9 +57,12 @@ const switchesContainer: CSSProperties = {
     ...boldFont,
     ...flexSpaceAround,
     ...centerAlignedFlexRow,
+    columnGap: "12px",
+    flexWrap: "wrap",
     fontSize: 16,
-    height: "25px",
     marginBottom: "3px",
+    minHeight: "25px",
+    rowGap: "4px",
 };
 
 const footerContainer: CSSProperties = {

@@ -3,7 +3,7 @@
  * weighting values.
  */
 import React, { CSSProperties, useEffect, useRef, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Offcanvas, Row } from "react-bootstrap";
 
 import TheAlgorithm, { Toot, optionalSuffix } from "fedialgo";
 import { Tooltip } from "react-tooltip";
@@ -19,6 +19,7 @@ import StatusComponent, { TOOLTIP_ACCOUNT_ANCHOR} from "../components/status/Sta
 import TooltippedLink from "../components/helpers/TooltippedLink";
 import TopLevelAccordion from "../components/helpers/TopLevelAccordion";
 import TrendingInfo from "../components/TrendingInfo";
+import useIsMobile from "../hooks/useIsMobile";
 import useOnScreen from "../hooks/useOnScreen";
 import WeightSetter from "../components/algorithm/WeightSetter";
 import { booleanIcon } from "../helpers/react_helpers";
@@ -64,6 +65,7 @@ export default function Feed() {
     const [numDisplayedToots, setNumDisplayedToots] = useState<number>(config.timeline.defaultNumDisplayedToots);
     const [prevScrollY, setPrevScrollY] = useState(0);
     const [scrollPercentage, setScrollPercentage] = useState(0);
+    const [showMobileControls, setShowMobileControls] = useState(false);
     const [showNewTootModal, setShowNewTootModal] = useState(false);
     const [thread, setThread] = useState<Toot[]>([]);
 
@@ -75,9 +77,33 @@ export default function Feed() {
 
     // Computed variables etc.
     const bottomRef = useRef<HTMLDivElement>(null);
+    const threadRef = useRef<HTMLDivElement>(null);
     const isBottom = useOnScreen(bottomRef);
+    const isMobile = useIsMobile();
     const leftColStyle: CSSProperties = isControlPanelSticky ? {} : {position: "relative"};
     const numShownToots = Math.max(config.timeline.defaultNumDisplayedToots, numDisplayedToots);
+
+    const handleSetThread = (toots: Toot[]) => {
+        setThread(toots);
+        if (isMobile && toots.length > 0) setShowMobileControls(true);
+    };
+
+    // Open the mobile drawer as soon as the user taps "View Thread", so the loading
+    // indicator is visible while the network call is in flight.
+    useEffect(() => {
+        if (isMobile && isLoadingThread) setShowMobileControls(true);
+    }, [isLoadingThread, isMobile]);
+
+    // When a thread is opened on mobile, wait for the offcanvas to finish opening, then scroll the
+    // Thread accordion into view inside the drawer.
+    useEffect(() => {
+        if (!isMobile || !showMobileControls) return;
+        if (thread.length === 0 && !isLoadingThread) return;
+        const t = setTimeout(() => {
+            threadRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 350);
+        return () => clearTimeout(t);
+    }, [isMobile, isLoadingThread, thread, showMobileControls]);
 
     // Reset all state except for the user and server
     const reset = async () => {
@@ -126,9 +152,105 @@ export default function Feed() {
     let footerMsg = `Scored ${(timeline?.length || 0).toLocaleString()} toots`;
     footerMsg += optionalSuffix(lastLoadDurationSeconds, seconds => `in ${seconds.toFixed(1)} seconds`);
 
+    const controlPanelContent = (
+        <>
+            <div style={stickySwitchContainer}>
+                {!isMobile && isControlPanelStickyCheckbox}
+                {showLinkPreviewsCheckbox}
+                {hideSensitiveCheckbox}
+                {shouldAutoUpdateCheckbox}
+            </div>
+
+            {algorithm && <WeightSetter />}
+            {algorithm && <FeedFiltersAccordionSection />}
+            {algorithm && <TrendingInfo />}
+            {algorithm && <ExperimentalFeatures />}
+
+            {(isLoadingThread || thread.length > 0) &&
+                <div ref={threadRef}>
+                    <TopLevelAccordion onExited={() => setThread([])} startOpen={true} title="Thread">
+                        {thread.length > 0
+                            ? thread.map((toot) => (
+                                <StatusComponent
+                                    fontColor="black"
+                                    key={toot.uri}
+                                    showLinkPreviews={showLinkPreviews}
+                                    status={toot}
+                                />
+                            ))
+                            : <LoadingSpinner message="Loading thread..." style={loadingMsgStyle} />}
+                    </TopLevelAccordion>
+                </div>}
+
+            <div style={stickySwitchContainer}>
+                {isLoading
+                    ? <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
+                    : <p style={loadingMsgStyle}>
+                          {footerMsg} (
+                              {<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>}
+                          )
+                      </p>}
+
+                <p style={scrollStatusMsg} className="d-none d-sm-block">
+                    {TheAlgorithm.isDebugMode
+                        ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
+                        : <BugReportLink />}
+                </p>
+            </div>
+
+            <div className="d-grid gap-2" style={newTootButton}>
+                <Button
+                    className={TEXT_CENTER_P2}
+                    onClick={() => setShowNewTootModal(true)}
+                    variant="outline-secondary"
+                >
+                    {`Create New Toot`}
+                </Button>
+            </div>
+
+            {algorithm && <ApiErrorsPanel />}
+
+            {TheAlgorithm.isDebugMode &&
+                <div style={envVarDebugPanel}>
+                    <ul>
+                        <li><strong>NODE_ENV:</strong> {process.env.NODE_ENV}</li>
+                        <li><strong>Debug Mode:</strong> {booleanIcon(TheAlgorithm.isDebugMode)}</li>
+                        <li><strong>Deep Debug:</strong> {booleanIcon(TheAlgorithm.isDeepDebug)}</li>
+                        <li><strong>Load Test:</strong> {booleanIcon(TheAlgorithm.isLoadTest)}</li>
+                        <li><strong>Quick Mode:</strong> {booleanIcon(TheAlgorithm.isQuickMode)}</li>
+                    </ul>
+                </div>}
+        </>
+    );
+
     return (
         <Container fluid style={{height: "auto"}}>
             <ReplyModal setShow={setShowNewTootModal} show={showNewTootModal}/>
+
+            {isMobile && (<>
+                <Button
+                    aria-label="Open controls and filters"
+                    onClick={() => setShowMobileControls(true)}
+                    style={mobileControlsFab}
+                    variant="primary"
+                >
+                    {"⚙"}
+                </Button>
+
+                <Offcanvas
+                    onHide={() => setShowMobileControls(false)}
+                    placement="end"
+                    show={showMobileControls}
+                    style={mobileControlsDrawer}
+                >
+                    <Offcanvas.Header closeButton closeVariant="white">
+                        <Offcanvas.Title>Controls & Filters</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        {controlPanelContent}
+                    </Offcanvas.Body>
+                </Offcanvas>
+            </>)}
 
             <Row style={waitOrDefaultCursor(isLoadingThread)}>
                 {/* Tooltip options: https://react-tooltip.com/docs/options */}
@@ -145,76 +267,17 @@ export default function Feed() {
 
                 {checkboxTooltip}
 
-                <Col md={6} xs={12} >
-                    {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
-                    <div className="sticky-top left-col-scroll" style={leftColStyle}>
-                        <div style={stickySwitchContainer}>
-                            {isControlPanelStickyCheckbox}
-                            {showLinkPreviewsCheckbox}
-                            {hideSensitiveCheckbox}
-                            {shouldAutoUpdateCheckbox}
+                {!isMobile && (
+                    <Col md={6} xs={12} >
+                        {/* TODO: maybe the inset-inline-end property could be used to allow panel to scroll to length but still stick? */}
+                        <div className="sticky-md-top left-col-scroll" style={leftColStyle}>
+                            {controlPanelContent}
                         </div>
-
-                        {algorithm && <WeightSetter />}
-                        {algorithm && <FeedFiltersAccordionSection />}
-                        {algorithm && <TrendingInfo />}
-                        {algorithm && <ExperimentalFeatures />}
-
-                        {(thread.length > 0) &&
-                            <TopLevelAccordion onExited={() => setThread([])} startOpen={true} title="Thread">
-                                {thread.map((toot) => (
-                                    <StatusComponent
-                                        fontColor="black"
-                                        key={toot.uri}
-                                        showLinkPreviews={showLinkPreviews}
-                                        status={toot}
-                                    />
-                                ))}
-                            </TopLevelAccordion>}
-
-                        <div style={stickySwitchContainer}>
-                            {isLoading
-                                ? <LoadingSpinner message={algorithm?.loadingStatus} style={loadingMsgStyle} />
-                                : <p style={loadingMsgStyle}>
-                                      {footerMsg} (
-                                          {<a onClick={reset} style={resetLinkStyle}>clear all data and reload</a>}
-                                      )
-                                  </p>}
-
-                            <p style={scrollStatusMsg} className="d-none d-sm-block">
-                                {TheAlgorithm.isDebugMode
-                                    ? `Displaying ${numDisplayedToots} Toots (Scroll: ${scrollPercentage.toFixed(1)}%)`
-                                    : <BugReportLink />}
-                            </p>
-                        </div>
-
-                        <div className="d-grid gap-2" style={newTootButton}>
-                            <Button
-                                className={TEXT_CENTER_P2}
-                                onClick={() => setShowNewTootModal(true)}
-                                variant="outline-secondary"
-                            >
-                                {`Create New Toot`}
-                            </Button>
-                        </div>
-
-                        {algorithm && <ApiErrorsPanel />}
-
-                        {TheAlgorithm.isDebugMode &&
-                            <div style={envVarDebugPanel}>
-                                <ul>
-                                    <li><strong>NODE_ENV:</strong> {process.env.NODE_ENV}</li>
-                                    <li><strong>Debug Mode:</strong> {booleanIcon(TheAlgorithm.isDebugMode)}</li>
-                                    <li><strong>Deep Debug:</strong> {booleanIcon(TheAlgorithm.isDeepDebug)}</li>
-                                    <li><strong>Load Test:</strong> {booleanIcon(TheAlgorithm.isLoadTest)}</li>
-                                    <li><strong>Quick Mode:</strong> {booleanIcon(TheAlgorithm.isQuickMode)}</li>
-                                </ul>
-                            </div>}
-                    </div>
-                </Col>
+                    </Col>
+                )}
 
                 {/* Feed column */}
-                <Col xs={12} md={6}>
+                <Col xs={12} md={isMobile ? 12 : 6}>
                     {algorithm && !isLoading &&
                         <div style={loadNewTootsText}>
                             <TooltippedLink
@@ -242,7 +305,7 @@ export default function Feed() {
                             <StatusComponent
                                 isLoadingThread={isLoadingThread}
                                 key={toot.uri}
-                                setThread={setThread}
+                                setThread={handleSetThread}
                                 setIsLoadingThread={setIsLoadingThread}
                                 showLinkPreviews={showLinkPreviews}
                                 status={toot}
@@ -265,6 +328,7 @@ export default function Feed() {
 
 const accountTooltipStyle: CSSProperties = {
     ...tooltipZIndex,
+    maxWidth: "min(500px, 92vw)",
     width: "500px",
 };
 
@@ -290,9 +354,33 @@ const loadNewTootsText: CSSProperties = {
 
 const newTootButton: CSSProperties = {
     ...verticalContainer,
+    marginInline: "auto",
     marginTop: "35px",
-    marginLeft: "200px",
-    marginRight: "200px",
+    maxWidth: "300px",
+    width: "100%",
+};
+
+const mobileControlsDrawer: CSSProperties = {
+    backgroundColor: "#191b22",
+    color: "#fff",
+    width: "min(420px, 98vw)",
+};
+
+const mobileControlsFab: CSSProperties = {
+    alignItems: "center",
+    borderRadius: "50%",
+    bottom: "20px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+    display: "flex",
+    fontSize: 24,
+    height: 56,
+    justifyContent: "center",
+    lineHeight: 1,
+    padding: 0,
+    position: "fixed",
+    right: "20px",
+    width: 56,
+    zIndex: 1040,
 };
 
 const noTootsMsgStyle: CSSProperties = {

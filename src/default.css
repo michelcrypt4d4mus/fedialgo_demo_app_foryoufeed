@@ -3211,14 +3211,14 @@ body > [data-popper-placement] {
     margin:-3px 0 0
 }
 
-.reply-indicator__content p, .status__content p {
+.reply-indicator__content p, .status__content p, .status__content__text p {
     margin-bottom: 20px;
     white-space: pre-wrap;
     unicode-bidi: -moz-plaintext;
     unicode-bidi:plaintext
 }
 
-.reply-indicator__content p:last-child, .status__content p:last-child {
+.reply-indicator__content p:last-child, .status__content p:last-child, .status__content__text p:last-child {
     margin-bottom:0
 }
 
