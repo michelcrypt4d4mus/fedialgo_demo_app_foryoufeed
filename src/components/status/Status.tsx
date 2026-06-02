@@ -314,7 +314,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                     {/* Preview card and attachment display (media attachments are preferred over preview cards) */}
                     {toot.card && !hasAttachments && <PreviewCard card={toot.card} showLinkPreviews={showLinkPreviews} />}
                     {hasAttachments && <MultimediaNode toot={toot}/>}
-                    {toot.poll && <Poll poll={toot.poll} />}
+                    {toot.poll && <Poll poll={toot.poll} toot={toot} />}
 
                     {/* Tags in smaller font, if they make up the entirety of the last paragraph */}
                     {toot.contentTagsParagraph &&

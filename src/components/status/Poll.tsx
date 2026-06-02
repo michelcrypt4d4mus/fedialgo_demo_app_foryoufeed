@@ -5,7 +5,7 @@ import React, { KeyboardEventHandler, useCallback, useMemo, useState } from "rea
 
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { isAccessTokenRevokedError, timeString } from "fedialgo";
+import { isAccessTokenRevokedError, Toot, timeString } from "fedialgo";
 import { mastodon } from "masto";
 
 import { getLogger } from "../../helpers/log_helpers";
@@ -18,11 +18,12 @@ const logger = getLogger("Poll");
 
 interface PollProps {
     poll: mastodon.v1.Poll,
+    toot?: Toot,
 };
 
 
 export default function Poll(props: PollProps) {
-    const { poll } = props;
+    const { poll, toot } = props;
     const { api } = useAlgorithm();
     const { logAndSetFormattedError } = useError();
 
@@ -65,7 +66,10 @@ export default function Poll(props: PollProps) {
         logger.debug('Vote clicked, selected is:', selected, '\nchoiceIndexes is:', choiceIndexes);
 
         try {
-            await api.v1.polls.$select(poll.id).votes.create({choices: choiceIndexes});
+            // Resolve the toot to the user's home server so we vote against the local poll id.
+            // Remote (federated) polls have a different id on the originating server, which causes 404s.
+            const localPollId = toot ? (await toot.resolve()).poll?.id ?? poll.id : poll.id;
+            await api.v1.polls.$select(localPollId).votes.create({choices: choiceIndexes});
             logger.debug('Vote successful, selected:', selected, '\nchoiceIndexes:', choiceIndexes);
             choiceIndexes.forEach((i) => poll.options[i].votesCount = (poll.options[i].votesCount || 0) + 1);
             poll.voted = true;
